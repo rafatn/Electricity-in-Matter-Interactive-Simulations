@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Electricity in Matter + Simulations (HE/EN)</title>
+
+  <!-- MathJax -->
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']]},
+      options: {skipHtmlTags: ['script','noscript','style','textarea','pre','code','canvas']}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1b33;
+      --card2:#0c172d;
+      --text:#e9eefc;
+      --muted:#b9c6ee;
+      --gold:#d7b55a;
+      --line:rgba(215,181,90,.22);
+      --shadow: 0 12px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+      --blue: rgba(92,146,255,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", sans-serif;
+      background: radial-gradient(1100px 600px at 18% 8%, rgba(215,181,90,.18), transparent 55%),
+                  radial-gradient(900px 500px at 82% 22%, rgba(92,146,255,.18), transparent 55%),
+                  linear-gradient(180deg, #070c16 0%, var(--bg) 45%, #070c16 100%);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      padding:26px 18px 10px;
+      max-width:1240px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width: 1040px;
+      font-size: 15px;
+    }
+    main{
+      max-width:1240px;
+      margin:0 auto;
+      padding: 10px 18px 50px;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(15,27,51,.65);
+      box-shadow: var(--shadow);
+      color: var(--muted);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--gold); font-weight:650}
+    .langBox{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(15,27,51,.65);
+      box-shadow: var(--shadow);
+      color: var(--muted);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    select{
+      background: rgba(7,12,22,.55);
+      color: var(--text);
+      border: 1px solid rgba(215,181,90,.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      outline:none;
+    }
+
+    /* Tabs */
+    .tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      padding:12px;
+      border:1px solid var(--line);
+      background: rgba(15,27,51,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 10px;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+    }
+    .tabbtn{
+      border: 1px solid rgba(215,181,90,.25);
+      background: linear-gradient(180deg, rgba(215,181,90,.14), rgba(15,27,51,.35));
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-size: 14px;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .tabbtn:hover{transform: translateY(-1px); border-color: rgba(215,181,90,.55);}
+    .tabbtn.active{
+      background: linear-gradient(180deg, rgba(215,181,90,.24), rgba(15,27,51,.22));
+      border-color: rgba(215,181,90,.75);
+      box-shadow: 0 0 0 3px rgba(215,181,90,.12) inset;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap:16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+      .tabs{position: static;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(15,27,51,.86), rgba(12,23,45,.78));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+    }
+    .card h2{ margin: 0 0 6px; font-size: 20px; }
+    .card h3{ margin: 14px 0 8px; font-size: 16px; color: var(--gold); font-weight: 800; }
+    .kicker{ color:var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+    .list{ margin:0; padding:0 18px 0 0; }
+    html[dir="ltr"] .list{ padding:0 0 0 18px; }
+    .list li{ margin: 6px 0; }
+    .formula{
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(215,181,90,.35);
+      background: rgba(7,12,22,.35);
+      overflow-x:auto;
+    }
+    .note{
+      margin-top:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(92,146,255,.28);
+      background: rgba(92,146,255,.08);
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+    .warn{
+      margin-top:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,135,92,.32);
+      background: rgba(255,135,92,.08);
+      color: rgba(233,238,252,.84);
+      font-size: 13.5px;
+    }
+    .badge{
+      display:inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(215,181,90,.35);
+      background: rgba(215,181,90,.10);
+      color: var(--gold);
+      font-size: 12px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    html[dir="ltr"] .badge{ margin-left:0; margin-right:6px; }
+    .rightbox{display:flex; flex-direction:column; gap:16px;}
+    .mini{font-size:13.5px; color:var(--muted); margin:0;}
+    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(215,181,90,.35), transparent); margin: 10px 0;}
+    .footer{margin-top: 16px; color: rgba(233,238,252,.72); font-size: 12.5px; text-align:center;}
+    .hidden{display:none;}
+    .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap: 12px;}
+    @media (max-width: 980px){ .twoCol{grid-template-columns: 1fr;} }
+
+    /* Simulations */
+    .simGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:16px; }
+    @media (max-width: 980px){ .simGrid{grid-template-columns:1fr;} }
+    canvas.sim{
+      width:100%; height:320px;
+      border-radius: 14px;
+      border: 1px solid rgba(215,181,90,.18);
+      background: rgba(6,10,18,.55);
+      display:block;
+    }
+    .simRow{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .tag{
+      display:inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(215,181,90,.35);
+      background: rgba(215,181,90,.10);
+      color: var(--gold);
+      font-size: 12px;
+      margin-left: 6px;
+    }
+    html[dir="ltr"] .tag{ margin-left:0; margin-right:6px; }
+    .controls{ margin-top:10px; display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px; }
+    @media (max-width: 520px){ .controls{grid-template-columns:1fr;} }
+    label{font-size:12.5px; color:var(--muted); display:block; margin-bottom:6px;}
+    input[type="range"]{width:100%;}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    button{
+      border:1px solid rgba(215,181,90,.35);
+      background: rgba(215,181,90,.12);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+    }
+    button:hover{border-color: rgba(215,181,90,.65); background: rgba(215,181,90,.16);}
+
+    /* Signature */
+    .sigWrap{
+      margin-top: 18px;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:12px;
+    }
+    html[dir="ltr"] .sigWrap{ justify-content:flex-start; }
+    .sig{
+      font-weight:800;
+      font-size: 16px;
+      letter-spacing: .6px;
+      background: linear-gradient(90deg, #d7b55a, #6aa7ff, #ff7aa5, #d7b55a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .sigNote{color:var(--muted); font-size:12.5px;}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1 data-i18n="title">מודל חשמל בתווך חומר + סימולציות משתנות</h1>
+      <p class="subtitle" data-i18n="subtitle">
+        אותו דף משלב: <b>משוואות (מקסוול + קשרי חומר + דינמיקה)</b> לכל מצב חומר וגם <b>סימולציות “צעצוע”</b> שממחישות את המשתנים הרלוונטיים.
+      </p>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <div class="langBox">
+        <span data-i18n="language">שפה</span>
+        <select id="langSel" aria-label="Language">
+          <option value="he">עברית</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="pill"><b data-i18n="tipLabel">טיפ</b> <span data-i18n="tipText">בחר טאב “סימולציות” כדי לשחק עם המשתנים</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="tabs" role="tablist" aria-label="Electricity in matter tabs">
+    <button class="tabbtn active" data-tab="unified" role="tab" aria-selected="true" data-i18n="tabA">A) מסגרת מאוחדת</button>
+    <button class="tabbtn" data-tab="solid" role="tab" aria-selected="false" data-i18n="tabB1">B1) מוצק</button>
+    <button class="tabbtn" data-tab="liquid" role="tab" aria-selected="false" data-i18n="tabB2">B2) נוזל</button>
+    <button class="tabbtn" data-tab="gas" role="tab" aria-selected="false" data-i18n="tabB3">B3) גז</button>
+    <button class="tabbtn" data-tab="powder" role="tab" aria-selected="false" data-i18n="tabB4">B4) אבקה</button>
+    <button class="tabbtn" data-tab="newterms" role="tab" aria-selected="false" data-i18n="tabC">C) “איברים חדשים”</button>
+    <button class="tabbtn" data-tab="sims" role="tab" aria-selected="false" data-i18n="tabD">D) סימולציות</button>
+  </div>
+
+  <!-- UNIFIED -->
+  <section id="unified" class="panel">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="unified_h2">המסגרת המאוחדת (ה”על”) <span class="badge">כל המצבים</span></h2>
+        <p class="kicker" data-i18n="unified_kicker">שלד מתמטי אחד: מקסוול + שימור מטען + קשרי חומר + זרמים + צימוד לכוחות/תנועה.</p>
+
+        <h3 data-i18n="mx_h3">1) מקסוול (במדיום)</h3>
+        <div class="formula">\(\nabla\cdot \mathbf{D}=\rho_f\), &nbsp;&nbsp; \(\nabla\cdot \mathbf{B}=0\)</div>
+        <div class="formula">\(\nabla\times \mathbf{E}=-\frac{\partial \mathbf{B}}{\partial t}\), &nbsp;&nbsp; \(\nabla\times \mathbf{H}=\mathbf{J}_f+\frac{\partial \mathbf{D}}{\partial t}\)</div>
+
+        <h3 data-i18n="charge_h3">2) שימור מטען</h3>
+        <div class="formula">\(\displaystyle \frac{\partial \rho_f}{\partial t}+\nabla\cdot \mathbf{J}_f=0\)</div>
+
+        <h3 data-i18n="mat_h3">3) קשרי חומר (מצב החומר נכנס כאן)</h3>
+        <div class="formula">\(\mathbf{D}=\varepsilon_0\mathbf{E}+\mathbf{P}\), &nbsp;&nbsp; \(\mathbf{B}=\mu_0(\mathbf{H}+\mathbf{M})\)</div>
+        <div class="formula" data-i18n="mat_formula">
+          קשר ליניארי פשוט: \(\mathbf{P}=\varepsilon_0\chi_e\mathbf{E}\Rightarrow \mathbf{D}=\varepsilon \mathbf{E}\).<br>
+          קשר עם זיכרון: \(\mathbf{P}(t)=\int_{-\infty}^{t}\chi_e(t-\tau)\mathbf{E}(\tau)\,d\tau\).
+        </div>
+
+        <h3 data-i18n="curr_h3">4) זרמים כלליים (הולכה + הסעה + דיפוזיה)</h3>
+        <div class="formula">\(\displaystyle \mathbf{J}_f = \rho_f \mathbf{v} + \mathbf{J}_{\text{cond}} + \mathbf{J}_{\text{diff}} + \mathbf{J}_{\text{react}}\)</div>
+        <div class="formula" data-i18n="ohm_general">אוהם כללי (כולל תנועה): \(\mathbf{J}_{\text{cond}}=\boldsymbol{\sigma}\,(\mathbf{E}+\mathbf{v}\times\mathbf{B})\)</div>
+        <div class="formula" data-i18n="diff_min">דיפוזיה מינימלית: \(\mathbf{J}_{\text{diff}}=-D\nabla\rho_f\)</div>
+
+        <h3 data-i18n="couple_h3">5) צימוד חשמל ↔ תנועה</h3>
+        <div class="formula" data-i18n="lorentz">לורנץ: \(\mathbf{f}_{em}=\rho_f\mathbf{E}+\mathbf{J}_f\times\mathbf{B}\)</div>
+
+        <h3 data-i18n="dyn_h3">6) דינמיקת החומר (בחירה לפי מצב)</h3>
+        <div class="twoCol">
+          <div class="card" style="margin:0; padding:12px; background: rgba(12,23,45,.55);">
+            <h3 style="margin-top:0" data-i18n="solid_dyn">מוצק (אלסטיות)</h3>
+            <div class="formula" style="margin:8px 0 0">\(\rho \ddot{\mathbf{u}}=\nabla\cdot\boldsymbol{\sigma}+\mathbf{f}_{em}+\rho\mathbf{g}\)</div>
+          </div>
+          <div class="card" style="margin:0; padding:12px; background: rgba(12,23,45,.55);">
+            <h3 style="margin-top:0" data-i18n="fluid_dyn">זורם (נוזל/גז)</h3>
+            <div class="formula" style="margin:8px 0 0">\(\rho(\partial_t\mathbf{v}+(\mathbf{v}\cdot\nabla)\mathbf{v})=-\nabla p+\mu\nabla^2\mathbf{v}+\mathbf{f}_{em}+\rho\mathbf{g}\)</div>
+          </div>
+        </div>
+
+        <div class="note" data-i18n="unified_note">
+          <b>רעיון מפתח:</b> מצב החומר לא משנה את מקסוול — הוא משנה את \(\varepsilon,\mu,\sigma\), ואת הדינמיקה (אלסטיות/זרימה/גרנולריות).
+        </div>
+      </div>
+
+      <div class="rightbox">
+        <div class="card">
+          <h3 data-i18n="effects_h3">מה נקרא “אפקטי טבע” בתוך המסגרת?</h3>
+          <ul class="list">
+            <li data-i18n="eff1"><b>כבידה:</b> \(\rho\mathbf{g}\) בדינמיקה; גרדיאנטי לחץ/צפיפות.</li>
+            <li data-i18n="eff2"><b>טמפרטורה:</b> \(\sigma(T),\varepsilon(T),\mu(T)\); קצבי יינון/תגובות.</li>
+            <li data-i18n="eff3"><b>חיכוך/צמיגות:</b> \(\mu\) בזורמים; דעיכה במוצקים.</li>
+            <li data-i18n="eff4"><b>לחות:</b> משפיעה על מוליכות/טעינה (במיוחד אבקות).</li>
+            <li data-i18n="eff5"><b>מבנה:</b> פגמים/גבולות/אריזה \(\phi\) → \(\sigma_{\text{eff}},\varepsilon_{\text{eff}}\).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="statevec_h3">וקטור מצב מאוחד</h3>
+          <div class="formula">\(\mathbf{X}=(\mathbf{E},\mathbf{B},\rho_f,\rho,\mathbf{v},T,\text{structure},\dots)\)</div>
+          <div class="hr"></div>
+          <p class="mini" data-i18n="statevec_note">שימושי לסימולציה: FEM / FDTD / CFD / DEM.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLID -->
+  <section id="solid" class="panel hidden">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="solid_h2">חשמל במוצק <span class="badge">מוליך • דיאלקטרי • פייזואלקטרי</span></h2>
+        <p class="kicker" data-i18n="solid_kicker">במוצק: הולכה, קיטוב, וצימוד למכניקה (תנועה).</p>
+
+        <h3 data-i18n="solid_ohm_h3">מוליך (אוהם) וחימום</h3>
+        <div class="formula">\(\mathbf{J}=\sigma \mathbf{E}\)</div>
+        <div class="formula" data-i18n="joule">חימום ג׳אולי: \(\;q=\mathbf{J}\cdot\mathbf{E}=\sigma E^2\)</div>
+
+        <h3 data-i18n="solid_die_h3">דיאלקטרי (קיטוב) + דליפה</h3>
+        <div class="formula">\(\mathbf{D}=\varepsilon \mathbf{E}\), &nbsp;&nbsp; \(\mathbf{J}_{leak}=\sigma_{leak}\mathbf{E}\)</div>
+        <div class="formula">Debye: \(\;\dot{\mathbf{P}}+\frac{1}{\tau}\mathbf{P}=\varepsilon_0\frac{\chi}{\tau}\mathbf{E}\)</div>
+
+        <h3 data-i18n="solid_piezo_h3">פייזואלקטריות: חשמל ↔ תנועה</h3>
+        <div class="formula">\(\mathbf{S}= \mathbf{s}\,\boldsymbol{\sigma}+\mathbf{d}^T\mathbf{E}\)<br>\(\mathbf{D}= \mathbf{d}\,\boldsymbol{\sigma}+\boldsymbol{\varepsilon}\mathbf{E}\)</div>
+
+        <h3 data-i18n="solid_dyn_h3">דינמיקה עם כוח EM</h3>
+        <div class="formula">\(\rho \ddot{\mathbf{u}}=\nabla\cdot\boldsymbol{\sigma}+\rho_f\mathbf{E}+\mathbf{J}\times\mathbf{B}+\rho\mathbf{g}\)</div>
+
+        <div class="note" data-i18n="solid_sim_note"><b>קישור לסימולציה:</b> בטאב “סימולציות” תראה גל אלסטי בשרשרת מסה–קפיץ (קשיחות \(k\)).</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="card">
+          <h3 data-i18n="solid_env_h3">משתנים סביבתיים חשובים</h3>
+          <ul class="list">
+            <li data-i18n="solid_env1">\(\sigma(T)\): מוליכות מול טמפרטורה.</li>
+            <li data-i18n="solid_env2">מאמץ/פגמים: שינוי \(\sigma,\varepsilon\).</li>
+            <li data-i18n="solid_env3">תדר: דיספרסיה וקבועים אפקטיביים.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIQUID -->
+  <section id="liquid" class="panel hidden">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="liquid_h2">חשמל בנוזל <span class="badge">אלקטרוליט • EHD</span></h2>
+        <p class="kicker" data-i18n="liquid_kicker">יונים נסחפים/מתפזרים + הזרימה מגיבה לשדה.</p>
+
+        <h3>Poisson–Nernst–Planck</h3>
+        <div class="formula">\(\mathbf{J}_i = -D_i\nabla c_i - \mu_i z_i e\,c_i \nabla \phi + c_i \mathbf{v}\)</div>
+        <div class="formula">\(\displaystyle \frac{\partial c_i}{\partial t}+\nabla\cdot \mathbf{J}_i = R_i\)</div>
+        <div class="formula">\(\displaystyle -\nabla\cdot(\varepsilon\nabla\phi)=\sum_i z_i e\,c_i\)</div>
+
+        <h3 data-i18n="liquid_flow_h3">זרימה עם כוח חשמלי</h3>
+        <div class="formula">\(\rho(\partial_t\mathbf{v}+(\mathbf{v}\cdot\nabla)\mathbf{v})=-\nabla p+\mu\nabla^2\mathbf{v}+ \rho_e \mathbf{E}+\rho\mathbf{g}\)</div>
+
+        <div class="note" data-i18n="liquid_sim_note"><b>קישור לסימולציה:</b> בטאב “סימולציות” יש מערבולת + גרר (אנלוג לזרימה עם צמיגות).</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="card">
+          <h3 data-i18n="liquid_env_h3">משתנים סביבתיים חשובים</h3>
+          <ul class="list">
+            <li data-i18n="liquid_env1">טמפ׳ \(T\): משנה \(D_i,\mu_i,\varepsilon\).</li>
+            <li data-i18n="liquid_env2">גבולות/דפנות: שכבה כפולה (EDL).</li>
+            <li data-i18n="liquid_env3">מתיחות פנים: טיפות/נימיות.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAS -->
+  <section id="gas" class="panel hidden">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="gas_h2">חשמל בגז <span class="badge">יינון • פלזמה</span></h2>
+        <p class="kicker" data-i18n="gas_kicker">בגז: יינון יוצר נשאי מטען, ואז יש דינמיקה EM–זורם.</p>
+
+        <h3 data-i18n="gas_dd_h3">Drift–Diffusion</h3>
+        <div class="formula">\(\mathbf{\Gamma}_e = -D_e\nabla n_e + \mu_e n_e \mathbf{E}\), &nbsp;&nbsp; \(\mathbf{\Gamma}_i = -D_i\nabla n_i - \mu_i n_i \mathbf{E}\)</div>
+        <div class="formula">\(\partial_t n_{e,i} + \nabla\cdot \mathbf{\Gamma}_{e,i} = S_{e,i}\)</div>
+        <div class="formula">\(\displaystyle -\nabla\cdot(\varepsilon_0\nabla\phi)=e(n_i-n_e)\)</div>
+
+        <h3 data-i18n="gas_mhd_h3">MHD (כאשר מוליכות גבוהה)</h3>
+        <div class="formula">\(\mathbf{J}=\sigma(\mathbf{E}+\mathbf{v}\times\mathbf{B})\)</div>
+        <div class="formula">\(\rho(\partial_t\mathbf{v}+(\mathbf{v}\cdot\nabla)\mathbf{v})=-\nabla p + \mathbf{J}\times\mathbf{B}\)</div>
+
+        <div class="note" data-i18n="gas_sim_note"><b>קישור לסימולציה:</b> בטאב “סימולציות” יש “גז אידאלי” חלקיקים בקופסה (טמפ׳ ↔ מהירות).</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="warn" data-i18n="gas_warn"><b>בטיחות:</b> פריקות חשמליות מסוכנות. כאן מודל תאורטי/ויזואלי בלבד.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POWDER -->
+  <section id="powder" class="panel hidden">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="powder_h2">חשמל באבקה <span class="badge">טריבו • מגעים • DEM</span></h2>
+        <p class="kicker" data-i18n="powder_kicker">רשת מגעים משתנה + טעינה במגע + לחות/אוויר → התנהגות עשירה.</p>
+
+        <h3 data-i18n="powder_eff_h3">תווך אפקטיבי</h3>
+        <div class="formula">\(\nabla\cdot(\varepsilon_{\text{eff}}\mathbf{E})=\rho_f\), \(\;\mathbf{J}=\sigma_{\text{eff}}(\mathbf{E}+\mathbf{v}\times\mathbf{B})+\rho_f\mathbf{v}\)</div>
+
+        <h3 data-i18n="powder_dem_h3">מודל חלקיקים (DEM + EM)</h3>
+        <div class="formula">לכל גרגר: \(\;m_i\ddot{\mathbf{x}}_i = \mathbf{F}^{contact}_i + q_i(\mathbf{E}+\dot{\mathbf{x}}_i\times\mathbf{B}) + m_i\mathbf{g} + \mathbf{F}^{drag}_i\)</div>
+
+        <div class="note" data-i18n="powder_sim_note"><b>קישור לסימולציה:</b> בטאב “סימולציות” יש אבקה עם כבידה+חיכוך+רעידה (Shake).</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="card">
+          <h3 data-i18n="powder_env_h3">משתנים סביבתיים קריטיים</h3>
+          <ul class="list">
+            <li data-i18n="powder_env1">לחות: מעלה מוליכות פני שטח + קוהזיה קפילרית.</li>
+            <li data-i18n="powder_env2">אוויר: גרר → ריחוף/סחיפה.</li>
+            <li data-i18n="powder_env3">אריזה \(\phi\): percolation במוליכות.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW TERMS -->
+  <section id="newterms" class="panel hidden">
+    <div class="grid">
+      <div class="card">
+        <h2 data-i18n="new_h2">איך מוסיפים “איברים חדשים” בצורה מדעית <span class="badge">מקום לחידוש</span></h2>
+        <p class="kicker" data-i18n="new_kicker">מגדירים איבר חדש בקשרי חומר/מקורות/מבנה, ושומרים שימורים וסיבתיות.</p>
+
+        <h3 data-i18n="new1_h3">1) קשרי חומר כלליים</h3>
+        <div class="formula">\(\mathbf{J}=\mathcal{J}(\mathbf{E},\mathbf{B},\mathbf{v},T,\eta)\), \(\;\mathbf{P}=\mathcal{P}(\mathbf{E},T,\boldsymbol{\sigma},\text{history})\)</div>
+
+        <h3 data-i18n="new2_h3">2) משתנה מבני \(\eta\)</h3>
+        <div class="formula">\(\partial_t\eta=\mathcal{H}(\eta,\mathbf{E},T,\dot{\gamma})\)</div>
+
+        <h3 data-i18n="new3_h3">3) מקור מטען</h3>
+        <div class="formula">\(\partial_t\rho_f+\nabla\cdot\mathbf{J}_f=S_\rho\)</div>
+
+        <div class="note" data-i18n="new_note"><b>כלל זהב:</b> שימור מטען, סיבתיות, סימטריות, בדיקת יחידות.</div>
+      </div>
+
+      <div class="rightbox">
+        <div class="card">
+          <h3 data-i18n="new_check_h3">צ׳ק‑ליסט קצר</h3>
+          <ol class="list">
+            <li data-i18n="new_check1">איפה החידוש נכנס? \(\mathbf{J}\)/\(\mathbf{P}\)/\(S_\rho\)/\(\eta\)</li>
+            <li data-i18n="new_check2">פרמטרים חדשים + יחידות</li>
+            <li data-i18n="new_check3">ניסוי שמודד אותם</li>
+            <li data-i18n="new_check4">גבול שבו חוזרים למודל מוכר</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMS -->
+  <section id="sims" class="panel hidden">
+    <div class="card">
+      <h2 data-i18n="sims_h2">סימולציות קטנות (Toy Models) <span class="badge">להמחשה מהירה</span></h2>
+      <p class="kicker" data-i18n="sims_kicker">הדגמות אינטואיטיביות: נסה לשנות פרמטר אחד בכל פעם.</p>
+    </div>
+
+    <div class="simGrid">
+      <!-- SOLID SIM -->
+      <section class="card">
+        <div class="simRow">
+          <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:18px;" data-i18n="sim_solid_title">מוצק</h2><span class="tag" data-i18n="sim_solid_tag">שרשרת מסה–קפיץ (גל)</span>
+          </div>
+        </div>
+        <canvas class="sim" id="cSolid" width="900" height="320"></canvas>
+        <div class="controls">
+          <div><label data-i18n="sim_s_k">קשיחות קפיץ (k)</label><input id="sK" type="range" min="20" max="260" value="120"></div>
+          <div><label data-i18n="sim_s_d">דעיכה</label><input id="sDamp" type="range" min="0" max="30" value="6"></div>
+          <div><label data-i18n="sim_s_p">עוצמת “דחיפה”</label><input id="sPoke" type="range" min="20" max="220" value="120"></div>
+        </div>
+        <div class="btns">
+          <button id="bPoke" data-i18n="btn_poke">דחיפה (Impulse)</button>
+          <button id="bResetSolid" data-i18n="btn_reset">איפוס</button>
+        </div>
+        <div class="mini" data-i18n="sim_solid_mini">פולס אלסטי נודד ומוחזר מקצוות (אינטואיציה לפונונים).</div>
+      </section>
+
+      <!-- LIQUID SIM -->
+      <section class="card">
+        <div class="simRow">
+          <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:18px;" data-i18n="sim_liquid_title">נוזל</h2><span class="tag" data-i18n="sim_liquid_tag">חלקיקים בשדה זרימה (ערבול)</span>
+          </div>
+        </div>
+        <canvas class="sim" id="cLiquid" width="900" height="320"></canvas>
+        <div class="controls">
+          <div><label data-i18n="sim_l_drag">צמיגות (גרר)</label><input id="lDrag" type="range" min="0" max="40" value="14"></div>
+          <div><label data-i18n="sim_l_stir">עוצמת ערבול</label><input id="lStir" type="range" min="10" max="220" value="120"></div>
+          <div><label data-i18n="sim_l_buoy">ציפה (כלפי מעלה)</label><input id="lBuoy" type="range" min="0" max="80" value="18"></div>
+        </div>
+        <div class="btns">
+          <button id="bStir" data-i18n="btn_stir">ערבול (Vortex)</button>
+          <button id="bResetLiquid" data-i18n="btn_reset">איפוס</button>
+        </div>
+        <div class="mini" data-i18n="sim_liquid_mini">שדה מערבולת + גרר: ערבוב והסעה (מודל צעצוע).</div>
+      </section>
+
+      <!-- GAS SIM -->
+      <section class="card">
+        <div class="simRow">
+          <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:18px;" data-i18n="sim_gas_title">גז</h2><span class="tag" data-i18n="sim_gas_tag">חלקיקים בקופסה (אידאלי)</span>
+          </div>
+        </div>
+        <canvas class="sim" id="cGas" width="900" height="320"></canvas>
+        <div class="controls">
+          <div><label data-i18n="sim_g_temp">“טמפרטורה” (מהירות)</label><input id="gTemp" type="range" min="10" max="200" value="90"></div>
+          <div><label data-i18n="sim_g_n">מס׳ חלקיקים</label><input id="gN" type="range" min="20" max="180" value="90"></div>
+          <div><label data-i18n="sim_g_e">אלסטיות התנגשויות</label><input id="gE" type="range" min="60" max="100" value="98"></div>
+        </div>
+        <div class="btns">
+          <button id="bHeat" data-i18n="btn_heat">פולס חימום</button>
+          <button id="bResetGas" data-i18n="btn_reset">איפוס</button>
+        </div>
+        <div class="mini" data-i18n="sim_gas_mini">התנגשויות כמעט אלסטיות + קירות → אינטואיציה לגז אידאלי.</div>
+      </section>
+
+      <!-- POWDER SIM -->
+      <section class="card">
+        <div class="simRow">
+          <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:18px;" data-i18n="sim_powder_title">אבקה</h2><span class="tag" data-i18n="sim_powder_tag">גרגרים + חיכוך + כבידה</span>
+          </div>
+        </div>
+        <canvas class="sim" id="cPowder" width="900" height="320"></canvas>
+        <div class="controls">
+          <div><label data-i18n="sim_p_g">כבידה</label><input id="pG" type="range" min="10" max="240" value="120"></div>
+          <div><label data-i18n="sim_p_f">חיכוך</label><input id="pF" type="range" min="0" max="60" value="30"></div>
+          <div><label data-i18n="sim_p_shake">עוצמת רעידה</label><input id="pShake" type="range" min="0" max="220" value="90"></div>
+        </div>
+        <div class="btns">
+          <button id="bShake" data-i18n="btn_shake">רעידה (Shake)</button>
+          <button id="bResetPowder" data-i18n="btn_reset">איפוס</button>
+        </div>
+        <div class="mini" data-i18n="sim_powder_mini">התנגשויות לא־אלסטיות + חיכוך → ערימות/נעילה (רמז).</div>
+      </section>
+    </div>
+
+    <div class="sigWrap">
+      <div class="sigNote" data-i18n="sig_note">signature</div>
+      <div class="sig">shick mounes</div>
+    </div>
+  </section>
+
+  <p class="footer" data-i18n="footer">המסמך משלב תיאוריה + הדגמות.</p>
+</main>
+
+<script>
+  // ---------- i18n ----------
+  const I18N = {
+    he: {
+      dir: "rtl",
+      title: "מודל חשמל בתווך חומר + סימולציות משתנות",
+      subtitle: "אותו דף משלב: <b>משוואות (מקסוול + קשרי חומר + דינמיקה)</b> לכל מצב חומר וגם <b>סימולציות “צעצוע”</b> שממחישות את המשתנים הרלוונטיים.",
+      language: "שפה",
+      tipLabel: "טיפ",
+      tipText: "בחר טאב “סימולציות” כדי לשחק עם המשתנים",
+      tabA: "A) מסגרת מאוחדת",
+      tabB1: "B1) מוצק",
+      tabB2: "B2) נוזל",
+      tabB3: "B3) גז",
+      tabB4: "B4) אבקה",
+      tabC: "C) “איברים חדשים”",
+      tabD: "D) סימולציות",
+      unified_h2: "המסגרת המאוחדת (ה”על”) <span class='badge'>כל המצבים</span>",
+      unified_kicker: "שלד מתמטי אחד: מקסוול + שימור מטען + קשרי חומר + זרמים + צימוד לכוחות/תנועה.",
+      mx_h3: "1) מקסוול (במדיום)",
+      charge_h3: "2) שימור מטען",
+      mat_h3: "3) קשרי חומר (מצב החומר נכנס כאן)",
+      mat_formula: "קשר ליניארי פשוט: \\(\\mathbf{P}=\\varepsilon_0\\chi_e\\mathbf{E}\\Rightarrow \\mathbf{D}=\\varepsilon \\mathbf{E}\\).<br>קשר עם זיכרון: \\(\\mathbf{P}(t)=\\int_{-\\infty}^{t}\\chi_e(t-\\tau)\\mathbf{E}(\\tau)\\,d\\tau\\).",
+      curr_h3: "4) זרמים כלליים (הולכה + הסעה + דיפוזיה)",
+      ohm_general: "אוהם כללי (כולל תנועה): \\(\\mathbf{J}_{\\text{cond}}=\\boldsymbol{\\sigma}\\,(\\mathbf{E}+\\mathbf{v}\\times\\mathbf{B})\\)",
+      diff_min: "דיפוזיה מינימלית: \\(\\mathbf{J}_{\\text{diff}}=-D\\nabla\\rho_f\\)",
+      couple_h3: "5) צימוד חשמל ↔ תנועה",
+      lorentz: "לורנץ: \\(\\mathbf{f}_{em}=\\rho_f\\mathbf{E}+\\mathbf{J}_f\\times\\mathbf{B}\\)",
+      dyn_h3: "6) דינמיקת החומר (בחירה לפי מצב)",
+      solid_dyn: "מוצק (אלסטיות)",
+      fluid_dyn: "זורם (נוזל/גז)",
+      unified_note: "<b>רעיון מפתח:</b> מצב החומר לא משנה את מקסוול — הוא משנה את \\(\\varepsilon,\\mu,\\sigma\\), ואת הדינמיקה (אלסטיות/זרימה/גרנולריות).",
+      effects_h3: "מה נקרא “אפקטי טבע” בתוך המסגרת?",
+      eff1: "<b>כבידה:</b> \\(\\rho\\mathbf{g}\\) בדינמיקה; גרדיאנטי לחץ/צפיפות.",
+      eff2: "<b>טמפרטורה:</b> \\(\\sigma(T),\\varepsilon(T),\\mu(T)\\); קצבי יינון/תגובות.",
+      eff3: "<b>חיכוך/צמיגות:</b> \\(\\mu\\) בזורמים; דעיכה במוצקים.",
+      eff4: "<b>לחות:</b> משפיעה על מוליכות/טעינה (במיוחד אבקות).",
+      eff5: "<b>מבנה:</b> פגמים/גבולות/אריזה \\(\\phi\\) → \\(\\sigma_{\\text{eff}},\\varepsilon_{\\text{eff}}\\).",
+      statevec_h3: "וקטור מצב מאוחד",
+      statevec_note: "שימושי לסימולציה: FEM / FDTD / CFD / DEM.",
+      solid_h2: "חשמל במוצק <span class='badge'>מוליך • דיאלקטרי • פייזואלקטרי</span>",
+      solid_kicker: "במוצק: הולכה, קיטוב, וצימוד למכניקה (תנועה).",
+      solid_ohm_h3: "מוליך (אוהם) וחימום",
+      joule: "חימום ג׳אולי: \\(q=\\mathbf{J}\\cdot\\mathbf{E}=\\sigma E^2\\)",
+      solid_die_h3: "דיאלקטרי (קיטוב) + דליפה",
+      solid_piezo_h3: "פייזואלקטריות: חשמל ↔ תנועה",
+      solid_dyn_h3: "דינמיקה עם כוח EM",
+      solid_sim_note: "<b>קישור לסימולציה:</b> בטאב “סימולציות” תראה גל אלסטי בשרשרת מסה–קפיץ (קשיחות \\(k\\)).",
+      solid_env_h3: "משתנים סביבתיים חשובים",
+      solid_env1: "\\(\\sigma(T)\\): מוליכות מול טמפרטורה.",
+      solid_env2: "מאמץ/פגמים: שינוי \\(\\sigma,\\varepsilon\\).",
+      solid_env3: "תדר: דיספרסיה וקבועים אפקטיביים.",
+      liquid_h2: "חשמל בנוזל <span class='badge'>אלקטרוליט • EHD</span>",
+      liquid_kicker: "יונים נסחפים/מתפזרים + הזרימה מגיבה לשדה.",
+      liquid_flow_h3: "זרימה עם כוח חשמלי",
+      liquid_sim_note: "<b>קישור לסימולציה:</b> בטאב “סימולציות” יש מערבולת + גרר (אנלוג לזרימה עם צמיגות).",
+      liquid_env_h3: "משתנים סביבתיים חשובים",
+      liquid_env1: "טמפ׳ \\(T\\): משנה \\(D_i,\\mu_i,\\varepsilon\\).",
+      liquid_env2: "גבולות/דפנות: שכבה כפולה (EDL).",
+      liquid_env3: "מתיחות פנים: טיפות/נימיות.",
+      gas_h2: "חשמל בגז <span class='badge'>יינון • פלזמה</span>",
+      gas_kicker: "בגז: יינון יוצר נשאי מטען, ואז יש דינמיקה EM–זורם.",
+      gas_dd_h3: "Drift–Diffusion",
+      gas_mhd_h3: "MHD (כאשר מוליכות גבוהה)",
+      gas_sim_note: "<b>קישור לסימולציה:</b> בטאב “סימולציות” יש “גז אידאלי” חלקיקים בקופסה (טמפ׳ ↔ מהירות).",
+      gas_warn: "<b>בטיחות:</b> פריקות חשמליות מסוכנות. כאן מודל תאורטי/ויזואלי בלבד.",
+      powder_h2: "חשמל באבקה <span class='badge'>טריבו • מגעים • DEM</span>",
+      powder_kicker: "רשת מגעים משתנה + טעינה במגע + לחות/אוויר → התנהגות עשירה.",
+      powder_eff_h3: "תווך אפקטיבי",
+      powder_dem_h3: "מודל חלקיקים (DEM + EM)",
+      powder_sim_note: "<b>קישור לסימולציה:</b> בטאב “סימולציות” יש אבקה עם כבידה+חיכוך+רעידה (Shake).",
+      powder_env_h3: "משתנים סביבתיים קריטיים",
+      powder_env1: "לחות: מעלה מוליכות פני שטח + קוהזיה קפילרית.",
+      powder_env2: "אוויר: גרר → ריחוף/סחיפה.",
+      powder_env3: "אריזה \\(\\phi\\): percolation במוליכות.",
+      new_h2: "איך מוסיפים “איברים חדשים” בצורה מדעית <span class='badge'>מקום לחידוש</span>",
+      new_kicker: "מגדירים איבר חדש בקשרי חומר/מקורות/מבנה, ושומרים שימורים וסיבתיות.",
+      new1_h3: "1) קשרי חומר כלליים",
+      new2_h3: "2) משתנה מבני \\(\\eta\\)",
+      new3_h3: "3) מקור מטען",
+      new_note: "<b>כלל זהב:</b> שימור מטען, סיבתיות, סימטריות, בדיקת יחידות.",
+      new_check_h3: "צ׳ק‑ליסט קצר",
+      new_check1: "איפה החידוש נכנס? \\(\\mathbf{J}\\)/\\(\\mathbf{P}\\)/\\(S_\\rho\\)/\\(\\eta\\)",
+      new_check2: "פרמטרים חדשים + יחידות",
+      new_check3: "ניסוי שמודד אותם",
+      new_check4: "גבול שבו חוזרים למודל מוכר",
+      sims_h2: "סימולציות קטנות (Toy Models) <span class='badge'>להמחשה מהירה</span>",
+      sims_kicker: "הדגמות אינטואיטיביות: נסה לשנות פרמטר אחד בכל פעם.",
+      sim_solid_title: "מוצק",
+      sim_solid_tag: "שרשרת מסה–קפיץ (גל)",
+      sim_s_k: "קשיחות קפיץ (k)",
+      sim_s_d: "דעיכה",
+      sim_s_p: "עוצמת “דחיפה”",
+      btn_poke: "דחיפה (Impulse)",
+      btn_reset: "איפוס",
+      sim_solid_mini: "פולס אלסטי נודד ומוחזר מקצוות (אינטואיציה לפונונים).",
+      sim_liquid_title: "נוזל",
+      sim_liquid_tag: "חלקיקים בשדה זרימה (ערבול)",
+      sim_l_drag: "צמיגות (גרר)",
+      sim_l_stir: "עוצמת ערבול",
+      sim_l_buoy: "ציפה (כלפי מעלה)",
+      btn_stir: "ערבול (Vortex)",
+      sim_liquid_mini: "שדה מערבולת + גרר: ערבוב והסעה (מודל צעצוע).",
+      sim_gas_title: "גז",
+      sim_gas_tag: "חלקיקים בקופסה (אידאלי)",
+      sim_g_temp: "“טמפרטורה” (מהירות)",
+      sim_g_n: "מס׳ חלקיקים",
+      sim_g_e: "אלסטיות התנגשויות",
+      btn_heat: "פולס חימום",
+      sim_gas_mini: "התנגשויות כמעט אלסטיות + קירות → אינטואיציה לגז אידאלי.",
+      sim_powder_title: "אבקה",
+      sim_powder_tag: "גרגרים + חיכוך + כבידה",
+      sim_p_g: "כבידה",
+      sim_p_f: "חיכוך",
+      sim_p_shake: "עוצמת רעידה",
+      btn_shake: "רעידה (Shake)",
+      sim_powder_mini: "התנגשויות לא־אלסטיות + חיכוך → ערימות/נעילה (רמז).",
+      sig_note: "signature",
+      footer: "המסמך משלב תיאוריה + הדגמות."
+    },
+    en: {
+      dir: "ltr",
+      title: "Electricity in Matter + Interactive Simulations",
+      subtitle: "One page that combines <b>equations</b> (Maxwell + constitutive laws + dynamics) for each state of matter, plus <b>toy simulations</b> to explore key parameters.",
+      language: "Language",
+      tipLabel: "Tip",
+      tipText: "Open the “Simulations” tab and play with the parameters",
+      tabA: "A) Unified framework",
+      tabB1: "B1) Solid",
+      tabB2: "B2) Liquid",
+      tabB3: "B3) Gas",
+      tabB4: "B4) Powder",
+      tabC: "C) “New terms”",
+      tabD: "D) Simulations",
+      unified_h2: "Unified framework <span class='badge'>all states</span>",
+      unified_kicker: "One mathematical backbone: Maxwell + charge conservation + material laws + currents + coupling to forces/motion.",
+      mx_h3: "1) Maxwell (in matter)",
+      charge_h3: "2) Charge conservation",
+      mat_h3: "3) Material (constitutive) relations",
+      mat_formula: "Simple linear: \\(\\mathbf{P}=\\varepsilon_0\\chi_e\\mathbf{E}\\Rightarrow \\mathbf{D}=\\varepsilon \\mathbf{E}\\).<br>With memory: \\(\\mathbf{P}(t)=\\int_{-\\infty}^{t}\\chi_e(t-\\tau)\\mathbf{E}(\\tau)\\,d\\tau\\).",
+      curr_h3: "4) General currents (conduction + advection + diffusion)",
+      ohm_general: "General Ohm (with motion): \\(\\mathbf{J}_{\\text{cond}}=\\boldsymbol{\\sigma}\\,(\\mathbf{E}+\\mathbf{v}\\times\\mathbf{B})\\)",
+      diff_min: "Minimal diffusion: \\(\\mathbf{J}_{\\text{diff}}=-D\\nabla\\rho_f\\)",
+      couple_h3: "5) EM ↔ motion coupling",
+      lorentz: "Lorentz force density: \\(\\mathbf{f}_{em}=\\rho_f\\mathbf{E}+\\mathbf{J}_f\\times\\mathbf{B}\\)",
+      dyn_h3: "6) Material dynamics (choose per state)",
+      solid_dyn: "Solid (elasticity)",
+      fluid_dyn: "Fluid (liquid/gas)",
+      unified_note: "<b>Key idea:</b> the state of matter does not change Maxwell—only \\(\\varepsilon,\\mu,\\sigma\\) and the material dynamics (elastic / flow / granular).",
+      effects_h3: "What counts as “environmental effects” here?",
+      eff1: "<b>Gravity:</b> \\(\\rho\\mathbf{g}\\) in momentum; pressure/density gradients.",
+      eff2: "<b>Temperature:</b> \\(\\sigma(T),\\varepsilon(T),\\mu(T)\\); ionization/reaction rates.",
+      eff3: "<b>Friction/viscosity:</b> \\(\\mu\\) in fluids; damping in solids.",
+      eff4: "<b>Humidity:</b> impacts conductivity/charging (especially powders).",
+      eff5: "<b>Structure:</b> defects/boundaries/packing \\(\\phi\\) → \\(\\sigma_{\\text{eff}},\\varepsilon_{\\text{eff}}\\).",
+      statevec_h3: "Unified state vector",
+      statevec_note: "Useful for simulation: FEM / FDTD / CFD / DEM.",
+      solid_h2: "Electricity in solids <span class='badge'>conductor • dielectric • piezo</span>",
+      solid_kicker: "Solids: conduction, polarization, and coupling to mechanics (motion).",
+      solid_ohm_h3: "Conductor (Ohm) + heating",
+      joule: "Joule heating: \\(q=\\mathbf{J}\\cdot\\mathbf{E}=\\sigma E^2\\)",
+      solid_die_h3: "Dielectric (polarization) + leakage",
+      solid_piezo_h3: "Piezo: electricity ↔ motion",
+      solid_dyn_h3: "Dynamics with EM force",
+      solid_sim_note: "<b>Simulation link:</b> in “Simulations” you’ll see an elastic pulse in a mass–spring chain (stiffness \\(k\\)).",
+      solid_env_h3: "Important environmental parameters",
+      solid_env1: "\\(\\sigma(T)\\): conductivity vs temperature.",
+      solid_env2: "Stress/defects: changes \\(\\sigma,\\varepsilon\\).",
+      solid_env3: "Frequency: dispersion & effective constants.",
+      liquid_h2: "Electricity in liquids <span class='badge'>electrolyte • EHD</span>",
+      liquid_kicker: "Ions drift/diffuse and the flow responds to the field.",
+      liquid_flow_h3: "Flow with electric body force",
+      liquid_sim_note: "<b>Simulation link:</b> vortex + drag (toy analog of viscosity).",
+      liquid_env_h3: "Important environmental parameters",
+      liquid_env1: "Temperature \\(T\\) changes \\(D_i,\\mu_i,\\varepsilon\\).",
+      liquid_env2: "Walls/boundaries: electric double layer (EDL).",
+      liquid_env3: "Surface tension: droplets/capillarity.",
+      gas_h2: "Electricity in gases <span class='badge'>ionization • plasma</span>",
+      gas_kicker: "Ionization creates charge carriers → coupled EM–fluid behavior.",
+      gas_dd_h3: "Drift–Diffusion",
+      gas_mhd_h3: "MHD (high conductivity)",
+      gas_sim_note: "<b>Simulation link:</b> ideal particles in a box (temperature ↔ mean speed).",
+      gas_warn: "<b>Safety:</b> electrical discharges can be dangerous. This is theoretical/visual only.",
+      powder_h2: "Electricity in powders <span class='badge'>tribo • contacts • DEM</span>",
+      powder_kicker: "Changing contact network + tribocharging + humidity/air → rich behavior.",
+      powder_eff_h3: "Effective medium view",
+      powder_dem_h3: "Particle model (DEM + EM)",
+      powder_sim_note: "<b>Simulation link:</b> granular pile with gravity + friction + shaking.",
+      powder_env_h3: "Critical environment parameters",
+      powder_env1: "Humidity: higher surface conductivity + capillary cohesion.",
+      powder_env2: "Air: drag → lofting/transport.",
+      powder_env3: "Packing \\(\\phi\\): percolation in conductivity.",
+      new_h2: "How to add “new terms” scientifically <span class='badge'>room for novelty</span>",
+      new_kicker: "Add terms in constitutive laws/sources/structure while preserving conservation and causality.",
+      new1_h3: "1) General constitutive laws",
+      new2_h3: "2) Structural variable \\(\\eta\\)",
+      new3_h3: "3) Charge source",
+      new_note: "<b>Rule of thumb:</b> charge conservation, causality, symmetries, unit checks.",
+      new_check_h3: "Quick checklist",
+      new_check1: "Where does the novelty enter? \\(\\mathbf{J}\\)/\\(\\mathbf{P}\\)/\\(S_\\rho\\)/\\(\\eta\\)",
+      new_check2: "New parameters + units",
+      new_check3: "Experiment to measure them",
+      new_check4: "Limit where you recover known models",
+      sims_h2: "Mini simulations (Toy Models) <span class='badge'>fast intuition</span>",
+      sims_kicker: "Intuitive demos: change one parameter at a time.",
+      sim_solid_title: "Solid",
+      sim_solid_tag: "mass–spring chain (wave)",
+      sim_s_k: "Spring stiffness (k)",
+      sim_s_d: "Damping",
+      sim_s_p: "Poke strength",
+      btn_poke: "Poke (Impulse)",
+      btn_reset: "Reset",
+      sim_solid_mini: "Elastic pulse travels and reflects (phonon intuition).",
+      sim_liquid_title: "Liquid",
+      sim_liquid_tag: "particles in a flow field (mixing)",
+      sim_l_drag: "Viscosity (drag)",
+      sim_l_stir: "Stir strength",
+      sim_l_buoy: "Buoyancy (up)",
+      btn_stir: "Stir (Vortex)",
+      sim_liquid_mini: "Swirl + drag: mixing & advection (toy model).",
+      sim_gas_title: "Gas",
+      sim_gas_tag: "ideal particles in a box",
+      sim_g_temp: "Temperature (speed)",
+      sim_g_n: "Particle count",
+      sim_g_e: "Collision elasticity",
+      btn_heat: "Heat pulse",
+      sim_gas_mini: "Nearly elastic collisions + walls → ideal-gas intuition.",
+      sim_powder_title: "Powder",
+      sim_powder_tag: "granular particles + friction + gravity",
+      sim_p_g: "Gravity",
+      sim_p_f: "Friction",
+      sim_p_shake: "Shake strength",
+      btn_shake: "Shake",
+      sim_powder_mini: "Inelastic-ish impacts + friction → piling/jamming hints.",
+      sig_note: "signature",
+      footer: "This document combines theory and interactive demos."
+    }
+  };
+
+  function applyI18n(lang){
+    const cfg = I18N[lang] || I18N.he;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = cfg.dir;
+
+    // apply translations
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = cfg[key];
+      if(val === undefined) return;
+      el.innerHTML = val;
+    });
+
+    // re-typeset math
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+  }
+
+  const langSel = document.getElementById('langSel');
+  langSel.addEventListener('change', ()=> applyI18n(langSel.value));
+  // default he
+  applyI18n('he');
+
+  // ---------- Tabs logic ----------
+  const buttons = Array.from(document.querySelectorAll('.tabbtn'));
+  const panels = Array.from(document.querySelectorAll('.panel'));
+  function show(tabId){
+    panels.forEach(p => p.classList.toggle('hidden', p.id !== tabId));
+    buttons.forEach(b => {
+      const active = (b.dataset.tab === tabId);
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    if (window.innerWidth < 980) {
+      document.querySelector('.tabs').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+  }
+  buttons.forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+  document.addEventListener('keydown', (e) => {
+    if (!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+    const idx = buttons.findIndex(b => b.classList.contains('active'));
+    if (idx < 0) return;
+    const next = (e.key === 'ArrowLeft') ? (idx + 1) : (idx - 1);
+    const wrapped = (next + buttons.length) % buttons.length;
+    show(buttons[wrapped].dataset.tab);
+  });
+
+  // ---------- Simulations ----------
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const rand = (a,b)=>a+Math.random()*(b-a);
+
+  // SOLID: mass-spring chain
+  (function(){
+    const c = document.getElementById('cSolid'); if(!c) return;
+    const ctx = c.getContext('2d');
+    const N = 70;
+    let y = new Array(N).fill(0);
+    let v = new Array(N).fill(0);
+    function reset(){ y.fill(0); v.fill(0); for(let i=0;i<N;i++) y[i]=rand(-1.5,1.5); }
+    reset();
+    const sK = document.getElementById('sK');
+    const sDamp = document.getElementById('sDamp');
+    const sPoke = document.getElementById('sPoke');
+    document.getElementById('bPoke').onclick = ()=>{
+      const mid = Math.floor(N*0.25 + rand(0, N*0.5));
+      v[mid] += Number(sPoke.value)/40;
+    };
+    document.getElementById('bResetSolid').onclick = reset;
+    function step(dt){
+      const k = Number(sK.value);
+      const damp = Number(sDamp.value)/400;
+      for(let i=1;i<N-1;i++){
+        const lap = (y[i-1] - 2*y[i] + y[i+1]);
+        const a = (k*lap) - (damp*v[i]*k*0.08);
+        v[i] += a*dt;
+      }
+      for(let i=1;i<N-1;i++){
+        y[i] += v[i]*dt;
+        v[i] *= (1 - damp);
+      }
+      y[0]=0; y[N-1]=0;
+    }
+    function draw(){
+      const W=c.width, H=c.height;
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='rgba(215,181,90,.28)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(0,H*0.5); ctx.lineTo(W,H*0.5); ctx.stroke();
+      ctx.strokeStyle='rgba(233,238,252,.85)'; ctx.lineWidth=2.5;
+      ctx.beginPath();
+      for(let i=0;i<N;i++){
+        const x = (i/(N-1))*W;
+        const yy = H*0.5 + y[i]*18;
+        if(i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+      }
+      ctx.stroke();
+      for(let i=0;i<N;i++){
+        const x=(i/(N-1))*W, yy=H*0.5+y[i]*18;
+        ctx.fillStyle='rgba(215,181,90,.7)';
+        ctx.beginPath(); ctx.arc(x,yy,2.2,0,Math.PI*2); ctx.fill();
+      }
+    }
+    let last=performance.now();
+    function loop(t){
+      const dt = clamp((t-last)/1000, 0, 0.033); last=t;
+      step(dt*6.0); draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // LIQUID: particles advected by swirl
+  (function(){
+    const c = document.getElementById('cLiquid'); if(!c) return;
+    const ctx = c.getContext('2d');
+    const M = 240;
+    let p = [];
+    let stir = 0, stirX=0, stirY=0;
+    function reset(){
+      p=[];
+      for(let i=0;i<M;i++) p.push({x: rand(0,c.width), y: rand(0,c.height), vx: rand(-10,10)*0.02, vy: rand(-10,10)*0.02});
+      stir=0; stirX=c.width*0.5; stirY=c.height*0.5;
+    }
+    reset();
+    const lDrag=document.getElementById('lDrag');
+    const lStir=document.getElementById('lStir');
+    const lBuoy=document.getElementById('lBuoy');
+    document.getElementById('bStir').onclick = ()=>{ stir=1.0; stirX=rand(c.width*0.25,c.width*0.75); stirY=rand(c.height*0.25,c.height*0.75); };
+    document.getElementById('bResetLiquid').onclick = reset;
+    function step(dt){
+      const drag=Number(lDrag.value)/120;
+      const strength=Number(lStir.value)/14;
+      const buoy=Number(lBuoy.value)/200;
+      for(const a of p){
+        const dx=a.x-stirX, dy=a.y-stirY;
+        const r2=dx*dx+dy*dy+60;
+        const inv=1/Math.sqrt(r2);
+        const tangX=-dy*inv, tangY=dx*inv;
+        const s = stir*strength/(1+r2/8000);
+        a.vx += tangX*s*dt*60; a.vy += tangY*s*dt*60;
+        a.vy -= buoy*dt*80;
+        a.vx *= (1-drag*dt); a.vy *= (1-drag*dt);
+        a.x += a.vx*dt*120; a.y += a.vy*dt*120;
+        if(a.x<0){a.x=0;a.vx*=-0.6;} if(a.x>c.width){a.x=c.width;a.vx*=-0.6;}
+        if(a.y<0){a.y=0;a.vy*=-0.6;} if(a.y>c.height){a.y=c.height;a.vy*=-0.6;}
+      }
+      stir *= (1-dt*0.8);
+    }
+    function draw(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.strokeStyle='rgba(215,181,90,.35)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(stirX,stirY,18+26*stir,0,Math.PI*2); ctx.stroke();
+      for(const a of p){ ctx.fillStyle='rgba(233,238,252,.65)'; ctx.fillRect(a.x,a.y,2.2,2.2); }
+    }
+    let last=performance.now();
+    function loop(t){
+      const dt=clamp((t-last)/1000,0,0.033); last=t;
+      step(dt); draw(); requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // GAS: ideal particles in a box
+  (function(){
+    const c=document.getElementById('cGas'); if(!c) return;
+    const ctx=c.getContext('2d');
+    let parts=[];
+    const gTemp=document.getElementById('gTemp');
+    const gN=document.getElementById('gN');
+    const gE=document.getElementById('gE');
+
+    function make(N){
+      parts=[];
+      const speed=Number(gTemp.value)/35;
+      for(let i=0;i<N;i++) parts.push({x:rand(20,c.width-20), y:rand(20,c.height-20), vx:rand(-1,1)*speed, vy:rand(-1,1)*speed, r:rand(2.4,3.2)});
+    }
+    make(Number(gN.value));
+    function reset(){ make(Number(gN.value)); }
+    document.getElementById('bResetGas').onclick = reset;
+    gN.oninput = reset;
+    document.getElementById('bHeat').onclick = ()=>{
+      const boost=Number(gTemp.value)/120+0.5;
+      for(const a of parts){ a.vx += rand(-1,1)*boost; a.vy += rand(-1,1)*boost; }
+    };
+
+    function step(dt){
+      const e=Number(gE.value)/100;
+      const target=Number(gTemp.value)/35;
+      for(const a of parts){
+        const sp=Math.hypot(a.vx,a.vy)+1e-9;
+        const scale=0.02;
+        a.vx += (a.vx/sp)*(target-sp)*scale;
+        a.vy += (a.vy/sp)*(target-sp)*scale;
+      }
+      for(const a of parts){
+        a.x += a.vx*dt*140; a.y += a.vy*dt*140;
+        if(a.x<a.r){a.x=a.r; a.vx=Math.abs(a.vx)*e;}
+        if(a.x>c.width-a.r){a.x=c.width-a.r; a.vx=-Math.abs(a.vx)*e;}
+        if(a.y<a.r){a.y=a.r; a.vy=Math.abs(a.vy)*e;}
+        if(a.y>c.height-a.r){a.y=c.height-a.r; a.vy=-Math.abs(a.vy)*e;}
+      }
+      for(let i=0;i<parts.length;i++){
+        for(let j=i+1;j<parts.length;j++){
+          const a=parts[i], b=parts[j];
+          const dx=b.x-a.x, dy=b.y-a.y;
+          const dist=Math.hypot(dx,dy);
+          const minDist=a.r+b.r;
+          if(dist<minDist && dist>1e-6){
+            const nx=dx/dist, ny=dy/dist;
+            const overlap=(minDist-dist)*0.5;
+            a.x -= nx*overlap; a.y -= ny*overlap;
+            b.x += nx*overlap; b.y += ny*overlap;
+            const rvx=b.vx-a.vx, rvy=b.vy-a.vy;
+            const vn=rvx*nx+rvy*ny;
+            if(vn<0){
+              const impulse=-(1+e)*vn*0.5;
+              a.vx -= impulse*nx; a.vy -= impulse*ny;
+              b.vx += impulse*nx; b.vy += impulse*ny;
+            }
+          }
+        }
+      }
+    }
+    function draw(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.strokeStyle='rgba(215,181,90,.28)'; ctx.lineWidth=2;
+      ctx.strokeRect(1,1,c.width-2,c.height-2);
+      for(const a of parts){
+        ctx.fillStyle='rgba(233,238,252,.75)';
+        ctx.beginPath(); ctx.arc(a.x,a.y,a.r,0,Math.PI*2); ctx.fill();
+      }
+    }
+    let last=performance.now();
+    function loop(t){
+      const dt=clamp((t-last)/1000,0,0.033); last=t;
+      step(dt); draw(); requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // POWDER: granular particles
+  (function(){
+    const c=document.getElementById('cPowder'); if(!c) return;
+    const ctx=c.getContext('2d');
+    let grains=[];
+    const pG=document.getElementById('pG');
+    const pF=document.getElementById('pF');
+    const pShake=document.getElementById('pShake');
+    let shakeT=0;
+
+    function reset(){
+      grains=[];
+      const N=120;
+      for(let i=0;i<N;i++) grains.push({x:rand(30,c.width-30), y:rand(10,c.height*0.55), vx:rand(-1,1)*0.2, vy:rand(-1,1)*0.2, r:rand(3.2,5.2)});
+      shakeT=0;
+    }
+    reset();
+    document.getElementById('bResetPowder').onclick = reset;
+    document.getElementById('bShake').onclick = ()=>{ shakeT=1.0; };
+
+    function step(dt){
+      const g=Number(pG.value)/40;
+      const fr=Number(pF.value)/200;
+      const shake=Number(pShake.value)/60*shakeT;
+      for(const a of grains){
+        a.vy += g*dt*80;
+        a.vx += rand(-1,1)*shake*dt*60;
+        a.vy += rand(-1,1)*shake*dt*40;
+        a.x += a.vx*dt*140; a.y += a.vy*dt*140;
+        if(a.x<a.r){a.x=a.r; a.vx*=-0.4;}
+        if(a.x>c.width-a.r){a.x=c.width-a.r; a.vx*=-0.4;}
+        if(a.y<a.r){a.y=a.r; a.vy*=-0.4;}
+        if(a.y>c.height-a.r){
+          a.y=c.height-a.r; a.vy*=-0.2; a.vx*=(1-fr*8);
+        }
+        a.vx*=(1-fr); a.vy*=(1-fr*0.6);
+      }
+      for(let i=0;i<grains.length;i++){
+        for(let j=i+1;j<grains.length;j++){
+          const a=grains[i], b=grains[j];
+          const dx=b.x-a.x, dy=b.y-a.y;
+          const dist=Math.hypot(dx,dy);
+          const minDist=a.r+b.r;
+          if(dist<minDist && dist>1e-6){
+            const nx=dx/dist, ny=dy/dist;
+            const overlap=(minDist-dist)*0.5;
+            a.x -= nx*overlap; a.y -= ny*overlap;
+            b.x += nx*overlap; b.y += ny*overlap;
+            const rvx=b.vx-a.vx, rvy=b.vy-a.vy;
+            const vn=rvx*nx+rvy*ny;
+            if(vn<0){
+              const e=0.35;
+              const impulse=-(1+e)*vn*0.5;
+              a.vx -= impulse*nx; a.vy -= impulse*ny;
+              b.vx += impulse*nx; b.vy += impulse*ny;
+              const tx=-ny, ty=nx;
+              const vt=rvx*tx+rvy*ty;
+              const mu=fr*4.0;
+              const jt=-vt*0.5*mu;
+              a.vx -= jt*tx; a.vy -= jt*ty;
+              b.vx += jt*tx; b.vy += jt*ty;
+            }
+          }
+        }
+      }
+      shakeT *= (1-dt*1.4);
+      shakeT = Math.max(0, shakeT);
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.strokeStyle='rgba(215,181,90,.25)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(0,c.height-1); ctx.lineTo(c.width,c.height-1); ctx.stroke();
+      for(const a of grains){
+        ctx.fillStyle='rgba(233,238,252,.72)';
+        ctx.beginPath(); ctx.arc(a.x,a.y,a.r,0,Math.PI*2); ctx.fill();
+      }
+    }
+    let last=performance.now();
+    function loop(t){
+      const dt=clamp((t-last)/1000,0,0.033); last=t;
+      step(dt); draw(); requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
+</script>
+
+</body>
+</html>
