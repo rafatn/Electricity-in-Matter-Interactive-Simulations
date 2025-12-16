@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>אוזניות נטענות מעצמן באמצעות קול — מסמך מלא: נוסחאות + תרשימים + סימולציה</title>
+
+<!-- KaTeX (Math Rendering) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  });">
+</script>
+
+<style>
+  :root{
+    --bg:#0b0e14;
+    --panel:#141c2e;
+    --panel2:#0b1020;
+    --text:#eaeaea;
+    --muted:#b9c0d0;
+    --gold:#ffd700;
+    --gold2:#ffcf40;
+    --line:rgba(255,215,0,0.35);
+    --shadow:0 0 26px rgba(255,215,0,0.14);
+    --ok:#c8ff78;
+    --cyan:#50c8ff;
+    --danger:#ff7a7a;
+  }
+  body{
+    margin:0;
+    padding:28px;
+    font-family: Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.95;
+    font-size:18px;
+  }
+  h1,h2,h3{
+    margin: 0 0 12px 0;
+    color:var(--gold);
+  }
+  .sub{color:var(--muted); margin-top:-6px; margin-bottom:18px;}
+  section{
+    background:var(--panel);
+    border:1px solid rgba(255,215,0,0.10);
+    border-radius:16px;
+    padding:22px;
+    margin: 0 0 20px 0;
+    box-shadow:var(--shadow);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+  @media (min-width: 980px){
+    .grid{ grid-template-columns: 1.15fr 0.85fr; }
+  }
+  .math{
+    background:#05070d;
+    border:2px solid rgba(255,215,0,0.70);
+    border-radius:14px;
+    padding:18px 18px;
+    margin:14px 0;
+    text-align:center;
+    overflow:auto;
+  }
+  .note{
+    border-right:4px solid var(--gold);
+    padding:12px 14px;
+    background:rgba(255,215,0,0.06);
+    border-radius:12px;
+    color:var(--text);
+  }
+  .small{font-size:14px; color:var(--muted);}
+  .pill{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    color:var(--gold2);
+    background:rgba(255,215,0,0.06);
+    font-size:13px;
+    margin: 2px 6px 2px 0;
+  }
+  .kbd{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    background: rgba(255,215,0,0.08);
+    border: 1px solid rgba(255,215,0,0.18);
+    padding: 2px 6px;
+    border-radius: 8px;
+    color: var(--gold);
+  }
+  .svgwrap{
+    background: #0a0d14;
+    border:1px solid rgba(255,215,0,0.18);
+    border-radius:14px;
+    padding:10px;
+    overflow:auto;
+  }
+  .flow{
+    background:#0a0d14;
+    border:1px solid rgba(255,215,0,0.18);
+    border-radius:14px;
+    padding:14px;
+    overflow:auto;
+  }
+  .flow ol{margin:0; padding-right:18px;}
+  .flow li{margin:8px 0;}
+  .controls{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+  }
+  .control{
+    background:var(--panel2);
+    border:1px solid rgba(255,215,0,0.18);
+    border-radius:12px;
+    padding:12px;
+  }
+  label{display:block; color:var(--muted); margin-bottom:6px;}
+  input[type="range"]{width:100%;}
+  .row{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .val{color:var(--gold); font-weight:700;}
+  canvas{
+    width:100%;
+    height:280px;
+    background: #0a0d14;
+    border:1px solid rgba(255,215,0,0.18);
+    border-radius:14px;
+  }
+  .badge{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:999px;
+    font-size:12px;
+    border:1px solid rgba(255,215,0,0.25);
+    background: rgba(255,215,0,0.07);
+    color: var(--gold);
+  }
+  .footer{
+    text-align:center;
+    color:var(--muted);
+    margin-top:22px;
+    font-size:13px;
+  }
+  /* KaTeX color tweaks to match gold theme */
+  .katex{ color: #ffd700; }
+  .katex-display{ margin: 10px 0; }
+  /* Optional XL equations */
+  body.eq-xl .math{ padding:22px; border-color: rgba(255,215,0,0.88); }
+  body.eq-xl .katex{ font-size: 1.22em; }
+</style>
+</head>
+<body>
+
+<h1>🎧 אוזניות הנטענות מעצמן באמצעות קול</h1>
+<div class="sub">מסמך מלא: משוואות תקניות (KaTeX) + תרשימי זרימה + חתך שכבות + סימולציה אינטראקטיבית + הסבר מפורט לכל סעיף</div>
+
+<section>
+  <h2>0) מטרת המסמך</h2>
+  <p>
+    המטרה: להציג מודל פיזיקלי־הנדסי לרעיון שבו האוזניות טוענות את עצמן במהלך שמיעה.
+    אנו עוברים בשרשרת: <b>שמע → לחץ אקוסטי → רטט מכאני → המרה לחשמל → יישור/אגירה → בקרה (SOC)</b>.
+  </p>
+  <div style="margin-top:10px">
+    <span class="pill">SPL → p(t)</span>
+    <span class="pill">p(t) → I → P</span>
+    <span class="pill">Mechanical resonance</span>
+    <span class="pill">Piezo / EM / Tribo</span>
+    <span class="pill">Rectify + DC/DC</span>
+    <span class="pill">Realtime Integration</span>
+  </div>
+</section>
+
+<section>
+  <h2>תצוגת משוואות</h2>
+  <div class="note">
+    אם אתה רוצה משוואות גדולות יותר: הפעל <b>תצוגת משוואות מוגדלת (XL)</b>.
+    אפשר גם לעשות זום בדפדפן (<span class="kbd">Ctrl</span> + <span class="kbd">+</span>).
+  </div>
+  <div style="margin-top:10px">
+    <label style="display:flex; align-items:center; gap:10px; color:var(--muted);">
+      <input id="eqZoom" type="checkbox" style="transform:scale(1.2)">
+      הגדל משוואות (XL)
+    </label>
+  </div>
+</section>
+
+<section class="grid">
+  <div>
+    <h2>1) מודל אקוסטי: SPL → לחץ → עוצמה</h2>
+    <p class="small">
+      כאן אנחנו ממירים “דציבלים” (SPL) למדידה פיזיקלית של לחץ אקוסטי, ומשם לעוצמה/הספק שניתן תאורטית לקצור.
+    </p>
+
+    <h3>1.1 SPL (dB) → לחץ RMS</h3>
+    <div class="math">
+      $$
+      \mathrm{SPL}(t) = 20\log_{10}\!\left(\frac{p_{\mathrm{rms}}(t)}{p_0}\right)
+      $$
+      $$
+      p_{\mathrm{rms}}(t)=p_0\cdot 10^{\frac{\mathrm{SPL}(t)}{20}}
+      $$
+      $$
+      p_0 = 20\,\mu\mathrm{Pa}
+      $$
+    </div>
+    <div class="note">
+      פירוש: <b>SPL</b> הוא סולם לוגריתמי. הכפלה של הלחץ פי 10 מעלה את SPL ב־20dB.
+    </div>
+
+    <h3>1.2 לחץ רגעי (מודל סינוס אידאלי)</h3>
+    <div class="math">
+      $$
+      p(t)=\sqrt{2}\,p_{\mathrm{rms}}(t)\,\sin(2\pi f t + \phi)
+      $$
+      $$
+      A(t)\propto p_{\mathrm{rms}}(t)
+      $$
+    </div>
+
+    <h3>1.3 עוצמה אקוסטית (Intensity) וצפיפות אנרגיה</h3>
+    <div class="math">
+      $$
+      I(t)\approx \frac{p_{\mathrm{rms}}^2(t)}{\rho c}
+      $$
+      $$
+      \varepsilon(t)\approx \frac{p_{\mathrm{rms}}^2(t)}{\rho c^2}
+      $$
+    </div>
+
+    <h3>1.4 הספק אקוסטי אפקטיבי משטח</h3>
+    <div class="math">
+      $$
+      P_{\mathrm{ac}}(t)=I(t)\,A_{\mathrm{eff}}, \qquad 0\le A_{\mathrm{eff}}\le A_{\mathrm{geo}}
+      $$
+    </div>
+
+    <div class="note">
+      <b>נקודת מפתח:</b> כדי לקבל טעינה משמעותית, צריך להגדיל את $A_{\mathrm{eff}}$ בעזרת איטום/קונכייה,
+      וכן להרוויח מכאנית (רזוננס) ולהוסיף מקורות רטט מהגוף.
+    </div>
+  </div>
+
+  <div>
+    <h2>תרשים מערכת: שרשרת ההמרה</h2>
+    <div class="svgwrap">
+      <svg width="820" height="300" viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="תרשים בלוקים">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L10,4 L0,8 Z" fill="#ffd700"/>
+          </marker>
+        </defs>
+
+        <rect x="10" y="20" width="190" height="92" rx="14" fill="#0e1320" stroke="rgba(255,215,0,0.55)" />
+        <text x="105" y="58" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow)">שמע / Waveform</text>
+        <text x="105" y="84" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">SPL(t) → p_rms(t)</text>
+
+        <rect x="225" y="20" width="190" height="92" rx="14" fill="#0e1320" stroke="rgba(255,215,0,0.55)" />
+        <text x="320" y="58" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow)">רטט מכאני</text>
+        <text x="320" y="84" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">x(t), v(t), רזוננס</text>
+
+        <rect x="440" y="20" width="190" height="92" rx="14" fill="#0e1320" stroke="rgba(255,215,0,0.55)" />
+        <text x="535" y="52" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow)">ממיר אנרגיה</text>
+        <text x="535" y="76" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">Piezo / EM / Tribo</text>
+        <text x="535" y="94" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">V(t), I(t)</text>
+
+        <rect x="655" y="20" width="155" height="92" rx="14" fill="#0e1320" stroke="rgba(255,215,0,0.55)" />
+        <text x="732" y="52" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow)">יישור + אגירה</text>
+        <text x="732" y="76" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">Bridge + C + Battery</text>
+        <text x="732" y="94" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">DC/DC</text>
+
+        <path d="M200 66 L225 66" stroke="#ffd700" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M415 66 L440 66" stroke="#ffd700" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M630 66 L655 66" stroke="#ffd700" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <rect x="10" y="140" width="800" height="140" rx="18" fill="#121826" stroke="rgba(255,215,0,0.22)"/>
+        <text x="410" y="178" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow)">בקר אנרגיה בזמן אמת (Realtime PMU)</text>
+        <text x="410" y="206" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">אינטגרציה: ∫ η·A(t)^2 dt • ניהול SOC • מדיניות עומסים</text>
+        <text x="410" y="230" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">החלטות: קציר/טעינה, הפחתת עומס (ANC/DSP), יעד SOC</text>
+        <text x="410" y="254" text-anchor="middle" fill="#b9c0d0" font-size="12" font-family="Arial">פלט: Gain, ניתוב לקבל/סוללה, מגבלות בטיחות</text>
+      </svg>
+    </div>
+
+    <h3 style="margin-top:14px">תרשים זרימה טקסטואלי</h3>
+    <div class="flow">
+      <ol>
+        <li><span class="badge">INPUT</span> קלט שמע / SPL</li>
+        <li><span class="badge">STEP 1</span> המרה ל־$p_{rms}(t)$</li>
+        <li><span class="badge">STEP 2</span> חישוב $I(t)$ ו־$P_{ac}(t)$</li>
+        <li><span class="badge">STEP 3</span> יצירת רטט $x(t)$ (כולל רזוננס)</li>
+        <li><span class="badge">STEP 4</span> המרה לחשמל (Piezo/EM/Tribo)</li>
+        <li><span class="badge">STEP 5</span> יישור + DC/DC</li>
+        <li><span class="badge">STEP 6</span> אגירה + חישוב SOC</li>
+        <li><span class="badge">OUTPUT</span> טעינה בזמן שמיעה + בקרה על צריכה</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div>
+    <h2>2) מודל מכאני: רטט ורזוננס</h2>
+    <p class="small">
+      מודל בסיסי של דרייבר/מבנה כאוסצילטור מסדר שני. זה מאפשר לתכנן “רווח מכאני” בתחום תדרים מסוים.
+    </p>
+
+    <h3>2.1 משוואת תנועה</h3>
+    <div class="math">
+      $$
+      m\ddot{x}(t) + b\dot{x}(t) + kx(t)
+      =
+      F_{\mathrm{ac}}(t) + F_{\mathrm{bone}}(t) + F_{\mathrm{motion}}(t)
+      $$
+      $$
+      F_{\mathrm{ac}}(t)\approx p(t)\,A_{\mathrm{drv}}
+      $$
+    </div>
+
+    <h3>2.2 תדר טבעי וריסון</h3>
+    <div class="math">
+      $$
+      \omega_n=\sqrt{\frac{k}{m}}, \qquad
+      \zeta=\frac{b}{2\sqrt{km}}
+      $$
+      $$
+      |H(\omega)|=\frac{1}{\sqrt{\left(1-\left(\frac{\omega}{\omega_n}\right)^2\right)^2+\left(2\zeta\frac{\omega}{\omega_n}\right)^2}}
+      $$
+    </div>
+
+    <div class="note">
+      רעיון תכנוני: לבחור $\omega_n$ כך שתומך בתדרי אנרגיה “שימושיים” לקציר, ולשמור $\zeta$ כך שלא יכניס עיוות שמע.
+    </div>
+  </div>
+
+  <div>
+    <h2>חתך שכבות מוצע</h2>
+    <div class="svgwrap">
+      <svg width="820" height="360" viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="חתך שכבות">
+        <defs>
+          <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <rect x="40" y="40" width="740" height="120" rx="18" fill="#0e1320" stroke="rgba(255,215,0,0.45)"/>
+        <text x="410" y="68" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow2)">כרית/בית אוזן — שכבות פונקציונליות</text>
+
+        <rect x="70" y="90" width="690" height="18" rx="8" fill="rgba(255,215,0,0.20)" stroke="rgba(255,215,0,0.35)"/>
+        <text x="76" y="104" fill="#ffd700" font-size="12" font-family="Arial">שכבת מגע/איטום (Foam/Seal) → מגדילה A_eff</text>
+
+        <rect x="70" y="112" width="690" height="18" rx="8" fill="rgba(80,200,255,0.18)" stroke="rgba(80,200,255,0.35)"/>
+        <text x="76" y="126" fill="rgba(80,200,255,0.95)" font-size="12" font-family="Arial">שכבת צימוד מכאני (Coupler) → מעבירה רטט</text>
+
+        <rect x="70" y="134" width="690" height="18" rx="8" fill="rgba(200,255,120,0.16)" stroke="rgba(200,255,120,0.35)"/>
+        <text x="76" y="148" fill="rgba(200,255,120,0.95)" font-size="12" font-family="Arial">שכבת ממיר: Piezo / Tribo / EM → חשמל</text>
+
+        <rect x="40" y="190" width="740" height="150" rx="18" fill="#0e1320" stroke="rgba(255,215,0,0.45)"/>
+        <text x="410" y="216" text-anchor="middle" fill="#ffd700" font-size="16" font-family="Arial" filter="url(#glow2)">קשת האוזניות — אגירה + אלקטרוניקה + רטט גוף</text>
+
+        <rect x="70" y="240" width="690" height="20" rx="10" fill="rgba(255,215,0,0.16)" stroke="rgba(255,215,0,0.35)"/>
+        <text x="76" y="255" fill="#ffd700" font-size="12" font-family="Arial">פס קבלים (Supercap) → בליעת שיאים/החלקה</text>
+
+        <rect x="70" y="266" width="690" height="20" rx="10" fill="rgba(80,200,255,0.14)" stroke="rgba(80,200,255,0.35)"/>
+        <text x="76" y="281" fill="rgba(80,200,255,0.95)" font-size="12" font-family="Arial">סוללה דקה → אגירה ארוכת טווח</text>
+
+        <rect x="70" y="292" width="690" height="20" rx="10" fill="rgba(200,255,120,0.12)" stroke="rgba(200,255,120,0.35)"/>
+        <text x="76" y="307" fill="rgba(200,255,120,0.95)" font-size="12" font-family="Arial">PMU + DC/DC + חיישנים (MEMS) + DSP/BT</text>
+      </svg>
+    </div>
+    <div class="note" style="margin-top:10px">
+      סעיף זה מסביר “איפה שמים מה”: האיטום מעלה $A_{\mathrm{eff}}$, הצימוד מעלה העברת רטט, והממיר מייצר חשמל.
+      הקשת מאפשרת שטח אגירה גדול יחסית.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>3) מודל המרה לחשמל + יישור</h2>
+  <p class="small">
+    כאן אנחנו מציגים מודל בסיסי לפיאזו (אפשר להחליף/להוסיף EM/Tribo). לאחר מכן יישור ו-DC/DC כדי להטעין אגירה.
+  </p>
+
+  <h3>3.1 פיאזו (דגם בסיסי)</h3>
+  <div class="math">
+    $$
+    Q_p(t)=d\,F(t)
+    $$
+    $$
+    V_p(t)=\frac{Q_p(t)}{C_p}, \qquad i_p(t)=\dot{Q}_p(t)
+    $$
+    $$
+    P_{\mathrm{elec}}(t)\approx \eta_{\mathrm{conv}}\,P_{\mathrm{mech}}(t)
+    $$
+  </div>
+
+  <h3>3.2 יישור ו-DC/DC</h3>
+  <div class="math">
+    $$
+    V_{\mathrm{dc}}(t)=\mathrm{Rectify}(V_p(t))
+    $$
+    $$
+    P_{\mathrm{store}}(t)=\eta_{\mathrm{dc}}\,V_{\mathrm{dc}}(t)\,I_{\mathrm{dc}}(t)
+    $$
+  </div>
+
+  <div class="note">
+    הסבר: הממיר נותן מתח AC/פולסי, היישור הופך ל-DC, ו-DC/DC מתאים את המתח לטעינת קבל/סוללה בצורה יעילה.
+  </div>
+</section>
+
+<section>
+  <h2>4) אינטגרציה רגעית + מאזן אנרגיה + SOC (החלק הייחודי)</h2>
+  <p class="small">
+    כאן נמצא “החוק שלך”: טעינה מצטברת לפי ריבוע העוצמה, תוך כדי שמיעה.
+    זה הופך את הקול ל”חבילת אנרגיה” שנאספת לאורך זמן.
+  </p>
+
+  <h3>4.1 אינטגרציה של אנרגיה נקצרת</h3>
+  <div class="math">
+    $$
+    E_{\mathrm{harv}}(t)=\int_0^t P_{\mathrm{store}}(\tau)\,d\tau
+    $$
+  </div>
+
+  <h3>4.2 מאזן אנרגיה סוללה</h3>
+  <div class="math">
+    $$
+    \frac{dE_{\mathrm{bat}}}{dt}=P_{\mathrm{store}}(t)-P_{\mathrm{load}}(t)-P_{\mathrm{loss}}(t)
+    $$
+  </div>
+
+  <h3>4.3 מצב טעינה SOC</h3>
+  <div class="math">
+    $$
+    SOC(t)=\frac{E_{\mathrm{bat}}(t)-E_{\min}}{E_{\max}-E_{\min}}, \qquad 0\le SOC\le 1
+    $$
+  </div>
+
+  <h3>4.4 תלות בריבוע העוצמה (החוק שלך)</h3>
+  <div class="math">
+    $$
+    P_{\mathrm{store}}(t)\propto \eta\cdot A(t)^2
+    \quad\Rightarrow\quad
+    E_{\mathrm{harv}}(t)\propto \int_0^t \eta\,A(\tau)^2\,d\tau
+    $$
+  </div>
+
+  <div class="note">
+    <b>תרגום הנדסי:</b> אם העוצמה עולה, הטעינה עולה ריבועית. לכן בקר אנרגיה יכול “לשחק” בין איכות שמע לבין חיסכון/טעינה.
+  </div>
+</section>
+
+<section class="grid">
+  <div>
+    <h2>5) סימולציה אינטראקטיבית</h2>
+    <p class="small">
+      הדגמה: אתה שולט בעוצמה, ביעילות $\eta$, ובעומס (צריכה). הגרף מראה $A(t)$, $P_{\mathrm{store}}(t)\approx\eta A^2$, ו-$SOC(t)$.
+      בנוסף מחשבון SPL נותן קירוב פיזיקלי ל-$p_{rms}$ ו-$I$.
+    </p>
+
+    <div class="controls">
+      <div class="control">
+        <div class="row">
+          <label>עוצמת שמע (מנורמל) — Volume</label>
+          <div class="val" id="volVal">0.60</div>
+        </div>
+        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.60">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label>יעילות המרה כוללת $\eta$</label>
+          <div class="val" id="etaVal">0.20</div>
+        </div>
+        <input id="eta" type="range" min="0" max="1" step="0.01" value="0.20">
+        <div class="small">כולל הפסדי מבנה, ממיר, יישור ו-DC/DC.</div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label>צריכת מערכת (יחסית) $P_{\mathrm{load}}$</label>
+          <div class="val" id="loadVal">0.25</div>
+        </div>
+        <input id="load" type="range" min="0" max="1" step="0.01" value="0.25">
+        <div class="small">כולל DSP, Bluetooth, ANC ועוד.</div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label>SPL ממוצע (dB) → $p_{rms}$ (Pa) → $I$ (W/m²) (קירוב)</label>
+          <div class="val"><span id="splVal">75</span> dB</div>
+        </div>
+        <input id="spl" type="range" min="40" max="110" step="1" value="75">
+        <div class="small">
+          קבועים: $p_0=20\mu Pa,\;\rho=1.2,\;c=343$. חישוב: $p_{rms}=p_0\cdot 10^{SPL/20}$ ו-$I\approx p_{rms}^2/(\rho c)$.
+        </div>
+        <div class="small" style="margin-top:6px">
+          תוצאה: $p_{rms}=$ <span class="val" id="prms">—</span> Pa • $I=$ <span class="val" id="intensity">—</span> W/m²
+        </div>
+      </div>
+
+      <div class="control">
+        <button id="runBtn" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(255,215,0,0.35); background:rgba(255,215,0,0.10); color:var(--gold); font-weight:700; cursor:pointer;">
+          ▶ הרץ סימולציה מחדש
+        </button>
+        <span class="small" style="margin-right:10px;">מעדכן גרפים לפי ההגדרות.</span>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:12px">
+      אם $SOC$ יורד לאורך זמן: <b>העומס גדול מהקציר</b>. צריך $\eta$ גבוהה יותר, או עומס נמוך יותר, או הוספת מקורות רטט (Bone/Motion).
+    </div>
+  </div>
+
+  <div>
+    <h2>גרפים</h2>
+    <canvas id="chart" width="980" height="350"></canvas>
+    <div class="small" style="margin-top:8px">
+      קווים: <span style="color:var(--gold)">A(t)</span> • <span style="color:var(--cyan)">P_store(t)</span> • <span style="color:var(--ok)">SOC(t)</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>6) הסברים מפורטים “לפי סעיף” (איך ליישם בפועל)</h2>
+
+  <h3>סעיף 1 — מדידה/הערכה של עוצמה</h3>
+  <div class="note">
+    ביישום: אפשר להשתמש במדידת SPL ממיקרופון/חיישן פנימי או להעריך מעוצמת האות הדיגיטלי (Gain).
+    המטרה היא לקבל אומדן ל-$p_{rms}$ או ל-$A(t)$.
+  </div>
+
+  <h3>סעיף 2 — יצירת רטט שימושי</h3>
+  <div class="note">
+    ביישום: מיקום הממיר במקום שבו יש רטט חזק (קונכייה/קשת), איטום הכריות, וחיבור מכאני (coupler) שמגדיל העברת תנודות.
+  </div>
+
+  <h3>סעיף 3 — בחירת ממיר</h3>
+  <div class="note">
+    Piezo מתאים לרטט קטן בתדר גבוה יחסית; EM מתאים לתנועה גדולה יותר; Tribo מתאים לחיכוך מחזורי.
+    אפשר גם לשלב כמה ממירים במקביל.
+  </div>
+
+  <h3>סעיף 4 — ניהול אנרגיה</h3>
+  <div class="note">
+    הבקר קובע “כמה” מהאנרגיה הולך לשמע וכמה לטעינה. הוא יכול לכבות ANC, להקטין עוצמת BT, או לעבור למצב חיסכון כש-$SOC$ נמוך.
+  </div>
+
+  <h3>סעיף 5 — בטיחות וחום</h3>
+  <div class="note">
+    בכל טעינה לסוללה חייבים מגבלות זרם/מתח וטמפרטורה. לכן יש PMU, ולפעמים העדפה לקבלים כדי לא לעבור זרמים חדים בסוללה.
+  </div>
+</section>
+
+<div class="footer">
+מסמך HTML מלא • KaTeX לכל המשוואות • תרשימי זרימה + חתך שכבות • סימולציה • הסברים מפורטים
+</div>
+
+<script>
+(function(){
+  // XL equations toggle
+  const eqZoom = document.getElementById('eqZoom');
+  if(eqZoom){
+    eqZoom.addEventListener('change', () => {
+      document.body.classList.toggle('eq-xl', eqZoom.checked);
+    });
+  }
+
+  const vol = document.getElementById('vol');
+  const eta = document.getElementById('eta');
+  const load = document.getElementById('load');
+  const spl = document.getElementById('spl');
+
+  const volVal = document.getElementById('volVal');
+  const etaVal = document.getElementById('etaVal');
+  const loadVal = document.getElementById('loadVal');
+  const splVal = document.getElementById('splVal');
+
+  const prmsEl = document.getElementById('prms');
+  const intensityEl = document.getElementById('intensity');
+
+  const btn = document.getElementById('runBtn');
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+
+  function fmt(x){
+    if(!isFinite(x)) return '—';
+    if(Math.abs(x) >= 1) return x.toFixed(3);
+    if(Math.abs(x) >= 0.01) return x.toFixed(4);
+    return x.toExponential(3);
+  }
+
+  function updateSPLCalcs(){
+    const SPL = +spl.value;
+    splVal.textContent = String(SPL);
+
+    const p0 = 20e-6;  // Pa
+    const rho = 1.2;   // kg/m^3
+    const c = 343;     // m/s
+
+    const prms = p0 * Math.pow(10, SPL/20);
+    const I = (prms*prms)/(rho*c);
+
+    prmsEl.textContent = fmt(prms);
+    intensityEl.textContent = fmt(I);
+  }
+
+  function readVals(){
+    volVal.textContent = (+vol.value).toFixed(2);
+    etaVal.textContent = (+eta.value).toFixed(2);
+    loadVal.textContent = (+load.value).toFixed(2);
+    updateSPLCalcs();
+    return {V:+vol.value, ETA:+eta.value, LOAD:+load.value};
+  }
+
+  function drawAxes(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.lineWidth = 1;
+
+    // grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    for(let x=60; x<canvas.width; x+=60){
+      ctx.beginPath(); ctx.moveTo(x, 18); ctx.lineTo(x, canvas.height-46); ctx.stroke();
+    }
+    for(let y=18; y<canvas.height-46; y+=42){
+      ctx.beginPath(); ctx.moveTo(44, y); ctx.lineTo(canvas.width-20, y); ctx.stroke();
+    }
+
+    // axes
+    ctx.strokeStyle = 'rgba(255,215,0,0.35)';
+    ctx.beginPath(); ctx.moveTo(44, 18); ctx.lineTo(44, canvas.height-46); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(44, canvas.height-46); ctx.lineTo(canvas.width-20, canvas.height-46); ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,215,0,0.9)';
+    ctx.font = '13px Arial';
+    ctx.fillText('זמן →', canvas.width-80, canvas.height-18);
+
+    ctx.save();
+    ctx.translate(18, canvas.height/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('ערכים מנורמלים', 0, 0);
+    ctx.restore();
+  }
+
+  function plotLine(data, color, label, yOffset){
+    const W = canvas.width, H = canvas.height;
+    const left=44, top=18, right=W-20, bottom=H-46;
+    const n = data.length;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const x = left + (right-left) * (i/(n-1));
+      const yNorm = Math.max(0, Math.min(1, data[i]));
+      const y = bottom - (bottom-top)*yNorm;
+      if(i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.font = '13px Arial';
+    ctx.fillText(label, 56, 16 + yOffset);
+  }
+
+  function simulate(){
+    const {V, ETA, LOAD} = readVals();
+    const N = 340;
+    const dt = 0.07;
+
+    // Demo envelope frequencies
+    const f1 = 2.3;
+    const f2 = 10.8;
+
+    let A = new Array(N);
+    let Pstore = new Array(N);
+    let SOC = new Array(N);
+
+    let E = 0.55;
+    const Ploss = 0.02;
+
+    for(let i=0;i<N;i++){
+      // normalized time
+      let a = V * (0.55 + 0.35*Math.sin(2*Math.PI*f1*(i/N)*6) + 0.10*Math.sin(2*Math.PI*f2*(i/N)*6));
+      a = Math.max(0, Math.min(1, a));
+      A[i]=a;
+
+      let p = ETA * a*a;         // core concept
+      Pstore[i]=p;
+
+      const dE = (p - LOAD - Ploss) * dt;
+      E = Math.max(0, Math.min(1, E + dE));
+      SOC[i]=E;
+    }
+
+    drawAxes();
+    plotLine(A, 'rgba(255,215,0,0.95)', 'A(t) עוצמה', 0);
+    plotLine(Pstore, 'rgba(80,200,255,0.85)', 'P_store(t) ≈ η·A²', 16);
+    plotLine(SOC, 'rgba(200,255,120,0.85)', 'SOC(t) מצב טעינה', 32);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = '12px Arial';
+    ctx.fillText('SOC עולה → טעינה תוך כדי שמיעה | SOC יורד → η נמוכה/עומס גבוה/צריך קציר נוסף', 44, canvas.height-10);
+  }
+
+  vol.addEventListener('input', simulate);
+  eta.addEventListener('input', simulate);
+  load.addEventListener('input', simulate);
+  spl.addEventListener('input', () => { updateSPLCalcs(); simulate(); });
+  btn.addEventListener('click', simulate);
+
+  updateSPLCalcs();
+  simulate();
+})();
+</script>
+
+</body>
+</html>
