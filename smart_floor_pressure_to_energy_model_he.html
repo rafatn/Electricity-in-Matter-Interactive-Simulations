@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>מודל רצפה חכמה: לחץ → פוטנציאל → אינטגרציה מרחבית ומסלולית</title>
+
+  <!-- MathJax for equations -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --card2:#0c1526;
+      --text:#e8eefc;
+      --muted:#b7c4e6;
+      --gold:#d6b25e;
+      --line:rgba(214,178,94,.22);
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(214,178,94,.18), transparent 55%),
+                  radial-gradient(900px 500px at 10% 0%, rgba(120,180,255,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      padding:28px 18px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .title{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .badge{
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      color:var(--gold);
+      background: rgba(214,178,94,.08);
+      font-weight:700;
+      font-size:13px;
+      letter-spacing:.2px;
+      margin-top:6px;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width:920px;
+    }
+    main{
+      max-width:1100px;
+      margin: 10px auto 36px;
+      padding: 0 18px 40px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)) , var(--card);
+      border:1px solid rgba(214,178,94,.18);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 18px 12px;
+      border-bottom:1px solid rgba(214,178,94,.14);
+      background: linear-gradient(90deg, rgba(214,178,94,.12), transparent 35%);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:18px;
+      color:var(--gold);
+    }
+    .card .bd{ padding: 16px 18px 18px; }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 650px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .kpi > div{
+      background: var(--card2);
+      border:1px solid rgba(214,178,94,.14);
+      border-radius: 14px;
+      padding:12px 12px 10px;
+    }
+    .kpi b{ color:var(--gold); display:block; margin-bottom:6px }
+    .muted{ color: var(--muted); }
+    .note{
+      border-right: 4px solid var(--gold);
+      background: rgba(214,178,94,.08);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      color: var(--text);
+    }
+    ul{ margin: 8px 0 0 0; padding-right: 18px; }
+    li{ margin: 6px 0; }
+    .eq{
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border:1px dashed rgba(214,178,94,.22);
+      color: var(--gold);
+      overflow:auto;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 800px){ .grid2{grid-template-columns:1fr} }
+    .pillrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      border:1px solid rgba(214,178,94,.22);
+      background: rgba(214,178,94,.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight:700;
+    }
+    .svgwrap{
+      background: var(--card2);
+      border:1px solid rgba(214,178,94,.14);
+      border-radius: 16px;
+      padding: 10px;
+      overflow:hidden;
+    }
+    .footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding: 0 18px 36px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      border:1px solid rgba(214,178,94,.28);
+      background: rgba(214,178,94,.10);
+      color: var(--text);
+      font-weight:800;
+    }
+    .btn:hover{ background: rgba(214,178,94,.16); }
+    .small{ font-size: 12px; opacity:.9; }
+  </style>
+</head>
+
+<body>
+  <header id="top">
+    <div class="title">
+      <div>
+        <h1>מודל רצפה חכמה: לחץ → פוטנציאל → אינטגרציה מרחבית ומסלולית</h1>
+        <p class="subtitle">
+          מסמך מסודר לרעיון: רצפת-אריחים שממפה עומסים (שולחן/ספה/מיטה/ארון/אדם) וממירה שינויי לחץ לאנרגיה,
+          עם רשת איסוף (נחושת/אלקטרודות) ואופטימיזציה של מסלול החשמל כדי להפיק מקסימום אנרגיה לכל קומה.
+        </p>
+      </div>
+      <div class="badge">גרסה 1.0 • RTL • כולל משוואות (MathJax) ותרשימי זרימה</div>
+    </div>
+
+    <div class="kpi">
+      <div><b>קלט</b><span class="muted">מסה/כוח, תנועה, מגע, זמן</span></div>
+      <div><b>חישה/קצירה</b><span class="muted">Piezo / Tribo / Capacitive / Thermo</span></div>
+      <div><b>פלט</b><span class="muted">DC מאוחסן + מפת לחץ + החלטות ניתוב</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="hd"><h2>1) רעיון המערכת בשורה אחת</h2></div>
+      <div class="bd">
+        <div class="note">
+          <b>רצפת-אריחים רב־שכבתית</b> הכוללת שכבת המרת לחץ/תנועה לאנרגיה, רשת איסוף מוליכה דו־ממדית,
+          ואלגוריתם שמבצע <b>אינטגרציה מרחבית</b> של מקור האנרגיה + <b>אופטימיזציה מסלולית</b> (מינימום איבודי הולכה)
+          כדי להפיק <b>מקסימום אנרגיה פר קומה</b> בהתאם למה שמונח על הרצפה.
+        </div>
+
+        <div class="pillrow">
+          <span class="pill">מיפוי לחץ</span>
+          <span class="pill">קצירת אנרגיה מתנועה</span>
+          <span class="pill">רשת נחושת / אלקטרודות</span>
+          <span class="pill">מיישור + DC-DC</span>
+          <span class="pill">אחסון (קבל־על/סוללה)</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><h2>שכבות (Stack) מוצעות</h2></div>
+      <div class="bd">
+        <ul>
+          <li><b>חיפוי</b>: בלטה/פרקט/משטח.</li>
+          <li><b>שכבת אלסטיות</b>: מאפשרת עיוות קטן $\Delta x$ (מגדילה רגישות).</li>
+          <li><b>שכבת חישה/קצירה</b>:
+            <ul>
+              <li><b>Piezo</b> — קצירה טובה כשיש שינויי לחץ (צעדים/תזוזות).</li>
+              <li><b>Tribo</b> — קצירה מתנועה/חיכוך.</li>
+              <li><b>Capacitive/Piezoresistive</b> — מצוינים למיפוי סטטי (איפה עומד הארון), אך אנרגיה נמוכה.</li>
+              <li><b>Thermoelectric</b> — עובד רק אם יש $\Delta T$ משמעותי ומתמשך.</li>
+            </ul>
+          </li>
+          <li><b>רשת איסוף</b>: אלקטרודות/נחושת בשיטת “אריחים-תאים”.</li>
+          <li><b>הספקה</b>: מיישרים, DC-DC, אחסון ויציאות לצרכנים.</li>
+        </ul>
+
+        <div class="note small">
+          הערת תכנון: לרוב האנרגיה המשמעותית מגיעה מ<b>שינויי עומס</b> (הליכה/תזוזה), יותר מאשר ממסה סטטטית של רהיטים.
+        </div>
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="hd"><h2>2) מודל לחץ מרחבי (Pressure Field)</h2></div>
+      <div class="bd">
+        <p>נתאר את הרצפה במישור $(x,y)$. לחץ מקומי:</p>
+        <div class="eq">$$p(x,y)=\frac{F(x,y)}{A(x,y)}$$</div>
+
+        <p>לרהיט עם $n$ נקודות מגע (למשל רגליים):</p>
+        <div class="eq">$$\sum_{i=1}^{n} F_i \approx Mg$$</div>
+
+        <p>בגלל אלסטיות ודבק, הלחץ מתפזר סביב נקודת המגע. אפשר לתאר זאת כך:</p>
+        <div class="eq">$$p(x,y)=\sum_{i=1}^{n} F_i\, w_i(x-x_i,y-y_i)$$</div>
+        <p class="muted">
+          $w_i$ היא פונקציית התפלגות (למשל “פעמון”) שמייצגת את התפשטות הלחץ סביב הרגל על פני הבלטה.
+        </p>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><h2>3) לחץ → מקור חשמלי (Transduction)</h2></div>
+      <div class="bd">
+        <p><b>Piezoelectric (מתנועה)</b> — קירוב שימושי:</p>
+        <div class="eq">$$Q = d\,F,\quad V=\frac{Q}{C}$$</div>
+        <div class="eq">$$E \approx \tfrac12 C V^2$$</div>
+
+        <p><b>Thermoelectric (Seebeck)</b> — אם יש הפרש טמפרטורה:</p>
+        <div class="eq">$$V(x,y)=S\,\Delta T(x,y)$$</div>
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="hd"><h2>4) אינטגרציה מרחבית</h2></div>
+      <div class="bd">
+        <div class="eq">$$E_{\text{floor}}=\iint_{\Omega} e(x,y)\, dA$$</div>
+        <div class="eq">$$P_{\text{floor}}(t)=\iint_{\Omega} p_{\text{elec}}(x,y,t)\, dA$$</div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><h2>5) אינטגרציה מסלולית</h2></div>
+      <div class="bd">
+        <div class="eq">$$\nabla\cdot(\sigma \nabla \phi)+j_s(x,y)=0$$</div>
+        <div class="eq">$$P_{\text{loss}}=\iint_{\Omega}\sigma\,|\nabla \phi|^2\, dA$$</div>
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="hd"><h2>6) תרשים זרימה</h2></div>
+      <div class="bd">
+        <div class="svgwrap">
+          <svg viewBox="0 0 980 220" width="100%" height="auto" role="img">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#d6b25e" stop-opacity=".35"/>
+                <stop offset="1" stop-color="#d6b25e" stop-opacity="0"/>
+              </linearGradient>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <path d="M0,0 L10,3 L0,6 Z" fill="#d6b25e"/>
+              </marker>
+            </defs>
+            <g font-family="Arial" font-size="16">
+              <rect x="25" y="55" width="220" height="80" rx="16" fill="url(#g1)" stroke="#d6b25e" stroke-opacity=".45"/>
+              <text x="135" y="90" text-anchor="middle" font-weight="700" fill="#d6b25e">דגימה</text>
+              <text x="135" y="117" text-anchor="middle" font-size="13" fill="#b7c4e6">Tiles → לחץ/Δלחץ</text>
+
+              <rect x="270" y="55" width="220" height="80" rx="16" fill="url(#g1)" stroke="#d6b25e" stroke-opacity=".45"/>
+              <text x="380" y="90" text-anchor="middle" font-weight="700" fill="#d6b25e">מפה</text>
+              <text x="380" y="117" text-anchor="middle" font-size="13" fill="#b7c4e6">p(x,y) + זיהוי עומסים</text>
+
+              <rect x="515" y="55" width="220" height="80" rx="16" fill="url(#g1)" stroke="#d6b25e" stroke-opacity=".45"/>
+              <text x="625" y="90" text-anchor="middle" font-weight="700" fill="#d6b25e">קצירה</text>
+              <text x="625" y="117" text-anchor="middle" font-size="13" fill="#b7c4e6">יישור/DC</text>
+
+              <rect x="760" y="55" width="195" height="80" rx="16" fill="url(#g1)" stroke="#d6b25e" stroke-opacity=".45"/>
+              <text x="857" y="90" text-anchor="middle" font-weight="700" fill="#d6b25e">אחסון</text>
+              <text x="857" y="117" text-anchor="middle" font-size="13" fill="#b7c4e6">קבל־על/סוללה</text>
+            </g>
+
+            <path d="M245 95 L270 95" stroke="#d6b25e" stroke-width="3" stroke-opacity=".85" marker-end="url(#arrow)"/>
+            <path d="M490 95 L515 95" stroke="#d6b25e" stroke-width="3" stroke-opacity=".85" marker-end="url(#arrow)"/>
+            <path d="M735 95 L760 95" stroke="#d6b25e" stroke-width="3" stroke-opacity=".85" marker-end="url(#arrow)"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><h2>שימוש</h2></div>
+      <div class="bd">
+        <p class="muted">פתח את הקובץ בדפדפן או העלה ל-GitHub Pages.</p>
+        <a class="btn" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">⬆️ חזרה למעלה</a>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>
