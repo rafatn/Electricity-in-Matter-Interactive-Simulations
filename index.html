@@ -3,18 +3,90 @@
 <head>
   <meta charset="utf-8">
   <title>דף הבית</title>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f6f7fb;
+      margin:30px;
+    }
+    h1{
+      margin-bottom:20px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    }
+    th, td{
+      padding:14px;
+      border-bottom:1px solid #e5e7eb;
+      text-align:right;
+    }
+    th{
+      background:#111827;
+      color:white;
+      font-size:16px;
+    }
+    tr:last-child td{
+      border-bottom:none;
+    }
+    a{
+      color:#2563eb;
+      text-decoration:none;
+      font-weight:bold;
+    }
+    a:hover{
+      text-decoration:underline;
+    }
+    .topic{
+      font-weight:bold;
+      color:#374151;
+    }
+  </style>
 </head>
 <body>
 
 <h1>ברוכים הבאים</h1>
 
-<a href="electricity_models_plus_simulations_bilingual_toggle.html">
-  🔌 מודל חשמל + סימולציות
-</a>
+<table>
+  <thead>
+    <tr>
+      <th>נושא</th>
+      <th>שם הקובץ / קישור</th>
+      <th>תיאור</th>
+    </tr>
+  </thead>
+  <tbody>
 
-<a href="thermosiphon_flow_calculator_he.html">
-  🔌 תרמוסיפון
-</a>
-  
+    <tr>
+      <td class="topic">⚡ חשמל וסימולציות</td>
+      <td>
+        <a href="electricity_models_plus_simulations_bilingual_toggle.html">
+          מודל חשמל + סימולציות
+        </a>
+      </td>
+      <td>
+        מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות
+      </td>
+    </tr>
+
+    <tr>
+      <td class="topic">🔥 תרמודינמיקה</td>
+      <td>
+        <a href="thermosiphon_flow_calculator_he.html">
+          תרמוסיפון
+        </a>
+      </td>
+      <td>
+        מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
 </body>
 </html>
