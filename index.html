@@ -606,6 +606,27 @@
         <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
       </tr>
 
+      <!-- ✅ NEW FILE ADDED -->
+      <tr class="row" data-cat="transport" data-key="patent_smart_boarding_token_he.html">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
+        </td>
+        <td data-label="קישור">
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="patent_smart_boarding_token_he.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="patent_smart_boarding_token_he.html" data-i18n="linkPatent">כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט</a>
+              <div class="muted">patent_smart_boarding_token_he.html</div>
+            </div>
+          </div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descPatent">
+          מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
+        </td>
+      </tr>
+      <!-- ✅ END NEW FILE -->
+
     </tbody>
   </table>
 
@@ -833,6 +854,11 @@
 
         linkHybrid:"נעליים מים–אוויר (תלת־לשוני)",
         descHybrid:"הליכה וריחוף על מים ואוויר עם זרימה מבוקרת",
+
+        /* NEW */
+        badgePatent:"✈️📄 פטנט — אבטחת תעופה",
+        linkPatent:"כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט",
+        descPatent:"מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס",
       },
 
       en:{
@@ -913,6 +939,11 @@
 
         linkHybrid:"Water–Air Shoes (Trilingual)",
         descHybrid:"Walking/hovering on water and air with controlled flow.",
+
+        /* NEW */
+        badgePatent:"✈️📄 Patent — Aviation Security",
+        linkPatent:"Smart Boarding Pass (Dynamic Token) — Patent Draft",
+        descPatent:"A smart digital boarding pass with multi-step verification, rolling token, anti-replay and automatic revocation after boarding.",
       },
 
       ar:{
@@ -993,6 +1024,11 @@
 
         linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
         descHybrid:"المشي/التحليق على الماء والهواء بتدفق مُتحكم به.",
+
+        /* NEW */
+        badgePatent:"✈️📄 براءة — أمن الطيران",
+        linkPatent:"بطاقة صعود ذكية (Token ديناميكي) — مسودة براءة",
+        descPatent:"بطاقة صعود رقمية ذكية مع تحقق متعدد المراحل، Token متغير، منع إعادة الاستخدام وإلغاء تلقائي بعد الصعود.",
       },
 
       ru:{
@@ -1073,6 +1109,11 @@
 
         linkHybrid:"Обувь вода–воздух (трёхъязычная)",
         descHybrid:"Ходьба/парение по воде и воздуху с управляемым потоком.",
+
+        /* NEW */
+        badgePatent:"✈️📄 Патент — авиационная безопасность",
+        linkPatent:"Умный посадочный талон (динамический Token) — черновик патента",
+        descPatent:"Умный цифровой посадочный талон с многоэтапной проверкой, меняющимся токеном, anti-replay и автоматической аннуляцией после посадки.",
       }
     };
 
@@ -1120,9 +1161,6 @@
       document.querySelectorAll(".langbtn").forEach(btn=>{
         btn.classList.toggle("active", btn.getAttribute("data-lang") === L);
       });
-
-      // table headers for mobile labels
-      // (keep original labels in Hebrew — not critical; cards still readable)
 
       apply();
     }
