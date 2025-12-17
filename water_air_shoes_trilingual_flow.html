@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>נעליים-ספינות להליכה ולטיסה מעל מים – Water & Air Shoes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, #eef7ff, #d6f5ff, #f9ffff);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            color: #102030;
+        }
+        header {
+            background: linear-gradient(135deg, #0077b6, #00b4d8);
+            color: #ffffff;
+            text-align: center;
+            padding: 20px 10px 10px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.9rem;
+        }
+        header p {
+            margin: 6px 0 10px;
+            font-size: 0.95rem;
+        }
+        #lang-switcher {
+            margin: 10px 0 15px;
+            text-align: center;
+        }
+        .lang-btn {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 5px 12px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: #caf0f8;
+            color: #003049;
+        }
+        .lang-btn.active {
+            background: #ffb703;
+            color: #000;
+            font-weight: bold;
+        }
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 15px 40px;
+        }
+        h2 {
+            border-right: 6px solid #0077b6;
+            padding-right: 10px;
+            margin-top: 25px;
+            color: #003049;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #005f73;
+        }
+        .box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            padding: 15px 18px;
+            margin: 18px 0;
+        }
+        .equation {
+            direction: ltr;
+            text-align: left;
+            background: #f4f8fb;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        .diagram {
+            background: #f1fbff;
+            border-radius: 10px;
+            padding: 10px;
+            font-family: "Courier New", monospace;
+            white-space: pre;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        .tag {
+            display: inline-block;
+            background: #e0f4ff;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            margin: 2px 4px;
+        }
+        .mode {
+            border-right: 4px solid #00b4d8;
+        }
+        .summary {
+            border-right: 4px solid #fb8500;
+        }
+        ul {
+            margin-top: 4px;
+        }
+        .columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .col {
+            flex: 1 1 280px;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            padding: 15px 10px 25px;
+        }
+        .highlight {
+            background: #fff3cd;
+            border-radius: 6px;
+            padding: 6px 10px;
+            border: 1px solid #ffeeba;
+        }
+        .lang {
+            display: none;
+        }
+        body[data-lang="he"] .lang-he,
+        body[data-lang="en"] .lang-en,
+        body[data-lang="ar"] .lang-ar {
+            display: block;
+        }
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+</head>
+<body data-lang="he">
+
+<header>
+    <h1>נעליים-ספינות להליכה ולטיסה מעל מים · Water & Air Shoes</h1>
+    <p>משולש הגוף (שתי כפות רגליים + פופק) כבסיס ליציבות על מים ובאוויר</p>
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="he">עברית</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ar">العربية</button>
+    </div>
+</header>
+
+<main>
+
+    <!-- ======= HEBREW VERSION ======= -->
+    <section class="lang lang-he rtl">
+
+        <!-- 1. תיאור כללי -->
+        <section class="box">
+            <h2>1. הרעיון הכללי</h2>
+            <p>
+                שתי יחידות זהות – <strong>נעל ימין</strong> ו<strong>נעל שמאל</strong> – מתפקדות כ<strong>ספינות־נעל</strong>
+                קטנות. הן מאפשרות:
+            </p>
+            <ul>
+                <li><strong>הליכה/החלקה על פני המים</strong> – באמצעות ציפה ו-Hydrofoil.</li>
+                <li><strong>טיסה בגובה נמוך מעל המים</strong> – באמצעות יחידות VTOL (רחפן זעיר בכל נעל).</li>
+            </ul>
+            <p>
+                יציבות הגוף נשמרת לפי <strong>משולש ביומכני</strong> טבעי:
+            </p>
+            <ul>
+                <li>כף רגל ימין</li>
+                <li>כף רגל שמאל</li>
+                <li>פופק – כמרכז מסה משוער</li>
+            </ul>
+            <p>
+                כל עוד מרכז המסה נשאר בתוך המשולש הזה (ובקרבת קו האגן), המערכת יכולה לשמור על יציבות גם על המים וגם באוויר.
+            </p>
+            <div>
+                <span class="tag">הליכה על מים</span>
+                <span class="tag">טיסה בגובה נמוך</span>
+                <span class="tag">משולש יציבות</span>
+                <span class="tag">חומר חכם</span>
+                <span class="tag">בקרת יציבות</span>
+            </div>
+        </section>
+
+        <!-- 2. משולש הגוף -->
+        <section class="box">
+            <h2>2. משולש היציבות של הגוף</h2>
+            <p>מיקומי הנקודות במישור (x,y):</p>
+            <div class="equation">
+r1 = (x1, y1)  ← כף רגל ימין
+r2 = (x2, y2)  ← כף רגל שמאל
+r3 = (x3, y3)  ← פופק / COM
+            </div>
+            <p>
+                תנאי יציבות: מרכז המסה צריך להיות בתוך התחום שנוצר בין שתי כפות הרגליים וקו האגן.
+            </p>
+            <div class="diagram">
+      (פופק / COM)
+             ●  r3
+            /            /          r1 ●     ● r2
+      (ימין)   (שמאל)
+            </div>
+            <p>
+                תזוזה קטנה של הפופק קדימה/אחורה/צדדים משמשת כמו "הגה" – המערכת מתאימה דחף וכוחות כדי ללכת או לטוס בכיוון הרצוי.
+            </p>
+        </section>
+
+        <!-- 3. מים -->
+        <section class="box mode">
+            <h2>3. מצב מים – ציפה, החלקה והידרודינמיקה</h2>
+
+            <h3>3.1 ציפה</h3>
+            <p>כוח הציפה לפי חוק ארכימדס:</p>
+            <div class="equation">
+F_b = ρ_water · g · V_displaced
+            </div>
+            <p>
+                נניח אדם במשקל 80 ק"ג → כל נעל צריכה לדחוק בערך 40–50 ליטר מים כדי לשאת חצי מהמשקל + מקדם ביטחון.
+            </p>
+
+            <h3>3.2 גרר ודחיפה</h3>
+            <p>כוח הגרר במים:</p>
+            <div class="equation">
+F_d = 0.5 · ρ · C_d · A · v²
+            </div>
+
+            <h3>3.3 Hydrofoil – כוח הרמה במים</h3>
+            <p>עם תחתית בצורת Hydrofoil קטן, נוצר כוח הרמה:</p>
+            <div class="equation">
+L = 0.5 · ρ · v² · S · C_L
+            </div>
+            <p>כך האדם "מרחף" מעט מעל המים, מצמצם חיכוך ומאפשר החלקה יציבה.</p>
+        </section>
+
+        <!-- 4. טיסה -->
+        <section class="box mode">
+            <h2>4. מצב טיסה – VTOL בכל נעל</h2>
+            <p>בכל נעל יחידת VTOL (כמו רחפן זעיר):</p>
+            <ul>
+                <li>4 מדחפים קטנים סביב הנעל.</li>
+                <li>סוללה/תא אנרגיה מובנה.</li>
+                <li>בקר מרכזי המאזן בין נעל ימין לנעל שמאל.</li>
+            </ul>
+
+            <h3>4.1 תנאי המראה</h3>
+            <div class="equation">
+W = m · g         ← משקל הגוף
+T_total = T_right + T_left
+תנאי המראה:  T_total &gt; W
+            </div>
+
+            <h3>4.2 משוואות תנועה באוויר</h3>
+            <div class="equation">
+ΣF = m · a
+Στ = 0         (סכום המומנטים סביב מרכז המסה ≈ 0)
+            </div>
+            <p>
+                באמצעות שינויים קטנים בדחף בין הנעליים ובמדחפים השונים,
+                המערכת שומרת שמרכז המסה יישאר "מרחף" במיקום יציב ביחס לנעליים.
+            </p>
+        </section>
+
+        <!-- 5. מעבר מים–אוויר -->
+        <section class="box">
+            <h2>5. מעבר בין מצב מים למצב טיסה</h2>
+
+            <h3>5.1 ממים לאוויר</h3>
+            <ol>
+                <li>הנעליים ננעלות לזווית יציבה ומפחיתות נדנודים.</li>
+                <li>יחידות ה-VTOL מעלות דחף בהדרגה, עדיין עם ציפה.</li>
+                <li>כאשר T_total &gt; W – הגוף מתנתק מהמים ועובר לרחיפה.</li>
+            </ol>
+
+            <h3>5.2 מאוויר למים</h3>
+            <ol>
+                <li>הבקר מוריד גובה ודחף לאט.</li>
+                <li>ברגע מגע במים – הציפה חוזרת לשלוט, המדחפים יורדים לעוצמה נמוכה.</li>
+            </ol>
+        </section>
+
+        <!-- 6. חומר חכם -->
+        <section class="box">
+            <h2>6. חומר חכם, חימום וקירור</h2>
+            <p>
+                מעטפת הנעל עשויה <strong>פולימר חכם</strong> – קשיחות/גמישות משתנות לפי טמפרטורה.
+            </p>
+            <ul>
+                <li>במים רגילים – החומר קשיח למחצה, יציב על הגלים.</li>
+                <li>בהמראה/נחיתה – החומר רך יותר לבלימת זעזועים.</li>
+                <li>בטיסה – החומר קשיח כדי למנוע עיוותים מרטט המדחפים.</li>
+            </ul>
+            <div class="equation">
+E_thermal  →  ΔT  →  שינוי ב-E_material (מודול אלסטיות)
+            </div>
+        </section>
+
+        <!-- 7. בקרה -->
+        <section class="box">
+            <h2>7. חיישנים ובקרת יציבות</h2>
+            <div class="columns">
+                <div class="col">
+                    <h3>7.1 חיישנים</h3>
+                    <ul>
+                        <li>IMU – מד תאוצה + ג'ירוסקופ בכל נעל.</li>
+                        <li>חיישני עומס – חלוקת משקל ימין/שמאל.</li>
+                        <li>חיישני גובה מעל מים (לייזר/אולטרה-סוניק).</li>
+                        <li>אפשרות סונאר למיפוי עומק ומכשולים.</li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>7.2 בקרת תיקון</h3>
+                    <div class="equation">
+F_c = k_p · Δθ + k_d · Δω
+                    </div>
+                    <p>
+                        Δθ – סטיית זווית, Δω – מהירות סיבוב.
+                        הבקר משנה מהירות מדחפים וזוויות כדי לתקן נטייה.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. מודל לאגרנג'י -->
+        <section class="box">
+            <h2>8. מודל דינמי קצר (לאגרנג'י)</h2>
+            <p>
+                באופן רעיוני אפשר לתאר את המערכת באמצעות לגראנז'יאן:
+            </p>
+            <div class="equation">
+L = T - V
+
+T – אנרגיה קינטית של הגוף + הנעליים (תנועה ותנודה)
+V – אנרגיית פוטנציאל כבידתית + אלסטית (החומר החכם)
+
+משוואות אוילר–לאגרנג':
+d/dt (∂L/∂q̇) - ∂L/∂q = Q
+            </div>
+            <p>
+                q – קואורדינטות כלליות (זוויות הגוף, מיקום הנעליים, גובה),
+                Q – כוחות מוכללים (מדחפים, ציפה, כוחות בקרה).
+            </p>
+        </section>
+
+        <!-- 9. תרשים זרימה -->
+        <section class="box">
+            <h2>9. תרשים זרימה – Sensors → Controller → Actuators → Body</h2>
+            <p>
+                תרשים זרימה רעיוני של המערכת:
+            </p>
+            <div class="diagram">
+[חיישני IMU / גובה / עומס / סונאר]
+               |
+               v
+        [בקר מרכזי]
+               |
+      -------------------
+      |        |        |
+      v        v        v
+[VTOL]   [Hydrofoil] [חומר חכם]
+      \        |        /
+       \       |       /
+        \      |      /
+           [תנועת גוף]
+               |
+          משוב למיקום
+          הפופק והמשקל
+            </div>
+            <p>
+                כל לולאת מידע חוזרת – שינוי במיקום הגוף משנה את הקריאות בחיישנים, הבקר מחשב תיקון,
+                המפעילים (VTOL, Hydrofoil, חומר חכם) מגיבים, וכך נשמרת יציבות על פני המים ובאוויר.
+            </p>
+        </section>
+
+        <!-- 10. סיכום -->
+        <section class="box summary">
+            <h2>10. סיכום</h2>
+            <p>
+                המערכת המשולבת מאפשרת:
+            </p>
+            <ul>
+                <li>ציפה והחלקה על מים באמצעות ספינות־נעל.</li>
+                <li>טיסה בגובה נמוך בעזרת יחידות VTOL.</li>
+                <li>שליטה דרך משולש הגוף (שתי כפות רגליים + פופק).</li>
+                <li>התאמת חומר (חימום/קירור) לבלימת זעזועים ויציבות.</li>
+                <li>בקרת יציבות מתקדמת עם חיישנים, אלגוריתם תיקון ולולאת משוב.</li>
+            </ul>
+        </section>
+
+    </section>
+
+    <!-- ======= ENGLISH VERSION ======= -->
+    <section class="lang lang-en ltr">
+
+        <section class="box">
+            <h2>1. General Concept</h2>
+            <p>
+                The system consists of two identical units – a <strong>right shoe-boat</strong> and a 
+                <strong>left shoe-boat</strong>. Together they allow:
+            </p>
+            <ul>
+                <li><strong>Walking/gliding on water</strong> using buoyancy and a small hydrofoil.</li>
+                <li><strong>Low-altitude flight above water</strong> using VTOL units (mini-drones) in each shoe.</li>
+            </ul>
+            <p>
+                Body stability is controlled by a natural <strong>stability triangle</strong>:
+            </p>
+            <ul>
+                <li>Right foot</li>
+                <li>Left foot</li>
+                <li>Belly button (approximate center of mass)</li>
+            </ul>
+        </section>
+
+        <section class="box">
+            <h2>2. Stability Triangle</h2>
+            <p>Positions in the plane (x,y):</p>
+            <div class="equation">
+r1 = (x1, y1)  ← right foot
+r2 = (x2, y2)  ← left foot
+r3 = (x3, y3)  ← belly button / COM
+            </div>
+            <p>
+                As long as the COM lies inside the triangle formed by both feet and the hip line, the system can remain stable.
+            </p>
+            <div class="diagram">
+   (COM)
+     ●  r3
+    /    /   r1 ●     ● r2
+(R)     (L)
+            </div>
+        </section>
+
+        <section class="box mode">
+            <h2>3. Water Mode – Buoyancy & Glide</h2>
+            <h3>3.1 Buoyancy</h3>
+            <div class="equation">
+F_b = ρ_water · g · V_displaced
+            </div>
+            <p>
+                For an 80 kg person, each shoe-boat displaces about 40–50 liters of water to support half of the body weight.
+            </p>
+            <h3>3.2 Drag & Propulsion</h3>
+            <div class="equation">
+F_d = 0.5 · ρ · C_d · A · v²
+            </div>
+            <h3>3.3 Hydrofoil Lift</h3>
+            <div class="equation">
+L = 0.5 · ρ · v² · S · C_L
+            </div>
+            <p>
+                A small hydrofoil shape under each shoe can lift the body slightly above the water surface.
+            </p>
+        </section>
+
+        <section class="box mode">
+            <h2>4. Flight Mode – VTOL Units</h2>
+            <p>
+                Each shoe contains a VTOL module (4 small rotors + battery + controller).
+            </p>
+            <h3>4.1 Take-off condition</h3>
+            <div class="equation">
+W = m · g
+T_total = T_right + T_left
+Take-off:  T_total &gt; W
+            </div>
+            <h3>4.2 Dynamics</h3>
+            <div class="equation">
+ΣF = m · a
+Στ = 0
+            </div>
+            <p>
+                Proper thrust distribution keeps the COM inside the stability triangle and maintains balance.
+            </p>
+        </section>
+
+        <section class="box">
+            <h2>5. Smart Material & Thermal Control</h2>
+            <p>
+                The shell of each shoe uses a <strong>smart polymer</strong> whose stiffness depends on temperature.
+            </p>
+            <div class="equation">
+E_thermal  →  ΔT  →  change in E_material
+            </div>
+            <ul>
+                <li>Normal water walking: medium stiffness.</li>
+                <li>Take-off/landing: softer for shock absorption.</li>
+                <li>Flight: stiffer to resist vibration and deformation.</li>
+            </ul>
+        </section>
+
+        <section class="box">
+            <h2>6. Sensors & Control</h2>
+            <ul>
+                <li>IMU in each shoe (acceleration + gyroscope).</li>
+                <li>Load sensors under each foot.</li>
+                <li>Height sensors above water (laser/ultrasonic).</li>
+                <li>Optional sonar for depth and obstacle mapping.</li>
+            </ul>
+            <div class="equation">
+F_c = k_p · Δθ + k_d · Δω
+            </div>
+            <p>
+                Δθ – angle error, Δω – angular velocity error.  
+                A controller adjusts the rotor speeds to correct tilt and keep balance.
+            </p>
+        </section>
+
+        <section class="box">
+            <h2>7. Dataflow Diagram – Sensors → Controller → Actuators → Body</h2>
+            <p>Conceptual dataflow of the system:</p>
+            <div class="diagram">
+[IMU / Height / Load / Sonar]
+              |
+              v
+        [Main Controller]
+              |
+      ------------------------
+      |          |          |
+      v          v          v
+[VTOL motors] [Hydrofoil] [Smart Material]
+      \          |          /
+       \         |         /
+        \        |        /
+           [Body Motion]
+              |
+          Feedback to
+          sensors & COM
+            </div>
+            <p>
+                Everything runs in a closed loop: body motion changes sensor readings, 
+                the controller computes corrections, and the actuators respond to 
+                keep the system stable on water and in the air.
+            </p>
+        </section>
+
+        <section class="box summary">
+            <h2>8. Summary</h2>
+            <p>
+                This concept combines:
+            </p>
+            <ul>
+                <li>Water walking & gliding.</li>
+                <li>Low-altitude VTOL flight.</li>
+                <li>Body-based control via the stability triangle (feet + belly button).</li>
+                <li>Smart material with thermal tuning.</li>
+                <li>Sensor-based stability control with closed-loop feedback.</li>
+            </ul>
+        </section>
+
+    </section>
+
+    <!-- ======= ARABIC VERSION ======= -->
+    <section class="lang lang-ar rtl">
+
+        <section class="box">
+            <h2>١. الفكرة العامة</h2>
+            <p>
+                النظام يتكوّن من وحدتين متماثلتين: <strong>حذاء-قارب أيمن</strong> و<strong>حذاء-قارب أيسر</strong>.
+                معاً يسمحان بـ:
+            </p>
+            <ul>
+                <li><strong>المشي / الانزلاق على سطح الماء</strong> باستخدام الطفو وـ Hydrofoil صغير.</li>
+                <li><strong>الطيران على ارتفاع منخفض فوق الماء</strong> باستخدام وحدات VTOL (درون صغير في كل حذاء).</li>
+            </ul>
+            <p>
+                ثبات الجسم يعتمد على <strong>مثلث الاستقرار</strong> الطبيعي:
+            </p>
+            <ul>
+                <li>القدم اليمنى</li>
+                <li>القدم اليسرى</li>
+                <li>السرة (مركز كتلة تقريبي للجسم)</li>
+            </ul>
+        </section>
+
+        <section class="box">
+            <h2>٢. مثلث الاستقرار للجسم</h2>
+            <p>نعرّف الإحداثيات في مستوى (x,y):</p>
+            <div class="equation">
+r1 = (x1, y1)  ← القدم اليمنى
+r2 = (x2, y2)  ← القدم اليسرى
+r3 = (x3, y3)  ← السرة / مركز الكتلة COM
+            </div>
+            <p>
+                طالما أن مركز الكتلة داخل هذا المثلث (بين القدمين وخط الحوض)، يمكن للنظام المحافظة على التوازن.
+            </p>
+            <div class="diagram">
+    (COM)
+      ●  r3
+     /     /   r1 ●     ● r2
+(يمين)  (يسار)
+            </div>
+        </section>
+
+        <section class="box mode">
+            <h2>٣. وضع الماء – الطفو والانزلاق</h2>
+            <h3>٣.١ قوة الطفو</h3>
+            <div class="equation">
+F_b = ρ_water · g · V_displaced
+            </div>
+            <p>
+                لشخص وزنه ٨٠ كغ تقريباً، كل حذاء-قارب يحتاج لإزاحة ٤٠–٥٠ لتر من الماء لحمل نصف الوزن مع هامش أمان.
+            </p>
+
+            <h3>٣.٢ قوة الجر والدفع</h3>
+            <div class="equation">
+F_d = 0.5 · ρ · C_d · A · v²
+            </div>
+
+            <h3>٣.٣ قوة الرفع في الماء (Hydrofoil)</h3>
+            <div class="equation">
+L = 0.5 · ρ · v² · S · C_L
+            </div>
+            <p>
+                شكل Hydrofoil صغير تحت كل حذاء يرفع الجسم قليلاً فوق سطح الماء ويقلّل الاحتكاك.
+            </p>
+        </section>
+
+        <section class="box mode">
+            <h2>٤. وضع الطيران – وحدات VTOL</h2>
+            <p>
+                في كل حذاء وحدة إقلاع وهبوط عمودي (VTOL) مع أربع مراوح صغيرة وبطارية ووحدة تحكم.
+            </p>
+            <h3>٤.١ شرط الإقلاع</h3>
+            <div class="equation">
+W = m · g
+T_total = T_right + T_left
+شرط الإقلاع:  T_total &gt; W
+            </div>
+
+            <h3>٤.٢ معادلات الحركة</h3>
+            <div class="equation">
+ΣF = m · a
+Στ = 0   (مجموع العزوم حول COM ≈ صفر)
+            </div>
+            <p>
+                توزيع الدفع بين الحذاءين والمراوح يحافظ على COM داخل مثلث الاستقرار ويمنع السقوط.
+            </p>
+        </section>
+
+        <section class="box">
+            <h2>٥. المادة الذكية والتحكم الحراري</h2>
+            <p>
+                غلاف كل حذاء مصنوع من <strong>بوليمر ذكي</strong> تتغيّر صلابته مع درجة الحرارة.
+            </p>
+            <div class="equation">
+E_thermal  →  ΔT  →  تغيّر في E_material
+            </div>
+            <ul>
+                <li>في المشي على الماء: صلابة متوسطة وثبات جيد.</li>
+                <li>أثناء الإقلاع/الهبوط: مادة أكثر ليونة لامتصاص الصدمات.</li>
+                <li>في الطيران: صلابة أعلى لمقاومة الاهتزاز والتشوّه.</li>
+            </ul>
+        </section>
+
+        <section class="box">
+            <h2>٦. الحساسات ونظام التحكم</h2>
+            <ul>
+                <li>IMU في كل حذاء (تسارع + جيروسكوب).</li>
+                <li>حساسات تحميل لقياس توزيع الوزن بين اليمين واليسار.</li>
+                <li>حساسات ارتفاع فوق الماء (ليزر أو ألتراسونك).</li>
+                <li>إمكانية إضافة سونار لقياس العمق والعوائق.</li>
+            </ul>
+            <div class="equation">
+F_c = k_p · Δθ + k_d · Δω
+            </div>
+            <p>
+                Δθ – خطأ في الزاوية، Δω – خطأ في السرعة الزاوية.  
+                وحدة التحكم تعدّل سرعات المراوح لتصحيح الميل والحفاظ على التوازن.
+            </p>
+        </section>
+
+        <section class="box">
+            <h2>٧. مخطط تدفق البيانات – الحساسات ← المتحكم ← المشغّلات ← الجسم</h2>
+            <p>مخطط تدفق مفهومي للنظام:</p>
+            <div class="diagram">
+[حساسات IMU / ارتفاع / تحميل / سونار]
+                 |
+                 v
+          [المتحكم الرئيسي]
+                 |
+        ------------------------
+        |          |          |
+        v          v          v
+ [محركات VTOL] [Hydrofoil] [المادة الذكية]
+        \          |          /
+         \         |         /
+          \        |        /
+             [حركة الجسم]
+                 |
+          تغذية راجعة إلى
+          الحساسات و COM
+            </div>
+            <p>
+                النظام يعمل في حلقة مغلقة: حركة الجسم تغيّر قراءات الحساسات؛ المتحكم يحسب التصحيحات؛ 
+                المشغّلات تستجيب للحفاظ على الاستقرار على الماء وفي الهواء.
+            </p>
+        </section>
+
+        <section class="box summary">
+            <h2>٨. خلاصة</h2>
+            <p>
+                هذا المفهوم يجمع بين:
+            </p>
+            <ul>
+                <li>المشي والانزلاق على سطح الماء.</li>
+                <li>الطيران على ارتفاع منخفض باستخدام VTOL.</li>
+                <li>التحكم عن طريق مثلث استقرار الجسم (القدمين + السرة).</li>
+                <li>مادة ذكية مع تحكم حراري في الصلابة.</li>
+                <li>نظام تحكم يعتمد على الحساسات وحلقة تغذية راجعة مغلقة.</li>
+            </ul>
+        </section>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>Trilingual conceptual HTML – water & air shoes with body stability triangle (feet + belly button) and dataflow diagram.</p>
+</footer>
+
+<script>
+    (function() {
+        const buttons = document.querySelectorAll('.lang-btn');
+        function setLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+        }
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+        });
+        // default:
+        setLang('he');
+    })();
+</script>
+
+</body>
+</html>
