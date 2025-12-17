@@ -2,66 +2,236 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <title>דף הבית</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="pageTitle">דף הבית</title>
 
   <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --head:#111827;
+      --link:#2563eb;
+      --shadow:0 6px 18px rgba(0,0,0,0.08);
+      --r:12px;
+      --r2:10px;
+      --pad:14px;
+
+      /* category colors */
+      --c-net:#0ea5e9;
+      --c-ui:#a855f7;
+      --c-id:#22c55e;
+      --c-med:#f97316;
+      --c-elec:#f59e0b;
+      --c-thermo:#ef4444;
+      --c-audio:#14b8a6;
+      --c-floor:#64748b;
+      --c-water:#3b82f6;
+      --c-transport:#10b981;
+      --c-hybrid:#06b6d4;
+    }
+
+    *{box-sizing:border-box}
     body{
       font-family: Arial, sans-serif;
-      background:#f6f7fb;
+      background:var(--bg);
       margin:30px;
-      user-select: none;
+      user-select:none;
+      color:var(--text);
     }
 
     h1{
-      margin-bottom:20px;
+      margin:0 0 14px;
+    }
+
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:flex-end;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:flex-end;
+    }
+
+    .control{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:220px;
+    }
+
+    label{
+      font-weight:bold;
+      font-size:13px;
+      color:#374151;
+    }
+
+    input, select, button{
+      padding:10px 12px;
+      font-size:15px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:white;
+      outline:none;
+    }
+
+    input:focus, select:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    .langbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .langbtn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:white;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:bold;
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+    }
+
+    .langbtn.active{
+      border-color:#111827;
+      box-shadow:0 6px 16px rgba(17,24,39,0.12);
+      transform:translateY(-1px);
+    }
+
+    .summary{
+      margin:6px 0 18px;
+      color:var(--muted);
+      font-size:14px;
     }
 
     table{
       width:100%;
       border-collapse:collapse;
-      background:white;
-      border-radius:10px;
+      background:var(--card);
+      border-radius:var(--r);
       overflow:hidden;
-      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+      box-shadow:var(--shadow);
     }
 
     th, td{
-      padding:14px;
-      border-bottom:1px solid #e5e7eb;
+      padding:var(--pad);
+      border-bottom:1px solid var(--line);
       text-align:right;
+      vertical-align:top;
     }
 
     th{
-      background:#111827;
+      background:var(--head);
       color:white;
       font-size:16px;
+      position:sticky;
+      top:0;
+      z-index:2;
     }
 
-    tr:last-child td{
-      border-bottom:none;
-    }
+    tr:last-child td{border-bottom:none}
 
     a{
-      color:#2563eb;
+      color:var(--link);
       text-decoration:none;
       font-weight:bold;
     }
-
-    a:hover{
-      text-decoration:underline;
-    }
+    a:hover{ text-decoration:underline; }
 
     .topic{
       font-weight:bold;
       color:#374151;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      font-size:12px;
+      font-weight:bold;
+      padding:4px 10px;
+      border-radius:999px;
+      color:white;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+
+    .b-net{background:var(--c-net)}
+    .b-ui{background:var(--c-ui)}
+    .b-id{background:var(--c-id)}
+    .b-med{background:var(--c-med)}
+    .b-elec{background:var(--c-elec)}
+    .b-thermo{background:var(--c-thermo)}
+    .b-audio{background:var(--c-audio)}
+    .b-floor{background:var(--c-floor)}
+    .b-water{background:var(--c-water)}
+    .b-transport{background:var(--c-transport)}
+    .b-hybrid{background:var(--c-hybrid)}
+
+    .desc{
+      color:#111827;
+      line-height:1.5;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+      margin-top:8px;
+    }
+
+    .smallbtn{
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#f9fafb;
+      cursor:pointer;
+      font-weight:bold;
+      font-size:13px;
+    }
+
+    .smallbtn:hover{
+      background:#eef2ff;
+    }
+
+    .empty{
+      margin-top:12px;
+      padding:14px;
+      border-radius:12px;
+      background:white;
+      border:1px dashed #cbd5e1;
+      color:#475569;
+      display:none;
     }
 
     /* 🔒 חסימת הדפסה */
-    @media print {
-      body {
-        display: none !important;
-      }
-    }
+    @media print { body { display: none !important; } }
 
     /* 💧 סימן מים */
     body::before {
@@ -87,171 +257,592 @@
       border-radius:8px;
       line-height:1.6;
     }
+
+    /* Mobile: convert table into cards */
+    @media (max-width: 820px){
+      body{ margin:14px; }
+      th{ position:static; }
+      table, thead, tbody, tr, td, th{ display:block; width:100%; }
+      thead{ display:none; }
+      tr{
+        border-bottom:1px solid var(--line);
+        padding:12px;
+      }
+      table{
+        overflow:visible;
+        border-radius:14px;
+      }
+      tr:last-child{ border-bottom:none; }
+      td{
+        border-bottom:none;
+        padding:8px 0;
+        text-align:right;
+      }
+      td[data-label]::before{
+        content: attr(data-label);
+        display:block;
+        font-weight:bold;
+        color:#334155;
+        margin-bottom:6px;
+        font-size:13px;
+      }
+      .control{ min-width: 100%; }
+      .topbar{ align-items:stretch; }
+      .langbar{ justify-content:flex-start; }
+    }
   </style>
 </head>
 
 <body>
 
-<h1>ברוכים הבאים</h1>
+  <div class="topbar">
+    <div>
+      <h1 data-i18n="welcome">ברוכים הבאים</h1>
+      <div class="summary">
+        <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
+        <strong id="countAll">0</strong>
+        ·
+        <span data-i18n="summaryShown">מוצגים כעת:</span>
+        <strong id="countShown">0</strong>
+      </div>
+    </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>נושא</th>
-      <th>שם הקובץ / קישור</th>
-      <th>תיאור</th>
-    </tr>
-  </thead>
-  <tbody>
+    <div class="langbar" aria-label="Language selector">
+      <button class="langbtn active" data-lang="he">🇮🇱 <span>עברית</span></button>
+      <button class="langbtn" data-lang="en">🌍 <span>English</span></button>
+      <button class="langbtn" data-lang="ar">🇵🇸 <span>العربية</span></button>
+    </div>
+  </div>
 
-    <tr>
-      <td class="topic">🌐🔌 תקשורת ורשתות</td>
-      <td>
-        <a href="usb_network_osi_ipv6_plus_hw_usecase.html">
-          USB + רשת (OSI + IPv6)
-        </a>
-      </td>
-      <td>
-        חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6,
-        תרשים חומרה ותרחיש שימוש מעשי
-      </td>
-    </tr>
+  <div class="controls">
+    <div class="control">
+      <label for="search" data-i18n="searchLabel">חיפוש</label>
+      <input id="search" type="text" placeholder="הקלד מילה/שם קובץ/תיאור…" data-i18n-ph="searchPh">
+      <div class="muted" data-i18n="searchHint">מחפש בתוך נושא, שם קובץ ותיאור.</div>
+    </div>
 
-    <tr>
-      <td class="topic">🖐️📺 ממשק אדם–מסך</td>
-      <td>
-        <a href="fingerprint_gesture_full_v5_he.html">
-          מסכים חכמים לפי טביעת אצבע
-        </a>
-      </td>
-      <td>
-        מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות,
-        כולל אימות משתמש, אלגוריתמים ודמו מלא
-      </td>
-    </tr>
+    <div class="control">
+      <label for="category" data-i18n="filterLabel">סינון לפי קטגוריה</label>
+      <select id="category">
+        <option value="all" data-i18n="filterAll">הכל</option>
+        <option value="net" data-i18n="catNet">תקשורת ורשתות</option>
+        <option value="ui" data-i18n="catUi">ממשק אדם–מסך</option>
+        <option value="id" data-i18n="catId">זיהוי זהות</option>
+        <option value="med" data-i18n="catMed">רפואה חכמה</option>
+        <option value="elec" data-i18n="catElec">חשמל וסימולציות</option>
+        <option value="thermo" data-i18n="catThermo">תרמודינמיקה</option>
+        <option value="audio" data-i18n="catAudio">אנרגיה וקול</option>
+        <option value="floor" data-i18n="catFloor">אנרגיה מהרצפה</option>
+        <option value="water" data-i18n="catWater">תנועה על מים</option>
+        <option value="transport" data-i18n="catTransport">תחבורה</option>
+        <option value="hybrid" data-i18n="catHybrid">הנעה היברידית</option>
+      </select>
 
-    <tr>
-      <td class="topic">📱🌍 זיהוי זהות רב־לשוני</td>
-      <td>
-        <a href="bivdn_multilang_full_mobile.html">
-          BIVDN – זיהוי זהות נייד
-        </a>
-      </td>
-      <td>
-        מערכת זיהוי דיגיטלית רב־לשונית למובייל:
-        אימות זהות, ממשק רספונסיבי,
-        תמיכה בשפות מרובות והתאמה למסכים קטנים
-      </td>
-    </tr>
+      <div class="actions">
+        <button class="smallbtn" id="resetBtn" data-i18n="resetBtn">איפוס</button>
+        <button class="smallbtn" id="openAllBtn" data-i18n="openAllBtn">פתח את כל הקישורים</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- 🧬🧲 הקובץ החדש -->
-    <tr>
-      <td class="topic">🧬🧲 רפואה חכמה</td>
-      <td>
-        <a href="bio_magnet_therapy.html">
-          מגנט ביולוגי להולכת תרופות
-        </a>
-      </td>
-      <td>
-        מודל מחקרי מתקדם להחלפת אינפוזיה:
-        טלאי חכם המבוסס על DNA, חתימה חשמלית
-        וניווט טיפולי ("GPS ביולוגי") בגוף האדם
-      </td>
-    </tr>
+  <div class="empty" id="emptyBox" data-i18n="empty">
+    לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה אחרת.
+  </div>
 
-    <tr>
-      <td class="topic">⚡ חשמל וסימולציות</td>
-      <td>
-        <a href="electricity_models_plus_simulations_bilingual_toggle.html">
-          מודל חשמל + סימולציות
-        </a>
-      </td>
-      <td>מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
-    </tr>
+  <table id="indexTable">
+    <thead>
+      <tr>
+        <th data-i18n="thTopic">נושא</th>
+        <th data-i18n="thLink">שם הקובץ / קישור</th>
+        <th data-i18n="thDesc">תיאור</th>
+      </tr>
+    </thead>
+    <tbody>
 
-    <tr>
-      <td class="topic">🔥 תרמודינמיקה</td>
-      <td>
-        <a href="thermosiphon_flow_calculator_he.html">
-          תרמוסיפון
-        </a>
-      </td>
-      <td>מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
-    </tr>
+      <tr class="row" data-cat="net">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-net" data-i18n="badgeNet">🌐🔌 תקשורת ורשתות</span>
+        </td>
+        <td data-label="קישור">
+          <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
+          <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descUsb">
+          חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי
+        </td>
+      </tr>
 
-    <tr>
-      <td class="topic">🎧 אנרגיה וקול</td>
-      <td>
-        <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html">
-          אוזניות נטענות מעצמן
-        </a>
-      </td>
-      <td>טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
-    </tr>
+      <tr class="row" data-cat="ui">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-ui" data-i18n="badgeUi">🖐️📺 ממשק אדם–מסך</span>
+        </td>
+        <td data-label="קישור">
+          <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
+          <div class="muted">fingerprint_gesture_full_v5_he.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descFp">
+          מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא
+        </td>
+      </tr>
 
-    <tr>
-      <td class="topic">🧱⚡ אנרגיה מהרצפה</td>
-      <td>
-        <a href="smart_floor_pressure_to_energy_model_he.html">
-          מודל רצפה חכמה
-        </a>
-      </td>
-      <td>הפקת אנרגיה מלחץ ומיפוי עומסים</td>
-    </tr>
+      <tr class="row" data-cat="id">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-id" data-i18n="badgeId">📱🌍 זיהוי זהות רב־לשוני</span>
+        </td>
+        <td data-label="קישור">
+          <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
+          <div class="muted">bivdn_multilang_full_mobile.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descBivdn">
+          מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים
+        </td>
+      </tr>
 
-    <tr>
-      <td class="topic">🌊👟 תנועה על מים</td>
-      <td>
-        <a href="water_walking_shoes_sonar_pump.html">
-          נעליים להליכה על מים
-        </a>
-      </td>
-      <td>סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
-    </tr>
+      <!-- ✅ הוספה: bio_magnet_therapy.html -->
+      <tr class="row" data-cat="med">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
+        </td>
+        <td data-label="קישור">
+          <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
+          <div class="muted">bio_magnet_therapy.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descBio">
+          מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
+        </td>
+      </tr>
 
-    <tr>
-      <td class="topic">🚆💧 תנועה ותחבורה</td>
-      <td>
-        <a href="water_gas_train_blue.html">
-          רכבת מים–גז (Blue)
-        </a>
-      </td>
-      <td>תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
-    </tr>
+      <tr class="row" data-cat="elec">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
+        </td>
+        <td data-label="קישור">
+          <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
+          <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
+      </tr>
 
-    <tr>
-      <td class="topic">🌊🌬️ הנעה היברידית</td>
-      <td>
-        <a href="water_air_shoes_trilingual_flow.html">
-          נעליים מים–אוויר (תלת־לשוני)
-        </a>
-      </td>
-      <td>הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
-    </tr>
+      <tr class="row" data-cat="thermo">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
+        </td>
+        <td data-label="קישור">
+          <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
+          <div class="muted">thermosiphon_flow_calculator_he.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
+      </tr>
 
-  </tbody>
-</table>
+      <tr class="row" data-cat="audio">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
+        </td>
+        <td data-label="קישור">
+          <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
+          <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
+      </tr>
 
-<footer>
-  © כל הזכויות שמורות – קלנסווה<br>
-  אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
-</footer>
+      <tr class="row" data-cat="floor">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
+        </td>
+        <td data-label="קישור">
+          <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
+          <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
+      </tr>
 
-<script>
-  /* ⛔ חסימת הדפסה */
-  window.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
-      e.preventDefault();
-      alert('הדפסה חסומה – כל הזכויות שמורות');
+      <tr class="row" data-cat="water">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
+        </td>
+        <td data-label="קישור">
+          <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
+          <div class="muted">water_walking_shoes_sonar_pump.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
+      </tr>
+
+      <tr class="row" data-cat="transport">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
+        </td>
+        <td data-label="קישור">
+          <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
+          <div class="muted">water_gas_train_blue.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
+      </tr>
+
+      <tr class="row" data-cat="hybrid">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
+        </td>
+        <td data-label="קישור">
+          <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
+          <div class="muted">water_air_shoes_trilingual_flow.html</div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <footer>
+    © כל הזכויות שמורות – קלנסווה<br>
+    אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
+  </footer>
+
+  <script>
+    // ⛔ חסימת הדפסה (Ctrl/Cmd+P)
+    window.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        alert('הדפסה חסומה – כל הזכויות שמורות');
+      }
+    });
+
+    // ⛔ חסימת קליק ימני
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // ⛔ חסימת בחירת טקסט
+    document.addEventListener('selectstart', e => e.preventDefault());
+
+    // --- Search + Filter ---
+    const searchEl = document.getElementById('search');
+    const catEl = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('tr.row'));
+    const emptyBox = document.getElementById('emptyBox');
+    const countAll = document.getElementById('countAll');
+    const countShown = document.getElementById('countShown');
+
+    countAll.textContent = String(rows.length);
+
+    function norm(s){
+      return (s || '').toString().toLowerCase().trim();
     }
-  });
 
-  /* ⛔ חסימת קליק ימני */
-  document.addEventListener('contextmenu', e => e.preventDefault());
+    function apply(){
+      const q = norm(searchEl.value);
+      const c = catEl.value;
 
-  /* ⛔ חסימת בחירת טקסט */
-  document.addEventListener('selectstart', e => e.preventDefault());
-</script>
+      let shown = 0;
+      rows.forEach(r=>{
+        const rCat = r.getAttribute('data-cat');
+        const txt = norm(r.innerText);
+        const okCat = (c === 'all') || (rCat === c);
+        const okQ = (!q) || txt.includes(q);
+
+        const ok = okCat && okQ;
+        r.style.display = ok ? '' : 'none';
+        if(ok) shown++;
+      });
+
+      countShown.textContent = String(shown);
+      emptyBox.style.display = (shown === 0) ? 'block' : 'none';
+    }
+
+    searchEl.addEventListener('input', apply);
+    catEl.addEventListener('change', apply);
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      searchEl.value = '';
+      catEl.value = 'all';
+      apply();
+    });
+
+    document.getElementById('openAllBtn').addEventListener('click', ()=>{
+      const visibleLinks = rows
+        .filter(r => r.style.display !== 'none')
+        .map(r => r.querySelector('a'))
+        .filter(Boolean);
+
+      if(!visibleLinks.length){
+        alert('אין קישורים פתוחים לפי הסינון הנוכחי.');
+        return;
+      }
+      visibleLinks.forEach(a => window.open(a.getAttribute('href'), '_blank'));
+    });
+
+    // --- i18n ---
+    const dict = {
+      he:{
+        pageTitle:"דף הבית",
+        welcome:"ברוכים הבאים",
+        summaryPrefix:"סך הכל קבצים:",
+        summaryShown:"מוצגים כעת:",
+        searchLabel:"חיפוש",
+        searchPh:"הקלד מילה/שם קובץ/תיאור…",
+        searchHint:"מחפש בתוך נושא, שם קובץ ותיאור.",
+        filterLabel:"סינון לפי קטגוריה",
+        filterAll:"הכל",
+        catNet:"תקשורת ורשתות",
+        catUi:"ממשק אדם–מסך",
+        catId:"זיהוי זהות",
+        catMed:"רפואה חכמה",
+        catElec:"חשמל וסימולציות",
+        catThermo:"תרמודינמיקה",
+        catAudio:"אנרגיה וקול",
+        catFloor:"אנרגיה מהרצפה",
+        catWater:"תנועה על מים",
+        catTransport:"תחבורה",
+        catHybrid:"הנעה היברידית",
+        resetBtn:"איפוס",
+        openAllBtn:"פתח את כל הקישורים",
+        empty:"לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה אחרת.",
+        thTopic:"נושא",
+        thLink:"שם הקובץ / קישור",
+        thDesc:"תיאור",
+
+        badgeNet:"🌐🔌 תקשורת ורשתות",
+        badgeUi:"🖐️📺 ממשק אדם–מסך",
+        badgeId:"📱🌍 זיהוי זהות רב־לשוני",
+        badgeMed:"🧬🧲 רפואה חכמה",
+        badgeElec:"⚡ חשמל וסימולציות",
+        badgeThermo:"🔥 תרמודינמיקה",
+        badgeAudio:"🎧 אנרגיה וקול",
+        badgeFloor:"🧱⚡ אנרגיה מהרצפה",
+        badgeWater:"🌊👟 תנועה על מים",
+        badgeTransport:"🚆💧 תנועה ותחבורה",
+        badgeHybrid:"🌊🌬️ הנעה היברידית",
+
+        linkUsb:"USB + רשת (OSI + IPv6)",
+        descUsb:"חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי",
+
+        linkFp:"מסכים חכמים לפי טביעת אצבע",
+        descFp:"מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא",
+
+        linkBivdn:"BIVDN – זיהוי זהות נייד",
+        descBivdn:"מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים",
+
+        linkBio:"מגנט ביולוגי להולכת תרופות",
+        descBio:"מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי (\"GPS ביולוגי\") בגוף האדם",
+
+        linkElec:"מודל חשמל + סימולציות",
+        descElec:"מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות",
+
+        linkThermo:"תרמוסיפון",
+        descThermo:"מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים",
+
+        linkAudio:"אוזניות נטענות מעצמן",
+        descAudio:"טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה",
+
+        linkFloor:"מודל רצפה חכמה",
+        descFloor:"הפקת אנרגיה מלחץ ומיפוי עומסים",
+
+        linkWater:"נעליים להליכה על מים",
+        descWater:"סונאר, משאבות זעירות ושיווי־משקל דינמי",
+
+        linkTrain:"רכבת מים–גז (Blue)",
+        descTrain:"תחבורה מבוססת מים וגז עם יעילות אנרגטית",
+
+        linkHybrid:"נעליים מים–אוויר (תלת־לשוני)",
+        descHybrid:"הליכה וריחוף על מים ואוויר עם זרימה מבוקרת",
+      },
+
+      en:{
+        pageTitle:"Home",
+        welcome:"Welcome",
+        summaryPrefix:"Total files:",
+        summaryShown:"Shown now:",
+        searchLabel:"Search",
+        searchPh:"Type a keyword / filename / description…",
+        searchHint:"Searches topic, filename and description.",
+        filterLabel:"Filter by category",
+        filterAll:"All",
+        catNet:"Networking & Communications",
+        catUi:"Human–Screen Interface",
+        catId:"Identity",
+        catMed:"Smart Medicine",
+        catElec:"Electricity & Simulations",
+        catThermo:"Thermodynamics",
+        catAudio:"Sound & Energy",
+        catFloor:"Energy from Floors",
+        catWater:"Water Mobility",
+        catTransport:"Transport",
+        catHybrid:"Hybrid Propulsion",
+        resetBtn:"Reset",
+        openAllBtn:"Open all links",
+        empty:"No results found. Try changing the search or category.",
+        thTopic:"Topic",
+        thLink:"File / Link",
+        thDesc:"Description",
+
+        badgeNet:"🌐🔌 Networking & Communications",
+        badgeUi:"🖐️📺 Human–Screen Interface",
+        badgeId:"📱🌍 Multilingual Identity",
+        badgeMed:"🧬🧲 Smart Medicine",
+        badgeElec:"⚡ Electricity & Simulations",
+        badgeThermo:"🔥 Thermodynamics",
+        badgeAudio:"🎧 Sound & Energy",
+        badgeFloor:"🧱⚡ Energy from Floors",
+        badgeWater:"🌊👟 Water Mobility",
+        badgeTransport:"🚆💧 Transport",
+        badgeHybrid:"🌊🌬️ Hybrid Propulsion",
+
+        linkUsb:"USB + Network (OSI + IPv6)",
+        descUsb:"USB as a full network stack (OSI layers), including IPv4/IPv6, hardware diagram and a practical use-case.",
+
+        linkFp:"Fingerprint-Gesture Smart Screens",
+        descFp:"Interactive screen system driven by fingerprint + gestures, including authentication, algorithms and a full demo.",
+
+        linkBivdn:"BIVDN – Mobile Identity",
+        descBivdn:"Multilingual digital identity for mobile: verification, responsive UI, multi-language support, small-screen optimized.",
+
+        linkBio:"Bio-Magnet Drug Delivery",
+        descBio:"Research concept to reduce IV infusion: smart patch based on DNA, electrical signature and therapeutic navigation (\"biological GPS\").",
+
+        linkElec:"Electricity Models + Simulations",
+        descElec:"Physical models, equations and interactive simulations.",
+
+        linkThermo:"Thermosiphon",
+        descThermo:"Thermosiphon flow calculator based on physical parameters.",
+
+        linkAudio:"Self-Charging Headphones",
+        descAudio:"Self charging from sound energy – theoretical model and simulation.",
+
+        linkFloor:"Smart Floor Model",
+        descFloor:"Energy harvesting from pressure and load mapping.",
+
+        linkWater:"Water-Walking Shoes",
+        descWater:"Sonar, micro-pumps and dynamic balance.",
+
+        linkTrain:"Water–Gas Train (Blue)",
+        descTrain:"Transport concept based on water and gas with energy efficiency.",
+
+        linkHybrid:"Water–Air Shoes (Trilingual)",
+        descHybrid:"Walking/hovering on water and air with controlled flow.",
+      },
+
+      ar:{
+        pageTitle:"الصفحة الرئيسية",
+        welcome:"مرحباً",
+        summaryPrefix:"إجمالي الملفات:",
+        summaryShown:"المعروض الآن:",
+        searchLabel:"بحث",
+        searchPh:"اكتب كلمة / اسم ملف / وصف…",
+        searchHint:"يبحث داخل العنوان واسم الملف والوصف.",
+        filterLabel:"تصفية حسب الفئة",
+        filterAll:"الكل",
+        catNet:"الشبكات والاتصالات",
+        catUi:"واجهة الإنسان–الشاشة",
+        catId:"الهوية",
+        catMed:"طب ذكي",
+        catElec:"الكهرباء والمحاكاة",
+        catThermo:"الديناميكا الحرارية",
+        catAudio:"الصوت والطاقة",
+        catFloor:"طاقة من الأرضيات",
+        catWater:"حركة على الماء",
+        catTransport:"النقل",
+        catHybrid:"دفع هجين",
+        resetBtn:"إعادة ضبط",
+        openAllBtn:"افتح كل الروابط",
+        empty:"لا توجد نتائج. جرّب تغيير البحث أو الفئة.",
+        thTopic:"الموضوع",
+        thLink:"الملف / الرابط",
+        thDesc:"الوصف",
+
+        badgeNet:"🌐🔌 الشبكات والاتصالات",
+        badgeUi:"🖐️📺 واجهة الإنسان–الشاشة",
+        badgeId:"📱🌍 هوية متعددة اللغات",
+        badgeMed:"🧬🧲 طب ذكي",
+        badgeElec:"⚡ الكهرباء والمحاكاة",
+        badgeThermo:"🔥 الديناميكا الحرارية",
+        badgeAudio:"🎧 الصوت والطاقة",
+        badgeFloor:"🧱⚡ طاقة من الأرضيات",
+        badgeWater:"🌊👟 حركة على الماء",
+        badgeTransport:"🚆💧 النقل",
+        badgeHybrid:"🌊🌬️ دفع هجين",
+
+        linkUsb:"USB + شبكة (OSI + IPv6)",
+        descUsb:"USB كنظام شبكة كامل (طبقات OSI) مع IPv4/IPv6 ومخطط عتاد وسيناريو عملي.",
+
+        linkFp:"شاشات ذكية ببصمة وإيماءات",
+        descFp:"نظام شاشات تفاعلي يعتمد على البصمة والإيماءات مع التحقق والخوارزميات وعرض كامل.",
+
+        linkBivdn:"BIVDN – هوية محمولة",
+        descBivdn:"هوية رقمية متعددة اللغات للموبايل: تحقق، واجهة متجاوبة، دعم لغات متعددة، مناسبة للشاشات الصغيرة.",
+
+        linkBio:"مغناطيس حيوي لإيصال الدواء",
+        descBio:"فكرة بحثية لتقليل التسريب الوريدي: رقعة ذكية تعتمد على DNA وتوقيع كهربائي وتوجيه علاجي (\"GPS\" حيوي).",
+
+        linkElec:"نماذج كهرباء + محاكاة",
+        descElec:"نماذج فيزيائية ومعادلات ومحاكاة تفاعلية.",
+
+        linkThermo:"الثرموسيفون",
+        descThermo:"حاسبة تدفق ثرموسيفون وفق المعلمات الفيزيائية.",
+
+        linkAudio:"سماعات تشحن نفسها",
+        descAudio:"شحن ذاتي من طاقة الصوت – نموذج نظري ومحاكاة.",
+
+        linkFloor:"نموذج أرضية ذكية",
+        descFloor:"توليد طاقة من الضغط ورسم خرائط الأحمال.",
+
+        linkWater:"أحذية للمشي على الماء",
+        descWater:"سونار ومضخات دقيقة وتوازن ديناميكي.",
+
+        linkTrain:"قطار ماء–غاز (Blue)",
+        descTrain:"مفهوم نقل يعتمد الماء والغاز بكفاءة طاقية.",
+
+        linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
+        descHybrid:"المشي/التحليق على الماء والهواء بتدفق مُتحكم به.",
+      }
+    };
+
+    function setLang(lang){
+      const L = dict[lang] ? lang : "he";
+      const root = document.documentElement;
+
+      if(L === "en"){ root.lang = "en"; root.dir = "ltr"; }
+      else if(L === "ar"){ root.lang = "ar"; root.dir = "rtl"; }
+      else { root.lang = "he"; root.dir = "rtl"; }
+
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        if(dict[L][key] !== undefined){
+          el.textContent = dict[L][key];
+        }
+      });
+
+      // placeholders
+      document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+        const key = el.getAttribute("data-i18n-ph");
+        if(dict[L][key] !== undefined){
+          el.setAttribute("placeholder", dict[L][key]);
+        }
+      });
+
+      // update options text (select options rely on data-i18n)
+      document.querySelectorAll("option[data-i18n]").forEach(opt=>{
+        const key = opt.getAttribute("data-i18n");
+        if(dict[L][key] !== undefined){
+          opt.textContent = dict[L][key];
+        }
+      });
+
+      // update link/desc i18n that are inside attributes
+      // (already handled by textContent for those with data-i18n)
+
+      // toggle active
+      document.querySelectorAll(".langbtn").forEach(btn=>{
+        btn.classList.toggle("active", btn.getAttribute("data-lang") === L);
+      });
+
+      // re-apply filter counts after direction change
+      apply();
+    }
+
+    document.querySelectorAll(".langbtn").forEach(btn=>{
+      btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
+    });
+
+    // initial apply
+    apply();
+  </script>
 
 </body>
 </html>
