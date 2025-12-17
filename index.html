@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>דף הבית</title>
+
   <style>
     body{
       font-family: Arial, sans-serif;
       background:#f6f7fb;
       margin:30px;
+      user-select: none;
     }
+
     h1{
       margin-bottom:20px;
     }
+
     table{
       width:100%;
       border-collapse:collapse;
@@ -20,33 +24,72 @@
       overflow:hidden;
       box-shadow:0 6px 18px rgba(0,0,0,0.08);
     }
+
     th, td{
       padding:14px;
       border-bottom:1px solid #e5e7eb;
       text-align:right;
     }
+
     th{
       background:#111827;
       color:white;
       font-size:16px;
     }
+
     tr:last-child td{
       border-bottom:none;
     }
+
     a{
       color:#2563eb;
       text-decoration:none;
       font-weight:bold;
     }
+
     a:hover{
       text-decoration:underline;
     }
+
     .topic{
       font-weight:bold;
       color:#374151;
     }
+
+    /* 🔒 חסימת הדפסה */
+    @media print {
+      body {
+        display: none !important;
+      }
+    }
+
+    /* 💧 סימן מים */
+    body::before {
+      content: "© ראפת נאטור – קלנסווה";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 48px;
+      color: rgba(0,0,0,0.08);
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    footer{
+      margin-top:40px;
+      padding:15px;
+      background:#111827;
+      color:#f9fafb;
+      text-align:center;
+      font-size:14px;
+      border-radius:8px;
+      line-height:1.6;
+    }
   </style>
 </head>
+
 <body>
 
 <h1>ברוכים הבאים</h1>
@@ -68,9 +111,7 @@
           מודל חשמל + סימולציות
         </a>
       </td>
-      <td>
-        מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות
-      </td>
+      <td>מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
     </tr>
 
     <tr>
@@ -80,9 +121,7 @@
           תרמוסיפון
         </a>
       </td>
-      <td>
-        מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים
-      </td>
+      <td>מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
     </tr>
 
     <tr>
@@ -92,33 +131,27 @@
           אוזניות נטענות מעצמן
         </a>
       </td>
-      <td>
-        מודל תאורטי + דיאגרמות KaTeX + סימולציה לטעינה עצמית מאנרגיית קול
-      </td>
+      <td>טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
     </tr>
 
     <tr>
       <td class="topic">🧱⚡ אנרגיה מהרצפה</td>
       <td>
         <a href="smart_floor_pressure_to_energy_model_he.html">
-          מודל רצפה חכמה – הפקת אנרגיה מלחץ
+          מודל רצפה חכמה
         </a>
       </td>
-      <td>
-        רצפה חכמה עם מיפוי עומסים, אינטגרציה מרחבית ומסלולית להפקת אנרגיה
-      </td>
+      <td>הפקת אנרגיה מלחץ ומיפוי עומסים</td>
     </tr>
 
     <tr>
       <td class="topic">🌊👟 תנועה על מים</td>
       <td>
         <a href="water_walking_shoes_sonar_pump.html">
-          נעליים להליכה על מים (סונאר + משאבה)
+          נעליים להליכה על מים
         </a>
       </td>
-      <td>
-        מודל נעליים חכמות להליכה על מים באמצעות סונאר, משאבות זעירות ושמירת שיווי־משקל
-      </td>
+      <td>סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
     </tr>
 
     <tr>
@@ -128,12 +161,9 @@
           רכבת מים–גז (Blue)
         </a>
       </td>
-      <td>
-        קונספט רכבת מבוססת מים וגז עם זרימה מבוקרת, יעילות אנרגטית ומודל פיזיקלי
-      </td>
+      <td>תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
     </tr>
 
-    <!-- 🆕 נעליים מים–אוויר -->
     <tr>
       <td class="topic">🌊🌬️ הנעה היברידית</td>
       <td>
@@ -141,13 +171,32 @@
           נעליים מים–אוויר (תלת־לשוני)
         </a>
       </td>
-      <td>
-        מודל נעליים להליכה/ריחוף על מים ואוויר עם זרימה מבוקרת ותמיכה בשלוש שפות
-      </td>
+      <td>הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
     </tr>
 
   </tbody>
 </table>
+
+<footer>
+  © כל הזכויות שמורות לראפת נאטור – קלנסווה<br>
+  אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
+</footer>
+
+<script>
+  /* ⛔ חסימת הדפסה */
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+      e.preventDefault();
+      alert('הדפסה חסומה – כל הזכויות שמורות');
+    }
+  });
+
+  /* ⛔ חסימת קליק ימני */
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  /* ⛔ חסימת בחירת טקסט */
+  document.addEventListener('selectstart', e => e.preventDefault());
+</script>
 
 </body>
 </html>
