@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>BIVDN – מודל רב־לשוני לאפיון וירוסים</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --bg-main: #0b1520;
+      --bg-card: #101b29;
+      --bg-card-soft: #141f30;
+      --accent: #00c9a7;
+      --accent-soft: rgba(0, 201, 167, 0.24);
+      --text-main: #f5f7fb;
+      --text-muted: #a5b3c8;
+      --danger: #ff4b5c;
+      --warning: #ffb347;
+      --info: #4ea1ff;
+      --success: #40d697;
+      --border-soft: #22324a;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1b3152 0, #050811 52%, #020309 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 16px;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto 60px;
+    }
+
+    .glass {
+      background: linear-gradient(135deg, rgba(16, 27, 41, 0.95), rgba(9, 15, 25, 0.98));
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 18px 18px 26px;
+      backdrop-filter: blur(14px);
+    }
+
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 201, 167, 0.12);
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 201, 167, 0.9);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 3px;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .lang-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-start;
+      margin-top: 6px;
+    }
+
+    .lang-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #041012;
+      border-color: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 12px rgba(0, 201, 167, 0.8);
+    }
+
+    .lang-btn span {
+      opacity: 0.8;
+      font-size: 0.78rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin: 18px 0 8px;
+      letter-spacing: 0.02em;
+    }
+
+    h3 {
+      font-size: 0.98rem;
+      margin: 14px 0 6px;
+    }
+
+    p {
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr);
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: #101b29;
+      border-radius: 18px;
+      border: 1px solid #22324a;
+      padding: 12px 12px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-soft {
+      background: #141f30;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -20%;
+      top: -40%;
+      width: 70%;
+      height: 75%;
+      background: radial-gradient(circle at top, rgba(0, 201, 167, 0.18), transparent 74%);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    ul {
+      padding-inline-start: 18px;
+      margin-top: 2px;
+    }
+
+    li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    /* Flowchart */
+    .flowchart {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      justify-content: space-between;
+    }
+
+    .flow-step {
+      flex: 1 1 180px;
+      min-width: 160px;
+      background: linear-gradient(145deg, #162334, #0c1622);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px 10px 12px;
+      position: relative;
+      font-size: 0.84rem;
+    }
+
+    .flow-step-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+      font-size: 0.88rem;
+    }
+
+    .flow-step small {
+      color: var(--text-muted);
+    }
+
+    .flow-step::after {
+      content: "➜";
+      position: absolute;
+      inset-inline-start: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    .flow-step:first-child::after {
+      content: "";
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .glass {
+        padding: 14px;
+        border-radius: 22px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .flow-step::after {
+        display: none;
+      }
+    }
+
+    /* Color map & animation */
+    .color-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .color-level {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+    }
+
+    .color-swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.35);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+
+    .swatch-low    { background: linear-gradient(135deg, #1ea35a, #40d697); }
+    .swatch-mid    { background: linear-gradient(135deg, #ffc857, #ff9f1c); }
+    .swatch-high   { background: linear-gradient(135deg, #ff4b5c, #9b0024); }
+    .swatch-unknown{ background: radial-gradient(circle at top, #8892b0, #4b5569); }
+
+    .animated-bar-wrapper {
+      margin-top: 12px;
+    }
+
+    .animated-bar-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .animated-bar {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #1ea35a,
+        #40d697,
+        #ffc857,
+        #ff9f1c,
+        #ff4b5c,
+        #9b0024
+      );
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .animated-bar::after {
+      content: "";
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 30%;
+      height: 180%;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.35),
+        rgba(255, 255, 255, 0.02)
+      );
+      filter: blur(4px);
+      animation: sweep 4.5s infinite ease-in-out;
+    }
+
+    @keyframes sweep {
+      0%   { transform: translateX(0); opacity: 0; }
+      12%  { opacity: 1; }
+      50%  { transform: translateX(260%); opacity: 0.9; }
+      100% { transform: translateX(280%); opacity: 0; }
+    }
+
+    /* Virus table + chips */
+    .virus-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .virus-table thead {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .virus-table th,
+    .virus-table td {
+      padding: 6px 6px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .virus-table th {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .virus-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.32);
+      font-size: 0.78rem;
+    }
+
+    .chip-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    .dot-low      { background: #40d697; }
+    .dot-mid      { background: #ffb347; }
+    .dot-high     { background: #ff4b5c; }
+    .dot-unknown  { background: #8892b0; }
+
+    .bivdn-code {
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+    }
+
+    .pill-air       { background: rgba(66, 153, 255, 0.16); color: #9ecbff; }
+    .pill-contact   { background: rgba(255, 193, 7, 0.14); color: #ffd05b; }
+    .pill-blood     { background: rgba(233, 30, 99, 0.2); color: #ff7dab; }
+    .pill-multi     { background: rgba(156, 39, 176, 0.18); color: #e3b0ff; }
+
+    /* Example card with pulse */
+    .example-card {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .example-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .example-pane {
+      background: radial-gradient(circle at top right, rgba(0, 201, 167, 0.22), #0d1624);
+      border-radius: 12px;
+      padding: 8px 10px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .example-pane::before {
+      content: "";
+      position: absolute;
+      inset-inline-end: -16%;
+      inset-block-start: -40%;
+      width: 52%;
+      height: 72%;
+      background: radial-gradient(circle at top, rgba(64, 214, 151, 0.18), transparent 70%);
+      opacity: 0.7;
+    }
+
+    .example-pane > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .example-tag {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .pulse {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(255, 75, 92, 0.12);
+      color: #ff9da9;
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #ff4b5c;
+      box-shadow: 0 0 14px rgba(255, 75, 92, 0.9);
+      animation: pulse 1.9s infinite;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255, 75, 92, 0.7); }
+      60%  { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 75, 92, 0); }
+      100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255, 75, 92, 0); }
+    }
+
+    /* Organ depth map */
+    .organ-map-wrapper {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .organ-map-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .organ-map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .organ-cell {
+      background: radial-gradient(circle at top, rgba(17, 24, 39, 0.9), #050814);
+      border-radius: 10px;
+      padding: 7px 8px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 0.78rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .organ-name {
+      font-weight: 600;
+      margin-bottom: 1px;
+      font-size: 0.8rem;
+    }
+
+    .organ-depth-bar {
+      margin-top: 3px;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.9);
+      position: relative;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .organ-depth-fill {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+    }
+
+    .depth-low {
+      width: 30%;
+      background: linear-gradient(90deg, #1ea35a, #40d697);
+    }
+
+    .depth-mid {
+      width: 60%;
+      background: linear-gradient(90deg, #ffc857, #ff9f1c);
+    }
+
+    .depth-high {
+      width: 90%;
+      background: linear-gradient(90deg, #ff4b5c, #9b0024);
+    }
+
+    .depth-note {
+      margin-top: 2px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Treatment algebra (Medical Karnaugh-style) */
+    .treatment-grid {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .treatment-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .frame-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 4px;
+    }
+
+    .frame-cell {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #050814);
+      border-radius: 10px;
+      padding: 7px 8px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 0.78rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .frame-title {
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-bottom: 2px;
+    }
+
+    .frame-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      margin-top: 3px;
+    }
+
+    .frame-tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #40d697;
+    }
+
+    .frame-tag-dot-crit {
+      background: #ff4b5c;
+    }
+
+    .mini-kmap {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      font-size: 0.78rem;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .mini-kmap th,
+    .mini-kmap td {
+      padding: 4px 4px;
+      text-align: center;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      border-inline-end: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .mini-kmap th {
+      background: rgba(15, 23, 42, 0.9);
+      font-weight: 600;
+    }
+
+    .mini-kmap td:last-child,
+    .mini-kmap th:last-child {
+      border-inline-end: none;
+    }
+
+    .kmap-highlight {
+      background: radial-gradient(circle at center, rgba(0, 201, 167, 0.18), transparent 70%);
+    }
+
+    .treatment-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      background: rgba(0, 201, 167, 0.12);
+      color: #9ef7de;
+      border: 1px solid rgba(0, 201, 167, 0.4);
+    }
+
+    /* Language blocks */
+    .lang-block {
+      display: none;
+    }
+
+    .lang-block.active {
+      display: block;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      padding-top: 8px;
+    }
+  </style>
+
+  <script>
+    function switchLang(lang) {
+      var blocks = document.getElementsByClassName('lang-block');
+      for (var i = 0; i < blocks.length; i++) {
+        blocks[i].classList.remove('active');
+      }
+      var btns = document.getElementsByClassName('lang-btn');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].classList.remove('active');
+      }
+      var activeBlock = document.getElementById('lang-' + lang);
+      if (activeBlock) {
+        activeBlock.classList.add('active');
+      }
+      var activeBtn = document.getElementById('btn-' + lang);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // כיוון הדף לפי שפה
+      var html = document.documentElement;
+      if (lang === 'he' || lang === 'ar') {
+        html.setAttribute('dir', 'rtl');
+      } else {
+        html.setAttribute('dir', 'ltr');
+      }
+      if (lang === 'he') {
+        html.setAttribute('lang', 'he');
+      } else if (lang === 'ar') {
+        html.setAttribute('lang', 'ar');
+      } else if (lang === 'fr') {
+        html.setAttribute('lang', 'fr');
+      } else if (lang === 'es') {
+        html.setAttribute('lang', 'es');
+      } else {
+        html.setAttribute('lang', 'en');
+      }
+    }
+  </script>
+</head>
+<body onload="switchLang('he')">
+  <main class="page">
+    <section class="glass">
+      <header>
+        <div class="header-top">
+          <div>
+            <div class="badge">
+              <span class="badge-dot"></span>
+              BIVDN – מודל דיגיטלי לאפיון וירוסים
+            </div>
+            <h1>BIVDN – Bio‑Viral Digital Notation</h1>
+            <p class="subtitle">
+              הצעה למסגרת דיגיטלית רב־לשונית: קידוד ויזואלי–מספרי של תכונות ויראליות, מפת איברים, ו“אלגברה רפואית”
+              לצמצום מצבים טיפוליים – לטובת ניהול קליני חכם בבית החולים.
+            </p>
+          </div>
+        </div>
+        <div class="lang-switcher">
+          <button id="btn-he" class="lang-btn active" onclick="switchLang('he')">עברית <span>HE</span></button>
+          <button id="btn-en" class="lang-btn" onclick="switchLang('en')">English <span>EN</span></button>
+          <button id="btn-ar" class="lang-btn" onclick="switchLang('ar')">العربية <span>AR</span></button>
+          <button id="btn-fr" class="lang-btn" onclick="switchLang('fr')">Français <span>FR</span></button>
+          <button id="btn-es" class="lang-btn" onclick="switchLang('es')">Español <span>ES</span></button>
+          <button id="btn-egy" class="lang-btn" onclick="switchLang('egy')">𓂀 מצרית עתיקה</button>
+        </div>
+      </header>
+
+      <!-- Hebrew full content -->
+      <div id="lang-he" class="lang-block active">
+        <section>
+          <h2>1. תקציר מנהלים ומטרת ההצעה</h2>
+          <div class="grid">
+            <div class="card">
+              <p>
+                BIVDN (Bio-Viral Digital Notation) היא הצעה למסגרת קידוד דיגיטלית אוניברסלית,
+                המייצגת וירוסים ותכונות אפידמיולוגיות בצורת קוד, צבע ועוצמה. במקום להתייחס לווירוס
+                כאל "ישות לא ניתנת למדידה", הופכת המערכת כל וירוס לוקטור מידע מובנה – הניתן להצגה
+                במערכות מידע, לניתוח ע"י AI ולהצלבה עם נתוני מחלקות, גיל, מין, ועוד.
+              </p>
+              <p>
+                המערכת אינה מפתחת וירוסים, אינה מבצעת מניפולציה ביולוגית, אלא מספקת שכבת
+                <strong>שפה ותצוגה</strong> בלבד – על גבי נתונים קליניים קיימים.
+              </p>
+            </div>
+            <div class="card card-soft">
+              <h3>תועלות לבית החולים</h3>
+              <ul>
+                <li><strong>שכבת סיווג אחידה</strong> לכל הווירוסים המדווחים במערכות שונות.</li>
+                <li><strong>דשבורד צבעוני אינטואיטיבי</strong> למצב ויראלי לפי מחלקה / אוכלוסייה.</li>
+                <li><strong>תעדוף משאבים</strong> לפי חומרת עומס ויראלי וצפיפות הדבקה.</li>
+                <li><strong>זיהוי מגמות</strong> מוקדם (התפרצויות, התגברות עונתית, שינוי דפוסי גיל).</li>
+                <li><strong>בסיס לעבודה עם AI</strong> – מודלים לומדים על קודי BIVDN במקום טקסט חופשי.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>2. תרשים זרימה – מאיסוף נתונים לקוד BIVDN ולתועלות קליניות</h2>
+          <div class="card">
+            <div class="flowchart">
+              <div class="flow-step">
+                <div class="flow-step-title">איסוף נתונים קיימים</div>
+                <small>מערכות LIS / EMR, נתוני מעבדה, אבחנות ICD, גיל, מין, מצב חיסוני.</small>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-title">מנוע מיפוי BIVDN</div>
+                <small>תרגום תכונות הווירוס והמטופל לקוד דיגיטלי + צבע + עוצמה.</small>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-title">מפה ויזואלית</div>
+                <small>הצגת עומס ויראלי לפי מחלקות, אוכלוסיות וגילאים, בצבעים אינטואיטיביים.</small>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-title">החלטות ניהוליות</div>
+                <small>תעדוף מיטות, בידוד, כוח אדם, ניטור התפרצויות, ודיווח פנימי.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>3. מפת צבעים – Viral Color Map</h2>
+          <div class="card card-soft">
+            <p>
+              לכל וירוס משויך פרופיל צבע המשקף חומרה, מדבקות ויציבות סביבתית. העין הקלינית יכולה
+              לזהות במהירות אזורים "בוערים" מול אזורים "שקטים".
+            </p>
+
+            <div class="color-map">
+              <div class="color-level">
+                <div class="color-swatch swatch-low"></div>
+                <div>
+                  <strong>רמה נמוכה – LOW</strong><br>
+                  <span class="text-muted">
+                    וירוסים קלים, תסמינים קלים, סיכון נמוך לאשפוז; מעקב שגרתי.
+                  </span>
+                </div>
+              </div>
+              <div class="color-level">
+                <div class="color-swatch swatch-mid"></div>
+                <div>
+                  <strong>רמה בינונית – MEDIUM</strong><br>
+                  <span class="text-muted">
+                    עומס ויראלי משמעותי, מחלקות ילדים/סיכון נדרשות לניטור הדוק.
+                  </span>
+                </div>
+              </div>
+              <div class="color-level">
+                <div class="color-swatch swatch-high"></div>
+                <div>
+                  <strong>רמה גבוהה – HIGH / CRITICAL</strong><br>
+                  <span class="text-muted">
+                    וירוסים אלימים, סיכון לאשפוז נרחב; הפעלת פרוטוקול חירום פנימי.
+                  </span>
+                </div>
+              </div>
+              <div class="color-level">
+                <div class="color-swatch swatch-unknown"></div>
+                <div>
+                  <strong>רמה לא ידועה – UNKNOWN</strong><br>
+                  <span class="text-muted">
+                    נתונים חלקיים; נדרש איסוף מידע נוסף או תיקוף מעבדתי.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="animated-bar-wrapper">
+              <div class="animated-bar-label">
+                הנפשה: מעבר דינמי בין רמות חומרה לאורך ציר הזמן / מחלקות (ייצוג רעיוני).
+              </div>
+              <div class="animated-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>4. דוגמה: מיפוי וירוסים קיימים לשפת BIVDN</h2>
+          <div class="card">
+            <p>
+              להלן דוגמה רעיונית (לא קלינית מחייבת) למיפוי מספר וירוסים ידועים לקוד BIVDN.
+              הקוד משלב:
+            </p>
+            <ul>
+              <li><strong>קבוצת וירוס</strong> (אות לטינית – A, B, C… לשימוש פנימי).</li>
+              <li><strong>צורת הדבקה</strong> (ספרה: 0–אוויר, 1–מגע, 2–דם, 3–מרובה).</li>
+              <li><strong>מהירות הדבקה</strong> (00–99).</li>
+              <li><strong>חומרת מחלה</strong> (000–999 – ממפה לצבע).</li>
+              <li><strong>משך מחזור ויראלי</strong> (ימים משוערים – 00–99).</li>
+            </ul>
+
+            <table class="virus-table">
+              <thead>
+                <tr>
+                  <th>וירוס (לדוגמה)</th>
+                  <th>רמת BIVDN</th>
+                  <th>צורת הדבקה</th>
+                  <th>קוד BIVDN דיגיטלי</th>
+                  <th>הערה קלינית כללית</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="virus-chip">
+                      <span class="chip-dot dot-high"></span>
+                      חצבת (Measles)
+                    </span>
+                  </td>
+                  <td>HIGH / CRITICAL</td>
+                  <td><span class="pill pill-air">אוויר</span></td>
+                  <td><span class="bivdn-code">A-0-82-840-10</span></td>
+                  <td>מדבק מאוד, סיכון לסיבוכים ודיכוי חיסוני.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="virus-chip">
+                      <span class="chip-dot dot-mid"></span>
+                      שפעת עונתית (Influenza)
+                    </span>
+                  </td>
+                  <td>MEDIUM</td>
+                  <td><span class="pill pill-air">אוויר</span></td>
+                  <td><span class="bivdn-code">B-0-65-620-07</span></td>
+                  <td>עומס עונתי; משמעותי בקשישים וחולי רקע.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="virus-chip">
+                      <span class="chip-dot dot-high"></span>
+                      SARS-CoV-2 (קורונה)</span>
+                  </td>
+                  <td>HIGH (תלוי וריאנט)</td>
+                  <td><span class="pill pill-multi">רב-גורמי</span></td>
+                  <td><span class="bivdn-code">C-3-78-780-14</span></td>
+                  <td>קשת חומרה רחבה; מתאים במיוחד למודלים דינמיים.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="virus-chip">
+                      <span class="chip-dot dot-mid"></span>
+                      RSV בילדים
+                    </span>
+                  </td>
+                  <td>MEDIUM–HIGH</td>
+                  <td><span class="pill pill-air">אוויר</span></td>
+                  <td><span class="bivdn-code">D-0-58-640-08</span></td>
+                  <td>השפעה משמעותית במחלקות ילדים ותינוקות.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="virus-chip">
+                      <span class="chip-dot dot-low"></span>
+                      וירוס מעיים קל (למשל Norovirus)</span>
+                  </td>
+                  <td>LOW–MEDIUM</td>
+                  <td><span class="pill pill-contact">מגע/זיהום צואה-פה</span></td>
+                  <td><span class="bivdn-code">E-1-46-420-04</span></td>
+                  <td>תסמונת חריפה וקצרה; עומס תפעולי במחלקות פנימיות.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>5. דוגמה תהליכית – שימוש BIVDN בהחלטות ניהול</h2>
+          <div class="example-card">
+            <div class="example-pane">
+              <div class="example-tag">דוגמה: עלייה בחצבת במחלקת ילדים</div>
+              <h3>סימון צבעוני מיידי</h3>
+              <p>
+                בעת רישום מספר גבוה מהרגיל של מקרי חצבת, מנוע BIVDN מעלה את רמת החומרה
+                למחלקת ילדים ל־<strong>HIGH</strong>. בדשבורד החזותי המחלקה נצבעת
+                בגוון אדום–כתום, בעוצמה התואמת את רמת העומס.
+              </p>
+              <div class="pulse">
+                <span class="pulse-dot"></span>
+                מחלקת ילדים – עומס ויראלי: HIGH (חצבת)
+              </div>
+            </div>
+            <div class="example-pane">
+              <div class="example-tag">תרגום לתועלת תפעולית</div>
+              <h3>צעדים אפשריים</h3>
+              <ul>
+                <li>פתיחת מיטות נוספות ותיעדוף צוות למחלקת הילדים.</li>
+                <li>הפעלה אוטומטית של פרוטוקול בידוד פנימי בהתאם לרמת BIVDN.</li>
+                <li>עדכון הנהלה קלינית בדיווח חזותי מרכזי, ללא מעבר על דוחות טקסט.</li>
+                <li>הזנת הנתונים למודלי AI לחיזוי עומס בשבועות הקרובים.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>6. מפת איברים – Viral Organ Depth Map</h2>
+          <div class="card">
+            <p>
+              בהמשך לרעיון השפה הדיגיטלית, ניתן לשלב גם “מפת איברים” המציגה באופן חזותי את
+              <strong>עומק ההשפעה הוויראלית</strong> על מערכות הגוף העיקריות. המפה אינה מחליפה
+              הדמיות או בדיקות, אלא מהווה שכבת תצוגה נוספת בתוך מערכת המידע של בית החולים.
+            </p>
+            <div class="organ-map-wrapper">
+              <div class="organ-map">
+                <div class="organ-cell">
+                  <div class="organ-name">דרכי נשימה עליונות</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-mid"></div>
+                  </div>
+                  <div class="depth-note">לדוגמה: הצטננות, חלק מזני שפעת וקורונה.</div>
+                </div>
+                <div class="organ-cell">
+                  <div class="organ-name">ריאות</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-high"></div>
+                  </div>
+                  <div class="depth-note">דוגמה לעומס גבוה: דלקת ריאות ויראלית, SARS-CoV-2, RSV.</div>
+                </div>
+                <div class="organ-cell">
+                  <div class="organ-name">מערכת העיכול</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-mid"></div>
+                  </div>
+                  <div class="depth-note">וירוסי מעיים (כגון Norovirus) – עומס בינוני, לרוב חד וחולף.</div>
+                </div>
+                <div class="organ-cell">
+                  <div class="organ-name">מערכת העצבים</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-low"></div>
+                  </div>
+                  <div class="depth-note">בדרך כלל מעורבות נמוכה; מקרים חריגים בלבד.</div>
+                </div>
+                <div class="organ-cell">
+                  <div class="organ-name">הדם ומערכת החיסון</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-high"></div>
+                  </div>
+                  <div class="depth-note">וירוסים המדכאים חיסון או גורמים לתגובה סיסטמית משמעותית.</div>
+                </div>
+                <div class="organ-cell">
+                  <div class="organ-name">עור ורקמות חיצוניות</div>
+                  <div class="organ-depth-bar">
+                    <div class="organ-depth-fill depth-mid"></div>
+                  </div>
+                  <div class="depth-note">פריחות ויראליות, מחלות ילדות, ביטוי חיצוני לזיהום פנימי.</div>
+                </div>
+              </div>
+              <div class="card card-soft">
+                <h3>שילוב במערכת BIVDN</h3>
+                <ul>
+                  <li>כל וירוס מקבל <strong>וקטור איברים</strong> (למשל: ריאות=HIGH, מעיים=LOW וכו').</li>
+                  <li>המידע מוצג בצבעים ועוצמות, בדומה למפת החומרה הגלובלית.</li>
+                  <li>הנהלת בית החולים יכולה לראות במהירות אילו מחלקות/מערכות נמצאות בעומס משמעותי.</li>
+                  <li>ניתן להצליב עם גיל, מין ומחלות רקע לצורך ניהול סיכונים מתקדם.</li>
+                </ul>
+                <p style="font-size:0.86rem; color: var(--text-muted); margin-top:6px;">
+                  המפה יכולה להופיע כלוח צד בדשבורד הראשי, או כתרשים אינטראקטיבי המאפשר לחיצה
+                  על איבר מסוים לקבלת פילוח הווירוסים הרלוונטיים אליו לפי קוד BIVDN.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>7. מודל טיפול משולב – “אלגברה רפואית” בסגנון מפת קרנו</h2>
+          <div class="card">
+            <p>
+              בדומה למפת קרנו באלגברה בוליאנית, ניתן להגדיר גם <strong>“אלגברה רפואית”</strong>
+              עבור BIVDN: חלוקה של מצבי המטופל והווירוס ל“צ’נקים” (Frames) לאורך הזמן, וצמצום
+              קומבינציות מורכבות לקבוצות טיפול פשוטות ועקביות. המטרה איננה לקבוע פרוטוקול רפואי
+              חדש, אלא לאפשר <strong>שכבת חשיבה דיגיטלית</strong> שתתמוך בהחלטות הקיימות.
+            </p>
+
+            <div class="treatment-grid">
+              <div>
+                <h3>7.1 צ’נקים בזמן – Frames של מצב ויראלי–קליני</h3>
+                <p style="font-size:0.9rem;">
+                  ניתן לחלק את מחזור המחלה לרצף “פריימים” (Frames), בדומה לוידאו. בכל פריים
+                  יש סט מצומצם של פרמטרים:
+                </p>
+                <ul>
+                  <li>V – עוצמת עומס ויראלי (Low / Medium / High).</li>
+                  <li>O – מעורבות איברים (למשל ריאות, מעיים, דם).</li>
+                  <li>H – מצב מארח (גיל, חיסון, מחלות רקע – מקודדים לטווחים).</li>
+                  <li>T – סל טיפול משולב (בידוד, תרופות קיימות, טיפול תומך, ניטור).</li>
+                </ul>
+                <div class="frame-grid">
+                  <div class="frame-cell">
+                    <div class="frame-title">Frame 1 – התחלה</div>
+                    <p>V: בינוני, O: דרכי נשימה עליונות בלבד, H: סיכון נמוך.</p>
+                    <div class="frame-tag">
+                      <span class="frame-tag-dot"></span>
+                      טיפול בסיסי + מעקב
+                    </div>
+                  </div>
+                  <div class="frame-cell">
+                    <div class="frame-title">Frame 2 – הסלמה</div>
+                    <p>V: גבוה, O: ריאות, H: סיכון בינוני–גבוה.</p>
+                    <div class="frame-tag">
+                      <span class="frame-tag-dot frame-tag-dot-crit"></span>
+                      תוספת ניטור ואשפוז
+                    </div>
+                  </div>
+                  <div class="frame-cell">
+                    <div class="frame-title">Frame 3 – התייצבות</div>
+                    <p>V: ירידה לעומס בינוני, O: ללא החמרה באיברים נוספים.</p>
+                    <div class="frame-tag">
+                      <span class="frame-tag-dot"></span>
+                      המשך טיפול תומך
+                    </div>
+                  </div>
+                  <div class="frame-cell">
+                    <div class="frame-title">Frame 4 – החלמה</div>
+                    <p>V: נמוך, O: התאוששות, H: שחרור הדרגתי.</p>
+                    <div class="frame-tag">
+                      <span class="frame-tag-dot"></span>
+                      מעבר למעקב בקהילה
+                    </div>
+                  </div>
+                </div>
+                <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">
+                  כל צ’נק מיוצג כוקטור קצר (V,O,H,T) – ובכך מאפשר ניתוח ממוחשב של מאות
+                  מצבים חוזרים, בדומה לפירוק סרט לפריימים לצורך עיבוד.
+                </p>
+              </div>
+              <div>
+                <h3>7.2 “מפת קרנו רפואית” – צמצום למצבי טיפול עיקריים</h3>
+                <p style="font-size:0.9rem;">
+                  בהשראת מפת קרנו, ניתן לארגן מצבים טיפוסיים בטבלה קטנה, ולזהות קבוצות שבהן
+                  אותו סל טיפול מתאים – למרות שהפרטים שונים מעט. כך מתקבל <strong>צמצום
+                  לסט מוגדר של “חבילות טיפול”</strong>.
+                </p>
+                <table class="mini-kmap">
+                  <thead>
+                    <tr>
+                      <th>מצב</th>
+                      <th>V (עומס)</th>
+                      <th>O (איברים)</th>
+                      <th>H (סיכון מארח)</th>
+                      <th>חבילת טיפול T</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="kmap-highlight">
+                      <td>G1</td>
+                      <td>Low / Medium</td>
+                      <td>דרכי נשימה עליונות בלבד</td>
+                      <td>סיכון נמוך</td>
+                      <td><span class="treatment-chip">T₁ – טיפול תומך + מעקב</span></td>
+                    </tr>
+                    <tr class="kmap-highlight">
+                      <td>G2</td>
+                      <td>Medium / High</td>
+                      <td>ריאות</td>
+                      <td>סיכון בינוני</td>
+                      <td><span class="treatment-chip">T₂ – ניטור מוגבר + אפשרות אשפוז</span></td>
+                    </tr>
+                    <tr>
+                      <td>G3</td>
+                      <td>High</td>
+                      <td>רב־מערכתי (ריאות + דם)</td>
+                      <td>סיכון גבוה</td>
+                      <td><span class="treatment-chip">T₃ – פרוטוקול חירום קיים</span></td>
+                    </tr>
+                    <tr>
+                      <td>G4</td>
+                      <td>ירידה מ־High ל־Medium</td>
+                      <td>שיפור באיברים</td>
+                      <td>כל סיכון</td>
+                      <td><span class="treatment-chip">T₄ – המשך טיפול + הכנה לשחרור</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">
+                  רעיונית, ניתן להגדיר “אלגברה רפואית” שבה מצבים דומים מקובצים לקבוצות G₁,G₂,…,
+                  וכל קבוצה ממופה לחבילת טיפול T₁,T₂,… בהתאם להנחיות הרפואיות הרשמית. האלגוריתם
+                  אינו מחליף את הרופא, אלא מציע <strong>שפת צמצום</strong> עבור מערכות מידע ו-AI.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="footer-note">
+          <strong>הערה:</strong> המסמך מציג מסגרת רעיונית דיגיטלית בלבד. כל הנתונים המספריים
+          והדוגמאות ב־BIVDN הם הדגמה עקרונית, ואינם מחליפים שיקול דעת רפואי, הנחיות משרד הבריאות
+          או ספרות קלינית.
+        </section>
+      </div>
+
+      <!-- English summary -->
+      <div id="lang-en" class="lang-block">
+        <section>
+          <h2>Executive Summary – English</h2>
+          <div class="card">
+            <p>
+              BIVDN (Bio‑Viral Digital Notation) is a conceptual digital framework for encoding viral
+              and host properties as color–numeric vectors. The goal is to create a common “language”
+              for dashboards, hospital information systems and AI models – without any manipulation or
+              engineering of real viruses.
+            </p>
+            <ul>
+              <li>Unified encoding of viral severity, spread and organ involvement.</li>
+              <li>Color maps for quick visual assessment of wards and age groups.</li>
+              <li>Organ depth map showing which systems (lungs, gut, blood, etc.) are under pressure.</li>
+              <li>“Medical algebra” inspired by Karnaugh maps – grouping complex clinical states into a
+                  small set of treatment bundles (T₁, T₂, …).</li>
+            </ul>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
+              This layer does not replace clinical protocols; it provides a structured way to encode,
+              visualize and analyze them.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Arabic summary -->
+      <div id="lang-ar" class="lang-block">
+        <section style="direction:rtl; text-align:right;">
+          <h2>ملخص تنفيذي – العربية</h2>
+          <div class="card">
+            <p>
+              BIVDN هي إطار رقمي مفاهيمي لتمثيل خصائص الفيروس والمضيف على شكل شيفرة رقمية‑لونية.
+              الهدف هو إنشاء “لغة” موحدة للعرض في لوحات المعلومات وأنظمة المستشفى ونماذج الذكاء
+              الاصطناعي – بدون أي تعديل حيوي أو هندسة للفيروسات الحقيقية.
+            </p>
+            <ul>
+              <li>ترميز موحد لشدة الفيروس، قابلية العدوى، وتوزيع الإصابة على الأعضاء.</li>
+              <li>خريطة ألوان لرؤية سريعة لوضع الأقسام والفئات العمرية.</li>
+              <li>خريطة عمق للأعضاء المتأثرة (الرئتان، الجهاز الهضمي، الدم، الجلد…).</li>
+              <li>“جبر طبي” مستوحى من خرائط كارنوه، لتجميع الحالات السريرية المعقدة في حزم علاجية
+                  واضحة (T₁، T₂…).</li>
+            </ul>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
+              هذا الإطار لا يستبدل القرار الطبي، بل يقدم طريقة منظمة للتمثيل والتحليل البصري.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- French summary -->
+      <div id="lang-fr" class="lang-block">
+        <section>
+          <h2>Résumé exécutif – Français</h2>
+          <div class="card">
+            <p>
+              BIVDN (Bio‑Viral Digital Notation) est un cadre numérique conceptuel pour coder les
+              propriétés virales et de l’hôte sous forme de vecteurs couleurs‑nombres. L’objectif est
+              de fournir un langage commun pour les tableaux de bord, les systèmes d’information
+              hospitaliers et les modèles d’IA – sans aucune manipulation de virus réels.
+            </p>
+            <ul>
+              <li>Codage unifié de la sévérité, de la contagiosité et de l’atteinte d’organes.</li>
+              <li>Carte de couleurs pour visualiser rapidement l’état virologique des services.</li>
+              <li>Carte de profondeur des organes montrant les systèmes les plus sollicités.</li>
+              <li>“Algèbre médicale” inspirée des cartes de Karnaugh, regroupant des états cliniques
+                  complexes en quelques paquets thérapeutiques (T₁, T₂…).</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- Spanish summary -->
+      <div id="lang-es" class="lang-block">
+        <section>
+          <h2>Resumen ejecutivo – Español</h2>
+          <div class="card">
+            <p>
+              BIVDN (Bio‑Viral Digital Notation) es un marco digital conceptual para codificar las
+              propiedades virales y del huésped como vectores numérico‑cromáticos. Su objetivo es crear
+              un “idioma” común para paneles de control, sistemas hospitalarios y modelos de IA, sin
+              ninguna manipulación de virus reales.
+            </p>
+            <ul>
+              <li>Codificación unificada de gravedad, contagiosidad y órganos afectados.</li>
+              <li>Mapas de color para evaluar rápidamente la carga viral por servicio o grupo etario.</li>
+              <li>Mapa de profundidad de órganos (pulmones, intestino, sangre, piel…).</li>
+              <li>“Álgebra médica” inspirada en los mapas de Karnaugh, agrupando estados clínicos en
+                  paquetes terapéuticos T₁, T₂, etc.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- "Ancient Egyptian" placeholder -->
+      <div id="lang-egy" class="lang-block">
+        <section>
+          <h2>𓂀 גרסת הדגמה – מצרית עתיקה</h2>
+          <div class="card">
+            <p style="font-size:0.9rem;">
+              𓂀 ייצוג זה הוא סמלי בלבד, לצורך המחשה ויזואלית של “שפה רב־תרבותית”. מערכת BIVDN
+              מתמקדת בקידוד דיגיטלי מודרני; השימוש בסמלים מצריים עתיקים כאן הוא אסתטי בלבד ואינו
+              משקף תרגום לשוני אותנטי.
+            </p>
+            <p style="font-size:1.4rem; margin-top:6px;">
+              𓇳 𓄿 𓏏 𓂋 · 𓋴𓏏𓆑𓄿 · 𓄿𓅱𓂋
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <section class="footer-note">
+        המסמך בנוי כך שיעבוד גם במובייל (כולל אייפון): כפתורי השפה למעלה מחליפים את התוכן
+        בלי לרענן את הדף, וכל השכבות כתובות ב־HTML ו־CSS פשוטים הנתמכים בדפדפנים ניידים.
+      </section>
+    </section>
+  </main>
+</body>
+</html>
