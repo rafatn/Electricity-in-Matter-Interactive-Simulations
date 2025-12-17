@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>USB + רשת (IP) לפי מודל 7 השכבות (OSI) - מסמך HTML</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1b33;
+      --card2:#0d1730;
+      --text:#e8eefc;
+      --muted:#b7c4e6;
+      --line:rgba(255,255,255,0.12);
+      --accent:#5dd6ff;
+      --accent2:#8b5cf6;
+      --good:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 20% 0%, rgba(93,214,255,0.16), transparent 55%),
+                  radial-gradient(900px 600px at 95% 10%, rgba(139,92,246,0.16), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    header{
+      padding: 34px 18px 18px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .title{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    h1{
+      margin: 10px 0 8px;
+      font-size: clamp(26px, 3.2vw, 38px);
+      letter-spacing: 0.2px;
+    }
+    .subtitle{
+      color: var(--muted);
+      max-width: 80ch;
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 46px;
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      background: rgba(0,0,0,0.08);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 18px;
+    }
+    .card .bd{
+      padding: 18px;
+    }
+    .pill{
+      font-size: 12px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      padding: 5px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 720px){
+      .grid2{grid-template-columns: 1fr;}
+    }
+    .kpi{
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+    }
+    .kpi .k{
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .kpi .v{
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+    th, td{
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: right;
+      font-size: 14px;
+    }
+    th{
+      background: rgba(0,0,0,0.18);
+      color: var(--muted);
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tr:last-child td{border-bottom:none}
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+    }
+    .tag.good{border-color: rgba(52,211,153,0.35); color: rgba(220,255,245,0.95); background: rgba(52,211,153,0.09);}
+    .tag.accent{border-color: rgba(93,214,255,0.35); background: rgba(93,214,255,0.09); color: rgba(226,249,255,0.95);}
+    .tag.purple{border-color: rgba(139,92,246,0.35); background: rgba(139,92,246,0.10); color: rgba(243,236,255,0.98);}
+    .tag.warn{border-color: rgba(251,191,36,0.35); background: rgba(251,191,36,0.10); color: rgba(255,248,231,0.98);}
+
+    .note{
+      border: 1px dashed rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.03);
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .list{
+      margin: 8px 0 0;
+      padding: 0 18px 0 0;
+      color: var(--muted);
+    }
+    .list li{margin: 6px 0;}
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+    pre{
+      margin: 12px 0 0;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.25);
+      overflow:auto;
+    }
+
+    .flow{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .box{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.04);
+    }
+    .box .t{
+      font-weight: 800;
+      margin-bottom: 6px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+    }
+    .box .d{
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .arrow{
+      text-align:center;
+      color: rgba(232,238,252,0.85);
+      font-size: 18px;
+      user-select:none;
+    }
+
+    .footer{
+      max-width:1100px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .small{
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .hr{
+      height:1px;
+      background: var(--line);
+      margin: 14px 0;
+    }
+    .toc a{color: var(--text); text-decoration:none; border-bottom: 1px dashed rgba(93,214,255,0.5);}
+    .toc a:hover{border-bottom-style: solid;}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <div class="badge">🔌 USB + 🌐 רשת (IP) על אותו כבל</div>
+      <div class="badge">🧱 תאימות מלאה למודל OSI (7 שכבות)</div>
+      <div class="badge">📦 IP-over-USB (CDC / RNDIS / NCM)</div>
+    </div>
+    <h1>מסמך טכני: עבודה עם מודל 7 השכבות ופרוטוקולי USB להעברת מידע</h1>
+    <p class="subtitle">
+      המטרה: להראות כיצד חיבור <b>USB</b> יכול לשמש כנשא תקשורת מלא (כולל <b>IP</b>) כך שהמערכת תעבוד בצורה טבעית לפי <b>מודל OSI</b>,
+      בלי צורך במחבר RJ45 — תוך שימוש בפרוטוקולי ההעברה ש־USB מספק (Frames/Endpoints/Transfers) כדי “להוביל” חבילות רשת.
+    </p>
+  </header>
+
+  <main>
+    <section class="card" id="overview">
+      <div class="hd">
+        <h2>1) הרעיון בקצרה</h2>
+        <span class="pill">USB כשכבות 1-2, ו-IP מעליו</span>
+      </div>
+      <div class="bd">
+        <div class="grid2">
+          <div class="kpi">
+            <div class="k">מה החיבור נותן</div>
+            <div class="v">כבל אחד: USB + רשת IP + (אופציונלי) חשמל</div>
+          </div>
+          <div class="kpi">
+            <div class="k">איך זה עובד</div>
+            <div class="v">עטיפת IP Packets בתוך USB Transfers</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <p class="small">
+          <span class="tag accent">עיקרון</span>
+          USB מטפל בשכבות הנמוכות (1–2) ואז מעליהן “יושבים” פרוטוקולי רשת סטנדרטיים (3–7).
+          כך מערכת ההפעלה רואה <b>כרטיס רשת רגיל</b> (Network Interface) למרות שהמדיה היא USB.
+        </p>
+
+        <div class="note">
+          <b>הערה חשובה:</b> USB לבדו לא “מדבר IP” כברירת מחדל, אבל הוא מאפשר תעלות מידע (Bulk/Interrupt וכו’) שבתוכן ניתן להעביר <b>מסגרות רשת</b>.
+          לכן הפתרון הטבעי נקרא <b>IP-over-USB</b>.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="toc">
+          <div class="small"><b>ניווט מהיר:</b></div>
+          <ul class="list">
+            <li><a href="#osi">מיפוי OSI ↔ USB שכבה-שכבה</a></li>
+            <li><a href="#packet">זרימת חבילה (Packet Flow)</a></li>
+            <li><a href="#profiles">פרופילים נפוצים: CDC-ECM / RNDIS / NCM</a></li>
+            <li><a href="#requirements">דרישות יישום והערות תכנון</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card" id="quick">
+      <div class="hd">
+        <h2>תמצית</h2>
+        <span class="pill">מה צריך כדי שזה יהיה "רשת"</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <div class="t">1) USB תומך Transfers <span class="tag good">Bulk</span></div>
+          <div class="d">Bulk מתאים להעברת נתונים אמינה עם בדיקות שגיאה (CRC) וניהול זרימה.</div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="box">
+          <div class="t">2) USB מזוהה כרשת <span class="tag purple">Device Class</span></div>
+          <div class="d">למשל CDC-ECM / NCM או RNDIS – ואז מערכת ההפעלה יוצרת NIC.</div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="box">
+          <div class="t">3) IP מעל USB <span class="tag accent">IPv4/IPv6</span></div>
+          <div class="d">DHCP/Static, Ping, Routing – הכל רגיל, כאילו היה כבל LAN.</div>
+        </div>
+        <div class="arrow">⬇</div>
+        <div class="box">
+          <div class="t">4) מעל IP יש TCP/UDP/TLS <span class="tag warn">Apps</span></div>
+          <div class="d">HTTP, WebRTC, MQTT, SSH, RTSP ועוד.</div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="card" id="osi" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>2) מיפוי מלא: USB בתוך מודל 7 השכבות (OSI)</h2>
+        <span class="pill">Layer-by-layer</span>
+      </div>
+      <div class="bd">
+        <table aria-label="OSI to USB mapping table">
+          <thead>
+            <tr>
+              <th style="width: 110px;">שכבה</th>
+              <th style="width: 160px;">שם (OSI)</th>
+              <th>מה קורה ב-USB</th>
+              <th>מה יושב מעל (דוגמה)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>7</b></td>
+              <td>Application</td>
+              <td>USB שקוף — רק נושא ביטים/מסגרות למעלה</td>
+              <td>HTTP/HTTPS, MQTT, WebRTC, SMB, RTSP</td>
+            </tr>
+            <tr>
+              <td><b>6</b></td>
+              <td>Presentation</td>
+              <td>קידוד/דחיסה/הצפנה מתבצעים בתוכנה</td>
+              <td>TLS/DTLS, JSON/Protobuf, Compression</td>
+            </tr>
+            <tr>
+              <td><b>5</b></td>
+              <td>Session</td>
+              <td>ניהול סשנים דרך פרוטוקולים מעל IP</td>
+              <td>TCP Sessions, WebSocket, Keep-Alive</td>
+            </tr>
+            <tr>
+              <td><b>4</b></td>
+              <td>Transport</td>
+              <td>USB לא מחליף TCP/UDP — הוא רק צינור</td>
+              <td>TCP, UDP, QUIC</td>
+            </tr>
+            <tr>
+              <td><b>3</b></td>
+              <td>Network</td>
+              <td><b>IP-over-USB</b>: חבילות IP עטופות בתוך Transfers</td>
+              <td>IPv4/IPv6, ICMP, Routing</td>
+            </tr>
+            <tr>
+              <td><b>2</b></td>
+              <td>Data Link</td>
+              <td>USB Packets/Frames, CRC, Endpoints, Transfer Types</td>
+              <td>מסגור דמוי Ethernet לוגי</td>
+            </tr>
+            <tr>
+              <td><b>1</b></td>
+              <td>Physical</td>
+              <td>כבל, אותות, מהירות, מחבר, סיגנלים דיפרנציאליים</td>
+              <td>USB 2.0/3.x/USB-C (פיזי)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="box">
+            <div class="t">הנקודה הקריטית: שכבה 3 <span class="tag accent">IP-over-USB</span></div>
+            <div class="d">
+              כדי להפוך USB לרשת, צריך שהמחשב יזהה את ההתקן ככרטיס רשת.
+              אז מערכת ההפעלה יוצרת ממשק (למשל <code>usb0</code> / <code>rndis0</code>) ומתחיל IP רגיל.
+            </div>
+          </div>
+          <div class="box">
+            <div class="t">מה USB תורם לשכבות 1-2 <span class="tag good">אמינות</span></div>
+            <div class="d">
+              USB כבר כולל מסגור, Endpoints, בקרת שגיאות (CRC) וניהול זרימה.
+              לכן הוא בסיס חזק לשכבות גבוהות יותר.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="packet" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>3) זרימת חבילה: מהאפליקציה עד הכבל ובחזרה</h2>
+        <span class="pill">Packet Flow</span>
+      </div>
+      <div class="bd">
+        <div class="flow">
+          <div class="box">
+            <div class="t">יישום (Layer 7) <span class="tag warn">HTTP / WebRTC / MQTT</span></div>
+            <div class="d">האפליקציה מייצרת נתונים (Payload).</div>
+          </div>
+          <div class="arrow">⬇ עטיפה</div>
+          <div class="box">
+            <div class="t">TCP/UDP (Layer 4) <span class="tag purple">Transport</span></div>
+            <div class="d">הנתונים מחולקים למנות, פורטים, בקרת זרימה/אמינות (ב-TCP).</div>
+          </div>
+          <div class="arrow">⬇ עטיפה</div>
+          <div class="box">
+            <div class="t">IP (Layer 3) <span class="tag accent">IPv4/IPv6</span></div>
+            <div class="d">כתובות, ניתוב, ICMP, הגדרת MTU לפי הצורך.</div>
+          </div>
+          <div class="arrow">⬇ עטיפה</div>
+          <div class="box">
+            <div class="t">USB Transfer (Layer 2) <span class="tag good">Bulk/Interrupt</span></div>
+            <div class="d">
+              חבילת ה-IP נארזת בתוך מקטעי USB (Endpoints + CRC).
+              מערכת ההפעלה חושבת שהיא שולחת ברשת — אבל בפועל זה עובר בתוך USB.
+            </div>
+          </div>
+          <div class="arrow">⬇</div>
+          <div class="box">
+            <div class="t">כבל USB (Layer 1) <span class="tag">Physical</span></div>
+            <div class="d">שידור אותות פיזיים על הכבל/מחבר.</div>
+          </div>
+        </div>
+
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">תמיכה מלאה ב-IPv6 <span class="tag accent">IPv6</span></div>
+          <div class="d">
+            כדי לעבוד ב-<b>IPv6</b> מעל USB, אין צורך לשנות את שכבות USB (1-2). פשוט מגדירים את ממשק הרשת שנוצר (למשל <code>usb0</code>)
+            עם IPv6 רגיל. מומלץ לתמוך ב:
+            <ul class="list">
+              <li><b>Link-Local</b> אוטומטי (<code>fe80::/64</code>) לתקשורת בסיסית מיידית בין שני הצדדים.</li>
+              <li><b>SLAAC</b> (Router Advertisements) לקבלת כתובת גלובלית בצורה אוטומטית כאשר יש נתב/גשר IPv6.</li>
+              <li><b>DHCPv6</b> כאשר רוצים ניהול מרכזי של כתובות/Prefix.</li>
+              <li><b>ND / NDP</b> (Neighbor Discovery) במקום ARP (הכל סטנדרטי של IPv6).</li>
+              <li>אפשרות ל-<b>Dual Stack</b>: IPv4 ו-IPv6 יחד לאותה תקשורת.</li>
+            </ul>
+            <div class="note" style="margin-top:10px;">
+              <b>דוגמה מהירה (לוגית):</b> אפליקציה → TCP/UDP → IPv6 Packet → עטיפה בתוך USB Bulk Transfer → כבל.
+            </div>
+            <pre>
+דוגמאות פקודות בלינוקס (אופציונלי):
+# בדיקת כתובות IPv6 על הממשק
+ip -6 addr show dev usb0
+
+# הוספת כתובת IPv6 ידנית (אם צריך)
+sudo ip -6 addr add 2001:db8:1::2/64 dev usb0
+
+# בדיקת חיבור (ping6)
+ping -6 2001:db8:1::1
+            </pre>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="note">
+          <b>המחשה קצרה (לוגית):</b>
+          <br/>
+          <code>HTTP payload</code> → עטוף ב-<code>TCP</code> → עטוף ב-<code>IP</code> → עטוף ב-<code>USB Bulk Transfer</code> → כבל.
+        </div>
+
+        <pre>
+דוגמה "עטיפה" סכמטית:
+
+[Application Data]
+    ↓
+[TCP Header | Application Data]
+    ↓
+[IP Header | TCP Header | Application Data]
+    ↓
+[USB Transfer Metadata | IP Packet Bytes ... | CRC]
+        </pre>
+      </div>
+    </section>
+
+    <section class="card" id="profiles">
+      <div class="hd">
+        <h2>4) פרופילים נפוצים שמממשים רשת מעל USB</h2>
+        <span class="pill">Compatibility</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <div class="t">CDC-ECM <span class="tag accent">USB CDC</span></div>
+          <div class="d">
+            סטנדרט נפוץ להעברת מסגרות רשת מעל USB (נפוץ בלינוקס/מק, וגם בחלק מהתצורות ב-Windows).
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="box">
+          <div class="t">RNDIS <span class="tag warn">Windows-friendly</span></div>
+          <div class="d">
+            פרוטוקול נפוץ במיוחד בסביבות Windows ובהתקנים רבים (קישור USB שמזוהה ככרטיס רשת).
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="box">
+          <div class="t">NCM <span class="tag good">יעיל ומהיר</span></div>
+          <div class="d">
+            Network Control Model: שיטה יעילה לאגד מסגרות/חבילות ולהקטין overhead (מתאים לקצבים גבוהים).
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="note">
+          <b>עקרון משותף:</b> בכל הפרופילים האלו, מערכת ההפעלה מקבלת כרטיס רשת והתקשורת הופכת ל-IP רגיל.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="requirements">
+      <div class="hd">
+        <h2>5) דרישות יישום והערות תכנון</h2>
+        <span class="pill">Design notes</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <div class="t">MTU / Fragmentation <span class="tag purple">Performance</span></div>
+          <div class="d">
+            בוחרים MTU שמתאים ל-USB Transfers כדי לצמצם פיצול חבילות.
+            NCM יכול לעזור ביעילות כאשר יש הרבה חבילות קטנות.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">אבטחה <span class="tag good">TLS/DTLS</span></div>
+          <div class="d">
+            מומלץ להצפין בשכבות 6-7 (למשל TLS) כדי לקבל אבטחה סטנדרטית כמו באינטרנט.
+            USB הוא רק מדיה; האבטחה חייבת להיות ברמת פרוטוקול.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">Plug and Play <span class="tag accent">UX</span></div>
+          <div class="d">
+            אם בוחרים פרופיל שה-OS תומך בו מהקופסה, המשתמש יקבל רשת בלי התקנות מיוחדות.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">USB + רשת + חשמל <span class="tag warn">Optional</span></div>
+          <div class="d">
+            אפשר לשלב אספקת חשמל (USB-PD) במקביל לנתונים, כך שהכבל גם מזין את ההתקן וגם נותן לו IP.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="note">
+          <b>המלצת תכנון:</b> אם המטרה היא מינימום תקלות ומקסימום תאימות, בנו פתרון על גבי פרופיל רשת מוכר (CDC/NCM/RNDIS),
+          ואז כל שכבות OSI העליונות עובדות כמו ברשת רגילה.
+        </div>
+      </div>
+    </section>
+    <section class="card" id="ipv6" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>6) תמיכה מלאה ב-IPv6 (מה להוסיף כדי שיעבוד חלק)</h2>
+        <span class="pill">IPv6 over USB</span>
+      </div>
+      <div class="bd">
+        <div class="grid2">
+          <div class="box">
+            <div class="t">זיהוי כרטיס רשת (NIC) <span class="tag accent">CDC/NCM/RNDIS</span></div>
+            <div class="d">
+              ברגע שההתקן מזוהה ככרטיס רשת, מערכת ההפעלה יכולה להרים עליו גם IPv6.
+              אין צורך בשינוי USB עצמו — IPv6 רץ מעל שכבה 3 בדיוק כמו IPv4.
+            </div>
+          </div>
+          <div class="box">
+            <div class="t">הקצאת כתובת IPv6 <span class="tag good">SLAAC / DHCPv6</span></div>
+            <div class="d">
+              שתי שיטות סטנדרטיות:
+              <ul class="list">
+                <li><b>SLAAC</b> (הגדרה אוטומטית) באמצעות Router Advertisements (RA).</li>
+                <li><b>DHCPv6</b> אם רוצים ניהול מרכזי, רישום, מדיניות וכו'.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">Neighbor Discovery (NDP) <span class="tag purple">ICMPv6</span></div>
+          <div class="d">
+            ב-IPv6 אין ARP. במקום זה יש <b>NDP</b> (Neighbor Discovery) המבוסס על ICMPv6.
+            לכן חשוב שהממשק "IP-over-USB" יעביר תקין:
+            <ul class="list">
+              <li>Router Solicitation / Router Advertisement</li>
+              <li>Neighbor Solicitation / Neighbor Advertisement</li>
+              <li>Duplicate Address Detection (DAD)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="box">
+            <div class="t">מולטיקאסט (Multicast) <span class="tag warn">ff02::/16</span></div>
+            <div class="d">
+              IPv6 משתמש הרבה במולטיקאסט מקומי (למשל ff02::1, ff02::2).
+              לכן מומלץ לבחור פרופיל שמייצג <b>Ethernet frames</b> בצורה נכונה (CDC-ECM/NCM בדרך כלל אידאלי),
+              כדי שהמולטיקאסט יזרום טוב בלי תרגומים מוזרים.
+            </div>
+          </div>
+          <div class="box">
+            <div class="t">MTU מומלץ <span class="tag purple">1280+</span></div>
+            <div class="d">
+              מינימום MTU ב-IPv6 הוא <b>1280</b>. בפועל רצוי לקבוע MTU גבוה יותר אם אפשר,
+              כדי להקטין Fragmentation ולשפר ביצועים. (USB 3.x בדרך כלל מאפשר זאת בקלות.)
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="note">
+          <b>שורה תחתונה:</b> כדי לתמוך ב-IPv6 אין צורך “להמציא IPv6 חדש”. צריך לוודא שהממשק מזוהה כ-NIC
+          ושעוברים תקין ICMPv6 (NDP/RA) ומולטיקאסט מקומי. מעל זה כל TCP/UDP/TLS עובדים כרגיל.
+        </div>
+
+        <pre>
+תרחיש מינימלי מומלץ (נקודה-לנקודה, Host ↔ Device):
+
+1) Host יוצר ממשק usb0
+2) Host שולח RA (או מפעיל DHCPv6)
+3) Device מקבל כתובת גלובלית + link-local (fe80::/64)
+4) בדיקה: ping6 fe80::...%usb0  ואז ping6 כתובת גלובלית
+
+הערה: ב-Link-Local (fe80::) חייבים לציין Interface (Zone ID) למשל %usb0.
+        </pre>
+      </div>
+    </section>
+
+
+    <section class="card" id="hardware" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>7) נספח תכנון: תרשים חומרה רעיוני (ברמת עיקרון)</h2>
+        <span class="pill">Concept</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          זה לא מחייב מחבר חדש בפועל — אפשר ליישם על <b>USB-C</b>:
+          אותו מחבר פיזי, ותוכנתית “מכריזים” על ההתקן כ-Network Device (CDC/NCM/RNDIS).
+          אם בעתיד רוצים מחבר ייעודי, אפשר להגדיר אותו כך שיהיה תאימות מכנית ל-USB-C אך עם נעילה/עמידות תעשייתית.
+        </div>
+
+        <div class="grid2">
+          <div class="box">
+            <div class="t">נתונים (USB)</div>
+            <div class="d">ערוצי TX/RX של USB 2.0/3.x משמשים להעברת כל המידע (כולל IP/IPv6).</div>
+          </div>
+          <div class="box">
+            <div class="t">חשמל (אופציונלי)</div>
+            <div class="d">USB-PD מאפשר להזין את ההתקן במקביל לתקשורת — "כבל אחד להכל".</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <pre>
+דוגמת "מיפוי תפקידי" (לא פינים אמיתיים):
+
+- Data Path: USB SuperSpeed / HighSpeed (נושא גם IPv4 וגם IPv6)
+- Control Path: USB Control transfers לזיהוי/קונפיגורציה
+- Power Path: USB-PD למתח/זרם לפי צורך
+        </pre>
+      </div>
+    </section>
+
+
+
+
+    <section class="card" id="hardware" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>6) תרשים חומרה/פינים רעיוני (קונספט)</h2>
+        <span class="pill">Concept Hardware & Pins</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          <b>מטרה:</b> להמחיש רעיונית איך "מחבר אחד" יכול לשאת USB + רשת IP + (אופציונלי) חשמל.
+          בפועל, הפתרון הפשוט והנפוץ ביותר הוא שימוש ב-<b>USB‑C</b> כפיזיקה (Layer 1),
+          ועל גביו <b>IP-over-USB</b> (CDC/NCM/RNDIS). אין כאן שינוי ל-USB עצמו - רק שימוש בפרופיל רשת.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="box">
+            <div class="t">אפשרות A: USB‑C סטנדרטי (מומלץ) <span class="tag good">תאימות</span></div>
+            <div class="d">
+              <ul class="list">
+                <li><b>Data</b>: זוגות דיפרנציאליים ל-USB 2.0/3.x.</li>
+                <li><b>Power</b>: USB-PD להזנת התקן (אופציונלי).</li>
+                <li><b>Network</b>: לא "פינים נפרדים", אלא IP שמועבר בתוך Transfers (CDC/NCM/RNDIS).</li>
+              </ul>
+              <div class="small">יתרון: אין צורך להמציא מחבר חדש - משתמשים במחבר תקני.</div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="t">אפשרות B: מחבר ייעודי (קונספט) <span class="tag purple">חדשנות</span></div>
+            <div class="d">
+              <ul class="list">
+                <li>זוג/שני זוגות דיפרנציאליים ל-USB (Data).</li>
+                <li>זוג דיפרנציאלי נוסף ל-"Channel" ניהולי/סנכרון (אופציונלי).</li>
+                <li>שני פינים להספק (V+, GND) עם בקרת זרם.</li>
+                <li>מגן (Shield) להורדת רעשים.</li>
+              </ul>
+              <div class="small">
+                גם כאן, “הרשת” יכולה להיות IP-over-USB לוגית; המחבר הייעודי רק מגדיל חוסן מכני/EMI.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">תרשים ASCII רעיוני <span class="tag accent">Overview</span></div>
+          <div class="d">
+            <pre>
+[Host / Router / PC]
+   |
+   |  (USB-C Cable)
+   |------------------------------|
+   |   USB Data (USB 2.0/3.x)     |
+   |   Power (USB-PD)  (optional) |
+   |------------------------------|
+                |
+           [Device]
+                |
+      [USB Endpoints / Transfers]
+                |
+          [IP-over-USB NIC]
+                |
+         [IPv4/IPv6, TCP/UDP]
+                |
+         [Apps: HTTP, MQTT...]
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section class="card" id="usecase" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>7) דוגמת תרחיש שימוש (Use Case) עם כתובות IP והגדרות</h2>
+        <span class="pill">Practical Example</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          <b>תרחיש:</b> מצלמה/חיישן (Device) מתחבר למחשב/נתב (Host) דרך USB, ומקבל "רשת" אמיתית (IP),
+          כולל IPv4 + IPv6 (Dual Stack). כך אפשר לגשת אליו ב-HTTP/RTSP/SSH כאילו היה מחובר ב-RJ45.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="box">
+            <div class="t">א) כתובות IPv4 (דוגמה) <span class="tag warn">IPv4</span></div>
+            <div class="d">
+              <ul class="list">
+                <li>Host (usb0): <code>192.168.50.1/24</code></li>
+                <li>Device (usb0): <code>192.168.50.2/24</code></li>
+                <li>Gateway: לא חובה אם זה Point-to-Point; אם רוצים אינטרנט - ה-Host עושה NAT/Forwarding.</li>
+              </ul>
+              <pre>
+# Host (Linux) - הגדרת כתובת
+sudo ip addr add 192.168.50.1/24 dev usb0
+sudo ip link set usb0 up
+
+# Device - כתובת בצד ההתקן
+sudo ip addr add 192.168.50.2/24 dev usb0
+sudo ip link set usb0 up
+
+# בדיקה
+ping 192.168.50.2
+              </pre>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="t">ב) כתובות IPv6 (דוגמה) <span class="tag accent">IPv6</span></div>
+            <div class="d">
+              <ul class="list">
+                <li>Link-Local נוצר אוטומטית (לרוב). דוגמה: <code>fe80::1234:abcd/64</code></li>
+                <li>Prefix גלובלי לדוגמה (תיעודי): <code>2001:db8:50::/64</code></li>
+                <li>Host: <code>2001:db8:50::1/64</code>, Device: <code>2001:db8:50::2/64</code></li>
+              </ul>
+              <pre>
+# Host
+sudo ip -6 addr add 2001:db8:50::1/64 dev usb0
+sudo ip link set usb0 up
+
+# Device
+sudo ip -6 addr add 2001:db8:50::2/64 dev usb0
+sudo ip link set usb0 up
+
+# בדיקה
+ping -6 2001:db8:50::2
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">גישה לשירותים (Layer 7) <span class="tag good">Apps</span></div>
+          <div class="d">
+            <ul class="list">
+              <li>HTTP: <code>http://192.168.50.2/</code> או <code>http://[2001:db8:50::2]/</code></li>
+              <li>SSH: <code>ssh user@192.168.50.2</code> או <code>ssh user@2001:db8:50::2</code></li>
+              <li>RTSP (אם מצלמה): <code>rtsp://192.168.50.2:554/stream</code></li>
+            </ul>
+            <div class="note" style="margin-top:10px;">
+              <b>שורה תחתונה:</b> ברגע שה-OS יצר NIC על USB, כל עולם הרשת עובד "כמו תמיד".
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div class="t">אופציונלי: אינטרנט דרך ה-Host (NAT/Forwarding) <span class="tag purple">Routing</span></div>
+          <div class="d">
+            <div class="small">
+              אם רוצים שה-Device יקבל גישה לאינטרנט דרך המחשב שמחובר גם ל-Wi‑Fi/ETH,
+              מפעילים Forwarding ו-NAT בצד ה-Host. (הפקודות תלויות דיסטרו/Firewall.)
+            </div>
+            <pre>
+# Host (Linux) - IPv4 forwarding
+sudo sysctl -w net.ipv4.ip_forward=1
+
+# IPv6 forwarding (אם רוצים ראוטינג אמיתי, מומלץ RA/Prefix מתאים)
+sudo sysctl -w net.ipv6.conf.all.forwarding=1
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="card" id="appendix" style="grid-column: 1 / -1;">
+      <div class="hd">
+        <h2>נספח: ניסוח קצר למפרט</h2>
+        <span class="pill">Ready-to-use</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          <b>תיאור קצר:</b> מערכת תקשורת בכבל יחיד שבה מחבר USB משמש כמדיה פיזית וקישור נתונים,
+          ומעליו מיושם פרוטוקול רשת IP מלא באמצעות עטיפת חבילות IP בתוך העברות USB (Bulk/Interrupt),
+          באופן שמציג למערכת ההפעלה ממשק רשת סטנדרטי ומאפשר שימוש בכל פרוטוקולי שכבות 4-7 (TCP/UDP/TLS/HTTP ועוד)
+          ללא תלות במחבר Ethernet ייעודי.
+        </div>
+
+        <pre>
+מילות מפתח:
+- Unified Connector
+- IP-over-USB
+- OSI layer mapping
+- USB endpoints as logical link-layer channels
+- Plug and Play network interface
+        </pre>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">
+    <div class="hr"></div>
+    <div class="small">
+      נוספו למסמך: (1) תרשים חומרה/פינים רעיוני, (2) דוגמת תרחיש שימוש עם כתובות IP והגדרות (כולל Dual-Stack IPv4+IPv6).
+    </div>
+  </div>
+</body>
+</html>
