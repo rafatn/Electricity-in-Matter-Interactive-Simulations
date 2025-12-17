@@ -16,8 +16,6 @@
       --link:#2563eb;
       --shadow:0 6px 18px rgba(0,0,0,0.08);
       --r:12px;
-      --r2:10px;
-      --pad:14px;
 
       /* category colors */
       --c-net:#0ea5e9;
@@ -42,9 +40,7 @@
       color:var(--text);
     }
 
-    h1{
-      margin:0 0 14px;
-    }
+    h1{ margin:0 0 14px; }
 
     .topbar{
       display:flex;
@@ -60,6 +56,7 @@
       flex-wrap:wrap;
       gap:10px;
       align-items:flex-end;
+      margin-bottom:10px;
     }
 
     .control{
@@ -115,7 +112,7 @@
     }
 
     .summary{
-      margin:6px 0 18px;
+      margin:6px 0 6px;
       color:var(--muted);
       font-size:14px;
     }
@@ -130,7 +127,7 @@
     }
 
     th, td{
-      padding:var(--pad);
+      padding:14px;
       border-bottom:1px solid var(--line);
       text-align:right;
       vertical-align:top;
@@ -187,15 +184,8 @@
     .b-transport{background:var(--c-transport)}
     .b-hybrid{background:var(--c-hybrid)}
 
-    .desc{
-      color:#111827;
-      line-height:1.5;
-    }
-
-    .muted{
-      color:var(--muted);
-      font-size:13px;
-    }
+    .desc{ color:#111827; line-height:1.5; }
+    .muted{ color:var(--muted); font-size:13px; }
 
     .actions{
       display:flex;
@@ -215,10 +205,54 @@
       font-weight:bold;
       font-size:13px;
     }
+    .smallbtn:hover{ background:#eef2ff; }
 
-    .smallbtn:hover{
-      background:#eef2ff;
+    .fav-wrap{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
     }
+
+    .favbtn{
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#f9fafb;
+      cursor:pointer;
+      font-size:18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .12s ease, background .12s ease, border .12s ease;
+    }
+    .favbtn:hover{ background:#fff7ed; border-color:#fdba74; transform:translateY(-1px); }
+    .favbtn.active{ background:#fffbeb; border-color:#f59e0b; }
+    .favpill{
+      display:none;
+      font-size:12px;
+      font-weight:bold;
+      padding:3px 8px;
+      border-radius:999px;
+      background:#fffbeb;
+      border:1px solid #f59e0b;
+      color:#92400e;
+      white-space:nowrap;
+    }
+    tr.fav .favpill{ display:inline-flex; }
+
+    .fav-only{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:white;
+      height:42px;
+    }
+    .fav-only input{ width:18px; height:18px; }
 
     .empty{
       margin-top:12px;
@@ -289,7 +323,11 @@
       .control{ min-width: 100%; }
       .topbar{ align-items:stretch; }
       .langbar{ justify-content:flex-start; }
+      .favbtn{ width:40px; height:40px; }
     }
+
+    /* LTR fixes */
+    [dir="ltr"] th, [dir="ltr"] td{ text-align:left; }
   </style>
 </head>
 
@@ -304,6 +342,9 @@
         ·
         <span data-i18n="summaryShown">מוצגים כעת:</span>
         <strong id="countShown">0</strong>
+        ·
+        <span data-i18n="summaryFav">מועדפים:</span>
+        <strong id="countFav">0</strong>
       </div>
     </div>
 
@@ -311,6 +352,7 @@
       <button class="langbtn active" data-lang="he">🇮🇱 <span>עברית</span></button>
       <button class="langbtn" data-lang="en">🌍 <span>English</span></button>
       <button class="langbtn" data-lang="ar">🇵🇸 <span>العربية</span></button>
+      <button class="langbtn" data-lang="ru">🇷🇺 <span>Русский</span></button>
     </div>
   </div>
 
@@ -341,7 +383,17 @@
       <div class="actions">
         <button class="smallbtn" id="resetBtn" data-i18n="resetBtn">איפוס</button>
         <button class="smallbtn" id="openAllBtn" data-i18n="openAllBtn">פתח את כל הקישורים</button>
+        <button class="smallbtn" id="clearFavBtn" data-i18n="clearFavBtn">נקה מועדפים</button>
       </div>
+    </div>
+
+    <div class="control">
+      <label data-i18n="favOnlyLabel">תצוגה</label>
+      <div class="fav-only">
+        <input type="checkbox" id="favOnly">
+        <span data-i18n="favOnlyText">הצג מועדפים בלבד</span>
+      </div>
+      <div class="muted" data-i18n="favHint">הכוכב נשמר בדפדפן (LocalStorage).</div>
     </div>
   </div>
 
@@ -359,132 +411,197 @@
     </thead>
     <tbody>
 
-      <tr class="row" data-cat="net">
+      <tr class="row" data-cat="net" data-key="usb_network_osi_ipv6_plus_hw_usecase.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-net" data-i18n="badgeNet">🌐🔌 תקשורת ורשתות</span>
         </td>
         <td data-label="קישור">
-          <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
-          <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="usb_network_osi_ipv6_plus_hw_usecase.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
+              <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descUsb">
           חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי
         </td>
       </tr>
 
-      <tr class="row" data-cat="ui">
+      <tr class="row" data-cat="ui" data-key="fingerprint_gesture_full_v5_he.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-ui" data-i18n="badgeUi">🖐️📺 ממשק אדם–מסך</span>
         </td>
         <td data-label="קישור">
-          <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
-          <div class="muted">fingerprint_gesture_full_v5_he.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="fingerprint_gesture_full_v5_he.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
+              <div class="muted">fingerprint_gesture_full_v5_he.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descFp">
           מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא
         </td>
       </tr>
 
-      <tr class="row" data-cat="id">
+      <tr class="row" data-cat="id" data-key="bivdn_multilang_full_mobile.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-id" data-i18n="badgeId">📱🌍 זיהוי זהות רב־לשוני</span>
         </td>
         <td data-label="קישור">
-          <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
-          <div class="muted">bivdn_multilang_full_mobile.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="bivdn_multilang_full_mobile.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
+              <div class="muted">bivdn_multilang_full_mobile.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descBivdn">
           מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים
         </td>
       </tr>
 
-      <!-- ✅ הוספה: bio_magnet_therapy.html -->
-      <tr class="row" data-cat="med">
+      <tr class="row" data-cat="med" data-key="bio_magnet_therapy.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
         </td>
         <td data-label="קישור">
-          <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
-          <div class="muted">bio_magnet_therapy.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="bio_magnet_therapy.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
+              <div class="muted">bio_magnet_therapy.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descBio">
           מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
         </td>
       </tr>
 
-      <tr class="row" data-cat="elec">
+      <tr class="row" data-cat="elec" data-key="electricity_models_plus_simulations_bilingual_toggle.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
         </td>
         <td data-label="קישור">
-          <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
-          <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="electricity_models_plus_simulations_bilingual_toggle.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
+              <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
       </tr>
 
-      <tr class="row" data-cat="thermo">
+      <tr class="row" data-cat="thermo" data-key="thermosiphon_flow_calculator_he.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
         </td>
         <td data-label="קישור">
-          <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
-          <div class="muted">thermosiphon_flow_calculator_he.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="thermosiphon_flow_calculator_he.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
+              <div class="muted">thermosiphon_flow_calculator_he.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
       </tr>
 
-      <tr class="row" data-cat="audio">
+      <tr class="row" data-cat="audio" data-key="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
         </td>
         <td data-label="קישור">
-          <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
-          <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
+              <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
       </tr>
 
-      <tr class="row" data-cat="floor">
+      <tr class="row" data-cat="floor" data-key="smart_floor_pressure_to_energy_model_he.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
         </td>
         <td data-label="קישור">
-          <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
-          <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="smart_floor_pressure_to_energy_model_he.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
+              <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
       </tr>
 
-      <tr class="row" data-cat="water">
+      <tr class="row" data-cat="water" data-key="water_walking_shoes_sonar_pump.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
         </td>
         <td data-label="קישור">
-          <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
-          <div class="muted">water_walking_shoes_sonar_pump.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="water_walking_shoes_sonar_pump.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
+              <div class="muted">water_walking_shoes_sonar_pump.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
       </tr>
 
-      <tr class="row" data-cat="transport">
+      <tr class="row" data-cat="transport" data-key="water_gas_train_blue.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
         </td>
         <td data-label="קישור">
-          <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
-          <div class="muted">water_gas_train_blue.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="water_gas_train_blue.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
+              <div class="muted">water_gas_train_blue.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
       </tr>
 
-      <tr class="row" data-cat="hybrid">
+      <tr class="row" data-cat="hybrid" data-key="water_air_shoes_trilingual_flow.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
         </td>
         <td data-label="קישור">
-          <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
-          <div class="muted">water_air_shoes_trilingual_flow.html</div>
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="water_air_shoes_trilingual_flow.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
+              <div class="muted">water_air_shoes_trilingual_flow.html</div>
+            </div>
+          </div>
         </td>
         <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
       </tr>
@@ -512,32 +629,69 @@
     // ⛔ חסימת בחירת טקסט
     document.addEventListener('selectstart', e => e.preventDefault());
 
-    // --- Search + Filter ---
+    // --- Search + Filter + Favorites ---
     const searchEl = document.getElementById('search');
     const catEl = document.getElementById('category');
     const rows = Array.from(document.querySelectorAll('tr.row'));
     const emptyBox = document.getElementById('emptyBox');
     const countAll = document.getElementById('countAll');
     const countShown = document.getElementById('countShown');
+    const countFav = document.getElementById('countFav');
+    const favOnlyEl = document.getElementById('favOnly');
 
-    countAll.textContent = String(rows.length);
+    const LS_KEY = "index_favorites_v1";
+
+    function loadFavs(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr : []);
+      }catch(e){
+        return new Set();
+      }
+    }
+
+    function saveFavs(set){
+      localStorage.setItem(LS_KEY, JSON.stringify(Array.from(set)));
+    }
+
+    let favs = loadFavs();
 
     function norm(s){
       return (s || '').toString().toLowerCase().trim();
     }
 
+    function syncFavUI(){
+      rows.forEach(r=>{
+        const key = r.getAttribute('data-key');
+        const btn = r.querySelector('button.favbtn');
+        const isFav = favs.has(key);
+        r.classList.toggle('fav', isFav);
+        if(btn){
+          btn.classList.toggle('active', isFav);
+          btn.textContent = isFav ? '★' : '☆';
+          btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+        }
+      });
+      countFav.textContent = String(favs.size);
+    }
+
     function apply(){
       const q = norm(searchEl.value);
       const c = catEl.value;
+      const favOnly = !!favOnlyEl.checked;
 
       let shown = 0;
       rows.forEach(r=>{
         const rCat = r.getAttribute('data-cat');
+        const key = r.getAttribute('data-key');
         const txt = norm(r.innerText);
+
         const okCat = (c === 'all') || (rCat === c);
         const okQ = (!q) || txt.includes(q);
+        const okFav = (!favOnly) || favs.has(key);
 
-        const ok = okCat && okQ;
+        const ok = okCat && okQ && okFav;
         r.style.display = ok ? '' : 'none';
         if(ok) shown++;
       });
@@ -546,12 +700,32 @@
       emptyBox.style.display = (shown === 0) ? 'block' : 'none';
     }
 
+    // init counts
+    countAll.textContent = String(rows.length);
+
+    // favorite button handlers
+    document.querySelectorAll('button.favbtn').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        const key = btn.getAttribute('data-fav');
+        if(!key) return;
+        if(favs.has(key)) favs.delete(key);
+        else favs.add(key);
+        saveFavs(favs);
+        syncFavUI();
+        apply();
+      });
+    });
+
     searchEl.addEventListener('input', apply);
     catEl.addEventListener('change', apply);
+    favOnlyEl.addEventListener('change', apply);
 
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       searchEl.value = '';
       catEl.value = 'all';
+      favOnlyEl.checked = false;
       apply();
     });
 
@@ -562,10 +736,21 @@
         .filter(Boolean);
 
       if(!visibleLinks.length){
-        alert('אין קישורים פתוחים לפי הסינון הנוכחי.');
+        alert(window.__i18nLang === 'en' ? 'No links to open for current filters.' :
+              window.__i18nLang === 'ar' ? 'لا توجد روابط لفتحها وفق التصفية الحالية.' :
+              window.__i18nLang === 'ru' ? 'Нет ссылок для открытия при текущих фильтрах.' :
+              'אין קישורים פתוחים לפי הסינון הנוכחי.');
         return;
       }
       visibleLinks.forEach(a => window.open(a.getAttribute('href'), '_blank'));
+    });
+
+    document.getElementById('clearFavBtn').addEventListener('click', ()=>{
+      if(favs.size === 0) return;
+      favs = new Set();
+      saveFavs(favs);
+      syncFavUI();
+      apply();
     });
 
     // --- i18n ---
@@ -575,6 +760,7 @@
         welcome:"ברוכים הבאים",
         summaryPrefix:"סך הכל קבצים:",
         summaryShown:"מוצגים כעת:",
+        summaryFav:"מועדפים:",
         searchLabel:"חיפוש",
         searchPh:"הקלד מילה/שם קובץ/תיאור…",
         searchHint:"מחפש בתוך נושא, שם קובץ ותיאור.",
@@ -593,6 +779,11 @@
         catHybrid:"הנעה היברידית",
         resetBtn:"איפוס",
         openAllBtn:"פתח את כל הקישורים",
+        clearFavBtn:"נקה מועדפים",
+        favOnlyLabel:"תצוגה",
+        favOnlyText:"הצג מועדפים בלבד",
+        favHint:"הכוכב נשמר בדפדפן (LocalStorage).",
+        favPill:"⭐ מועדף",
         empty:"לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה אחרת.",
         thTopic:"נושא",
         thLink:"שם הקובץ / קישור",
@@ -649,6 +840,7 @@
         welcome:"Welcome",
         summaryPrefix:"Total files:",
         summaryShown:"Shown now:",
+        summaryFav:"Favorites:",
         searchLabel:"Search",
         searchPh:"Type a keyword / filename / description…",
         searchHint:"Searches topic, filename and description.",
@@ -667,6 +859,11 @@
         catHybrid:"Hybrid Propulsion",
         resetBtn:"Reset",
         openAllBtn:"Open all links",
+        clearFavBtn:"Clear favorites",
+        favOnlyLabel:"View",
+        favOnlyText:"Show favorites only",
+        favHint:"Stars are saved in the browser (LocalStorage).",
+        favPill:"⭐ Favorite",
         empty:"No results found. Try changing the search or category.",
         thTopic:"Topic",
         thLink:"File / Link",
@@ -723,6 +920,7 @@
         welcome:"مرحباً",
         summaryPrefix:"إجمالي الملفات:",
         summaryShown:"المعروض الآن:",
+        summaryFav:"المفضلة:",
         searchLabel:"بحث",
         searchPh:"اكتب كلمة / اسم ملف / وصف…",
         searchHint:"يبحث داخل العنوان واسم الملف والوصف.",
@@ -741,6 +939,11 @@
         catHybrid:"دفع هجين",
         resetBtn:"إعادة ضبط",
         openAllBtn:"افتح كل الروابط",
+        clearFavBtn:"مسح المفضلة",
+        favOnlyLabel:"عرض",
+        favOnlyText:"عرض المفضلة فقط",
+        favHint:"يتم حفظ النجمة في المتصفح (LocalStorage).",
+        favPill:"⭐ مفضّل",
         empty:"لا توجد نتائج. جرّب تغيير البحث أو الفئة.",
         thTopic:"الموضوع",
         thLink:"الملف / الرابط",
@@ -790,17 +993,106 @@
 
         linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
         descHybrid:"المشي/التحليق على الماء والهواء بتدفق مُتحكم به.",
+      },
+
+      ru:{
+        pageTitle:"Главная",
+        welcome:"Добро пожаловать",
+        summaryPrefix:"Всего файлов:",
+        summaryShown:"Показано сейчас:",
+        summaryFav:"Избранное:",
+        searchLabel:"Поиск",
+        searchPh:"Введите слово / имя файла / описание…",
+        searchHint:"Поиск по теме, имени файла и описанию.",
+        filterLabel:"Фильтр по категории",
+        filterAll:"Все",
+        catNet:"Сети и связь",
+        catUi:"Интерфейс человек–экран",
+        catId:"Идентификация",
+        catMed:"Умная медицина",
+        catElec:"Электричество и симуляции",
+        catThermo:"Термодинамика",
+        catAudio:"Звук и энергия",
+        catFloor:"Энергия от пола",
+        catWater:"Движение по воде",
+        catTransport:"Транспорт",
+        catHybrid:"Гибридная тяга",
+        resetBtn:"Сброс",
+        openAllBtn:"Открыть все ссылки",
+        clearFavBtn:"Очистить избранное",
+        favOnlyLabel:"Вид",
+        favOnlyText:"Показывать только избранное",
+        favHint:"Звёздочки сохраняются в браузере (LocalStorage).",
+        favPill:"⭐ Избранное",
+        empty:"Ничего не найдено. Попробуйте изменить поиск или категорию.",
+        thTopic:"Тема",
+        thLink:"Файл / Ссылка",
+        thDesc:"Описание",
+
+        badgeNet:"🌐🔌 Сети и связь",
+        badgeUi:"🖐️📺 Интерфейс человек–экран",
+        badgeId:"📱🌍 Многоязычная идентификация",
+        badgeMed:"🧬🧲 Умная медицина",
+        badgeElec:"⚡ Электричество и симуляции",
+        badgeThermo:"🔥 Термодинамика",
+        badgeAudio:"🎧 Звук и энергия",
+        badgeFloor:"🧱⚡ Энергия от пола",
+        badgeWater:"🌊👟 Движение по воде",
+        badgeTransport:"🚆💧 Транспорт",
+        badgeHybrid:"🌊🌬️ Гибридная тяга",
+
+        linkUsb:"USB + сеть (OSI + IPv6)",
+        descUsb:"USB как полноценная сеть (уровни OSI), включая IPv4/IPv6, схема железа и практический сценарий.",
+
+        linkFp:"Умные экраны по отпечатку и жестам",
+        descFp:"Интерактивная система экранов: отпечаток + жесты, аутентификация, алгоритмы и полный демо-режим.",
+
+        linkBivdn:"BIVDN – мобильная идентификация",
+        descBivdn:"Многоязычная цифровая идентификация для мобильных: проверка, адаптивный интерфейс, поддержка языков, оптимизация для маленьких экранов.",
+
+        linkBio:"Био-магнитная доставка лекарств",
+        descBio:"Исследовательская концепция вместо инфузии: умный пластырь на основе ДНК, электрической подписи и терапевтической навигации (\"био-GPS\").",
+
+        linkElec:"Модели электричества + симуляции",
+        descElec:"Физические модели, уравнения и интерактивные симуляции.",
+
+        linkThermo:"Термосифон",
+        descThermo:"Калькулятор потока термосифона по физическим параметрам.",
+
+        linkAudio:"Самозаряжающиеся наушники",
+        descAudio:"Самозаряд от энергии звука — теоретическая модель и симуляция.",
+
+        linkFloor:"Модель умного пола",
+        descFloor:"Сбор энергии от давления и карта нагрузок.",
+
+        linkWater:"Обувь для ходьбы по воде",
+        descWater:"Сонар, микропомпы и динамическая устойчивость.",
+
+        linkTrain:"Поезд вода–газ (Blue)",
+        descTrain:"Транспортная концепция на воде и газе с повышенной энергоэффективностью.",
+
+        linkHybrid:"Обувь вода–воздух (трёхъязычная)",
+        descHybrid:"Ходьба/парение по воде и воздуху с управляемым потоком.",
       }
     };
 
     function setLang(lang){
       const L = dict[lang] ? lang : "he";
       const root = document.documentElement;
+      window.__i18nLang = L;
 
-      if(L === "en"){ root.lang = "en"; root.dir = "ltr"; }
-      else if(L === "ar"){ root.lang = "ar"; root.dir = "rtl"; }
-      else { root.lang = "he"; root.dir = "rtl"; }
+      if(L === "en" || L === "ru"){
+        root.lang = L;
+        root.dir = "ltr";
+      } else if(L === "ar"){
+        root.lang = "ar";
+        root.dir = "rtl";
+      } else {
+        root.lang = "he";
+        root.dir = "rtl";
+      }
 
+      // text
       document.querySelectorAll("[data-i18n]").forEach(el=>{
         const key = el.getAttribute("data-i18n");
         if(dict[L][key] !== undefined){
@@ -816,7 +1108,7 @@
         }
       });
 
-      // update options text (select options rely on data-i18n)
+      // select options
       document.querySelectorAll("option[data-i18n]").forEach(opt=>{
         const key = opt.getAttribute("data-i18n");
         if(dict[L][key] !== undefined){
@@ -824,15 +1116,14 @@
         }
       });
 
-      // update link/desc i18n that are inside attributes
-      // (already handled by textContent for those with data-i18n)
-
-      // toggle active
+      // active btn
       document.querySelectorAll(".langbtn").forEach(btn=>{
         btn.classList.toggle("active", btn.getAttribute("data-lang") === L);
       });
 
-      // re-apply filter counts after direction change
+      // table headers for mobile labels
+      // (keep original labels in Hebrew — not critical; cards still readable)
+
       apply();
     }
 
@@ -840,7 +1131,9 @@
       btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
     });
 
-    // initial apply
+    // init
+    syncFavUI();
+    setLang("he");
     apply();
   </script>
 
