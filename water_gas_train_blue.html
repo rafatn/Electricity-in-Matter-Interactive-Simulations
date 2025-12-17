@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>רכבת מים על גז - חיבור עולמי דרך הים</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --bg: #021526;
+      --card-bg: #06223a;
+      --accent: #29b6f6;
+      --accent-soft: rgba(41, 182, 246, 0.18);
+      --accent-2: #4dd0e1;
+      --text-main: #f3fbff;
+      --text-muted: #b2c7d8;
+      --danger: #ff6b81;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #093053, #020b16);
+      color: var(--text-main);
+      direction: rtl;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.1rem;
+      margin: 0.5rem 0;
+    }
+
+    header h2 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin: 0.3rem 0 1rem;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #29b6f622, #4dd0e122);
+      border: 1px solid #29b6f666;
+      font-size: 0.85rem;
+      color: var(--accent-2);
+    }
+
+    .tagline span.icon {
+      font-size: 1.1rem;
+    }
+
+    .byline {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .lang-switcher {
+      margin-top: 0.8rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: linear-gradient(135deg, #06223a, #04121f);
+      border-radius: 1.2rem;
+      padding: 1.2rem 1.3rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, #29b6f628, transparent 55%),
+        radial-gradient(circle at 100% 0%, #4dd0e128, transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card h3 {
+      margin: 0 0 0.6rem;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card h3 .emoji {
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      margin: 0.2rem 0;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(2, 19, 32, 0.9);
+      color: var(--text-muted);
+    }
+
+    .highlight {
+      color: var(--accent);
+    }
+
+    .flow-section-title {
+      margin-top: 0.7rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .flowchart {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: stretch;
+      justify-content: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .flow-step {
+      min-width: 120px;
+      max-width: 200px;
+      flex: 1 1 120px;
+      background: rgba(3, 24, 42, 0.96);
+      border-radius: 0.9rem;
+      padding: 0.5rem 0.7rem;
+      border: 1px solid rgba(41, 182, 246, 0.55);
+      position: relative;
+    }
+
+    .flow-step h4 {
+      margin: 0 0 0.3rem;
+      font-size: 0.88rem;
+      color: var(--accent);
+    }
+
+    .flow-step p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .flow-arrow {
+      align-self: center;
+      font-size: 1.7rem;
+      opacity: 0.7;
+    }
+
+    .diagram-wrapper {
+      margin-top: 0.9rem;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: radial-gradient(circle at top, #08335a, #04131f);
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 0.8rem;
+      margin-top: 0.6rem;
+    }
+
+    @media (max-width: 700px) {
+      .calc-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .field-group {
+      margin-bottom: 0.6rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 0.2rem;
+      color: var(--text-muted);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(3, 18, 30, 0.9);
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    input[type="number"]::placeholder {
+      color: #6f88a1;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.82rem;
+      cursor: pointer;
+      background: linear-gradient(90deg, #29b6f6, #4dd0e1);
+      color: #02121f;
+      font-weight: 600;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.6);
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        filter 0.12s ease;
+      white-space: nowrap;
+    }
+
+    button.secondary {
+      background: rgba(4, 26, 41, 0.96);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: none;
+    }
+
+    button.lang-btn {
+      padding-inline: 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    button.active-lang {
+      box-shadow: 0 0 0 1px #ffffffaa, 0 10px 22px rgba(0, 0, 0, 0.7);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.7);
+    }
+
+    button.secondary:hover {
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+    }
+
+    .small-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .result-box {
+      margin-top: 0.4rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: 0.8rem;
+      background: rgba(2, 14, 26, 0.96);
+      border: 1px dashed rgba(41, 182, 246, 0.7);
+      font-size: 0.9rem;
+      min-height: 2.3rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
+    .gantt {
+      margin-top: 0.6rem;
+      background: radial-gradient(circle at 0 0, #29b6f622, transparent 55%);
+      border-radius: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gantt-row {
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+      align-items: center;
+    }
+
+    .gantt-label {
+      color: var(--text-muted);
+    }
+
+    .gantt-bar-bg {
+      position: relative;
+      height: 0.65rem;
+      border-radius: 999px;
+      background: rgba(1, 12, 23, 0.96);
+      overflow: hidden;
+    }
+
+    .gantt-bar {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #29b6f6, #4dd0e1);
+    }
+
+    .gantt-caption {
+      margin-top: 0.3rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      margin-top: 1.6rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer span {
+      color: var(--accent-2);
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="tagline">
+        <span class="icon">🌊</span>
+        רכבת מים על גז – חיבור העולם דרך הים
+      </div>
+      <h1>רכבת מים על גז על־ימית</h1>
+      <h2>
+        מערכת תחבורה עולמית ללא דלק פוסילי, על שכבות מים וגז, עם יכולת הצלה מהירה ביבשה
+      </h2>
+      <div class="byline">
+        רעיון ופיתוח קונספטואלי: <strong>ראפת נאטור</strong>
+      </div>
+
+      <div class="lang-switcher">
+        <button class="lang-btn active-lang" data-lang="he">עברית</button>
+        <button class="lang-btn" data-lang="en">English (בעתיד)</button>
+        <button class="lang-btn" data-lang="ar">العربية (لاحقًا)</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="card-inner">
+          <h3>
+            <span class="emoji">🧠</span>
+            ליבת הרעיון ותרשימי זרימה
+          </h3>
+          <p>
+            רכבת גלובלית שנעה על
+            <span class="highlight">מסילה תחתונה</span>
+            של שכבות מים וגז דחוס, ועל
+            <span class="highlight">מסילה עליונה</span>
+            מגנטית/חשמלית המייצבת את המסלול. האנרגיה מופקת מהים, מהשמש ומהרוח –
+            ללא אגירת דלק קלאסית.
+          </p>
+          <p>
+            במצב חירום הרכבת יכולה להתנתק מהמסילות, לצוף מעל פני הים כרחפת־על,
+            ולהשתמש באנרגיה שנאגרה מהסביבה כדי להגיע במהירות לנקודת יבשה בטוחה
+            לצורך חילוץ הנוסעים.
+          </p>
+
+          <div class="pill-row">
+            <div class="pill">אפס דלק פוסילי</div>
+            <div class="pill">שכבות מים+גז בעובי מתוכנן</div>
+            <div class="pill">מסילות עליונות מגנטיות</div>
+            <div class="pill">מצב הצלה ליבשות</div>
+          </div>
+
+          <h4 class="flow-section-title">
+            תרשים זרימה 1 – תנועת אנרגיה ונסיעה
+          </h4>
+          <div class="flowchart">
+            <div class="flow-step">
+              <h4>1. איסוף אנרגיה מהים</h4>
+              <p>גלים, זרמים ופרשי לחץ מומרות לחשמל נקי לאורך המסלול.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>2. מים → גז דחוס</h4>
+              <p>הידרוליזה והידרודינמיקה מייצרות גז להרמה, דחיפה וייצוב.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>3. כרית מים–גז</h4>
+              <p>שכבות בעובי מחושב יוצרות מסילה תחתונה חלקה מעל הים.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>4. מסילה עליונה</h4>
+              <p>מגנטים וחיישנים שומרים על גובה, כיוון ומהירות מדויקים.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>5. תנועה בין יבשות</h4>
+              <p>נסיעות רציפות ומהירות, עם ניהול עומסים גלובלי.</p>
+            </div>
+          </div>
+
+          <h4 class="flow-section-title">
+            תרשים זרימה 2 – מצב חירום והצלה
+          </h4>
+          <div class="flowchart">
+            <div class="flow-step">
+              <h4>1. זיהוי בעיה</h4>
+              <p>חיישנים מזהים כשל במסילה, סופה קיצונית או תקלה במערכת.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>2. הרמה מעל הים</h4>
+              <p>כריות גז מתנפחות והרכבת הופכת ל"ספינת הצלה" צפה ויציבה.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>3. שימוש באנרגיה שנאספה</h4>
+              <p>שמש, רוח וגלים מניעים את המערכת לכיוון היבשה הקרובה.</p>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-step">
+              <h4>4. נחיתה בטוחה</h4>
+              <p>הגעה לנקודות חילוץ, בתי חולים ונמלי חירום ייעודיים.</p>
+            </div>
+          </div>
+
+          <div class="diagram-wrapper">
+            <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="80" width="600" height="140" fill="#043058"/>
+              <path d="M0 110 Q 50 90 100 110 T 200 110 T 300 110 T 400 110 T 500 110 T 600 110"
+                    fill="none" stroke="#4fc3f7" stroke-width="2" opacity="0.9"/>
+              <rect x="40" y="130" width="520" height="30" fill="#063455" stroke="#4dd0e1" stroke-width="1.5" />
+              <rect x="60" y="140" width="480" height="10" rx="4" fill="#29b6f6"/>
+              <rect x="190" y="115" width="220" height="25" rx="8" fill="#f3fbff"/>
+              <rect x="200" y="120" width="60" height="16" rx="4" fill="#06223a"/>
+              <rect x="270" y="120" width="60" height="16" rx="4" fill="#06223a"/>
+              <rect x="340" y="120" width="60" height="16" rx="4" fill="#06223a"/>
+              <rect x="80" y="60" width="440" height="6" rx="3" fill="#4dd0e1"/>
+              <rect x="100" y="66" width="4" height="44" fill="#0e2742"/>
+              <rect x="200" y="66" width="4" height="44" fill="#0e2742"/>
+              <rect x="300" y="66" width="4" height="44" fill="#0e2742"/>
+              <rect x="400" y="66" width="4" height="44" fill="#0e2742"/>
+              <rect x="500" y="66" width="4" height="44" fill="#0e2742"/>
+              <text x="90" y="55" fill="#f3fbff" font-size="11">
+                מסילה עליונה מגנטית
+              </text>
+              <text x="70" y="135" fill="#b3e5fc" font-size="11">
+                שכבת גז דחוס תת־ימית
+              </text>
+              <text x="200" y="108" fill="#f3fbff" font-size="11">
+                רכבת מים על גז
+              </text>
+              <text x="20" y="200" fill="#bbdefb" font-size="11">
+                ים פתוח
+              </text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-inner">
+          <h3>
+            <span class="emoji">🐍</span>
+            מחשבון Python – זמן נסיעה עולמי
+          </h3>
+          <p>
+            כאן משולב קוד <span class="highlight">Python</span> חי (באמצעות Pyodide)
+            לחישוב זמן נסיעה משוער של רכבת המים־על־גז אם מחברים את העולם דרך הים.
+          </p>
+          <p>
+            ניתן להזין מרחק בים, מהירות ממוצעת, מספר מקטעים (עצירות) וזמן עצירה ממוצע בכל מקטע.
+            התוצאה מחושבת בשעות ובימים.
+          </p>
+
+          <div class="calc-grid">
+            <div>
+              <div class="field-group">
+                <label for="distance">
+                  מרחק בים (ק"מ)
+                </label>
+                <input
+                  id="distance"
+                  type="number"
+                  placeholder="לדוגמה: 40075 (היקף כדור הארץ בקו המשווה)"
+                  value="40075"
+                  step="1"
+                  min="1"
+                />
+              </div>
+              <div class="field-group">
+                <label for="speed">
+                  מהירות ממוצעת של הרכבת (קמ״ש)
+                </label>
+                <input
+                  id="speed"
+                  type="number"
+                  placeholder="לדוגמה: 600 קמ״ש במסילה ימית מהירה"
+                  value="600"
+                  step="10"
+                  min="10"
+                />
+              </div>
+              <div class="field-group">
+                <label for="segments">
+                  מספר מקטעים / עצירות בדרך
+                </label>
+                <input
+                  id="segments"
+                  type="number"
+                  placeholder="לדוגמה: 8–12 עצירות יבשתיות"
+                  value="10"
+                  step="1"
+                  min="0"
+                />
+              </div>
+              <div class="field-group">
+                <label for="stop-time">
+                  זמן עצירה ממוצע בכל מקטע (שעות)
+                </label>
+                <input
+                  id="stop-time"
+                  type="number"
+                  placeholder="לדוגמה: 1.5 שעות עצירה"
+                  value="1.5"
+                  step="0.1"
+                  min="0"
+                />
+              </div>
+              <div class="btn-row">
+                <button type="button" onclick="calculateTravelTime()">
+                  חישוב זמן נסיעה
+                </button>
+                <button
+                  type="button"
+                  class="secondary"
+                  onclick="setPresetDistance(40075)"
+                  title="היקף כדור הארץ בקו המשווה"
+                >
+                  🌍 היקף העולם ~40,075 ק"מ
+                </button>
+                <button
+                  type="button"
+                  class="secondary"
+                  onclick="setPresetDistance(60000)"
+                  title="רשת מסילות גלובלית דרך הימים העיקריים"
+                >
+                  🌐 רשת גלובלית מורחבת ~60,000 ק"מ
+                </button>
+                <button
+                  type="button"
+                  class="secondary"
+                  onclick="setPresetDistance(9000)"
+                  title="לדוגמה: מסלול בין-יבשתי טיפוסי"
+                >
+                  ✈️ מסלול בין-יבשתי ~9,000 ק"מ
+                </button>
+              </div>
+              <div id="calc-note" class="small-note">
+                החישוב מבוצע בדפדפן שלך באמצעות Python (Pyodide). בפעם הראשונה
+                ייתכן עיכוב קצר בזמן טעינת מנוע פייתון.
+              </div>
+            </div>
+
+            <div>
+              <div id="calc-result" class="result-box">
+                זמן הנסיעה הכולל יוצג כאן לאחר החישוב.
+              </div>
+              <div id="calc-error" class="small-note error" style="display:none;">
+                שגיאה בקלט – בדוק שהמרחק, המהירות ונתוני העצירות תקינים.
+              </div>
+
+              <div class="gantt">
+                <div class="gantt-row">
+                  <div class="gantt-label">שלב 1</div>
+                  <div class="gantt-bar-bg">
+                    <div class="gantt-bar" style="width: 20%;"></div>
+                  </div>
+                </div>
+                <div class="gantt-row">
+                  <div class="gantt-label">שלב 2</div>
+                  <div class="gantt-bar-bg">
+                    <div class="gantt-bar" style="width: 40%;"></div>
+                  </div>
+                </div>
+                <div class="gantt-row">
+                  <div class="gantt-label">שלב 3</div>
+                  <div class="gantt-bar-bg">
+                    <div class="gantt-bar" style="width: 70%;"></div>
+                  </div>
+                </div>
+                <div class="gantt-row">
+                  <div class="gantt-label">שלב 4</div>
+                  <div class="gantt-bar-bg">
+                    <div class="gantt-bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+                <div class="gantt-caption">
+                  דוגמת ציר זמן לפרויקט גלובלי: 1–3 שנים לפיתוח ראשוני,
+                  5–10 שנים לפריסת קווים ראשיים בין יבשות, ואז הרחבה הדרגתית
+                  לפי ביקוש ושותפויות בין־מדינתיות.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="small-note">
+            * מודל הזמן כאן הוא חישוב פיזיקלי פשוט (מרחק ÷ מהירות + עצירות).
+            בעולם האמיתי יתווספו תנאי ים, מגבלות בטיחות ותפעול.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      מסמך קונספט הנדסי-חזוני – <span>רכבת מים על גז</span> המחברת את העולם דרך הים.
+      ניתן לשימוש כהצעה למחקר, לשיתוף פעולה בין מדינות או כבסיס לתקינה עתידית.
+    </footer>
+  </div>
+
+  <script>
+    // תשתית כפתורי שפה (כרגע עברית בלבד פעילה)
+    const langButtons = document.querySelectorAll(".lang-btn");
+    langButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        langButtons.forEach(b => b.classList.remove("active-lang"));
+        btn.classList.add("active-lang");
+        const lang = btn.getAttribute("data-lang");
+        if (lang !== "he") {
+          alert("כרגע התוכן קיים בעברית בלבד. ניתן להוסיף תרגומים באנגלית/ערבית בשלב הבא.");
+        }
+      });
+    });
+
+    let pyodideReadyPromise = (async () => {
+      try {
+        const pyodide = await loadPyodide();
+        const pythonCode = `
+def travel_time_str(distance_km, speed_kmh, segments, stop_time_h):
+    try:
+        distance_km = float(distance_km)
+        speed_kmh = float(speed_kmh)
+        segments = float(segments)
+        stop_time_h = float(stop_time_h)
+        if speed_kmh <= 0 or distance_km <= 0 or segments < 0 or stop_time_h < 0:
+            return "ERROR"
+        travel_hours = distance_km / speed_kmh
+        stops_hours = segments * stop_time_h
+        total_hours = travel_hours + stops_hours
+        days = total_hours / 24.0
+        return f"{travel_hours:.1f}|{stops_hours:.1f}|{total_hours:.1f}|{days:.1f}"
+    except Exception:
+        return "ERROR"
+`;
+        await pyodide.runPythonAsync(pythonCode);
+        return pyodide;
+      } catch (e) {
+        console.error("Pyodide failed to load:", e);
+        return null;
+      }
+    })();
+
+    function setPresetDistance(value) {
+      const distanceInput = document.getElementById("distance");
+      distanceInput.value = value;
+    }
+
+    async function calculateTravelTime() {
+      const resultBox = document.getElementById("calc-result");
+      const errorBox = document.getElementById("calc-error");
+      errorBox.style.display = "none";
+
+      const distance = Number(document.getElementById("distance").value);
+      const speed = Number(document.getElementById("speed").value);
+      const segments = Number(document.getElementById("segments").value);
+      const stopTime = Number(document.getElementById("stop-time").value);
+
+      if (!distance || !speed || speed <= 0 || distance <= 0 || segments < 0 || stopTime < 0) {
+        errorBox.textContent = "שגיאה בקלט – בדוק שהמרחק, המהירות ונתוני העצירות תקינים.";
+        errorBox.style.display = "block";
+        resultBox.textContent = "לא ניתן לחשב – קלט לא תקין.";
+        return;
+      }
+
+      resultBox.textContent = "מחשב באמצעות Python...";
+
+      const pyodide = await pyodideReadyPromise;
+      if (!pyodide) {
+        errorBox.textContent = "לא הצלחנו לטעון את מנוע ה-Python (Pyodide). בדוק חיבור אינטרנט.";
+        errorBox.style.display = "block";
+        resultBox.textContent = "החישוב אינו זמין כרגע.";
+        return;
+      }
+
+      try {
+        const code = `travel_time_str(${distance}, ${speed}, ${segments}, ${stopTime})`;
+        const res = await pyodide.runPythonAsync(code);
+
+        if (!res || res === "ERROR") {
+          throw new Error("Python returned ERROR");
+        }
+
+        const parts = String(res).split("|");
+        if (parts.length !== 4) {
+          throw new Error("Unexpected result format");
+        }
+        const travel = parts[0];
+        const stops = parts[1];
+        const total = parts[2];
+        const days = parts[3];
+
+        resultBox.innerHTML =
+          "זמן נסיעה נטו: <strong>" + travel + " שעות</strong><br>" +
+          "זמן עצירות כולל: <strong>" + stops + " שעות</strong><br>" +
+          "סה"כ זמן נסיעה: <strong>" + total + " שעות</strong> (~" + days + " ימים)";
+      } catch (e) {
+        console.error(e);
+        errorBox.textContent = "שגיאה בזמן החישוב. אפשר לנסות שוב או עם ערכים אחרים.";
+        errorBox.style.display = "block";
+        resultBox.textContent = "החישוב נכשל.";
+      }
+    }
+  </script>
+</body>
+</html>
