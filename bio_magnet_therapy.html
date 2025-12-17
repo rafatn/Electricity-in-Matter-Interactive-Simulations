@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מודל מגנט ביולוגי להולכת תרופות</title>
+  <style>
+    :root{
+      --accent:#38bdf8;
+      --accent-soft:rgba(56,189,248,.15);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:rgba(148,163,184,.4);
+      --card:#0f172a;
+      --shadow:0 18px 45px rgba(15,23,42,.9);
+      --r-lg:18px;
+      --r-md:12px;
+      --t:.2s ease-out;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at top,#0f172a 0,#020617 55%,#000 100%);
+      color:var(--text);
+    }
+    .glow{
+      position:fixed; inset:-20%;
+      pointer-events:none; z-index:-1; opacity:.9; mix-blend-mode:screen;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(56,189,248,.13), transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(45,212,191,.14), transparent 55%),
+        radial-gradient(circle at 50% 110%, rgba(129,140,248,.18), transparent 55%);
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      padding:16px 14px 8px;
+      backdrop-filter:blur(18px);
+      background:linear-gradient(to bottom, rgba(15,23,42,.95), rgba(15,23,42,.9), transparent);
+    }
+    main{max-width:1100px; margin:0 auto; padding:16px 16px 32px}
+    .title-row{display:flex; gap:12px; justify-content:space-between; align-items:flex-start; flex-wrap:wrap}
+    h1{margin:0; font-size:clamp(1.35rem,2.2vw,1.8rem); display:flex; gap:8px; align-items:center}
+    .chip{
+      font-size:.7rem; padding:3px 8px; border-radius:999px;
+      background:rgba(15,118,110,.25); border:1px solid rgba(45,212,191,.35); color:#a5f3fc;
+      white-space:nowrap;
+    }
+    .subtitle{margin:6px 0 0; font-size:.86rem; color:var(--muted); max-width:72ch}
+    .pill-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+    .pill{
+      font-size:.7rem; padding:3px 7px; border-radius:999px;
+      border:1px solid rgba(148,163,184,.35); color:#cbd5f5; background:rgba(15,23,42,.7);
+    }
+    .lang-switch{display:flex; gap:6px; flex-wrap:wrap; margin-top:2px}
+    .lang-btn{
+      border-radius:999px; border:1px solid rgba(148,163,184,.45);
+      padding:4px 9px; font-size:.78rem; background:rgba(15,23,42,.85);
+      color:var(--text); cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+      transition:background var(--t), border var(--t), transform var(--t), box-shadow var(--t);
+    }
+    .lang-btn.active{
+      background:radial-gradient(circle at top, rgba(56,189,248,.3), rgba(15,23,42,.95));
+      border-color:rgba(56,189,248,.9);
+      box-shadow:0 0 18px rgba(56,189,248,.5);
+      transform:translateY(-1px);
+    }
+    .grid{display:grid; gap:14px; margin-top:12px}
+    @media(min-width:900px){.grid-main{grid-template-columns:minmax(0,1.6fr) minmax(0,1.1fr)}}
+    .card{
+      background:linear-gradient(145deg, rgba(15,23,42,.97), rgba(15,23,42,.92), rgba(8,47,73,.93));
+      border-radius:var(--r-lg); border:1px solid var(--border);
+      padding:14px 14px 16px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+    }
+    .card::before{
+      content:""; position:absolute; inset:-40%; opacity:.08; pointer-events:none;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,.9), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(45,212,191,.7), transparent 55%);
+      mix-blend-mode:soft-light;
+    }
+    .card-h{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-bottom:8px}
+    .card-title{font-size:.95rem; font-weight:650; display:flex; gap:8px; align-items:center}
+    .dot{width:8px; height:8px; border-radius:999px; background:radial-gradient(circle at 30% 30%, #bef264, #22c55e, #15803d); box-shadow:0 0 12px rgba(34,197,94,.9)}
+    .tag{
+      font-size:.75rem; padding:3px 7px; border-radius:999px;
+      background:var(--accent-soft); color:#e0f2fe; border:1px solid rgba(56,189,248,.7);
+      white-space:nowrap;
+    }
+    p{margin:0 0 8px; font-size:.86rem}
+    p.muted{color:var(--muted); font-size:.82rem}
+    .flow{
+      margin-top:6px; border-radius:var(--r-md);
+      background:radial-gradient(circle at top, rgba(56,189,248,.12), rgba(15,23,42,.95));
+      border:1px solid rgba(56,189,248,.45);
+      padding:10px; position:relative;
+    }
+    .flow-line{
+      position:absolute; inset-inline:14px; top:32px; bottom:32px;
+      border-inline-start:1px dashed rgba(148,163,184,.55); opacity:.8;
+    }
+    [dir="ltr"] .flow-line{inset-inline:auto 14px}
+    .steps{display:flex; flex-direction:column; gap:10px; position:relative}
+    .step{display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; align-items:flex-start; position:relative; z-index:1}
+    .icon{
+      width:28px; height:28px; border-radius:999px;
+      background:#020617; border:1px solid rgba(148,163,184,.7);
+      display:flex; align-items:center; justify-content:center; font-size:.9rem;
+      position:relative; overflow:hidden;
+    }
+    .icon::after{
+      content:""; position:absolute; inset:-40%;
+      background:radial-gradient(circle at 25% 25%, rgba(56,189,248,.5), transparent 60%);
+      opacity:.7; mix-blend-mode:screen; animation:pulse 2.4s infinite alternate;
+    }
+    @keyframes pulse{0%{opacity:.25; transform:scale(1)}100%{opacity:.85; transform:scale(1.12)}}
+    .st-title{font-size:.84rem; font-weight:650; margin-bottom:2px}
+    .st-sub{font-size:.78rem; color:var(--muted)}
+    .visual{
+      margin-top:10px; display:flex; gap:10px; align-items:center;
+      padding:9px 10px; border-radius:var(--r-md);
+      border:1px dashed rgba(148,163,184,.6);
+      background:radial-gradient(circle at 10% 0, rgba(56,189,248,.18), rgba(15,23,42,.96));
+    }
+    .orb{
+      width:38px; height:38px; border-radius:999px;
+      background:radial-gradient(circle at 30% 20%, #e0f2fe, #38bdf8, #1d4ed8);
+      box-shadow:0 0 18px rgba(56,189,248,.9), 0 0 40px rgba(56,189,248,.55);
+      position:relative; animation:beat 2.6s ease-in-out infinite;
+      flex:0 0 auto;
+    }
+    @keyframes beat{
+      0%,100%{transform:scale(.96) translateY(0); box-shadow:0 0 14px rgba(56,189,248,.8), 0 0 25px rgba(56,189,248,.4)}
+      50%{transform:scale(1.06) translateY(-1px); box-shadow:0 0 26px rgba(56,189,248,1), 0 0 50px rgba(56,189,248,.7)}
+    }
+    .ring{
+      position:absolute; inset:-4px; border-radius:inherit;
+      border:1px solid rgba(125,211,252,.6);
+      opacity:.7; animation:ring 3s ease-out infinite;
+    }
+    @keyframes ring{0%{transform:scale(1); opacity:.7}100%{transform:scale(1.25); opacity:0}}
+    .visual-text{font-size:.82rem}
+    .tagrow{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
+    .pill2{
+      font-size:.72rem; padding:3px 8px; border-radius:999px;
+      border:1px solid rgba(148,163,184,.4); background:rgba(15,23,42,.85);
+    }
+    .good{border-color:rgba(74,222,128,.7); background:rgba(22,163,74,.1); color:#bbf7d0}
+    .warn{border-color:rgba(250,204,21,.7); background:rgba(113,63,18,.22); color:#fef9c3}
+    .risk{border-color:rgba(248,113,113,.7); background:rgba(127,29,29,.18); color:#fecaca}
+    ul{margin:6px 0 0; padding-left:18px; font-size:.82rem}
+    li{margin-bottom:4px}
+    .disc{
+      margin-top:10px; font-size:.72rem; color:var(--muted);
+      border-radius:var(--r-md); border:1px dashed rgba(148,163,184,.55);
+      padding:7px 9px; background:rgba(15,23,42,.78);
+    }
+    .footer{margin-top:18px; font-size:.72rem; color:var(--muted); text-align:center}
+    @media(max-width:480px){
+      main{padding-inline:10px}
+      .card{padding:12px 11px 14px}
+      .flow{padding:9px 8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <header>
+    <div class="title-row">
+      <div>
+        <h1 data-i18n="title">
+          מודל מגנט ביולוגי להולכת תרופות
+          <span class="chip" data-i18n="chip">קונספט מחקרי · לא קליני</span>
+        </h1>
+        <p class="subtitle" data-i18n="subtitle">
+          הצעה למערכת טלאי חכם המבוססת על "מגנט" ביולוגי, פרופיל DNA וחתימה חשמלית, כחלופה חלקית לאינפוזיה.
+        </p>
+        <div class="pill-row">
+          <span class="pill" data-i18n="pill-1">הולכה לא מייננת</span>
+          <span class="pill" data-i18n="pill-2">התאמה גנטית־חשמלית</span>
+          <span class="pill" data-i18n="pill-3">מפת שושלת משפחתית</span>
+        </div>
+      </div>
+
+      <div class="lang-switch" aria-label="Language selector">
+        <button class="lang-btn active" data-lang="he">🇮🇱 עברית</button>
+        <button class="lang-btn" data-lang="en">🌍 English</button>
+        <button class="lang-btn" data-lang="ar">🇵🇸 العربية</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid grid-main">
+      <article class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span><span data-i18n="concept-title">1. רעיון בסיסי – טלאי "מגנט ביולוגי"</span></div>
+          <span class="tag" data-i18n="concept-tag">חלופה חלקית לאינפוזיה</span>
+        </div>
+
+        <p data-i18n="concept-1">
+          במקום עירוי ורידי מתמשך, המערכת מבוססת על טלאי חכם הנצמד לעור. הטלאי מכיל מאגר תרופות, חיישנים,
+          ומנגנון "מגנטי" ביולוגי שאינו מתכת, אלא התאמה ביוכימית־חשמלית בין התרופה לרקמת היעד.
+        </p>
+        <p class="muted" data-i18n="concept-2">
+          "המגנט" כאן הוא שפה ביולוגית־חשמלית: זיהוי DNA, חתימה חשמלית של האיבר, והיסטוריה רפואית של המטופל והמשפחה,
+          כדי להחליט מתי, כמה ולאן לשחרר את התרופה.
+        </p>
+
+        <div class="flow">
+          <div class="flow-line"></div>
+          <div class="steps">
+            <div class="step">
+              <div class="icon">1</div>
+              <div>
+                <div class="st-title" data-i18n="flow1t">הצמדת הטלאי לגוף</div>
+                <div class="st-sub" data-i18n="flow1s">הטלאי קורא פרמטרים פיזיולוגיים (טמפרטורה, מוליכות, דופק) ומתאים את עצמו למטופל.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="icon">2</div>
+              <div>
+                <div class="st-title" data-i18n="flow2t">חישוב מסלול – "GPS ביולוגי"</div>
+                <div class="st-sub" data-i18n="flow2s">המערכת משתמשת במפת גוף דיגיטלית, DNA אישי ושושלת משפחתית כדי לבחור איברי יעד ומינונים בטוחים.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="icon">3</div>
+              <div>
+                <div class="st-title" data-i18n="flow3t">שחרור התרופה בצ'אנקים</div>
+                <div class="st-sub" data-i18n="flow3s">התרופה מוזרמת במנות קטנות (כמו פריימים בוידאו), בליווי שדות לא מייננים, עם פידבק בזמן אמת מהחיישנים.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="icon">4</div>
+              <div>
+                <div class="st-title" data-i18n="flow4t">התאמה ותיקון תוך כדי תנועה</div>
+                <div class="st-sub" data-i18n="flow4s">אם הגוף מגיב אחרת מהצפוי, האלגוריתם משנה את הקצב, הכיוון או מפסיק את השחרור לצורך בטיחות.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="visual">
+          <div class="orb"><div class="ring"></div></div>
+          <div class="visual-text" data-i18n="visual">
+            ה"אורב" מייצג את המגנט הביולוגי: שילוב של שדות חשמליים חלשים, ננו־נשאים וכימיה מותאמת־DNA,
+            המושכים את התרופה לאיבר היעד בלי שימוש במגנט מתכתי.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span><span data-i18n="map-title">2. מפת גוף + DNA + שושלת = ניווט טיפולי</span></div>
+          <span class="tag" data-i18n="map-tag">"Google Maps" של החולה</span>
+        </div>
+
+        <p data-i18n="map-1">
+          הליבה של המערכת היא מודל נתונים מאוחד ("Digital Twin") של הגוף: אנטומיה, זרימת דם, קולטנים,
+          יחד עם DNA אישי והיסטוריה משפחתית למחלות כרוניות.
+        </p>
+
+        <ul>
+          <li data-i18n="map-li1"><strong>שכבת אנטומיה:</strong> איברים, כלי דם, אזורי רגישות (מוח, לב, כליות וכו').</li>
+          <li data-i18n="map-li2"><strong>שכבת סיכון משפחתית:</strong> נתוני מחלות כרוניות לאורך דורות → מפת חום של איברים בסיכון.</li>
+          <li data-i18n="map-li3"><strong>שכבת חתימה חשמלית:</strong> תבניות הולכה עצבית/שרירית המגדירות אילו גירויים בטוחים.</li>
+        </ul>
+
+        <div class="tagrow">
+          <span class="pill2 good" data-i18n="tg1">התאמה אישית עמוקה</span>
+          <span class="pill2 good" data-i18n="tg2">פוטנציאל להפחתת מינונים</span>
+          <span class="pill2 warn" data-i18n="tw1">דורש הגנת פרטיות חזקה</span>
+          <span class="pill2 risk" data-i18n="tr1">לא מיועד לשימוש קליני ישיר</span>
+        </div>
+
+        <p class="muted" style="margin-top:10px" data-i18n="map-2">
+          המודל מיועד כרעיון מחקרי בלבד: שילוב נתוני DNA ומשפחה מחייב מסגרות אתיות, רגולטוריות וטכנולוגיות
+          שלא קיימות במלואן כיום.
+        </p>
+      </article>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span><span data-i18n="adv-title">3. יתרונות פוטנציאליים</span></div>
+          <span class="tag" data-i18n="adv-tag">חזון עתידי</span>
+        </div>
+        <ul>
+          <li data-i18n="adv1">הפחתת תלות באינפוזיות ורידיות: פחות זיהומים, פחות כאב, יותר נוחות למטופל.</li>
+          <li data-i18n="adv2">שחרור תרופה במנות קטנות ומתוזמנות, עם אפשרות עצירה בזמן אמת אם מתגלה תגובה לא צפויה.</li>
+          <li data-i18n="adv3">פוטנציאל לצמצם פגיעה באיברים בריאים על ידי כיוון התרופה לרקמות יעד בלבד.</li>
+          <li data-i18n="adv4">אפשרות למעקב ארוך־טווח במחלות כרוניות, תוך התאמת טיפול דינמית לפי שינויים בגוף.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span><span data-i18n="risk-title">4. מגבלות ואתגרים</span></div>
+          <span class="tag" data-i18n="risk-tag">נקודות לבחינה</span>
+        </div>
+        <ul>
+          <li data-i18n="rk1">הצורך בהוכחה מדעית לכך ששדות לא מייננים ברמות נמוכות מסוגלים לכוון הגעה של תרופות לרקמות עמוקות.</li>
+          <li data-i18n="rk2">שילוב בטוח של נתוני DNA ומשפחה – רגולציה, אתיקה, זכויות פרט.</li>
+          <li data-i18n="rk3">שנים רבות של ניסויים פרה־קליניים וקליניים לפני כל שימוש בעולם האמיתי.</li>
+        </ul>
+        <div class="disc" data-i18n="disc">
+          ⚠️ מסמך זה מציג רעיון קונספטואלי בלבד, לצורך דיון מחקרי ותיאורטי. אין לראות בו המלצה רפואית,
+          הנחיה לטיפול, או תחליף להתייעצות עם רופא. כל שימוש רפואי (אם יהיה) מחייב מחקר, רגולציה וניסויים קליניים מלאים.
+        </div>
+      </article>
+    </section>
+
+    <div class="footer" data-i18n="foot">
+      ניתן להציג דף זה כחלק מהצעת מחקר או מצגת חזון לבית חולים / אוניברסיטה, בכפוף לדיוק מדעי ותיקוף מקצועי נוסף.
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const dict = {
+        he:{
+          title:"מודל מגנט ביולוגי להולכת תרופות",
+          chip:"קונספט מחקרי · לא קליני",
+          subtitle:"הצעה למערכת טלאי חכם המבוססת על \"מגנט\" ביולוגי, פרופיל DNA וחתימה חשמלית, כחלופה חלקית לאינפוזיה.",
+          "pill-1":"הולכה לא מייננת","pill-2":"התאמה גנטית־חשמלית","pill-3":"מפת שושלת משפחתית",
+          "concept-title":"1. רעיון בסיסי – טלאי \"מגנט ביולוגי\"","concept-tag":"חלופה חלקית לאינפוזיה",
+          "concept-1":"במקום עירוי ורידי מתמשך, המערכת מבוססת על טלאי חכם הנצמד לעור. הטלאי מכיל מאגר תרופות, חיישנים, ומנגנון \"מגנטי\" ביולוגי שאינו מתכת, אלא התאמה ביוכימית־חשמלית בין התרופה לרקמת היעד.",
+          "concept-2":"\"המגנט\" כאן הוא שפה ביולוגית־חשמלית: זיהוי DNA, חתימה חשמלית של האיבר, והיסטוריה רפואית של המטופל והמשפחה, כדי להחליט מתי, כמה ולאן לשחרר את התרופה.",
+          flow1t:"הצמדת הטלאי לגוף",flow1s:"הטלאי קורא פרמטרים פיזיולוגיים (טמפרטורה, מוליכות, דופק) ומתאים את עצמו למטופל.",
+          flow2t:"חישוב מסלול – \"GPS ביולוגי\"",flow2s:"המערכת משתמשת במפת גוף דיגיטלית, DNA אישי ושושלת משפחתית כדי לבחור איברי יעד ומינונים בטוחים.",
+          flow3t:"שחרור התרופה בצ'אנקים",flow3s:"התרופה מוזרמת במנות קטנות (כמו פריימים בוידאו), בליווי שדות לא מייננים, עם פידבק בזמן אמת מהחיישנים.",
+          flow4t:"התאמה ותיקון תוך כדי תנועה",flow4s:"אם הגוף מגיב אחרת מהצפוי, האלגוריתם משנה את הקצב, הכיוון או מפסיק את השחרור לצורך בטיחות.",
+          visual:"ה\"אורב\" מייצג את המגנט הביולוגי: שילוב של שדות חשמליים חלשים, ננו־נשאים וכימיה מותאמת־DNA, המושכים את התרופה לאיבר היעד בלי שימוש במגנט מתכתי.",
+          "map-title":"2. מפת גוף + DNA + שושלת = ניווט טיפולי","map-tag":"\"Google Maps\" של החולה",
+          "map-1":"הליבה של המערכת היא מודל נתונים מאוחד (\"Digital Twin\") של הגוף: אנטומיה, זרימת דם, קולטנים, יחד עם DNA אישי והיסטוריה משפחתית למחלות כרוניות.",
+          "map-li1":"<strong>שכבת אנטומיה:</strong> איברים, כלי דם, אזורי רגישות (מוח, לב, כליות וכו').",
+          "map-li2":"<strong>שכבת סיכון משפחתית:</strong> נתוני מחלות כרוניות לאורך דורות → מפת חום של איברים בסיכון.",
+          "map-li3":"<strong>שכבת חתימה חשמלית:</strong> תבניות הולכה עצבית/שרירית המגדירות אילו גירויים בטוחים.",
+          tg1:"התאמה אישית עמוקה",tg2:"פוטנציאל להפחתת מינונים",tw1:"דורש הגנת פרטיות חזקה",tr1:"לא מיועד לשימוש קליני ישיר",
+          "map-2":"המודל מיועד כרעיון מחקרי בלבד: שילוב נתוני DNA ומשפחה מחייב מסגרות אתיות, רגולטוריות וטכנולוגיות שלא קיימות במלואן כיום.",
+          "adv-title":"3. יתרונות פוטנציאליים","adv-tag":"חזון עתידי",
+          adv1:"הפחתת תלות באינפוזיות ורידיות: פחות זיהומים, פחות כאב, יותר נוחות למטופל.",
+          adv2:"שחרור תרופה במנות קטנות ומתוזמנות, עם אפשרות עצירה בזמן אמת אם מתגלה תגובה לא צפויה.",
+          adv3:"פוטנציאל לצמצם פגיעה באיברים בריאים על ידי כיוון התרופה לרקמות יעד בלבד.",
+          adv4:"אפשרות למעקב ארוך־טווח במחלות כרוניות, תוך התאמת טיפול דינמית לפי שינויים בגוף.",
+          "risk-title":"4. מגבלות ואתגרים","risk-tag":"נקודות לבחינה",
+          rk1:"הצורך בהוכחה מדעית לכך ששדות לא מייננים ברמות נמוכות מסוגלים לכוון הגעה של תרופות לרקמות עמוקות.",
+          rk2:"שילוב בטוח של נתוני DNA ומשפחה – רגולציה, אתיקה, זכויות פרט.",
+          rk3:"שנים רבות של ניסויים פרה־קליניים וקליניים לפני כל שימוש בעולם האמיתי.",
+          disc:"⚠️ מסמך זה מציג רעיון קונספטואלי בלבד, לצורך דיון מחקרי ותיאורטי. אין לראות בו המלצה רפואית, הנחיה לטיפול, או תחליף להתייעצות עם רופא. כל שימוש רפואי (אם יהיה) מחייב מחקר, רגולציה וניסויים קליניים מלאים.",
+          foot:"ניתן להציג דף זה כחלק מהצעת מחקר או מצגת חזון לבית חולים / אוניברסיטה, בכפוף לדיוק מדעי ותיקוף מקצועי נוסף."
+        },
+        en:{
+          title:"Bio-Magnetic Model for Targeted Drug Delivery",
+          chip:"Conceptual research · Non-clinical",
+          subtitle:"A proposal for a smart skin patch based on a biological “magnet”, DNA profile and electrical signature, as a partial alternative to IV infusion.",
+          "pill-1":"Non-ionizing conduction","pill-2":"Genetic–electrical matching","pill-3":"Family risk mapping",
+          "concept-title":"1. Core idea – “Bio-magnet” skin patch","concept-tag":"Partial alternative to infusion",
+          "concept-1":"Instead of continuous IV infusion, the system uses a smart patch attached to the skin. The patch contains a drug reservoir, sensors and a biological “magnetic” mechanism that is not metal-based, but a biochemical–electrical match between the drug and the target tissue.",
+          "concept-2":"The “magnet” here is a biological–electrical language: DNA recognition, organ-specific electrical signatures, and the patient’s and family’s medical history, to decide when, how much and where to release the drug.",
+          flow1t:"Attaching the patch",flow1s:"The patch reads physiological parameters (temperature, conductivity, pulse) and adapts to the patient.",
+          flow2t:"Path calculation – Biological “GPS”",flow2s:"The system uses a digital body map, personal DNA and family history to select target organs and safe dosing.",
+          flow3t:"Drug release in chunks",flow3s:"The drug is delivered in small packets (similar to video frames), accompanied by non-ionizing fields, with real-time feedback from the sensors.",
+          flow4t:"On-the-fly adjustment",flow4s:"If the body responds differently than expected, the algorithm adjusts the rate and direction, or pauses delivery for safety.",
+          visual:"The glowing orb represents the bio-magnet: a combination of weak electric fields, nano-carriers and DNA-matched chemistry that attracts the drug to the target organ without using metallic magnets.",
+          "map-title":"2. Body map + DNA + lineage = Therapeutic navigation","map-tag":"Patient-specific “Google Maps”",
+          "map-1":"The system’s core is a unified data model (“Digital Twin”) of the body: anatomy, blood flow, receptors, together with personal DNA and family history of chronic diseases.",
+          "map-li1":"<strong>Anatomy layer:</strong> Organs, blood vessels and vulnerable regions (brain, heart, kidneys, etc.).",
+          "map-li2":"<strong>Family risk layer:</strong> Chronic disease data across generations → a heat-map of organs at risk.",
+          "map-li3":"<strong>Electrical signature layer:</strong> Neural/muscular conduction patterns defining which stimuli are safe.",
+          tg1:"Deep personalization",tg2:"Potential dose reduction",tw1:"Requires strong privacy protection",tr1:"Not intended for direct clinical use",
+          "map-2":"This model is a research concept only: combining DNA and family data requires ethical, regulatory and technological frameworks that are not fully available today.",
+          "adv-title":"3. Potential advantages","adv-tag":"Future vision",
+          adv1:"Reduced dependence on continuous IV lines: fewer infections, less pain, better comfort for the patient.",
+          adv2:"Drug release in small, timed portions, with the ability to stop immediately if an unexpected reaction occurs.",
+          adv3:"Potential to reduce damage to healthy organs by steering the drug mainly to target tissues.",
+          adv4:"Possibility of long-term monitoring in chronic disease with dynamic adjustment to bodily changes.",
+          "risk-title":"4. Limitations and challenges","risk-tag":"Points to evaluate",
+          rk1:"The need for scientific proof that low-level non-ionizing fields can reliably guide drugs to deep tissues.",
+          rk2:"Safe use of DNA and family data – regulation, ethics and privacy rights.",
+          rk3:"Many years of pre-clinical and clinical research before any real-world use.",
+          disc:"⚠️ This document describes a conceptual idea for research discussion only. It is not medical advice, treatment guidance or a substitute for consulting a physician. Any medical use (if ever) would require full research, regulation and clinical trials.",
+          foot:"This page can be used as part of a research proposal or vision slide deck for hospitals / universities, subject to scientific accuracy and additional professional validation."
+        },
+        ar:{
+          title:"نموذج مغناطيس حيوي لإيصال الدواء الموجّه",
+          chip:"فكرة بحثية · غير سريرية",
+          subtitle:"اقتراح لرقعة ذكية على الجلد تعتمد على \"مغناطيس\" حيوي، وبصمة DNA وتوقيع كهربائي، كبديل جزئي للحقن الوريدي.",
+          "pill-1":"نقل غير مؤيّن","pill-2":"مواءمة جينية-كهربائية","pill-3":"خريطة مخاطر عائلية",
+          "concept-title":"1. الفكرة الأساسية – رقعة \"مغناطيس حيوي\"","concept-tag":"بديل جزئي للحقن الوريدي",
+          "concept-1":"بدلاً من التسريب الوريدي المستمر، يستخدم النظام رقعة ذكية تلتصق بالجلد. تحتوي الرقعة على مخزن للدواء، وحساسات، وآلية \"مغناطيسية\" حيوية ليست معدنية، بل تعتمد على تطابق كيميائي-كهربائي بين الدواء والأنسجة المستهدفة.",
+          "concept-2":"\"المغناطيس\" هنا هو لغة حيوية-كهربائية: تعرف على الـDNA، وتوقيع كهربائي خاص بكل عضو، وتاريخ طبي للمريض والعائلة، لتحديد متى وكم وإلى أين يتم إطلاق الدواء.",
+          flow1t:"تثبيت الرقعة على الجسم",flow1s:"تقرأ الرقعة المعطيات الفسيولوجية (الحرارة، الناقلية، النبض) وتتكيف مع حالة المريض.",
+          flow2t:"حساب المسار – \"GPS\" حيوي",flow2s:"يستخدم النظام خريطة رقمية للجسم، وDNA شخصي، وتاريخ عائلي لتحديد الأعضاء المستهدفة والجرعات الآمنة.",
+          flow3t:"إطلاق الدواء على شكل أجزاء",flow3s:"يتم إيصال الدواء على شكل جرعات صغيرة (مثل إطارات الفيديو)، مع مجالات غير مؤيّنة وتغذية راجعة آنية من الحساسات.",
+          flow4t:"تعديل المسار أثناء العمل",flow4s:"إذا استجاب الجسم بطريقة غير متوقعة، يغيّر الخوارزم التوقيت والكمية أو يوقف الإطلاق لأسباب تتعلق بالأمان.",
+          visual:"الكرة المضيئة تمثل المغناطيس الحيوي: مزيج من مجالات كهربائية ضعيفة، وناقلات نانوية وكيمياء متطابقة مع الـDNA، يجذب الدواء إلى العضو الهدف دون استخدام مغناطيس معدني.",
+          "map-title":"2. خريطة الجسم + DNA + السلالة = توجيه علاجي","map-tag":"\"Google Maps\" للمريض",
+          "map-1":"نواة النظام هي نموذج بيانات موحّد (\"توأم رقمي\") للجسم: تشريح، جريان الدم، مستقبلات، مع دمج الـDNA الشخصي والتاريخ العائلي للأمراض المزمنة.",
+          "map-li1":"<strong>طبقة التشريح:</strong> الأعضاء، الأوعية الدموية، والمناطق الحساسة (الدماغ، القلب، الكلى...).",
+          "map-li2":"<strong>طبقة خطورة عائلية:</strong> بيانات الأمراض المزمنة عبر الأجيال → خريطة حرارية للأعضاء المعرضة للخطر.",
+          "map-li3":"<strong>طبقة التوقيع الكهربائي:</strong> أنماط التوصيل العصبي/العضلي التي تحدد ما هي المحفزات الآمنة.",
+          tg1:"مواءمة شخصية عميقة",tg2:"إمكانية خفض الجرعة الكلية",tw1:"يتطلب حماية قوية للخصوصية",tr1:"غير مخصص للاستخدام السريري المباشر",
+          "map-2":"هذا النموذج هو فكرة بحثية فقط: دمج بيانات DNA والعائلة يحتاج إلى أطر أخلاقية وتنظيمية وتقنية غير مكتملة اليوم.",
+          "adv-title":"3. مزايا محتملة","adv-tag":"رؤية مستقبلية",
+          adv1:"تقليل الاعتماد على التسريب الوريدي المستمر: التهابات أقل، ألم أقل، وراحة أكبر للمريض.",
+          adv2:"إطلاق الدواء على جرعات صغيرة وموقّتة مع إمكانية الإيقاف الفوري عند ظهور استجابة غير متوقعة.",
+          adv3:"إمكانية تقليل الضرر للأعضاء السليمة عن طريق توجيه الدواء أساساً إلى الأنسجة المستهدفة.",
+          adv4:"إمكانية المتابعة طويلة الأمد في الأمراض المزمنة مع تعديل ديناميكي للعلاج حسب تغيّر حالة الجسم.",
+          "risk-title":"4. حدود وتحديات","risk-tag":"نقاط للفحص",
+          rk1:"الحاجة إلى إثبات علمي أن المجالات غير المؤيّنة منخفضة الشدة يمكنها فعلياً توجيه الأدوية إلى أنسجة عميقة.",
+          rk2:"استخدام آمن لبيانات الـDNA والعائلة – التنظيم، الأخلاق، وحقوق الخصوصية.",
+          rk3:"سنوات عديدة من الأبحاث قبل سريرية وسريرية قبل أي استخدام فعلي.",
+          disc:"⚠️ هذا المستند يصف فكرة مفهومية للنقاش البحثي فقط. لا يُعتبر نصيحة طبية أو توجيهاً علاجياً ولا يغني عن استشارة الطبيب. أي استخدام طبي (إن حدث) يتطلب أبحاثاً كاملة، وتنظيماً، وتجارب سريرية.",
+          foot:"يمكن عرض هذه الصفحة كجزء من مقترح بحث أو عرض رؤية لمستشفى أو جامعة، مع ضرورة التدقيق العلمي والمراجعة المهنية الإضافية."
+        }
+      };
+
+      function setLang(lang){
+        const L = dict[lang] ? lang : "he";
+        const root = document.documentElement;
+
+        if(L==="en"){ root.lang="en"; root.dir="ltr"; }
+        else if(L==="ar"){ root.lang="ar"; root.dir="rtl"; }
+        else { root.lang="he"; root.dir="rtl"; }
+
+        document.querySelectorAll("[data-i18n]").forEach(el=>{
+          const key = el.getAttribute("data-i18n");
+          const val = dict[L][key];
+          if(typeof val === "string"){
+            if(val.includes("<") && (el.tagName==="LI" || el.tagName==="P")){
+              el.innerHTML = val;
+            }else{
+              el.textContent = val;
+            }
+          }
+        });
+
+        document.querySelectorAll(".lang-btn").forEach(btn=>{
+          btn.classList.toggle("active", btn.getAttribute("data-lang")===L);
+        });
+      }
+
+      document.querySelectorAll(".lang-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
+      });
+
+      setLang("he");
+    })();
+  </script>
+</body>
+</html>
