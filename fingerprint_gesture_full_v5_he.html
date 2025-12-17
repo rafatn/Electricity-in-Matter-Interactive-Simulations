@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>מסכים חכמים לפי טביעת אצבע + מחוות במרחק (Full v5)</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --accent2:#0ea5e9;
+      --good:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:24px;
+      font-family: Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.65;
+      user-select:none;
+    }
+
+    header{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    h1{margin:0;font-size:28px;letter-spacing:.2px}
+    .subtitle{margin-top:8px;color:var(--muted);max-width:980px}
+
+    .pillbar{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:#eef2ff;color:#1f2a75;
+      font-weight:900;font-size:13px;border:1px solid #dbe2ff;
+    }
+    .pill .dot{
+      width:9px;height:9px;border-radius:999px;background:var(--accent);
+      box-shadow:0 0 0 3px rgba(37,99,235,.12);
+    }
+
+    nav{
+      position:sticky;
+      top:12px;
+      z-index:20;
+      background:rgba(246,247,251,.85);
+      backdrop-filter: blur(10px);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.05);
+    }
+    .navlinks{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+    .navlinks a{
+      text-decoration:none;color:var(--text);
+      font-weight:900;font-size:13px;
+      padding:7px 10px;border-radius:999px;border:1px solid transparent;
+    }
+    .navlinks a:hover{border-color:var(--line);background:white}
+
+    main{max-width:1100px;margin:0 auto;display:grid;gap:16px}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .card h2{margin:0 0 10px 0;font-size:18px}
+    .card h3{margin:14px 0 8px 0;font-size:15px;color:#0f172a}
+    .muted{color:var(--muted)}
+
+    .split{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 820px){
+      .split{grid-template-columns:1fr}
+      nav{border-radius:14px}
+    }
+
+    .list{margin:8px 0 0 0;padding:0 18px 0 0}
+    .list li{margin:6px 0}
+
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tag{
+      font-size:12px;
+      border:1px solid var(--line);
+      background:#fbfdff;
+      padding:6px 10px;
+      border-radius:999px;
+      color:#0f172a;
+      font-weight:900;
+    }
+
+    .callout{
+      border-radius:14px;
+      padding:12px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+    .callout.good{border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.08)}
+    .callout.warn{border-color: rgba(245,158,11,.40); background: rgba(245,158,11,.09)}
+    .callout.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.08)}
+
+    .mono{
+      font-family: var(--mono);
+      font-size: 12px;
+      background:#0b1220;
+      color:#e5e7eb;
+      border-radius:14px;
+      padding:12px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+    }
+    details summary{cursor:pointer;font-weight:900}
+
+    /* ==== Demo (Merged: Live + Status + Edge + Hold) ==== */
+    .demoWrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+    @media (max-width: 980px){.demoWrap{grid-template-columns:1fr}}
+
+    .demoPanel{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:#0b1220;
+      position:relative;
+      min-height:310px;
+      color:#e5e7eb;
+    }
+    .demoTopbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;
+      background:rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .demoTopbar strong{font-size:13px}
+    .badgeRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .badge{
+      font-size:12px;padding:6px 10px;border-radius:999px;font-weight:900;
+      border:1px solid transparent; white-space:nowrap;
+    }
+    .badge.good{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.25);color:#d1fae5}
+    .badge.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.28);color:#fee2e2}
+    .badge.warn{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.28);color:#ffedd5}
+
+    .stage{
+      position:absolute;
+      inset:52px 12px 12px 12px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:14px;
+      touch-action:none; /* critical for mobile drag */
+    }
+    .finger{
+      position:absolute;
+      width:44px;height:44px;
+      border-radius:16px;
+      background:rgba(14,165,233,.25);
+      border:1px solid rgba(14,165,233,.45);
+      box-shadow:0 0 0 6px rgba(14,165,233,.10);
+      display:flex;align-items:center;justify-content:center;
+      color:#e0f2fe;font-weight:900;
+      transform: translate(-50%, -50%);
+      pointer-events:none;
+    }
+
+    .hud{
+      position:absolute;
+      left:12px; right:12px; bottom:12px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){.hud{grid-template-columns:1fr}}
+
+    .hudCard{
+      border-radius:14px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      padding:10px;
+      color:#e5e7eb;
+    }
+    .hudCard .t{font-size:12px;color:#cbd5e1;font-weight:900}
+    .hudCard .v{margin-top:4px;font-size:18px;font-weight:900}
+    .bar{
+      height:10px;border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .bar > i{
+      display:block;height:100%;
+      background:rgba(37,99,235,.85);
+      width:50%;
+      border-radius:999px;
+    }
+
+    .controls{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#fbfbfd;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 160px 1fr 110px;
+      gap:10px;
+      align-items:center;
+      margin:10px 0;
+    }
+    @media (max-width: 620px){
+      .row{grid-template-columns:1fr}
+      .row label{font-weight:900}
+    }
+    input[type="range"]{width:100%}
+    .mini{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .toggle{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:#fff;
+      margin-top:10px;
+    }
+    .toggle b{font-size:13px}
+    .toggle small{color:var(--muted)}
+    .switch{
+      width:54px;height:30px;border-radius:999px;
+      background:#e5e7eb;position:relative;border:1px solid #d1d5db;
+      cursor:pointer;flex:0 0 auto
+    }
+    .switch i{
+      position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:999px;background:#fff;
+      box-shadow:0 8px 16px rgba(0,0,0,.12);transition:all .18s ease
+    }
+    .switch.on{background:rgba(37,99,235,.25);border-color:rgba(37,99,235,.35)}
+    .switch.on i{right:27px}
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{
+      cursor:pointer;border:none;border-radius:12px;padding:10px 12px;
+      font-weight:900;background:var(--accent);color:white;
+      box-shadow:0 10px 18px rgba(37,99,235,.22);
+    }
+    button.ghost{background:#fff;color:var(--text);border:1px solid var(--line);box-shadow:none}
+    button:active{transform:translateY(1px)}
+
+    /* Mermaid fallback (CDN may be blocked) */
+    .mermaidWrap{margin-top:10px}
+    .mermaidBox{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px}
+    .hidden{display:none !important}
+
+    @media print{body{display:none !important;}}
+  </style>
+
+  <!-- Mermaid best-effort (optional). If offline/CDN blocked, we show fallback text. -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h1>מסכים חכמים שמגיבים לטביעת אצבע + מחוות במרחק (Full v5)</h1>
+      <div class="subtitle">
+        מסמך תכנון מלא + דמו עובד שמדגים את הלוגיקה: <b>Gate (Auth + Distance)</b> → <b>Tracking (Δx/Δy)</b> → <b>Gesture</b> → <b>Action</b>.
+        הדמו הוא סימולציה (לא חיישן אמיתי), אבל המבנה זהה למערכת אמיתית.
+      </div>
+      <div class="pillbar">
+        <span class="pill"><span class="dot"></span> Live Update</span>
+        <span class="pill"><span class="dot" style="background:var(--accent2)"></span> Status Badges</span>
+        <span class="pill"><span class="dot" style="background:var(--warn)"></span> Edge / Continuous</span>
+        <span class="pill"><span class="dot" style="background:var(--good)"></span> Hold Mode</span>
+      </div>
+    </div>
+
+    <nav aria-label="ניווט">
+      <div class="navlinks">
+        <a href="#overview">סקירה</a>
+        <a href="#hardware">חומרה</a>
+        <a href="#enroll">הגדרה ראשונית</a>
+        <a href="#pipeline">אלגוריתם</a>
+        <a href="#mapping">מיפוי מחוות</a>
+        <a href="#ui">מסכים</a>
+        <a href="#security">אבטחה</a>
+        <a href="#mvp">MVP</a>
+        <a href="#demo">דמו</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="overview" class="card">
+      <h2>1) סקירה</h2>
+      <div class="split">
+        <div>
+          <p class="muted">
+            המטרה היא לבנות “מסך חכם” שמזהה אצבע מורשית לפי טביעת/מרקם, ואז מאפשר שליטה במחוות באוויר בטווח מרחק מוגדר.
+            כך רק משתמש מורשה מפעיל פעולות, והמחוות הופכות ל”שלט” טבעי.
+          </p>
+
+          <h3>רעיונות ליכולות</h3>
+          <ul class="list">
+            <li><b>Swipe ימינה/שמאלה</b> → מעבר ערוץ / דפדוף כרטיסיות / Next/Prev</li>
+            <li><b>Up/Down</b> → עוצמת קול / בהירות / zoom</li>
+            <li><b>Hold</b> → מצב שליטה רציפה (למשל להעלות ווליום בהדרגה)</li>
+            <li><b>אצבע אחרת</b> → פרופיל אחר (ילד/הורה/אורח) והרשאות שונות</li>
+          </ul>
+
+          <div class="tags">
+            <span class="tag">טווח מומלץ: 2–6 ס״מ</span>
+            <span class="tag">Latency יעד: &lt; 60ms</span>
+            <span class="tag">FPS יעד: 30–60</span>
+          </div>
+        </div>
+
+        <div class="callout good">
+          <h3 style="margin:0 0 6px 0;">מה מיוחד כאן</h3>
+          <div class="muted">
+            לא רק “מחוות” כמו מצלמת רגילה — אלא <b>מחוות שמופעלות רק לאחר אימות אצבע</b>.
+            כלומר, יש שכבת <b>Gate</b> שמונעת הפעלה בטעות / על ידי מישהו אחר.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hardware" class="card">
+      <h2>2) חומרה אפשרית</h2>
+      <div class="split">
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">אופציה א׳: IR/אופטי (מומלץ ללא מגע)</h3>
+          <ul class="list">
+            <li>מצלמת IR קטנה + LED IR + עדשה מאקרו</li>
+            <li>פילטר IR לפי הצורך</li>
+            <li>מעבד/SoC להרצת CV בזמן אמת</li>
+          </ul>
+          <div class="muted">יתרון: “ללא מגע” אמיתי. חסרון: רגיש לתאורה/זווית (פתיר עם IR).</div>
+        </div>
+
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">אופציה ב׳: קיבולי/אולטרסוני</h3>
+          <ul class="list">
+            <li>דומה לקורא טביעות אצבע מתחת מסך</li>
+            <li>מתאים יותר למ״מ בודדים (“כמעט ללא מגע”)</li>
+          </ul>
+          <div class="muted">יתרון: פחות תלוי תאורה. חסרון: קשה להגיע לטווח ס״מ ללא מגע.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="enroll" class="card">
+      <h2>3) הגדרה ראשונית (Enrollment)</h2>
+      <p class="muted">
+        בהפעלה ראשונית המערכת “לומדת” את האצבע/ות המורשות. העיקרון: <b>לא לשמור תמונה גולמית</b>,
+        אלא לשמור תכונות/Embedding מוצפן.
+      </p>
+
+      <div class="split">
+        <div>
+          <h3>שלבים מומלצים</h3>
+          <ol class="list" style="padding-right:22px">
+            <li>בחירת אצבע (אגודל/אצבע מורה) + שם פרופיל (הורה/ילד)</li>
+            <li>קליטת 5–10 דגימות בזוויות קלות ומרחקים שונים (בתוך הטווח)</li>
+            <li>הפקת תכונות (features/embedding) ושמירה מוצפנת במכשיר</li>
+            <li>הגדרת טווח עבודה (לדוגמה 2–6 ס״מ) + רגישות</li>
+          </ol>
+        </div>
+        <div class="callout warn">
+          <h3 style="margin:0 0 6px 0;">טיפ קריטי</h3>
+          <div class="muted">
+            אם לא מתכננים Enrollment טוב, יקרה <b>False Reject</b> (המשתמש האמיתי נחסם).
+            לכן כדאי לקלוט דגימות בכמה תנאים, ולעדכן דגימות “ברקע” בהצלחה (adaptive update) — בזהירות.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="card">
+      <h2>4) צינור עיבוד (Pipeline)</h2>
+      <p class="muted">
+        לוגיקה מומלצת: <b>Detection → Authentication → Tracking → Gesture → Action → Feedback</b>.
+      </p>
+
+      <div class="mermaidWrap">
+        <div class="mermaidBox">
+          <div class="mermaid" id="mermaidDiagram">
+flowchart TD
+  A[Sensor Frame] --> B{Detection: אצבע בטווח?}
+  B -- לא --> B0[Idle]
+  B -- כן --> C{Authentication: אצבע מורשית?}
+  C -- לא --> C0[Block + Hint]
+  C -- כן --> D[Tracking: Δx, Δy, מרחק]
+  D --> E{Gesture}
+  E -->|Swipe L/R| F[Channel +/-]
+  E -->|Up/Down| G[Volume +/-]
+  E -->|Hold| H[Continuous control]
+  F --> I[Feedback UI/Sound]
+  G --> I
+  H --> I
+          </div>
+
+          <div id="mermaidFallback" class="hidden">
+            <b>Fallback (אם Mermaid לא נטען):</b>
+            <ul class="list">
+              <li>קליטת חיישן → זיהוי אצבע בטווח</li>
+              <li>אימות אצבע מורשית</li>
+              <li>מעקב תנועה: Δx/Δy + מרחק</li>
+              <li>סיווג מחווה → פעולה (ערוץ/ווליום/Hold)</li>
+              <li>פידבק למשתמש</li>
+            </ul>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-top:8px">
+            אם אתה פותח את הקובץ בלי אינטרנט / CDN חסום, התרשים יוחלף אוטומטית ב-Fallback.
+          </div>
+        </div>
+      </div>
+
+      <h3>פסאודו-קוד (תמציתי)</h3>
+      <div class="mono">
+loop each frame:
+  finger = detect_finger(frame, distance_range=[2cm..6cm])
+  if not finger: idle()
+
+  user = authenticate(finger)    # embedding match
+  if not user: block()
+
+  dx, dy = track_motion(finger)  # relative movement
+  dx, dy = filter(dx, dy)        # EMA/Kalman + dead-zone
+
+  gesture = classify(dx, dy)     # swipe / up-down / hold
+  action  = map(gesture, dx, dy) # channel/volume/etc.
+  apply(action)
+  feedback(action)
+      </div>
+    </section>
+
+    <section id="mapping" class="card">
+      <h2>5) מיפוי מחוות לפעולות</h2>
+      <div class="split">
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">ערוצים (ימין/שמאל)</h3>
+          <ul class="list">
+            <li><b>Continuous</b>: כל עוד Δx גדול מסף → ערוץ ממשיך לזוז</li>
+            <li><b>Edge Trigger</b>: “מחווה פעם אחת” → מונע קפיצות חוזרות</li>
+            <li>האצה: אם |Δx| גדול מאוד → דילוג 5 ערוצים</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">ווליום (מעלה/מטה)</h3>
+          <ul class="list">
+            <li>תנועה למעלה/למטה משנה ווליום</li>
+            <li>ב-Hold: שינוי עדין ורציף</li>
+            <li>רצוי “Dead-zone” כדי שרעידות לא ישנו ווליום</li>
+          </ul>
+        </div>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary>למה Edge Trigger חשוב?</summary>
+        <div class="muted" style="margin-top:8px">
+          אם המשתמש מחזיק אצבע בצד (Δx גדול) במשך שנייה, במצב רציף הערוץ יכול לקפוץ הרבה.
+          Edge Trigger מאפשר שינוי פעם אחת עד שהמשתמש חוזר קרוב למרכז (אזור מת), ואז אפשר עוד שינוי.
+        </div>
+      </details>
+    </section>
+
+    <section id="ui" class="card">
+      <h2>6) מסכים (UI) מומלצים</h2>
+      <div class="split">
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">מסך מדיה (TV/Player)</h3>
+          <ul class="list">
+            <li>פס ערוצים אופקי (Preview של הערוץ הבא/קודם)</li>
+            <li>פס ווליום אנכי בצד</li>
+            <li>אייקון “אצבע מזוהה” + שם פרופיל</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">מסך בית חכם</h3>
+          <ul class="list">
+            <li>ימין/שמאל: חדרים/סצנות</li>
+            <li>מעלה/מטה: בהירות/טמפ’ צבע</li>
+            <li>Hold: שליטה רציפה</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout good" style="margin-top:12px;">
+        <b>פרופילים לפי אצבע:</b> כל אצבע יכולה להיות משתמש אחר (ילדים/הורים/אורח) עם הרשאות שונות.
+      </div>
+    </section>
+
+    <section id="security" class="card">
+      <h2>7) אבטחה ופרטיות</h2>
+      <div class="split">
+        <div class="callout warn">
+          <h3 style="margin:0 0 6px 0;">Liveness (מניעת זיופים)</h3>
+          <ul class="list">
+            <li>IR multi-angle / שינוי תאורה עדין + תגובת טקסטורה</li>
+            <li>מיקרו-תנועה טבעית</li>
+            <li>אופציונלי: חיישן נוסף (למשל ToF/PPG) בהתאם למוצר</li>
+          </ul>
+        </div>
+        <div class="callout bad">
+          <h3 style="margin:0 0 6px 0;">מה להימנע</h3>
+          <ul class="list">
+            <li>לא לשמור תמונות טביעה גולמיות</li>
+            <li>לא להשאיר “מצב פתוח” לפעולות רגישות</li>
+            <li>לא להסתמך על תמונה מודפסת/צילום בלבד</li>
+          </ul>
+        </div>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary>Privacy by Design (מומלץ)</summary>
+        <ul class="list">
+          <li>לשמור רק embedding מוצפן (במכשיר)</li>
+          <li>Timeout קצר לאחר אימות (למשל 5 שניות)</li>
+          <li>לוגים: לשמור אירועי מחווה “אנונימיים” בלבד</li>
+        </ul>
+      </details>
+    </section>
+
+    <section id="mvp" class="card">
+      <h2>8) MVP מהיר (איך להתחיל)</h2>
+      <div class="split">
+        <div>
+          <h3>מה לבנות קודם</h3>
+          <ol class="list" style="padding-right:22px">
+            <li>Detection בסיסי + Tracking (Δx/Δy)</li>
+            <li>Gate: Distance + Auth (אפשר זמני auth דמה)</li>
+            <li>Gesture: Swipe + Up/Down + Hold</li>
+            <li>UI + Feedback</li>
+          </ol>
+        </div>
+        <div class="callout">
+          <h3 style="margin:0 0 6px 0;">מדדים</h3>
+          <ul class="list">
+            <li>Latency ממוצע &lt; 60ms</li>
+            <li>False Reject נמוך (נוחות)</li>
+            <li>False Accept נמוך (אבטחה)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="card">
+      <h2>9) דמו אינטראקטיבי (סימולציה) — Merged: Live + Status + Edge + Hold</h2>
+      <p class="muted">
+        הדמו מדגים את הלוגיקה בלבד. כדי שדברים “יקרו” צריך: <b>Auth=1</b> וגם מרחק בתוך <b>2–6 ס״מ</b>.
+        אפשר לשלוט עם סליידרים או לגרור בתוך הפאנל.
+      </p>
+
+      <div class="demoWrap">
+        <div class="demoPanel" aria-label="פאנל דמו">
+          <div class="demoTopbar">
+            <strong>Panel</strong>
+            <div class="badgeRow">
+              <span class="badge good" id="authBadge">Authorized</span>
+              <span class="badge good" id="distBadge">Distance OK</span>
+              <span class="badge warn" id="modeBadge">Mode: Edge</span>
+            </div>
+          </div>
+
+          <div class="stage" id="stage">
+            <div class="finger" id="finger" style="left:50%; top:50%;">☝️</div>
+          </div>
+
+          <div class="hud">
+            <div class="hudCard">
+              <div class="t">ערוץ</div>
+              <div class="v" id="channel">12</div>
+              <div class="bar"><i id="chBar" style="width:40%"></i></div>
+            </div>
+            <div class="hudCard">
+              <div class="t">עוצמת קול</div>
+              <div class="v" id="volume">45</div>
+              <div class="bar"><i id="volBar" style="width:45%"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls" aria-label="בקרות דמו">
+          <h3 style="margin:0 0 6px 0;">בקרות סימולציה</h3>
+
+          <div class="row">
+            <label for="dx">Δx (ימין/שמאל)</label>
+            <input id="dx" type="range" min="-100" max="100" value="0" />
+            <div class="muted" id="dxv">0</div>
+          </div>
+
+          <div class="row">
+            <label for="dy">Δy (מעלה/מטה)</label>
+            <input id="dy" type="range" min="-100" max="100" value="0" />
+            <div class="muted" id="dyv">0</div>
+          </div>
+
+          <div class="row">
+            <label for="dist">מרחק (ס״מ)</label>
+            <input id="dist" type="range" min="0" max="12" value="4" step="0.1" />
+            <div class="muted" id="distv">4.0</div>
+          </div>
+
+          <div class="row">
+            <label for="auth">אימות (Auth)</label>
+            <input id="auth" type="range" min="0" max="1" value="1" step="1" />
+            <div class="muted" id="authv">מורשה</div>
+          </div>
+
+          <div class="toggle" title="Edge Trigger מונע מצב שהערוץ קופץ כמה פעמים בגלל שהΔx נשאר גדול.">
+            <div>
+              <b>Edge Trigger לערוצים</b><br/>
+              <small>כבה כדי לאפשר Continuous</small>
+            </div>
+            <div class="switch on" id="edgeSwitch" role="switch" aria-checked="true" tabindex="0"><i></i></div>
+          </div>
+
+          <div class="toggle" title="Hold מאפשר שליטה עדינה ורציפה עם סף קטן יותר.">
+            <div>
+              <b>Hold Mode</b><br/>
+              <small>שליטה רציפה עדינה</small>
+            </div>
+            <div class="switch" id="holdSwitch" role="switch" aria-checked="false" tabindex="0"><i></i></div>
+          </div>
+
+          <div class="btnRow">
+            <button class="ghost" id="reset">איפוס</button>
+          </div>
+
+          <div class="mini">
+            ברירת מחדל:
+            <b>טווח</b> 2–6 ס״מ,
+            <b>סף ערוץ</b> |Δx|&gt;20,
+            <b>סף ווליום</b> |Δy|&gt;12,
+            <b>Dead-zone</b> ±8.
+            <br/>ב-Edge: כדי לשנות שוב, החזר Δx/Δy לאזור מת ואז תזיז שוב.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>נספח: פרמטרים מומלצים (Default)</h2>
+      <div class="split">
+        <div class="mono">
+distance_range_cm = [2.0, 6.0]
+dead_zone_px      = 8
+swipe_threshold   = 20
+vertical_threshold= 12
+channel_step(dx)  = 1 if |dx|<60 else 5
+volume_delta(dy)  = max(1, round(|dy|/10))
+timeout_after_auth= 5s
+        </div>
+        <div class="callout">
+          <b>טיפ UX:</b> תן פידבק מיידי כשיש זיהוי (אייקון/תג),
+          אבל הפעל פעולה רק אחרי חציית סף תנועה — זה מוריד טעויות.
+          <div class="muted" style="margin-top:8px;">
+            לפעולות רגישות (רכישה/הגדרות): דרוש Hold של 1–2 שניות.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ===== Mermaid init with fallback =====
+    (function initMermaid(){
+      const fallback = document.getElementById("mermaidFallback");
+      const diagram  = document.getElementById("mermaidDiagram");
+
+      const hasMermaid = typeof window.mermaid !== "undefined";
+      if (!hasMermaid){
+        diagram.classList.add("hidden");
+        fallback.classList.remove("hidden");
+        return;
+      }
+      try{
+        window.mermaid.initialize({ startOnLoad: true, securityLevel: "loose" });
+        setTimeout(()=>{
+          const hasSvg = diagram.querySelector("svg");
+          if (!hasSvg){
+            diagram.classList.add("hidden");
+            fallback.classList.remove("hidden");
+          }
+        }, 800);
+      }catch(e){
+        diagram.classList.add("hidden");
+        fallback.classList.remove("hidden");
+      }
+    })();
+
+    // ===== Demo logic (Merged: Live + Status + Edge + Hold) =====
+    const el = (id)=>document.getElementById(id);
+
+    const state = {
+      channel: 12,
+      volume: 45,
+      hold: false,
+      edge: true,
+      chArmed: true,
+      volArmed: true
+    };
+
+    const params = {
+      minDist: 2.0,
+      maxDist: 6.0,
+      swipeThreshold: 20,
+      verticalThreshold: 12,
+      deadZone: 8
+    };
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function inRange(dist){ return dist >= params.minDist && dist <= params.maxDist; }
+
+    function setBars(){
+      el("channel").textContent = state.channel;
+      el("volume").textContent  = state.volume;
+      el("chBar").style.width   = clamp((state.channel % 100), 0, 100) + "%";
+      el("volBar").style.width  = clamp(state.volume, 0, 100) + "%";
+    }
+
+    function setBadges(auth, dist){
+      const a = el("authBadge");
+      a.textContent = auth ? "Authorized" : "Blocked";
+      a.className = "badge " + (auth ? "good" : "bad");
+
+      const d = el("distBadge");
+      const ok = inRange(dist);
+      d.textContent = ok ? "Distance OK" : "Distance BLOCKED";
+      d.className = "badge " + (ok ? "good" : "bad");
+
+      const m = el("modeBadge");
+      m.textContent = state.hold ? "Mode: Hold" : (state.edge ? "Mode: Edge" : "Mode: Continuous");
+      m.className = "badge " + (state.hold ? "warn" : (state.edge ? "warn" : "good"));
+    }
+
+    function updateFingerPosition(dx, dy){
+      const stage = el("stage");
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      const x = clamp(w/2 + dx*1.2, 24, w-24);
+      const y = clamp(h/2 + dy*1.2, 24, h-24);
+      el("finger").style.left = x + "px";
+      el("finger").style.top  = y + "px";
+    }
+
+    function channelStep(dx){
+      const ax = Math.abs(dx);
+      return (ax < 60) ? 1 : 5;
+    }
+    function volumeDelta(dy){
+      return Math.max(1, Math.round(Math.abs(dy)/10));
+    }
+
+    function applyMotion(dx, dy, dist, auth){
+      if (!auth || !inRange(dist)) return;
+
+      // Re-arm when back near center (dead zone)
+      if (Math.abs(dx) < params.deadZone) state.chArmed  = true;
+      if (Math.abs(dy) < params.deadZone) state.volArmed = true;
+
+      if (state.hold){
+        // gentle continuous control
+        state.channel = clamp(state.channel + Math.sign(dx) * (Math.abs(dx) > 3 ? 1 : 0), 1, 999);
+        state.volume  = clamp(state.volume  - Math.sign(dy) * (Math.abs(dy) > 2 ? 1 : 0), 0, 100);
+        return;
+      }
+
+      // Channel
+      if (Math.abs(dx) > params.swipeThreshold){
+        if (!state.edge || state.chArmed){
+          state.channel = clamp(state.channel + Math.sign(dx) * channelStep(dx), 1, 999);
+          if (state.edge) state.chArmed = false;
+        }
+      }
+
+      // Volume
+      if (Math.abs(dy) > params.verticalThreshold){
+        if (!state.edge || state.volArmed){
+          state.volume = clamp(state.volume - Math.sign(dy) * volumeDelta(dy), 0, 100);
+          if (state.edge) state.volArmed = false;
+        }
+      }
+    }
+
+    function readInputs(){
+      return {
+        dx: Number(el("dx").value),
+        dy: Number(el("dy").value),
+        dist: Number(el("dist").value),
+        auth: el("auth").value === "1"
+      };
+    }
+
+    function refreshLabels(auth, dist, dx, dy){
+      el("dxv").textContent = dx;
+      el("dyv").textContent = dy;
+      el("distv").textContent = Number(dist).toFixed(1);
+      el("authv").textContent = auth ? "מורשה" : "חסום";
+    }
+
+    function tick(){
+      const {dx, dy, dist, auth} = readInputs();
+      refreshLabels(auth, dist, dx, dy);
+      setBadges(auth, dist);
+      updateFingerPosition(dx, dy);
+      applyMotion(dx, dy, dist, auth);
+      setBars();
+    }
+
+    // Live update
+    ["dx","dy","dist","auth"].forEach(id=> el(id).addEventListener("input", tick));
+
+    // Switch helpers
+    function setSwitch(sw, on){
+      sw.classList.toggle("on", on);
+      sw.setAttribute("aria-checked", on ? "true" : "false");
+    }
+
+    const edgeSw = el("edgeSwitch");
+    const holdSw = el("holdSwitch");
+
+    function toggleEdge(){
+      state.edge = !state.edge;
+      state.chArmed = true; state.volArmed = true;
+      setSwitch(edgeSw, state.edge);
+      tick();
+    }
+    function toggleHold(){
+      state.hold = !state.hold;
+      setSwitch(holdSw, state.hold);
+      tick();
+    }
+
+    edgeSw.addEventListener("click", toggleEdge);
+    holdSw.addEventListener("click", toggleHold);
+    edgeSw.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleEdge(); }});
+    holdSw.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleHold(); }});
+
+    // Drag interaction (mouse + touch) inside stage
+    (function(){
+      const stage = el("stage");
+      let dragging = false;
+      let startX=0, startY=0;
+
+      function getClientXY(e){
+        if (e.touches && e.touches.length) return {cx:e.touches[0].clientX, cy:e.touches[0].clientY};
+        return {cx:e.clientX, cy:e.clientY};
+      }
+      function toCenteredXY(cx, cy){
+        const r = stage.getBoundingClientRect();
+        return { x:(cx - r.left) - r.width/2, y:(cy - r.top) - r.height/2 };
+      }
+      function onDown(e){
+        dragging = true;
+        const {cx, cy} = getClientXY(e);
+        const p = toCenteredXY(cx, cy);
+        startX = p.x; startY = p.y;
+        if (e.cancelable) e.preventDefault();
+      }
+      function onMove(e){
+        if (!dragging) return;
+        const {cx, cy} = getClientXY(e);
+        const p = toCenteredXY(cx, cy);
+        const dx = clamp(p.x - startX, -100, 100);
+        const dy = clamp(p.y - startY, -100, 100);
+        el("dx").value = Math.round(dx);
+        el("dy").value = Math.round(dy);
+        tick();
+        if (e.cancelable) e.preventDefault();
+      }
+      function onUp(){ dragging = false; }
+
+      stage.addEventListener("mousedown", onDown);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+
+      stage.addEventListener("touchstart", onDown, {passive:false});
+      window.addEventListener("touchmove", onMove, {passive:false});
+      window.addEventListener("touchend", onUp);
+    })();
+
+    // reset
+    el("reset").addEventListener("click", ()=>{
+      state.channel = 12;
+      state.volume = 45;
+      state.edge = true;
+      state.hold = false;
+      state.chArmed = true;
+      state.volArmed = true;
+
+      el("dx").value = 0;
+      el("dy").value = 0;
+      el("dist").value = 4.0;
+      el("auth").value = 1;
+
+      setSwitch(edgeSw, true);
+      setSwitch(holdSw, false);
+      tick();
+    });
+
+    // init
+    setSwitch(edgeSw, true);
+    setSwitch(holdSw, false);
+    tick();
+  </script>
+</body>
+</html>
