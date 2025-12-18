@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>תאורה בבית ללא מפסיקים — הצבעה + ביומטריה (דף מערכת)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --link:#2563eb;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --r:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      padding:22px 18px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .title{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    button, select, input[type="text"], input[type="range"]{
+      font:inherit;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow:0 2px 10px rgba(0,0,0,.04);
+      transition:transform .05s ease, box-shadow .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ box-shadow:0 10px 18px rgba(0,0,0,.08); }
+    .btn:active{ transform:translateY(1px); }
+    .btn.primary{
+      background:var(--link);
+      color:#fff;
+      border-color:transparent;
+    }
+    .btn.danger{
+      background:#fff;
+      color:var(--bad);
+      border-color:rgba(239,68,68,.35);
+    }
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 18px 28px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns:1fr; }
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:17px;
+    }
+    .card h3{
+      margin:14px 0 8px;
+      font-size:14px;
+      color:#0f172a;
+    }
+    .muted{ color:var(--muted); }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      font-size:12px;
+      user-select:none;
+    }
+    .pill.ok{ border-color:rgba(22,163,74,.25); }
+    .pill.warn{ border-color:rgba(245,158,11,.25); }
+    .pill.bad{ border-color:rgba(239,68,68,.25); }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .hr{
+      height:1px;
+      background:var(--line);
+      margin:12px 0;
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .tab{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab[aria-selected="true"]{
+      border-color:rgba(37,99,235,.35);
+      box-shadow:0 12px 20px rgba(37,99,235,.12);
+    }
+    .panel{ display:none; margin-top:12px; }
+    .panel.active{ display:block; }
+    .kpi{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    @media (max-width:700px){
+      .kpi{ grid-template-columns:1fr; }
+    }
+    .kpi .box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:#fff;
+    }
+    .kpi .box .v{ font-weight:700; font-size:14px; }
+    .kpi .box .l{ color:var(--muted); font-size:12px; margin-top:4px; }
+    .mono{
+      font-family:var(--mono);
+      font-size:12.5px;
+      background:#0b1220;
+      color:#e5e7eb;
+      padding:12px;
+      border-radius:14px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .note{
+      border:1px dashed rgba(37,99,235,.35);
+      background:rgba(37,99,235,.05);
+      padding:10px;
+      border-radius:14px;
+    }
+    .warnbox{
+      border:1px dashed rgba(245,158,11,.5);
+      background:rgba(245,158,11,.08);
+      padding:10px;
+      border-radius:14px;
+    }
+    .badbox{
+      border:1px dashed rgba(239,68,68,.5);
+      background:rgba(239,68,68,.07);
+      padding:10px;
+      border-radius:14px;
+    }
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .table th, .table td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+      vertical-align:top;
+      font-size:13px;
+    }
+    .table th{
+      background:#0f172a;
+      color:#fff;
+      font-size:13px;
+    }
+    .table tr:last-child td{ border-bottom:none; }
+    .small{ font-size:12px; }
+    a{ color:var(--link); text-decoration:none; font-weight:700; }
+    a:hover{ text-decoration:underline; }
+
+    /* Diagram */
+    .diagramWrap{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      overflow:auto;
+    }
+    svg{ max-width:100%; height:auto; }
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* Controls */
+    .control{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:700px){
+      .control{ grid-template-columns:1fr; }
+    }
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:6px;
+      font-size:12px;
+      color:#0f172a;
+    }
+    .field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:#fff;
+    }
+    select, input[type="text"]{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background:#fff;
+      outline:none;
+    }
+    input[type="range"]{ width:100%; }
+    .statusLine{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid var(--line);
+    }
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      user-select:none;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .tag.ok{ border-color:rgba(22,163,74,.35); color:#064e3b; }
+    .tag.warn{ border-color:rgba(245,158,11,.45); color:#7c2d12; }
+    .tag.bad{ border-color:rgba(239,68,68,.45); color:#7f1d1d; }
+
+    /* "Soft lock" (optional) */
+    .lockOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      background:rgba(17,24,39,.75);
+      backdrop-filter: blur(8px);
+      z-index:9999;
+      color:#fff;
+      padding:20px;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    .lockOverlay .box{
+      max-width:620px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:16px;
+    }
+    .lockOverlay input{
+      margin-top:10px;
+      width:100%;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.25);
+      padding:10px;
+      background:rgba(0,0,0,.18);
+      color:#fff;
+      outline:none;
+    }
+    .lockOverlay .row{
+      justify-content:center;
+      margin-top:10px;
+    }
+
+    /* Print note */
+    @media print{
+      body{ filter:grayscale(1); }
+      .noPrint{ display:none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="title">
+    <div>
+      <h1>תאורה ללא מפסיקים: הצבעה על נר/גוף תאורה + אימות ביומטרי</h1>
+      <div class="subtitle">דף מערכת (מפרט + תרשים + סימולציה קטנה + BOM + אלגוריתם). הכל מקומי (ללא ענן) כקו מנחה.</div>
+    </div>
+
+    <div class="top-actions noPrint">
+      <button class="btn" id="btnToggleLock">🔒 מצב נעילה (אופציונלי)</button>
+      <button class="btn" id="btnExport">📄 העתק סיכום למקלדת</button>
+      <button class="btn primary" id="btnReset">↺ איפוס בחירות</button>
+    </div>
+  </div>
+
+  <div class="tabs noPrint" role="tablist" aria-label="Sections">
+    <div class="tab" role="tab" tabindex="0" aria-selected="true" data-tab="overview">סקירה</div>
+    <div class="tab" role="tab" tabindex="0" aria-selected="false" data-tab="architecture">ארכיטקטורה</div>
+    <div class="tab" role="tab" tabindex="0" aria-selected="false" data-tab="prototype">פרוטוטייפ</div>
+    <div class="tab" role="tab" tabindex="0" aria-selected="false" data-tab="security">אבטחה</div>
+    <div class="tab" role="tab" tabindex="0" aria-selected="false" data-tab="code">אלגוריתם וקוד</div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- LEFT -->
+    <section class="card">
+      <div id="panel-overview" class="panel active" role="tabpanel" aria-label="overview">
+        <h2>מה המערכת עושה בפועל</h2>
+
+        <div class="kpi">
+          <div class="box">
+            <div class="v">ללא מגע</div>
+            <div class="l">הדלקה/כיבוי בהצבעה + אימות ביומטרי</div>
+          </div>
+          <div class="box">
+            <div class="v">זמן תגובה יעד</div>
+            <div class="l">~0.3–1.0 שניות (תלוי חיישנים)</div>
+          </div>
+          <div class="box">
+            <div class="v">פרטיות</div>
+            <div class="l">עיבוד מקומי + תבניות מוצפנות</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>שרשרת פעולה (Flow)</h3>
+        <div class="diagramWrap" aria-label="flow diagram">
+          <svg viewBox="0 0 980 250" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity=".12"/>
+              </filter>
+              <style>
+                .n{fill:#fff;stroke:#e5e7eb;stroke-width:2;rx:16;filter:url(#sh)}
+                .t{font-family:Arial,sans-serif;font-size:16px;fill:#111827}
+                .s{font-family:Arial,sans-serif;font-size:12px;fill:#6b7280}
+                .a{stroke:#94a3b8;stroke-width:2;marker-end:url(#m)}
+              </style>
+              <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"></path>
+              </marker>
+            </defs>
+
+            <!-- nodes -->
+            <rect class="n" x="20" y="60" width="180" height="120"></rect>
+            <text class="t" x="110" y="105" text-anchor="middle">1) הצבעה</text>
+            <text class="s" x="110" y="128" text-anchor="middle">זיהוי כיוון/מחווה</text>
+            <text class="s" x="110" y="148" text-anchor="middle">איזה נר נבחר</text>
+
+            <rect class="n" x="220" y="60" width="220" height="120"></rect>
+            <text class="t" x="330" y="105" text-anchor="middle">2) ביומטריה</text>
+            <text class="s" x="330" y="128" text-anchor="middle">טביעת אצבע / ורידים / חום</text>
+            <text class="s" x="330" y="148" text-anchor="middle">ללא מגע</text>
+
+            <rect class="n" x="460" y="60" width="220" height="120"></rect>
+            <text class="t" x="570" y="105" text-anchor="middle">3) אימות</text>
+            <text class="s" x="570" y="128" text-anchor="middle">השוואה לתבנית מוצפנת</text>
+            <text class="s" x="570" y="148" text-anchor="middle">הרשאות לפי משתמש</text>
+
+            <rect class="n" x="700" y="60" width="260" height="120"></rect>
+            <text class="t" x="830" y="105" text-anchor="middle">4) פעולה על תאורה</text>
+            <text class="s" x="830" y="128" text-anchor="middle">ON / OFF / עמעם / צבע</text>
+            <text class="s" x="830" y="148" text-anchor="middle">Zigbee / Thread / Wi-Fi</text>
+
+            <!-- arrows -->
+            <line class="a" x1="200" y1="120" x2="220" y2="120"></line>
+            <line class="a" x1="440" y1="120" x2="460" y2="120"></line>
+            <line class="a" x1="680" y1="120" x2="700" y2="120"></line>
+          </svg>
+
+          <div class="legend">
+            <span class="pill ok">✅ אפשרי טכנית</span>
+            <span class="pill warn">⚠️ תלוי באיכות חיישנים ותנאי אור</span>
+            <span class="pill bad">⛔ “מניעת צילום/העתקה” לא ניתנת להבטחה מלאה בדפדפן</span>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>3 תצורות מומלצות</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>תצורה</th>
+              <th>מטרת חיישן</th>
+              <th>יתרון</th>
+              <th>מגבלה</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>A — בסיסית</b></td>
+              <td>מחווה/הצבעה + זיהוי משתמש “קל” (PIN/טלפון)</td>
+              <td>הכי קל לפרוטוטייפ</td>
+              <td>לא ביומטרי מלא</td>
+            </tr>
+            <tr>
+              <td><b>B — יציבה</b></td>
+              <td>חיישן עומק (ToF) + ורידים/IR באצבע</td>
+              <td>עמיד יותר מזיופים ואור</td>
+              <td>חיישן מורכב יותר</td>
+            </tr>
+            <tr>
+              <td><b>C — מתקדמת</b></td>
+              <td>מצלמת עומק + ביומטריה מרובת-מאפיינים</td>
+              <td>חוויית “מצביע ונדלק” הכי טבעית</td>
+              <td>עלות/כיול</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="hr"></div>
+
+        <div class="note">
+          <b>קו מנחה:</b> כדי שזה יעבוד חלק בבית אמיתי — מפרידים בין 2 בעיות:
+          <br/>① <b>Targeting</b> (על איזה נר הצבעת) ② <b>Authentication</b> (מי אתה).
+          כאשר כל אחד מקבל חיישן/אלגוריתם מתאים.
+        </div>
+      </div>
+
+      <div id="panel-architecture" class="panel" role="tabpanel" aria-label="architecture">
+        <h2>ארכיטקטורה מומלצת</h2>
+
+        <h3>מיקרו-שכבות מערכת</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>שכבה</th>
+              <th>רכיב</th>
+              <th>מה היא עושה</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>חישה</td>
+              <td>ToF / IR / מצלמה</td>
+              <td>מזהה יד/אצבע, כיוון הצבעה, טווח</td>
+            </tr>
+            <tr>
+              <td>ביומטריה</td>
+              <td>IR Vein / Optical FP / Thermal</td>
+              <td>מייצר חתימה/תבנית ומשווה לאחסון מקומי</td>
+            </tr>
+            <tr>
+              <td>בקרה</td>
+              <td>MCU (למשל ESP32)</td>
+              <td>מנהל לוגיקה, הרשאות, תקשורת</td>
+            </tr>
+            <tr>
+              <td>תאורה</td>
+              <td>דרייבר LED + ממסר/דימר</td>
+              <td>מפעיל On/Off/עמעום/צבע</td>
+            </tr>
+            <tr>
+              <td>תקשורת</td>
+              <td>Zigbee/Thread/Wi-Fi</td>
+              <td>שולח פקודה לגוף התאורה/גשר</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>איפה לשים את החיישנים</h3>
+        <div class="diagramWrap">
+          <svg viewBox="0 0 980 360" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <style>
+                .box{fill:#fff;stroke:#e5e7eb;stroke-width:2;rx:18}
+                .lbl{font-family:Arial,sans-serif;font-size:14px;fill:#111827}
+                .sub{font-family:Arial,sans-serif;font-size:12px;fill:#6b7280}
+                .line{stroke:#94a3b8;stroke-width:2}
+                .cone{fill:rgba(37,99,235,.12);stroke:rgba(37,99,235,.55);stroke-width:2}
+              </style>
+            </defs>
+
+            <!-- room -->
+            <rect x="40" y="40" width="900" height="280" fill="rgba(15,23,42,.03)" stroke="#e5e7eb" stroke-width="2" rx="18"/>
+            <text class="lbl" x="70" y="75">חדר (דוגמה)</text>
+
+            <!-- person -->
+            <rect class="box" x="90" y="145" width="160" height="110"/>
+            <text class="lbl" x="170" y="190" text-anchor="middle">משתמש</text>
+            <text class="sub" x="170" y="212" text-anchor="middle">מצביע על נר</text>
+
+            <!-- lamp -->
+            <rect class="box" x="720" y="120" width="180" height="160"/>
+            <text class="lbl" x="810" y="165" text-anchor="middle">נר / גוף תאורה</text>
+            <text class="sub" x="810" y="188" text-anchor="middle">בקר תאורה + תקשורת</text>
+            <text class="sub" x="810" y="210" text-anchor="middle">Zigbee/Thread/Wi-Fi</text>
+
+            <!-- sensor near lamp -->
+            <rect class="box" x="520" y="70" width="170" height="100"/>
+            <text class="lbl" x="605" y="110" text-anchor="middle">מודול חישה</text>
+            <text class="sub" x="605" y="132" text-anchor="middle">ToF/IR/מצלמה</text>
+
+            <!-- cone -->
+            <path class="cone" d="M250,175 L520,120 L520,220 Z"/>
+            <line class="line" x1="250" y1="200" x2="520" y2="170"/>
+            <text class="sub" x="390" y="148" text-anchor="middle">"קונוס הצבעה"</text>
+
+            <!-- arrows to lamp -->
+            <line class="line" x1="690" y1="140" x2="720" y2="140"/>
+            <line class="line" x1="690" y1="230" x2="720" y2="230"/>
+            <text class="sub" x="700" y="120">פקודה</text>
+          </svg>
+          <div class="legend">
+            <span class="pill">💡 אופציה 1: חיישן ליד כל נר</span>
+            <span class="pill">🏠 אופציה 2: חיישן תקרה מרכזי + מיפוי מיקום נרות</span>
+            <span class="pill">🔐 אופציה 3: ביומטריה בנקודת כניסה + הצבעה בלבד ליד נרות</span>
+          </div>
+        </div>
+
+        <div class="warnbox" style="margin-top:12px;">
+          <b>המלצה פרקטית לבית:</b> לא “טביעת אצבע קלאסית מרחוק” בלבד.
+          עדיף לשלב <b>ורידים באצבע (IR)</b> או <b>רב-מאפיינים</b> (ורידים + מרחק + מחווה),
+          כי זה עובד טוב יותר בתאורה משתנה ופחות רגיש לתמונה מזויפת.
+        </div>
+      </div>
+
+      <div id="panel-prototype" class="panel" role="tabpanel" aria-label="prototype">
+        <h2>מחולל פרוטוטייפ (בחירות → BOM + חיווט + הערכת ביצועים)</h2>
+        <div class="control noPrint">
+          <div class="field">
+            <label for="selTarget">שיטת Targeting (על איזה נר הצבעת)</label>
+            <select id="selTarget">
+              <option value="tof">ToF/IR Distance (חיישן עומק קטן)</option>
+              <option value="depthcam">מצלמת עומק + זיהוי יד</option>
+              <option value="irgrid">גריד IR סביב הנר (טווח קצר)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="selBio">שיטת ביומטריה</label>
+            <select id="selBio">
+              <option value="vein">IR Vein (ורידים באצבע)</option>
+              <option value="optfp">Optical Fingerprint מרחוק (טווח קצר)</option>
+              <option value="thermal">חתימת חום + מרקם</option>
+              <option value="hybrid">היברידי (ורידים + מרחק + מחווה)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="selNet">תקשורת לבית חכם</label>
+            <select id="selNet">
+              <option value="zigbee">Zigbee (מומלץ לבית יציב)</option>
+              <option value="thread">Thread/Matter</option>
+              <option value="wifi">Wi-Fi (פשוט לפרוטוטייפ)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="rangeDist">מרחק עבודה רצוי (ס"מ)</label>
+            <input id="rangeDist" type="range" min="5" max="200" value="35" />
+            <div class="row" style="justify-content:space-between;margin-top:6px;">
+              <span class="muted small">5</span>
+              <b id="distVal">35</b>
+              <span class="muted small">200</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="selLight">סוג שליטה בתאורה</label>
+            <select id="selLight">
+              <option value="relay">ON/OFF באמצעות ממסר/ריליי</option>
+              <option value="dimmer">עמעום (Triac/0-10V/Driver מתאים)</option>
+              <option value="rgb">RGB / CCT (צבע/טמפרטורה)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="txtRooms">כמות נרות/גופים בבית (מספר)</label>
+            <input id="txtRooms" type="text" inputmode="numeric" value="6" />
+            <div class="muted small" style="margin-top:6px;">משפיע על הערכת עלות/מורכבות.</div>
+          </div>
+        </div>
+
+        <div class="statusLine">
+          <div class="row">
+            <span class="tag" id="tagFeas">...</span>
+            <span class="tag" id="tagLatency">...</span>
+            <span class="tag" id="tagRisk">...</span>
+          </div>
+          <div class="row noPrint">
+            <button class="btn" id="btnCopyBOM">העתק BOM</button>
+            <button class="btn" id="btnCopyWiring">העתק חיווט</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>BOM — רכיבים מוצעים (כללי)</h3>
+        <div class="mono" id="bomOut"></div>
+
+        <h3 style="margin-top:14px;">חיווט/חיבוריות (סקיצה טקסטואלית)</h3>
+        <div class="mono" id="wiringOut"></div>
+
+        <div class="hr"></div>
+
+        <h3>כללי כיול מהירים</h3>
+        <ul class="small">
+          <li><b>סף “הצבעה”:</b> החזקת אצבע/יד במצב יציב 200–400ms כדי למנוע הדלקות בטעות.</li>
+          <li><b>רעש אור:</b> עבודה ב-IR עם פילטר + התאמת חשיפה (Auto exposure lock) בעת זיהוי.</li>
+          <li><b>אימות:</b> עדיף 2 שלבים: “מי אתה” + “על מה הצבעת”.</li>
+          <li><b>סגירת מעגל:</b> פידבק ויזואלי קטן (לד זעיר) שמראה “זוהית/לא זוהית”.</li>
+        </ul>
+      </div>
+
+      <div id="panel-security" class="panel" role="tabpanel" aria-label="security">
+        <h2>אבטחה, פרטיות, ואנטי-זיוף</h2>
+
+        <h3>איומים נפוצים</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>איום</th>
+              <th>דוגמה</th>
+              <th>הגנה מומלצת</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Replay / צילום</td>
+              <td>תמונה/וידאו של אצבע</td>
+              <td>בדיקת “חיות” (Liveness): IR vein/פולס/תנועה מיקרו</td>
+            </tr>
+            <tr>
+              <td>זיוף מחווה</td>
+              <td>מישהו מצביע במקומך</td>
+              <td>הרשאות לפי משתמש + נעילה לפי זמן + טווח קצר</td>
+            </tr>
+            <tr>
+              <td>חטיפת תקשורת</td>
+              <td>פקודות ברשת הביתית</td>
+              <td>Zigbee/Thread עם מפתחות, או TLS ב-Wi-Fi</td>
+            </tr>
+            <tr>
+              <td>דליפת ביומטריה</td>
+              <td>שמירת תמונת טביעה</td>
+              <td>לא לשמור תמונות — רק תבניות/וקטורים + הצפנה + salt</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="hr"></div>
+
+        <h3>כללי זהב ליישום בטוח</h3>
+        <div class="note">
+          <ul class="small" style="margin:0; padding-inline-start:18px;">
+            <li><b>עיבוד מקומי:</b> אין צורך בענן כדי להדליק נר.</li>
+            <li><b>תבנית ולא תמונה:</b> שמירה כ-template (hash/embedding), לא כ-JPG של טביעה.</li>
+            <li><b>חיות (Liveness):</b> בדיקת שינוי קטן בזמן (תנועה, זרימה, IR-דינמיקה).</li>
+            <li><b>Failsafe:</b> תמיד כפתור חירום/אפליקציה למקרה תקלה.</li>
+          </ul>
+        </div>
+
+        <div class="badbox" style="margin-top:12px;">
+          <b>הערה חשובה:</b> בדפדפן אינטרנט אי אפשר להבטיח מניעה מוחלטת של צילום מסך/שמירה/העתקה.
+          אפשר רק “להקשות” (למשל חסימת הדפסה או קיצורי מקלדת), אבל מי שרוצה תמיד יוכל לצלם מסך.
+        </div>
+      </div>
+
+      <div id="panel-code" class="panel" role="tabpanel" aria-label="code">
+        <h2>אלגוריתם וקוד (פסאודו + דוגמאות)</h2>
+
+        <h3>מבני נתונים (רעיון)</h3>
+        <div class="mono">
+type LampID = string
+
+UserTemplate:
+  user_id: string
+  bio_template: bytes        # לא תמונה גולמית
+  perms: { onoff: bool, dim: bool, color: bool, allowed_lamps: [LampID] }
+
+Event:
+  ts: int
+  pointing_vector: (x,y,z)
+  target_lamp: LampID | null
+  bio_score: float
+  liveness_ok: bool
+        </div>
+
+        <h3>לוגיקת החלטה</h3>
+        <div class="mono" id="algoOut"></div>
+
+        <h3>דוגמה (Arduino/ESP32) — שלד אירועים</h3>
+        <div class="mono">
+/*
+  זה שלד כללי: קריאת חיישנים → זיהוי יעד → אימות → שליחת פקודה.
+  בפועל צריך לבחור ספריות לפי החומרה (ToF/IR/תקשורת).
+*/
+
+void loop(){
+  SensorFrame f = readSensors();
+
+  Target t = detectTargetLamp(f);          // Targeting
+  BioResult b = biometricMatch(f);         // Biometric
+  bool live = livenessCheck(f);            // Anti-spoof
+
+  if(!t.valid) return;
+  if(!live)   { denyBlink(); return; }
+  if(b.score < THRESH) { denyBlink(); return; }
+
+  if(!isAllowed(b.user_id, t.lamp_id)) { denyBlink(); return; }
+
+  // Toggle / set mode:
+  sendLampCommand(t.lamp_id, CMD_TOGGLE);
+  okBlink();
+}
+        </div>
+
+        <h3>מיפוי “הצבעה → נר” (רעיון פשוט)</h3>
+        <div class="mono">
+# אם יש חיישן תקרה מרכזי:
+# מחשבים וקטור הצבעה מהיד,
+# מחפשים את גוף התאורה הכי קרוב לקו.
+
+for each lamp in lamps:
+  d = distancePointToRay(lamp.position, hand.origin, hand.direction)
+choose lamp with minimal d and d < threshold
+        </div>
+
+        <div class="warnbox" style="margin-top:12px;">
+          <b>טיפ:</b> כדי שהמערכת לא תדליק בטעות — מחייבים “יציבות”:
+          חייבים 3–8 פריימים רצופים שמצביעים על אותו גוף תאורה לפני הפעלה.
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="card">
+      <h2>מצב מערכת (סימולציה קטנה)</h2>
+      <div class="muted small">הסימולציה כאן היא לוגית בלבד — כדי להבין החלטות. היא לא מחליפה חומרה אמיתית.</div>
+
+      <div class="hr"></div>
+
+      <div class="field noPrint">
+        <label for="simPoint">מצביע על גוף תאורה</label>
+        <select id="simPoint">
+          <option value="lamp1">נר 1</option>
+          <option value="lamp2">נר 2</option>
+          <option value="lamp3">נר 3</option>
+          <option value="none">לא מצביע</option>
+        </select>
+      </div>
+
+      <div class="field noPrint" style="margin-top:10px;">
+        <label for="simUser">מי מנסה להפעיל</label>
+        <select id="simUser">
+          <option value="owner">משתמש מורשה</option>
+          <option value="guest">אורח (מוגבל)</option>
+          <option value="unknown">לא מוכר</option>
+        </select>
+      </div>
+
+      <div class="field noPrint" style="margin-top:10px;">
+        <label for="simScore">ציון התאמה ביומטרית</label>
+        <input id="simScore" type="range" min="0" max="1" step="0.01" value="0.82"/>
+        <div class="row" style="justify-content:space-between;margin-top:6px;">
+          <span class="muted small">0</span>
+          <b id="scoreVal">0.82</b>
+          <span class="muted small">1</span>
+        </div>
+      </div>
+
+      <div class="field noPrint" style="margin-top:10px;">
+        <label>בדיקת חיות (Liveness)</label>
+        <div class="row">
+          <label class="pill"><input type="checkbox" id="simLive" checked> תקין</label>
+          <label class="pill"><input type="checkbox" id="simStable" checked> יציבות הצבעה</label>
+        </div>
+      </div>
+
+      <div class="row noPrint" style="margin-top:10px;">
+        <button class="btn primary" id="btnRun">▶ הרץ החלטה</button>
+        <button class="btn" id="btnDemo">✨ תרחיש דוגמה</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="tag" id="simDecision">מוכן</div>
+      <div class="mono" id="simLog" style="margin-top:10px; max-height:260px;"></div>
+
+      <div class="hr"></div>
+
+      <h3>הערות יישום לבית אמיתי</h3>
+      <ul class="small">
+        <li>למניעת “הדלקות בטעות”: טיימאאוט + דרישת יציבות + טווח.</li>
+        <li>אורח יכול לקבל הרשאה רק ל־ON/OFF של נרות מסוימים.</li>
+        <li>מומלץ להוסיף מצב “שקט לילה” שלא מגיב לתנועות מזדמנות.</li>
+      </ul>
+    </aside>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <h2>סיכום קצר</h2>
+    <div class="muted">המערכת הכי מוצלחת בבית בדרך כלל: <b>חיישן Targeting יציב</b> + <b>ביומטריה עמידה</b> + <b>אימות מקומי</b> + <b>תקשורת מאובטחת</b>.</div>
+    <div class="hr"></div>
+    <div class="row">
+      <span class="pill ok">✅ עובד טוב: ToF + IR Vein + Zigbee/Thread</span>
+      <span class="pill warn">⚠️ דורש כיול: FP אופטי מרחוק</span>
+      <span class="pill">💡 תמיד להשאיר פתרון גיבוי: אפליקציה/כפתור</span>
+    </div>
+  </div>
+</main>
+
+<!-- Optional soft lock overlay -->
+<div class="lockOverlay noPrint" id="lockOverlay" aria-hidden="true">
+  <div class="box">
+    <h2 style="margin:0 0 6px;">מצב נעילה (אופציונלי)</h2>
+    <div class="muted" style="color:rgba(255,255,255,.85); font-size:13px;">
+      זה רק “נעילה רכה” בדפדפן להגבלת צפייה מזדמנת. לא מנגנון אבטחה מוחלט.
+    </div>
+    <input id="lockPass" type="text" placeholder="הקלד סיסמה כדי לפתוח (ברירת מחדל: 1234)" />
+    <div class="row">
+      <button class="btn primary" id="btnUnlock">פתח</button>
+      <button class="btn" id="btnCloseLock">סגור</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Tabs ---
+  const tabs = [...document.querySelectorAll('.tab')];
+  const panels = {
+    overview: document.getElementById('panel-overview'),
+    architecture: document.getElementById('panel-architecture'),
+    prototype: document.getElementById('panel-prototype'),
+    security: document.getElementById('panel-security'),
+    code: document.getElementById('panel-code'),
+  };
+
+  function setTab(name){
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
+    Object.entries(panels).forEach(([k,el]) => el.classList.toggle('active', k === name));
+  }
+  tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+  tabs.forEach(t => t.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' ') setTab(t.dataset.tab);
+  }));
+
+  // --- Prototype generator ---
+  const selTarget = document.getElementById('selTarget');
+  const selBio = document.getElementById('selBio');
+  const selNet = document.getElementById('selNet');
+  const selLight = document.getElementById('selLight');
+  const rangeDist = document.getElementById('rangeDist');
+  const distVal = document.getElementById('distVal');
+  const txtRooms = document.getElementById('txtRooms');
+
+  const tagFeas = document.getElementById('tagFeas');
+  const tagLatency = document.getElementById('tagLatency');
+  const tagRisk = document.getElementById('tagRisk');
+  const bomOut = document.getElementById('bomOut');
+  const wiringOut = document.getElementById('wiringOut');
+
+  const algoOut = document.getElementById('algoOut');
+
+  function clampInt(v, def){
+    const n = parseInt(String(v).replace(/[^\d]/g,''), 10);
+    return Number.isFinite(n) && n>0 ? n : def;
+  }
+
+  function gradeTag(el, kind, text){
+    el.classList.remove('ok','warn','bad');
+    el.classList.add(kind);
+    el.textContent = text;
+  }
+
+  function estimate(){
+    const target = selTarget.value;
+    const bio = selBio.value;
+    const net = selNet.value;
+    const light = selLight.value;
+    const dist = parseInt(rangeDist.value, 10);
+    const lamps = clampInt(txtRooms.value, 6);
+
+    distVal.textContent = dist;
+
+    // Feasibility
+    let feas = 'ok', feasText = '✅ ישימות: גבוהה';
+    if(bio === 'optfp' && dist > 50){ feas='warn'; feasText='⚠️ ישימות: בינונית (FP מרחוק > 50 ס"מ דורש איכות גבוהה)'; }
+    if(target === 'irgrid' && dist > 40){ feas='warn'; feasText='⚠️ ישימות: בינונית (IR grid מתאים לטווח קצר)'; }
+    if(bio === 'optfp' && dist > 120){ feas='bad'; feasText='⛔ ישימות: נמוכה (מרחק גדול מדי ל-FP אופטי טיפוסי)'; }
+    gradeTag(tagFeas, feas, feasText);
+
+    // Latency
+    let lat = 'ok', latText = '⚡ זמן תגובה יעד: ~0.3–0.8s';
+    if(target === 'depthcam'){ lat='warn'; latText = '⏱️ זמן תגובה יעד: ~0.6–1.2s (מצלמת עומק + עיבוד)'; }
+    if(bio === 'hybrid'){ lat='warn'; latText = '⏱️ זמן תגובה יעד: ~0.5–1.1s (כמה בדיקות)'; }
+    gradeTag(tagLatency, lat, latText);
+
+    // Risk
+    let risk='ok', riskText='🛡️ סיכון זיוף: נמוך';
+    if(bio === 'optfp') { risk='warn'; riskText='⚠️ סיכון זיוף: בינוני (מומלץ Liveness חזק)'; }
+    if(bio === 'vein' || bio === 'hybrid') { risk='ok'; riskText='🛡️ סיכון זיוף: נמוך (IR Vein טוב)'; }
+    if(bio === 'thermal') { risk='warn'; riskText='⚠️ סיכון זיוף: בינוני (טוב כתוספת, פחות לבד)'; }
+    gradeTag(tagRisk, risk, riskText);
+
+    // BOM builder
+    const bom = [];
+    bom.push(`BOM (כללי) — עבור ~${lamps} גופי תאורה`);
+    bom.push(`- MCU/Broker: ESP32 (או בקר מרכזי + Gateways לפי הצורך)`);
+    if(net === 'zigbee') bom.push(`- תקשורת: מודול Zigbee (או גשר Zigbee קיים בבית)`);
+    if(net === 'thread') bom.push(`- תקשורת: Thread/Matter (Border Router אם צריך)`);
+    if(net === 'wifi')   bom.push(`- תקשורת: Wi-Fi (עם TLS/מפתחות)`);
+    if(target === 'tof') bom.push(`- Targeting: חיישן ToF/IR (טווח ${dist} ס"מ) + עיבוד יד בסיסי`);
+    if(target === 'depthcam') bom.push(`- Targeting: מצלמת עומק / IR depth + זיהוי מחוות`);
+    if(target === 'irgrid') bom.push(`- Targeting: גריד IR סביב כל נר (טווח קצר)`);
+    if(bio === 'vein') bom.push(`- ביומטריה: IR Vein sensor (עדיף) + תאורת IR + פילטר`);
+    if(bio === 'optfp') bom.push(`- ביומטריה: מצלמה/חיישן FP אופטי מרחוק + תאורת IR + פילטר (טווח קצר)`);
+    if(bio === 'thermal') bom.push(`- ביומטריה: חיישן תרמי קטן + זיהוי תבנית/חום`);
+    if(bio === 'hybrid') bom.push(`- ביומטריה: שילוב Vein/IR + מרחק + מחווה + Liveness`);
+    if(light === 'relay') bom.push(`- שליטת תאורה: ממסר/SSR מדורג לעומס + ספק כוח מתאים`);
+    if(light === 'dimmer') bom.push(`- שליטת תאורה: דימר (Triac/0-10V/Driver LED מתאים) + בידוד`);
+    if(light === 'rgb') bom.push(`- שליטת תאורה: דרייבר RGB/CCT (PWM/דיגיטלי) + ספק כוח`);
+    bom.push(`- אבטחה: אחסון תבניות מוצפן + salt + ניהול הרשאות`);
+    bom.push(`- פידבק: לד מצב/באזר עדין (אופציונלי)`);
+    bom.push(`- גיבוי: אפליקציה/כפתור חירום`);
+
+    bomOut.textContent = bom.join('\n');
+
+    // Wiring sketch
+    const wire = [];
+    wire.push(`חיווט (סקיצה כללית):`);
+    wire.push(`1) חיישני Targeting/Bio → ESP32 (I2C/SPI/UART לפי חיישן)`);
+    wire.push(`2) ESP32 → תקשורת (${net.toUpperCase()}) → בקר תאורה / גשר / נורה חכמה`);
+    if(light === 'relay') wire.push(`3) ESP32 → GPIO → דרייבר ממסר/SSR → קו AC/DC לגוף התאורה`);
+    if(light === 'dimmer') wire.push(`3) ESP32 → דרייבר Triac/0-10V → דרייבר LED/מנורה (בידוד חובה)`);
+    if(light === 'rgb') wire.push(`3) ESP32 → PWM/Bus → דרייבר RGB/CCT → LED`);
+    wire.push(`4) ספק כוח יציב: 5V/3.3V (לפי מודולים) עם הגנות בסיסיות`);
+    wire.push(`5) הצפנה/מפתחות: נשמרים ב-NVS/Flash בצורה מוצפנת (או רכיב Secure Element)`);
+    wiringOut.textContent = wire.join('\n');
+
+    // Algorithm text (tailored)
+    const TH = (bio === 'optfp') ? 0.90 : (bio === 'thermal' ? 0.88 : 0.80);
+    algoOut.textContent =
+`סף התאמה מומלץ (דוגמה): THRESH = ${TH.toFixed(2)}
+
+Decision(event):
+  if event.target_lamp == null:
+      return DENY("לא זוהה יעד")
+  if not event.stable_pointing:
+      return DENY("לא יציב — נגד הדלקות בטעות")
+  if not event.liveness_ok:
+      return DENY("כשל בדיקת חיות")
+  if event.bio_score < THRESH:
+      return DENY("ביומטריה לא מספקת")
+  if not allowed(user, event.target_lamp):
+      return DENY("אין הרשאה לנר הזה")
+  return ALLOW("בצע פקודה: Toggle/Dim/Color")`;
+  }
+
+  [selTarget, selBio, selNet, selLight, rangeDist, txtRooms].forEach(el=>{
+    el.addEventListener('input', estimate);
+    el.addEventListener('change', estimate);
+  });
+  estimate();
+
+  // Copy helpers
+  function copyText(txt){
+    navigator.clipboard?.writeText(txt).catch(()=>{});
+  }
+  document.getElementById('btnCopyBOM').addEventListener('click', ()=>copyText(bomOut.textContent));
+  document.getElementById('btnCopyWiring').addEventListener('click', ()=>copyText(wiringOut.textContent));
+
+  // --- Simulation ---
+  const simPoint = document.getElementById('simPoint');
+  const simUser = document.getElementById('simUser');
+  const simScore = document.getElementById('simScore');
+  const simLive = document.getElementById('simLive');
+  const simStable = document.getElementById('simStable');
+  const scoreVal = document.getElementById('scoreVal');
+  const simDecision = document.getElementById('simDecision');
+  const simLog = document.getElementById('simLog');
+
+  simScore.addEventListener('input', ()=>{
+    scoreVal.textContent = Number(simScore.value).toFixed(2);
+  });
+
+  function simAppend(line){
+    const ts = new Date().toLocaleTimeString('he-IL');
+    simLog.textContent += `[${ts}] ${line}\n`;
+    simLog.scrollTop = simLog.scrollHeight;
+  }
+
+  function runSim(){
+    const target = simPoint.value;
+    const user = simUser.value;
+    const score = Number(simScore.value);
+    const live = simLive.checked;
+    const stable = simStable.checked;
+
+    const TH = (selBio.value === 'optfp') ? 0.90 : (selBio.value === 'thermal' ? 0.88 : 0.80);
+
+    simAppend(`Targeting: ${target === 'none' ? 'לא מצביע' : target}`);
+    if(target === 'none'){
+      simDecision.className = 'tag bad';
+      simDecision.textContent = '⛔ דחייה: לא זוהה יעד';
+      simAppend('DENY: no target');
+      return;
+    }
+    if(!stable){
+      simDecision.className = 'tag warn';
+      simDecision.textContent = '⚠️ דחייה: הצבעה לא יציבה';
+      simAppend('DENY: unstable pointing');
+      return;
+    }
+    if(!live){
+      simDecision.className = 'tag bad';
+      simDecision.textContent = '⛔ דחייה: כשל בדיקת חיות';
+      simAppend('DENY: liveness failed');
+      return;
+    }
+    if(user === 'unknown'){
+      simDecision.className = 'tag bad';
+      simDecision.textContent = '⛔ דחייה: משתמש לא מוכר';
+      simAppend('DENY: unknown user');
+      return;
+    }
+    simAppend(`Bio score=${score.toFixed(2)} (TH=${TH.toFixed(2)})`);
+    if(score < TH){
+      simDecision.className = 'tag warn';
+      simDecision.textContent = '⚠️ דחייה: התאמה ביומטרית נמוכה';
+      simAppend('DENY: low biometric score');
+      return;
+    }
+
+    // Permissions: guest allowed only lamp1 ON/OFF
+    if(user === 'guest' && target !== 'lamp1'){
+      simDecision.className = 'tag warn';
+      simDecision.textContent = '⚠️ דחייה: אין הרשאה לנר הזה (אורח)';
+      simAppend('DENY: guest not allowed for this lamp');
+      return;
+    }
+
+    simDecision.className = 'tag ok';
+    simDecision.textContent = '✅ אישור: שלח פקודת תאורה';
+    simAppend(`ALLOW: command=${selLight.value === 'relay' ? 'TOGGLE' : (selLight.value === 'dimmer' ? 'DIM' : 'RGB/CCT')}`);
+  }
+
+  document.getElementById('btnRun').addEventListener('click', runSim);
+  document.getElementById('btnDemo').addEventListener('click', ()=>{
+    simPoint.value='lamp1';
+    simUser.value='owner';
+    simScore.value='0.87';
+    scoreVal.textContent='0.87';
+    simLive.checked=true;
+    simStable.checked=true;
+    runSim();
+  });
+
+  // --- Export summary ---
+  document.getElementById('btnExport').addEventListener('click', ()=>{
+    const summary =
+`סיכום מערכת תאורה ללא מפסיקים (הצבעה + ביומטריה)
+בחירות:
+- Targeting: ${selTarget.options[selTarget.selectedIndex].text}
+- ביומטריה: ${selBio.options[selBio.selectedIndex].text}
+- תקשורת: ${selNet.options[selNet.selectedIndex].text}
+- שליטה בתאורה: ${selLight.options[selLight.selectedIndex].text}
+- מרחק: ${rangeDist.value} ס"מ
+- מספר גופים: ${txtRooms.value}
+
+${bomOut.textContent}
+
+${wiringOut.textContent}
+
+אלגוריתם:
+${algoOut.textContent}
+`;
+    copyText(summary);
+    alert('הסיכום הועתק למקלדת ✅');
+  });
+
+  // --- Reset ---
+  document.getElementById('btnReset').addEventListener('click', ()=>{
+    selTarget.value='tof';
+    selBio.value='vein';
+    selNet.value='zigbee';
+    selLight.value='relay';
+    rangeDist.value='35';
+    txtRooms.value='6';
+    distVal.textContent='35';
+    estimate();
+    simLog.textContent='';
+    simDecision.className='tag';
+    simDecision.textContent='מוכן';
+  });
+
+  // --- Optional lock overlay ---
+  const lockOverlay = document.getElementById('lockOverlay');
+  const btnToggleLock = document.getElementById('btnToggleLock');
+  const btnUnlock = document.getElementById('btnUnlock');
+  const btnCloseLock = document.getElementById('btnCloseLock');
+  const lockPass = document.getElementById('lockPass');
+  const DEFAULT_PASS = '1234';
+
+  function openLock(){
+    lockOverlay.style.display='flex';
+    lockOverlay.setAttribute('aria-hidden','false');
+    lockPass.value='';
+    lockPass.focus();
+  }
+  function closeLock(){
+    lockOverlay.style.display='none';
+    lockOverlay.setAttribute('aria-hidden','true');
+  }
+
+  btnToggleLock?.addEventListener('click', openLock);
+  btnCloseLock?.addEventListener('click', closeLock);
+  btnUnlock?.addEventListener('click', ()=>{
+    const p = (lockPass.value || '').trim();
+    if(p === DEFAULT_PASS){
+      closeLock();
+    }else{
+      alert('סיסמה שגויה');
+    }
+  });
+  lockPass?.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter') btnUnlock.click();
+    if(e.key==='Escape') closeLock();
+  });
+
+  // Small safety: prevent accidental drag-select a bit (not security)
+  document.addEventListener('dragstart', (e)=>e.preventDefault());
+</script>
+</body>
+</html>
