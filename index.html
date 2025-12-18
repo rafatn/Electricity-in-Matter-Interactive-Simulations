@@ -229,6 +229,7 @@
     }
     .favbtn:hover{ background:#fff7ed; border-color:#fdba74; transform:translateY(-1px); }
     .favbtn.active{ background:#fffbeb; border-color:#f59e0b; }
+
     .favpill{
       display:none;
       font-size:12px;
@@ -267,9 +268,9 @@
     /* 🔒 חסימת הדפסה */
     @media print { body { display: none !important; } }
 
-    /* 💧 סימן מים */
+    /* 💧 סימן מים (ללא שם אישי) */
     body::before {
-      content: "© תל אביב יפו - קלנסווה -ראפת נאטור (רח' אל תין)";
+      content: "© כל הזכויות שמורות – קלנסווה";
       position: fixed;
       top: 50%;
       left: 50%;
@@ -328,6 +329,85 @@
 
     /* LTR fixes */
     [dir="ltr"] th, [dir="ltr"] td{ text-align:left; }
+
+    /* ✅ FIX: נושא + קישור באותו גובה */
+    #indexTable th,
+    #indexTable td{
+      vertical-align: middle;
+    }
+    #indexTable td.topic{
+      display:flex;
+      align-items:center;
+    }
+    #indexTable .fav-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    #indexTable .fav-wrap > div{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    /* ✅ Viewer Modal */
+    .viewer{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.55);
+      display:none;
+      z-index:999999;
+      padding:14px;
+    }
+    .viewer.open{ display:block; }
+
+    .viewer-inner{
+      background:#fff;
+      height:100%;
+      width:100%;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .viewer-bar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border-bottom:1px solid #e5e7eb;
+      background:#111827;
+      color:#fff;
+    }
+
+    .viewer-title{
+      flex:1;
+      font-weight:bold;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .viewer-btn{
+      border:1px solid rgba(255,255,255,0.25);
+      background:rgba(255,255,255,0.08);
+      color:#fff;
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:bold;
+      font-size:13px;
+    }
+    .viewer-btn:hover{ background:rgba(255,255,255,0.16); }
+
+    .viewer-frame{
+      border:0;
+      width:100%;
+      height:100%;
+      background:#fff;
+    }
   </style>
 </head>
 
@@ -627,7 +707,6 @@
         <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
       </tr>
 
-      <!-- ✅ NEW FILE ADDED -->
       <tr class="row" data-cat="transport" data-key="patent_smart_boarding_token_he.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
@@ -646,7 +725,6 @@
           מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
         </td>
       </tr>
-      <!-- ✅ END NEW FILE -->
 
     </tbody>
   </table>
@@ -655,6 +733,18 @@
     © כל הזכויות שמורות – קלנסווה<br>
     אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
   </footer>
+
+  <!-- ✅ Viewer Modal (Back to home without editing other files) -->
+  <div id="viewer" class="viewer" aria-hidden="true">
+    <div class="viewer-inner">
+      <div class="viewer-bar">
+        <button id="viewerClose" class="viewer-btn" type="button">⬅ חזרה למסך המרכזי</button>
+        <div class="viewer-title" id="viewerTitle">Preview</div>
+        <button id="viewerOpenNew" class="viewer-btn" type="button">פתח בלשונית חדשה ↗</button>
+      </div>
+      <iframe id="viewerFrame" class="viewer-frame" src="" loading="lazy"></iframe>
+    </div>
+  </div>
 
   <script>
     // ⛔ חסימת הדפסה (Ctrl/Cmd+P)
@@ -771,6 +861,56 @@
       apply();
     });
 
+    document.getElementById('clearFavBtn').addEventListener('click', ()=>{
+      if(favs.size === 0) return;
+      favs = new Set();
+      saveFavs(favs);
+      syncFavUI();
+      apply();
+    });
+
+    // ===== ✅ Viewer (Back to home without editing other files) =====
+    const viewer = document.getElementById('viewer');
+    const viewerFrame = document.getElementById('viewerFrame');
+    const viewerClose = document.getElementById('viewerClose');
+    const viewerTitle = document.getElementById('viewerTitle');
+    const viewerOpenNew = document.getElementById('viewerOpenNew');
+    let lastHref = "";
+
+    function openViewer(href, titleText){
+      lastHref = href;
+      viewerTitle.textContent = titleText || href;
+      viewerFrame.src = href;
+      viewer.classList.add('open');
+      viewer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer(){
+      viewer.classList.remove('open');
+      viewer.setAttribute('aria-hidden', 'true');
+      viewerFrame.src = "";
+      document.body.style.overflow = '';
+    }
+
+    viewerClose.addEventListener('click', closeViewer);
+    viewer.addEventListener('click', (e)=>{ if(e.target === viewer) closeViewer(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && viewer.classList.contains('open')) closeViewer(); });
+    viewerOpenNew.addEventListener('click', ()=>{ if(lastHref) window.open(lastHref, '_blank'); });
+
+    // intercept table link clicks -> open in viewer
+    document.querySelectorAll('#indexTable tbody a').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        // אם המשתמש עושה Ctrl/Shift/Meta או אמצעי עכבר — תן לפתוח רגיל
+        if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        const txt = a.textContent.trim();
+        openViewer(href, txt);
+      });
+    });
+
+    // openAllBtn: במקום לפתוח הרבה חלונות, פותח את הראשון (לפי הסינון) ב-Viewer
     document.getElementById('openAllBtn').addEventListener('click', ()=>{
       const visibleLinks = rows
         .filter(r => r.style.display !== 'none')
@@ -784,15 +924,7 @@
               'אין קישורים פתוחים לפי הסינון הנוכחי.');
         return;
       }
-      visibleLinks.forEach(a => window.open(a.getAttribute('href'), '_blank'));
-    });
-
-    document.getElementById('clearFavBtn').addEventListener('click', ()=>{
-      if(favs.size === 0) return;
-      favs = new Set();
-      saveFavs(favs);
-      syncFavUI();
-      apply();
+      openViewer(visibleLinks[0].getAttribute('href'), visibleLinks[0].textContent.trim());
     });
 
     // --- i18n ---
@@ -849,7 +981,6 @@
         linkFp:"מסכים חכמים לפי טביעת אצבע",
         descFp:"מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא",
 
-        /* NEW (new 8.html) */
         badgeLightBio:"💡🖐️ תאורה חכמה ביומטרית",
         linkLightBio:"תאורה ללא מפסיקים — הצבעה + טביעת אצבע",
         descLightBio:"דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי",
@@ -881,280 +1012,139 @@
         linkHybrid:"נעליים מים–אוויר (תלת־לשוני)",
         descHybrid:"הליכה וריחוף על מים ואוויר עם זרימה מבוקרת",
 
-        /* NEW */
         badgePatent:"✈️📄 פטנט — אבטחת תעופה",
         linkPatent:"כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט",
         descPatent:"מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס",
       },
 
-      en:{
-        pageTitle:"Home",
-        welcome:"Welcome",
-        summaryPrefix:"Total files:",
-        summaryShown:"Shown now:",
-        summaryFav:"Favorites:",
-        searchLabel:"Search",
-        searchPh:"Type a keyword / filename / description…",
-        searchHint:"Searches topic, filename and description.",
-        filterLabel:"Filter by category",
-        filterAll:"All",
-        catNet:"Networking & Communications",
-        catUi:"Human–Screen Interface",
-        catId:"Identity",
-        catMed:"Smart Medicine",
-        catElec:"Electricity & Simulations",
-        catThermo:"Thermodynamics",
-        catAudio:"Sound & Energy",
-        catFloor:"Energy from Floors",
-        catWater:"Water Mobility",
-        catTransport:"Transport",
-        catHybrid:"Hybrid Propulsion",
-        resetBtn:"Reset",
-        openAllBtn:"Open all links",
-        clearFavBtn:"Clear favorites",
-        favOnlyLabel:"View",
-        favOnlyText:"Show favorites only",
-        favHint:"Stars are saved in the browser (LocalStorage).",
-        favPill:"⭐ Favorite",
+      en:{ pageTitle:"Home", welcome:"Welcome", summaryPrefix:"Total files:", summaryShown:"Shown now:", summaryFav:"Favorites:",
+        searchLabel:"Search", searchPh:"Type a keyword / filename / description…", searchHint:"Searches topic, filename and description.",
+        filterLabel:"Filter by category", filterAll:"All", catNet:"Networking & Communications", catUi:"Human–Screen Interface",
+        catId:"Identity", catMed:"Smart Medicine", catElec:"Electricity & Simulations", catThermo:"Thermodynamics",
+        catAudio:"Sound & Energy", catFloor:"Energy from Floors", catWater:"Water Mobility", catTransport:"Transport", catHybrid:"Hybrid Propulsion",
+        resetBtn:"Reset", openAllBtn:"Open all links", clearFavBtn:"Clear favorites", favOnlyLabel:"View", favOnlyText:"Show favorites only",
+        favHint:"Stars are saved in the browser (LocalStorage).", favPill:"⭐ Favorite",
         empty:"No results found. Try changing the search or category.",
-        thTopic:"Topic",
-        thLink:"File / Link",
-        thDesc:"Description",
+        thTopic:"Topic", thLink:"File / Link", thDesc:"Description",
 
-        badgeNet:"🌐🔌 Networking & Communications",
-        badgeUi:"🖐️📺 Human–Screen Interface",
-        badgeId:"📱🌍 Multilingual Identity",
-        badgeMed:"🧬🧲 Smart Medicine",
-        badgeElec:"⚡ Electricity & Simulations",
-        badgeThermo:"🔥 Thermodynamics",
-        badgeAudio:"🎧 Sound & Energy",
-        badgeFloor:"🧱⚡ Energy from Floors",
-        badgeWater:"🌊👟 Water Mobility",
-        badgeTransport:"🚆💧 Transport",
-        badgeHybrid:"🌊🌬️ Hybrid Propulsion",
+        badgeNet:"🌐🔌 Networking & Communications", badgeUi:"🖐️📺 Human–Screen Interface", badgeId:"📱🌍 Multilingual Identity",
+        badgeMed:"🧬🧲 Smart Medicine", badgeElec:"⚡ Electricity & Simulations", badgeThermo:"🔥 Thermodynamics", badgeAudio:"🎧 Sound & Energy",
+        badgeFloor:"🧱⚡ Energy from Floors", badgeWater:"🌊👟 Water Mobility", badgeTransport:"🚆💧 Transport", badgeHybrid:"🌊🌬️ Hybrid Propulsion",
 
         linkUsb:"USB + Network (OSI + IPv6)",
         descUsb:"USB as a full network stack (OSI layers), including IPv4/IPv6, hardware diagram and a practical use-case.",
-
         linkFp:"Fingerprint-Gesture Smart Screens",
         descFp:"Interactive screen system driven by fingerprint + gestures, including authentication, algorithms and a full demo.",
-
-        /* NEW (new 8.html) */
         badgeLightBio:"💡🖐️ Biometric Smart Lighting",
         linkLightBio:"No-Switch Lighting — Pointing + Fingerprint",
         descLightBio:"Full system page: architecture, diagrams, security, simulation and prototype for pointing-based lighting with biometric authentication.",
-
         linkBivdn:"BIVDN – Mobile Identity",
         descBivdn:"Multilingual digital identity for mobile: verification, responsive UI, multi-language support, small-screen optimized.",
-
         linkBio:"Bio-Magnet Drug Delivery",
         descBio:"Research concept to reduce IV infusion: smart patch based on DNA, electrical signature and therapeutic navigation (\"biological GPS\").",
-
         linkElec:"Electricity Models + Simulations",
         descElec:"Physical models, equations and interactive simulations.",
-
         linkThermo:"Thermosiphon",
         descThermo:"Thermosiphon flow calculator based on physical parameters.",
-
         linkAudio:"Self-Charging Headphones",
         descAudio:"Self charging from sound energy – theoretical model and simulation.",
-
         linkFloor:"Smart Floor Model",
         descFloor:"Energy harvesting from pressure and load mapping.",
-
         linkWater:"Water-Walking Shoes",
         descWater:"Sonar, micro-pumps and dynamic balance.",
-
         linkTrain:"Water–Gas Train (Blue)",
         descTrain:"Transport concept based on water and gas with energy efficiency.",
-
         linkHybrid:"Water–Air Shoes (Trilingual)",
         descHybrid:"Walking/hovering on water and air with controlled flow.",
-
-        /* NEW */
         badgePatent:"✈️📄 Patent — Aviation Security",
         linkPatent:"Smart Boarding Pass (Dynamic Token) — Patent Draft",
-        descPatent:"A smart digital boarding pass with multi-step verification, rolling token, anti-replay and automatic revocation after boarding.",
+        descPatent:"A smart digital boarding pass with multi-step verification, rolling token, anti-replay and automatic revocation after boarding."
       },
 
-      ar:{
-        pageTitle:"الصفحة الرئيسية",
-        welcome:"مرحباً",
-        summaryPrefix:"إجمالي الملفات:",
-        summaryShown:"المعروض الآن:",
-        summaryFav:"المفضلة:",
-        searchLabel:"بحث",
-        searchPh:"اكتب كلمة / اسم ملف / وصف…",
-        searchHint:"يبحث داخل العنوان واسم الملف والوصف.",
-        filterLabel:"تصفية حسب الفئة",
-        filterAll:"الكل",
-        catNet:"الشبكات والاتصالات",
-        catUi:"واجهة الإنسان–الشاشة",
-        catId:"الهوية",
-        catMed:"طب ذكي",
-        catElec:"الكهرباء والمحاكاة",
-        catThermo:"الديناميكا الحرارية",
-        catAudio:"الصوت والطاقة",
-        catFloor:"طاقة من الأرضيات",
-        catWater:"حركة على الماء",
-        catTransport:"النقل",
-        catHybrid:"دفع هجين",
-        resetBtn:"إعادة ضبط",
-        openAllBtn:"افتح كل الروابط",
-        clearFavBtn:"مسح المفضلة",
-        favOnlyLabel:"عرض",
-        favOnlyText:"عرض المفضلة فقط",
-        favHint:"يتم حفظ النجمة في المتصفح (LocalStorage).",
-        favPill:"⭐ مفضّل",
-        empty:"لا توجد نتائج. جرّب تغيير البحث أو الفئة.",
-        thTopic:"الموضوع",
-        thLink:"الملف / الرابط",
-        thDesc:"الوصف",
+      ar:{ pageTitle:"الصفحة الرئيسية", welcome:"مرحباً", summaryPrefix:"إجمالي الملفات:", summaryShown:"المعروض الآن:", summaryFav:"المفضلة:",
+        searchLabel:"بحث", searchPh:"اكتب كلمة / اسم ملف / وصف…", searchHint:"يبحث داخل العنوان واسم الملف والوصف.",
+        filterLabel:"تصفية حسب الفئة", filterAll:"الكل", catNet:"الشبكات والاتصالات", catUi:"واجهة الإنسان–الشاشة", catId:"الهوية",
+        catMed:"طب ذكي", catElec:"الكهرباء والمحاكاة", catThermo:"الديناميكا الحرارية", catAudio:"الصوت والطاقة", catFloor:"طاقة من الأرضيات",
+        catWater:"حركة على الماء", catTransport:"النقل", catHybrid:"دفع هجين",
+        resetBtn:"إعادة ضبط", openAllBtn:"افتح كل الروابط", clearFavBtn:"مسح المفضلة", favOnlyLabel:"عرض", favOnlyText:"عرض المفضلة فقط",
+        favHint:"يتم حفظ النجمة في المتصفح (LocalStorage).", favPill:"⭐ مفضّل",
+        empty:"لا توجد نتائج. جرّب تغيير البحث أو الفئة.", thTopic:"الموضوع", thLink:"الملف / الرابط", thDesc:"الوصف",
 
-        badgeNet:"🌐🔌 الشبكات والاتصالات",
-        badgeUi:"🖐️📺 واجهة الإنسان–الشاشة",
-        badgeId:"📱🌍 هوية متعددة اللغات",
-        badgeMed:"🧬🧲 طب ذكي",
-        badgeElec:"⚡ الكهرباء والمحاكاة",
-        badgeThermo:"🔥 الديناميكا الحرارية",
-        badgeAudio:"🎧 الصوت والطاقة",
-        badgeFloor:"🧱⚡ طاقة من الأرضيات",
-        badgeWater:"🌊👟 حركة على الماء",
-        badgeTransport:"🚆💧 النقل",
-        badgeHybrid:"🌊🌬️ دفع هجين",
+        badgeNet:"🌐🔌 الشبكات والاتصالات", badgeUi:"🖐️📺 واجهة الإنسان–الشاشة", badgeId:"📱🌍 هوية متعددة اللغات",
+        badgeMed:"🧬🧲 طب ذكي", badgeElec:"⚡ الكهرباء والمحاكاة", badgeThermo:"🔥 الديناميكا الحرارية", badgeAudio:"🎧 الصوت والطاقة",
+        badgeFloor:"🧱⚡ طاقة من الأرضيات", badgeWater:"🌊👟 حركة على الماء", badgeTransport:"🚆💧 النقل", badgeHybrid:"🌊🌬️ دفع هجين",
 
         linkUsb:"USB + شبكة (OSI + IPv6)",
         descUsb:"USB كنظام شبكة كامل (طبقات OSI) مع IPv4/IPv6 ومخطط عتاد وسيناريو عملي.",
-
         linkFp:"شاشات ذكية ببصمة وإيماءات",
         descFp:"نظام شاشات تفاعلي يعتمد على البصمة والإيماءات مع التحقق والخوارزميات وعرض كامل.",
-
-        /* NEW (new 8.html) */
         badgeLightBio:"💡🖐️ إضاءة ذكية بيومترية",
         linkLightBio:"إضاءة بدون مفاتيح — الإشارة + بصمة",
         descLightBio:"صفحة نظام كاملة: بنية، مخططات، أمان، محاكاة ونموذج أولي لتشغيل الإضاءة بالإشارة مع تحقق بيومتري.",
-
         linkBivdn:"BIVDN – هوية محمولة",
         descBivdn:"هوية رقمية متعددة اللغات للموبايل: تحقق، واجهة متجاوبة، دعم لغات متعددة، مناسبة للشاشات الصغيرة.",
-
         linkBio:"مغناطيس حيوي لإيصال الدواء",
         descBio:"فكرة بحثية لتقليل التسريب الوريدي: رقعة ذكية تعتمد على DNA وتوقيع كهربائي وتوجيه علاجي (\"GPS\" حيوي).",
-
         linkElec:"نماذج كهرباء + محاكاة",
         descElec:"نماذج فيزيائية ومعادلات ومحاكاة تفاعلية.",
-
         linkThermo:"الثرموسيفون",
         descThermo:"حاسبة تدفق ثرموسيفون وفق المعلمات الفيزيائية.",
-
         linkAudio:"سماعات تشحن نفسها",
         descAudio:"شحن ذاتي من طاقة الصوت – نموذج نظري ومحاكاة.",
-
         linkFloor:"نموذج أرضية ذكية",
         descFloor:"توليد طاقة من الضغط ورسم خرائط الأحمال.",
-
         linkWater:"أحذية للمشي على الماء",
         descWater:"سونار ومضخات دقيقة وتوازن ديناميكي.",
-
         linkTrain:"قطار ماء–غاز (Blue)",
         descTrain:"مفهوم نقل يعتمد الماء والغاز بكفاءة طاقية.",
-
         linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
         descHybrid:"المشي/التحليق على الماء والهواء بتدفق مُتحكم به.",
-
-        /* NEW */
         badgePatent:"✈️📄 براءة — أمن الطيران",
         linkPatent:"بطاقة صعود ذكية (Token ديناميكي) — مسودة براءة",
-        descPatent:"بطاقة صعود رقمية ذكية مع تحقق متعدد المراحل، Token متغير، منع إعادة الاستخدام وإلغاء تلقائي بعد الصعود.",
+        descPatent:"بطاقة صعود رقمية ذكية مع تحقق متعدد المراحل، Token متغير، منع إعادة الاستخدام وإلغاء تلقائي بعد الصعود."
       },
 
-      ru:{
-        pageTitle:"Главная",
-        welcome:"Добро пожаловать",
-        summaryPrefix:"Всего файлов:",
-        summaryShown:"Показано сейчас:",
-        summaryFav:"Избранное:",
-        searchLabel:"Поиск",
-        searchPh:"Введите слово / имя файла / описание…",
-        searchHint:"Поиск по теме, имени файла и описанию.",
-        filterLabel:"Фильтр по категории",
-        filterAll:"Все",
-        catNet:"Сети и связь",
-        catUi:"Интерфейс человек–экран",
-        catId:"Идентификация",
-        catMed:"Умная медицина",
-        catElec:"Электричество и симуляции",
-        catThermo:"Термодинамика",
-        catAudio:"Звук и энергия",
-        catFloor:"Энергия от пола",
-        catWater:"Движение по воде",
-        catTransport:"Транспорт",
-        catHybrid:"Гибридная тяга",
-        resetBtn:"Сброс",
-        openAllBtn:"Открыть все ссылки",
-        clearFavBtn:"Очистить избранное",
-        favOnlyLabel:"Вид",
-        favOnlyText:"Показывать только избранное",
-        favHint:"Звёздочки сохраняются в браузере (LocalStorage).",
-        favPill:"⭐ Избранное",
-        empty:"Ничего не найдено. Попробуйте изменить поиск или категорию.",
-        thTopic:"Тема",
-        thLink:"Файл / Ссылка",
-        thDesc:"Описание",
+      ru:{ pageTitle:"Главная", welcome:"Добро пожаловать", summaryPrefix:"Всего файлов:", summaryShown:"Показано сейчас:", summaryFav:"Избранное:",
+        searchLabel:"Поиск", searchPh:"Введите слово / имя файла / описание…", searchHint:"Поиск по теме, имени файла и описанию.",
+        filterLabel:"Фильтр по категории", filterAll:"Все", catNet:"Сети и связь", catUi:"Интерфейс человек–экран", catId:"Идентификация",
+        catMed:"Умная медицина", catElec:"Электричество и симуляции", catThermo:"Термодинамика", catAudio:"Звук и энергия",
+        catFloor:"Энергия от пола", catWater:"Движение по воде", catTransport:"Транспорт", catHybrid:"Гибридная тяга",
+        resetBtn:"Сброс", openAllBtn:"Открыть все ссылки", clearFavBtn:"Очистить избранное", favOnlyLabel:"Вид",
+        favOnlyText:"Показывать только избранное", favHint:"Звёздочки сохраняются в браузере (LocalStorage).", favPill:"⭐ Избранное",
+        empty:"Ничего не найдено. Попробуйте изменить поиск или категорию.", thTopic:"Тема", thLink:"Файл / Ссылка", thDesc:"Описание",
 
-        badgeNet:"🌐🔌 Сети и связь",
-        badgeUi:"🖐️📺 Интерфейс человек–экран",
-        badgeId:"📱🌍 Многоязычная идентификация",
-        badgeMed:"🧬🧲 Умная медицина",
-        badgeElec:"⚡ Электричество и симуляции",
-        badgeThermo:"🔥 Термодинамика",
-        badgeAudio:"🎧 Звук и энергия",
-        badgeFloor:"🧱⚡ Энергия от пола",
-        badgeWater:"🌊👟 Движение по воде",
-        badgeTransport:"🚆💧 Транспорт",
-        badgeHybrid:"🌊🌬️ Гибридная тяга",
+        badgeNet:"🌐🔌 Сети и связь", badgeUi:"🖐️📺 Интерфейс человек–экран", badgeId:"📱🌍 Многоязычная идентификация",
+        badgeMed:"🧬🧲 Умная медицина", badgeElec:"⚡ Электричество и симуляции", badgeThermo:"🔥 Термодинамика", badgeAudio:"🎧 Звук и энергия",
+        badgeFloor:"🧱⚡ Энергия от пола", badgeWater:"🌊👟 Движение по воде", badgeTransport:"🚆💧 Транспорт", badgeHybrid:"🌊🌬️ Гибридная тяга",
 
         linkUsb:"USB + сеть (OSI + IPv6)",
         descUsb:"USB как полноценная сеть (уровни OSI), включая IPv4/IPv6, схема железа и практический сценарий.",
-
         linkFp:"Умные экраны по отпечатку и жестам",
         descFp:"Интерактивная система экранов: отпечаток + жесты, аутентификация, алгоритмы и полный демо-режим.",
-
-        /* NEW (new 8.html) */
         badgeLightBio:"💡🖐️ Биометрическое умное освещение",
         linkLightBio:"Освещение без выключателей — указание + отпечаток",
         descLightBio:"Полная страница системы: архитектура, схемы, безопасность, симуляция и прототип управления светом по указанию с биометрической проверкой.",
-
         linkBivdn:"BIVDN – мобильная идентификация",
         descBivdn:"Многоязычная цифровая идентификация для мобильных: проверка, адаптивный интерфейс, поддержка языков, оптимизация для маленьких экранов.",
-
         linkBio:"Био-магнитная доставка лекарств",
-        descBio:"Исследовательская концепция вместо инфузии: умный пластырь на основе ДНК, электрической подписи и терапевтической навигации (\"био-GPS\").",
-
+        descBio:"Исследовательская концепция: умный пластырь на основе ДНК, электрической подписи и терапевтической навигации (\"био-GPS\").",
         linkElec:"Модели электричества + симуляции",
         descElec:"Физические модели, уравнения и интерактивные симуляции.",
-
         linkThermo:"Термосифон",
         descThermo:"Калькулятор потока термосифона по физическим параметрам.",
-
         linkAudio:"Самозаряжающиеся наушники",
         descAudio:"Самозаряд от энергии звука — теоретическая модель и симуляция.",
-
         linkFloor:"Модель умного пола",
         descFloor:"Сбор энергии от давления и карта нагрузок.",
-
         linkWater:"Обувь для ходьбы по воде",
         descWater:"Сонар, микропомпы и динамическая устойчивость.",
-
         linkTrain:"Поезд вода–газ (Blue)",
         descTrain:"Транспортная концепция на воде и газе с повышенной энергоэффективностью.",
-
         linkHybrid:"Обувь вода–воздух (трёхъязычная)",
         descHybrid:"Ходьба/парение по воде и воздуху с управляемым потоком.",
-
-        /* NEW */
         badgePatent:"✈️📄 Патент — авиационная безопасность",
         linkPatent:"Умный посадочный талон (динамический Token) — черновик патента",
-        descPatent:"Умный цифровой посадочный талон с многоэтапной проверкой, меняющимся токеном, anti-replay и автоматической аннуляцией после посадки.",
+        descPatent:"Умный посадочный талон: многоэтапная проверка, меняющийся токен, anti-replay и автоматическая аннуляция после посадки."
       }
     };
 
