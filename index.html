@@ -529,7 +529,6 @@
         </td>
       </tr>
 
-      <!-- ✅ NEW FILE ADDED: new 8.html -->
       <tr class="row" data-cat="ui" data-key="new 8.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-ui" data-i18n="badgeLightBio">💡🖐️ תאורה חכמה ביומטרית</span>
@@ -548,7 +547,6 @@
           דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי
         </td>
       </tr>
-      <!-- ✅ END NEW FILE -->
 
       <tr class="row" data-cat="id" data-key="bivdn_multilang_full_mobile.html">
         <td class="topic" data-label="נושא">
@@ -569,6 +567,7 @@
         </td>
       </tr>
 
+      <!-- ✅ ADDED FILE: bio_magnet_therapy.html -->
       <tr class="row" data-cat="med" data-key="bio_magnet_therapy.html">
         <td class="topic" data-label="נושא">
           <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
@@ -587,6 +586,7 @@
           מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
         </td>
       </tr>
+      <!-- ✅ END ADDED FILE -->
 
       <tr class="row" data-cat="elec" data-key="electricity_models_plus_simulations_bilingual_toggle.html">
         <td class="topic" data-label="נושא">
@@ -734,7 +734,6 @@
     אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
   </footer>
 
-  <!-- ✅ Viewer Modal (Back to home without editing other files) -->
   <div id="viewer" class="viewer" aria-hidden="true">
     <div class="viewer-inner">
       <div class="viewer-bar">
@@ -901,7 +900,6 @@
     // intercept table link clicks -> open in viewer
     document.querySelectorAll('#indexTable tbody a').forEach(a=>{
       a.addEventListener('click', (e)=>{
-        // אם המשתמש עושה Ctrl/Shift/Meta או אמצעי עכבר — תן לפתוח רגיל
         if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
         e.preventDefault();
         const href = a.getAttribute('href');
@@ -910,7 +908,6 @@
       });
     });
 
-    // openAllBtn: במקום לפתוח הרבה חלונות, פותח את הראשון (לפי הסינון) ב-Viewer
     document.getElementById('openAllBtn').addEventListener('click', ()=>{
       const visibleLinks = rows
         .filter(r => r.style.display !== 'none')
@@ -1164,7 +1161,6 @@
         root.dir = "rtl";
       }
 
-      // text
       document.querySelectorAll("[data-i18n]").forEach(el=>{
         const key = el.getAttribute("data-i18n");
         if(dict[L][key] !== undefined){
@@ -1172,7 +1168,6 @@
         }
       });
 
-      // placeholders
       document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
         const key = el.getAttribute("data-i18n-ph");
         if(dict[L][key] !== undefined){
@@ -1180,7 +1175,6 @@
         }
       });
 
-      // select options
       document.querySelectorAll("option[data-i18n]").forEach(opt=>{
         const key = opt.getAttribute("data-i18n");
         if(dict[L][key] !== undefined){
@@ -1188,7 +1182,6 @@
         }
       });
 
-      // active btn
       document.querySelectorAll(".langbtn").forEach(btn=>{
         btn.classList.toggle("active", btn.getAttribute("data-lang") === L);
       });
@@ -1200,7 +1193,6 @@
       btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
     });
 
-    // init
     syncFavUI();
     setLang("he");
     apply();
