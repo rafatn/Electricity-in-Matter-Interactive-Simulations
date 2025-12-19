@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>טיוטת פטנט — “אזור אוויר נקי מרובע” סביב מיטת חולה + משוואות</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#e5e7eb;
+      --link:#2563eb;
+      --shadow:0 10px 28px rgba(2,6,23,.08);
+      --r:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    header{
+      padding:22px 18px;
+      background:linear-gradient(180deg, #0b1220 0%, #111827 100%);
+      color:white;
+    }
+    header .wrap{max-width:1100px;margin:0 auto}
+    h1{margin:0 0 6px 0;font-size:22px}
+    .sub{opacity:.9;font-size:14px}
+    .pillrow{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px solid rgba(255,255,255,.18);
+      border-radius:999px;font-size:13px;color:#e5e7eb;background:rgba(255,255,255,.06)
+    }
+    .pill b{color:white}
+    main{max-width:1100px;margin:18px auto;padding:0 14px 28px}
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .toc a{color:var(--link);text-decoration:none}
+    .toc a:hover{text-decoration:underline}
+    .toc ul{margin:8px 0 0 0;padding:0 18px}
+    .toc li{margin:6px 0}
+    h2{margin:0 0 10px 0;font-size:18px}
+    h3{margin:18px 0 10px 0;font-size:16px}
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .note{
+      border-right:4px solid #f59e0b;
+      background:#fff7ed;
+      padding:10px 12px;border-radius:12px;
+      font-size:14px;
+    }
+    .legal{
+      border-right:4px solid #60a5fa;
+      background:#eff6ff;
+      padding:10px 12px;border-radius:12px;
+      font-size:14px;
+    }
+    .kbox{
+      border:1px dashed var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fafafa;
+    }
+    code, pre{font-family:var(--mono)}
+    pre{
+      direction:ltr;
+      text-align:left;
+      overflow:auto;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#0b1220;
+      color:#e5e7eb;
+      margin:10px 0;
+      font-size:13px;
+    }
+    .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    button{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:white;
+      padding:9px 11px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    button:hover{background:#f8fafc}
+    details{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background:white;
+      margin:10px 0;
+    }
+    summary{cursor:pointer;font-weight:800}
+    .claim{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      background:#fcfcff;margin:10px 0;
+    }
+    .claim .n{font-weight:900}
+    .figure{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#ffffff;
+    }
+    .figcap{margin-top:8px;font-size:13px;color:var(--muted)}
+    .badge{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#f1f5f9;
+      font-size:12px;
+      margin-left:6px;
+    }
+    .small{font-size:13px}
+    .anchor{scroll-margin-top:90px}
+    .mjx-container{font-size: 115% !important;}
+  </style>
+
+  <!-- MathJax for crisp equations -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']],
+        processEscapes: true
+      },
+      options: { renderActions: { addMenu: [] } } // hide contextual menu
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <h1>טיוטת פטנט — מערכת “אזור אוויר נקי מרובע” סביב מיטת חולה + מודל מתמטי</h1>
+    <div class="sub">מסמך טכני/קונספטואלי לשימוש כבסיס להגשת פטנט. ניתן להתאים ל‑PCT / USPTO / IL.</div>
+    <div class="pillrow">
+      <span class="pill"><b>יישום</b>: חדרי אשפוז, בידוד, טיפול נמרץ, חדרי מיון</span>
+      <span class="pill"><b>עיקרון</b>: זרימה למינארית “וילון אוויר” מרובע + סילוק + גילוי חריגות</span>
+      <span class="pill"><b>מודל</b>: אות + רעש גאוסי + סינון/בקרה</span>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="card toc">
+    <h2>תוכן עניינים</h2>
+    <ul>
+      <li><a href="#abstract">תקציר</a></li>
+      <li><a href="#field">תחום ההמצאה</a></li>
+      <li><a href="#background">רקע ובעיה</a></li>
+      <li><a href="#summary">תמצית ההמצאה</a></li>
+      <li><a href="#figures">תיאור תמציתי של שרטוטים</a></li>
+      <li><a href="#detailed">תיאור מפורט והגשמות</a></li>
+      <li><a href="#math">המודל המתמטי והמשוואות</a></li>
+      <li><a href="#control">בקרה, מדידה וגילוי וירוסים</a></li>
+      <li><a href="#claims">תביעות (Claims)</a></li>
+      <li><a href="#variations">וריאציות ושיפורים</a></li>
+      <li><a href="#checklist">צ’קליסט להגשה</a></li>
+    </ul>
+
+    <div class="hr"></div>
+
+    <div class="legal">
+      <b>הערה חשובה:</b> זהו ניסוח טכני כללי ואינו ייעוץ משפטי. לפני הגשה בפועל מומלץ עו״ד/עורך פטנטים שיעשה חיפוש קדם‑פטנטי,
+      דיוק תביעות, ותיאום שרטוטים.
+    </div>
+
+    <div class="btnrow">
+      <button onclick="window.print()">הדפסה / PDF</button>
+      <button id="copyClaimsBtn">העתקת כל התביעות</button>
+    </div>
+
+    <div class="hr"></div>
+    <div class="note small">
+      <b>טיפ:</b> אם תרצה, אפשר להוסיף גרסה באנגלית (Abstract + Claims), או לייצר שרטוטים “פטנטיים” (שחור‑לבן) על בסיס הסכמות כאן.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="anchor" id="abstract">תקציר</h2>
+    <p class="muted">
+      מוצעת מערכת ליצירת <b>אזור אוויר נקי תחום גאומטרית</b> מעל/סביב מיטת חולה, באמצעות פתח אספקת אוויר מסונן בעל <b>חתך מרובע</b>
+      היוצר זרימה יורדת דמוית “קרן מרובעת” (וילון אוויר למינארי), יחד עם פתחי יניקה/החזרה היקפיים והיגוי זרימה.
+      המערכת מגדירה נפח \(\Omega_{\text{clean}}\) שבו ריכוז חלקיקים/אירוסולים מזוהמים קטן מסף \(\epsilon\) לאורך זמן,
+      ומיישמת ניטור וחיווי לזיהוי חריגות (לרבות וירוסים) באמצעות סנסורי חלקיקים/CO\(_2\)/ביואירוסול ואלגוריתם גילוי המבוסס על מודל “אות+רעש”.
+    </p>
+
+    <h3 class="anchor" id="field">תחום ההמצאה</h3>
+    <p>
+      מערכות מיזוג אוויר רפואיות, בקרת זיהומים באוויר, “אזורי זרימה נקייה” מקומיים בחדרי אשפוז, מערכות ניטור איכות אוויר
+      ובקרה אדפטיבית לניטרול אירוסולים ביולוגיים.
+    </p>
+
+    <h3 class="anchor" id="background">רקע ובעיה</h3>
+    <p>
+      בבתי חולים קיימות גישות לבידוד: חדרי לחץ שלילי/חיובי, HEPA, חדרי ניתוח עם זרימה למינארית, ועוד.
+      עם זאת, חדרים רבים הם <b>משותפים</b> או דורשים גמישות, ועלות שדרוג תשתיות לכל חדר גבוהה.
+      נדרש פתרון היוצר <b>בידוד מרחבי נקודתי</b> סביב החולה ללא בניית חדרים מיוחדים, עם יכולת <b>מדידה וזיהוי</b> בזמן אמת.
+    </p>
+
+    <h3 class="anchor" id="summary">תמצית ההמצאה</h3>
+    <div class="kbox">
+      <ol>
+        <li>
+          פתח אספקה מעל המיטה בעל חתך מרובע/מסגרת רב‑צלעית, כולל מפזר/מיישר זרימה (flow straightener) ליצירת זרימה
+          יורדת יציבה (“laminar downflow”) על תחום שטח \(A\).
+        </li>
+        <li>
+          סידור פתחי החזרה/יניקה היקפיים או בקירות/רצפה כך שזרימת ההחזרה “מושכת” החוצה מזהמים ומקטינה חדירת ערבול לתוך
+          \(\Omega_{\text{clean}}\).
+        </li>
+        <li>
+          סנסורים למדידת ריכוז חלקיקים/אירוסולים בתוך/מחוץ לתחום, וחישוב מדד חריגה (למשל SNR או z‑score) לזיהוי מצב של
+          “נוכחות פתוגן/אירוסול חריג”.
+        </li>
+        <li>
+          בקרה אדפטיבית על ספיקת האוויר \(Q(t)\) ומהירות הזרימה \(U(t)\) לשמירת \(\Omega_{\text{clean}}\) כך ש-\(c(\vec{x},t)\le\epsilon\).
+        </li>
+      </ol>
+    </div>
+
+    <h3 class="anchor" id="figures">תיאור תמציתי של שרטוטים</h3>
+    <div class="figure">
+      <svg viewBox="0 0 820 330" width="100%" height="auto" role="img" aria-label="סכמה אזור אוויר נקי מרובע סביב מיטת חולה">
+        <!-- room -->
+        <rect x="20" y="20" width="780" height="290" rx="18" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
+        <text x="65" y="55" font-size="18" fill="#0f172a" font-weight="700">חדר אשפוז</text>
+
+        <!-- bed -->
+        <rect x="290" y="205" width="240" height="60" rx="12" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="305" y="185" width="210" height="35" rx="12" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <text x="360" y="243" font-size="14" fill="#334155" font-weight="700">מיטת חולה</text>
+
+        <!-- supply square -->
+        <rect x="325" y="70" width="170" height="60" rx="10" fill="#0ea5e9" opacity="0.16" stroke="#0284c7" stroke-width="2"/>
+        <text x="346" y="106" font-size="14" fill="#075985" font-weight="800">פתח אספקה (מרובע)</text>
+
+        <!-- clean zone -->
+        <rect x="300" y="135" width="220" height="150" rx="12" fill="#22c55e" opacity="0.12" stroke="#16a34a" stroke-width="2"/>
+        <text x="320" y="160" font-size="13" fill="#166534" font-weight="800">Ω_clean (אזור נקי)</text>
+
+        <!-- downward arrows -->
+        <g stroke="#0284c7" stroke-width="3">
+          <line x1="350" y1="135" x2="350" y2="195"/>
+          <line x1="410" y1="135" x2="410" y2="205"/>
+          <line x1="470" y1="135" x2="470" y2="195"/>
+          <polyline points="345,190 350,195 355,190" fill="none"/>
+          <polyline points="405,200 410,205 415,200" fill="none"/>
+          <polyline points="465,190 470,195 475,190" fill="none"/>
+        </g>
+
+        <!-- return vents -->
+        <rect x="65" y="255" width="120" height="30" rx="8" fill="#f97316" opacity="0.20" stroke="#ea580c" stroke-width="2"/>
+        <text x="77" y="275" font-size="12" fill="#9a3412" font-weight="800">יניקה/החזרה</text>
+
+        <rect x="635" y="255" width="120" height="30" rx="8" fill="#f97316" opacity="0.20" stroke="#ea580c" stroke-width="2"/>
+        <text x="647" y="275" font-size="12" fill="#9a3412" font-weight="800">יניקה/החזרה</text>
+
+        <!-- sensors -->
+        <circle cx="270" cy="175" r="10" fill="#a855f7" opacity="0.25" stroke="#7e22ce" stroke-width="2"/>
+        <circle cx="550" cy="175" r="10" fill="#a855f7" opacity="0.25" stroke="#7e22ce" stroke-width="2"/>
+        <text x="232" y="170" font-size="12" fill="#5b21b6" font-weight="800">סנסור</text>
+        <text x="563" y="170" font-size="12" fill="#5b21b6" font-weight="800">סנסור</text>
+      </svg>
+      <div class="figcap">
+        <b>איור 1:</b> פתח אספקה מרובע מעל מיטת החולה יוצר עמוד זרימה יורד (וילון אוויר) המגדיר תחום \(\Omega_{\text{clean}}\).
+        יניקה/החזרה היקפית מסייעת בסילוק מזהמים. סנסורים בתוך/מחוץ לאזור מאפשרים זיהוי חריגות.
+      </div>
+    </div>
+
+    <h3 class="anchor" id="detailed">תיאור מפורט והגשמות (Embodiments)</h3>
+    <ol>
+      <li>
+        <b>פתח אספקה מרובע:</b> אלמנט תקרתי בעל מסגרת מרובעת או רב‑צלעית, הכולל רשת/חלת‑דבש/מיישר זרימה לייצוב פרופיל מהירות,
+        וסינון HEPA/ULPA או מקור אוויר נקי אחר. הפתח מתוכנן כך שהזרימה יורדת על שטח \(A\) בהתפלגות מהירות קרובה לאחידה.
+      </li>
+      <li>
+        <b>הגדרת תחום ניקיון:</b> התחום \(\Omega_{\text{clean}}\) מוגדר על‑פי ממדים (לדוגמה: רוחב \(2a\), אורך \(2b\), וגובה \(h\)),
+        כך שהחולה וצוות רפואי קרוב נמצאים רוב הזמן בתוך התחום.
+      </li>
+      <li>
+        <b>החזרה/יניקה:</b> פתחי יניקה ברצפה/קירות צד או טבעת היקפית מסביב למיטה. מטרתם ליצור
+        “משיכה החוצה” ולהקטין ערבול פנימה.
+      </li>
+      <li>
+        <b>ניטור בזמן אמת:</b> לפחות שני חיישנים: אחד בתוך \(\Omega_{\text{clean}}\) ואחד מחוץ לו.
+        אפשרות לחיישני חלקיקים (PM), CO\(_2\), לחות, או חיישן ביואירוסול/פלואורסצנציה.
+      </li>
+      <li>
+        <b>בקרה אדפטיבית:</b> בקר שולח פקודות ל‑VAV/מאוורר/דמפרים לשינוי ספיקת אוויר \(Q(t)\),
+        ולשמירה על ריכוז \(c\) מתחת לסף תוך חסכון אנרגטי.
+      </li>
+    </ol>
+
+    <h2 class="anchor" id="math">המודל המתמטי והמשוואות הלבנטיות</h2>
+
+    <div class="note">
+      <b>מטרה:</b> לתאר מתמטית כיצד זרימת אוויר נקי “מסננת” רעש (מזהמים) ומאפשרת גילוי חריגות.
+      אפשר להשתמש במשוואות כהצדקה הנדסית בדו״ח תיאור ההמצאה.
+    </div>
+
+    <h3>1) משוואות זרימה (אוויר)</h3>
+    <p>
+      נניח אוויר כנוזל ניוטוני בלתי‑דחיס במהירויות נמוכות. אז:
+    </p>
+    <div class="kbox">
+      \[
+      \nabla \cdot \mathbf{u} = 0
+      \]
+      \[
+      \rho\left(\frac{\partial \mathbf{u}}{\partial t}+(\mathbf{u}\cdot\nabla)\mathbf{u}\right)
+      = -\nabla p + \mu \nabla^2 \mathbf{u} + \mathbf{f}
+      \]
+      <div class="muted small">כאשר \(\mathbf{u}\) מהירות האוויר, \(p\) לחץ, \(\rho\) צפיפות, \(\mu\) צמיגות.</div>
+    </div>
+
+    <h3>2) מודל חלקיקים/אירוסולים: אדבקציה‑דיפוזיה + שקיעה</h3>
+    <p>
+      נגדיר \(c(\mathbf{x},t)\) כריכוז חלקיקים מזוהמים (למשל מס’ חלקיקים למ״ק). דינמיקה בסיסית:
+    </p>
+    <div class="kbox">
+      \[
+      \frac{\partial c}{\partial t} + \nabla\cdot(\mathbf{u}c)
+      = \nabla\cdot(D\nabla c) - \lambda c + S(\mathbf{x},t)
+      \]
+      <div class="muted small">
+        \(D\) דיפוזיה אפקטיבית (ערבול), \(\lambda\) קצב סילוק/שקיעה/סינון, \(S\) מקור (שיעול/נשיפה).
+      </div>
+    </div>
+
+    <h3>3) תנאי שפה של “אוויר נקי” בכניסה</h3>
+    <p>
+      בפתח אספקה (inlet) נגדיר ריכוז זניח:
+    </p>
+    <div class="kbox">
+      \[
+      c(\mathbf{x},t)\big|_{\Gamma_{\text{in}}} \approx 0
+      \]
+      <div class="muted small">
+        כלומר האוויר המסופק מסונן עד כדי “שקט” ביחס למזהמים (כמו אות נקי ללא רעש).
+      </div>
+    </div>
+
+    <h3>4) הגדרת תחום נקי \(\Omega_{\text{clean}}\) וסף איכות</h3>
+    <p>
+      נגדיר תחום מרחבי (למשל תיבה/פריזמה מרובעת) ונדרוש:
+    </p>
+    <div class="kbox">
+      \[
+      \forall \mathbf{x}\in\Omega_{\text{clean}},\ \ c(\mathbf{x},t)\le \epsilon
+      \]
+      <div class="muted small">
+        \(\epsilon\) סף שנקבע לפי תקן/מדיניות (לדוגמה PM, או ערך אקוויוולנטי לביואירוסול).
+      </div>
+    </div>
+
+    <h3>5) מאזן מסה ממוצע (מודל “קופסה” שימושי לתכנון)</h3>
+    <p>
+      למטרות בקרה אפשר לקרב את התחום לנפח \(V\) עם ערבול חלש:
+    </p>
+    <div class="kbox">
+      \[
+      \frac{d\bar{c}}{dt} = \frac{S_{\text{eff}}}{V} - \left(\frac{Q}{V}+\lambda\right)\bar{c}
+      \]
+      <div class="muted small">
+        \(\bar{c}\) ריכוז ממוצע, \(Q\) ספיקת אוויר נקי [מ״ק/ש׳], \(S_{\text{eff}}\) מקור אפקטיבי בתוך האזור.
+      </div>
+    </div>
+    <p class="small">
+      פתרון במצב יציב (\(d\bar{c}/dt=0\)):
+      \[
+      \bar{c}_{ss}=\frac{S_{\text{eff}}}{Q+\lambda V}
+      \]
+      לכן הגדלת \(Q\) או \(\lambda\) (סילוק) מקטינה את הריכוז.
+    </p>
+
+    <h3>6) מספר ריינולדס לבדיקת למינאריות/יציבות</h3>
+    <div class="kbox">
+      \[
+      \mathrm{Re}=\frac{\rho U L}{\mu}
+      \]
+      <div class="muted small">
+        \(U\) מהירות ממוצעת בכניסה, \(L\) אורך אופייני (למשל רוחב הפתח). בתכנון פתח/מיישר זרימה אפשר “להנמיך ערבול”.
+      </div>
+    </div>
+
+    <h3>7) אנלוגיה לתקשורת: אות + רעש וגילוי חריגות</h3>
+    <p>
+      נגדיר “אות נקי” \(s\) (אוויר מסונן) ורעש \(n\) (אירוסולים/וירוס). המדידה:
+    </p>
+    <div class="kbox">
+      \[
+      y = s + n
+      \qquad,\qquad \mathbb{E}[n]=0,\ \mathrm{Var}(n)=\sigma^2
+      \]
+      <div class="muted small">
+        המערכת שואפת להקטין \(\sigma^2\) בתוך \(\Omega_{\text{clean}}\) ולהדגים שמדידה חריגה מצביעה על “אירוע זיהומי”.
+      </div>
+    </div>
+
+    <h2 class="anchor" id="control">בקרה, מדידה וגילוי וירוסים</h2>
+
+    <h3>1) מדד חריגה (z‑score) בין “פנים” ל“חוץ”</h3>
+    <div class="kbox">
+      \[
+      z(t)=\frac{c_{\text{in}}(t)-c_{\text{ref}}}{\sigma_{\text{ref}}}
+      \]
+      <div class="muted small">
+        \(c_{\text{in}}(t)\) מדידה בתוך האזור, \(c_{\text{ref}}\) ממוצע ייחוס, \(\sigma_{\text{ref}}\) סטיית תקן ייחוס.
+        אם \(z(t)>\tau\) (סף), מופעלת התראה/בקרה.
+      </div>
+    </div>
+
+    <h3>2) יחס אות‑רעש (SNR) כמבחן היפותזות</h3>
+    <div class="kbox">
+      \[
+      \mathrm{SNR}(t)=\frac{\mathbb{E}[s^2]}{\mathbb{E}[n^2]} \approx \frac{s_0^2}{\mathrm{Var}(c_{\text{in}})}
+      \]
+      <div class="muted small">
+        ירידת SNR או עליה בשונות הריכוז/חלקיקים בתוך \(\Omega_{\text{clean}}\) יכולה להעיד על חדירה/מקור פתוגני.
+      </div>
+    </div>
+
+    <h3>3) חוק בקרה אדפטיבי לספיקה</h3>
+    <p class="small">דוגמה פשוטה (PID/פרופורציונלי):</p>
+    <div class="kbox">
+      \[
+      Q(t)=\mathrm{clip}\left(Q_0 + k_p\,(c_{\text{in}}(t)-\epsilon)+k_i\!\int_0^t (c_{\text{in}}(\tau)-\epsilon)\,d\tau,\ Q_{\min},Q_{\max}\right)
+      \]
+      <div class="muted small">
+        העלאת \(Q\) כשנמדדת חריגה; הורדה כשחוזרים לבסיס — תוך שמירה על גבולות רעש/אנרגיה.
+      </div>
+    </div>
+
+    <h3>4) בידוד “וירוס” כסטייה סטטיסטית</h3>
+    <p>
+      אם האוויר המסופק נקי בקירוב (\(c\approx 0\) בכניסה), אז הופעת עלייה עקבית ב-\(c_{\text{in}}\) מצביעה על:
+    </p>
+    <ul>
+      <li>מקור בתוך \(\Omega_{\text{clean}}\) (לדוגמה: שיעול/נשיפה/פרוצדורה)</li>
+      <li>חדירת ערבול מבחוץ (דלת פתוחה/תנועת צוות/הפרעת זרימה)</li>
+      <li>תקלה בסינון/ספיקה</li>
+    </ul>
+    <p class="muted small">
+      ההמצאה כוללת לא רק “זרימה נקייה”, אלא גם מנגנון מדידה+בקרה שמאפשר להבחין בין התרחישים.
+    </p>
+
+    <h2 class="anchor" id="claims">תביעות (Claims)</h2>
+
+    <details open>
+      <summary>תביעה 1 — תביעה עצמאית (מערכת)</summary>
+      <div class="claim">
+        <div class="n">1.</div>
+        <div>
+          מערכת ליצירת אזור אוויר נקי מקומי סביב חולה בחדר אשפוז, הכוללת:
+          (א) פתח אספקת אוויר מסונן המותקן בתקרה מעל מיטת החולה ובעל חתך מרובע או רב‑צלעי המגדיר שטח כיסוי,
+          (ב) אלמנט מיישר זרימה המוגדר ליצור זרימה יורדת יציבה על נפח מרחבי מוגדר \(\Omega_{\text{clean}}\),
+          (ג) לפחות פתח יניקה/החזרה אחד המוגדר לקלוט אוויר מהחדר ולסלק מזהמים מחוץ ל-\(\Omega_{\text{clean}}\),
+          (ד) מערך חיישנים הכולל לפחות חיישן אחד בתוך \(\Omega_{\text{clean}}\) ולפחות חיישן אחד מחוצה לו למדידת ריכוז חלקיקים/אירוסולים,
+          (ה) בקר ממוחשב המוגדר לחשב מדד חריגה של ריכוז מזהמים ולהתאים ספיקת אספקה \(Q(t)\) על מנת לשמור על
+          \(c(\mathbf{x},t)\le\epsilon\) לכל \(\mathbf{x}\in\Omega_{\text{clean}}\).
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>תביעות תלויות (2–14)</summary>
+
+      <div class="claim"><div class="n">2.</div><div>המערכת לפי תביעה 1, שבה פתח האספקה כולל מסנן HEPA או ULPA.</div></div>
+      <div class="claim"><div class="n">3.</div><div>המערכת לפי תביעה 1, שבה אלמנט מיישר הזרימה כולל מבנה חלת‑דבש או רשת רב‑שכבתית להקטנת ערבול.</div></div>
+      <div class="claim"><div class="n">4.</div><div>המערכת לפי תביעה 1, שבה פתחי היניקה/החזרה מסודרים היקפית סביב המיטה או בתצורה של יניקה ברצפה סמוך לתחום \(\Omega_{\text{clean}}\).</div></div>
+      <div class="claim"><div class="n">5.</div><div>המערכת לפי תביעה 1, שבה החיישנים כוללים חיישן חלקיקים (PM), חיישן CO\(_2\), או חיישן ביואירוסול המבוסס פלואורסצנציה.</div></div>
+      <div class="claim"><div class="n">6.</div><div>המערכת לפי תביעה 1, שבה מדד החריגה כולל חישוב \(z(t)=\frac{c_{\text{in}}(t)-c_{\text{ref}}}{\sigma_{\text{ref}}}\) והשוואה לסף \(\tau\).</div></div>
+      <div class="claim"><div class="n">7.</div><div>המערכת לפי תביעה 1, שבה הבקר מבצע בקרה אדפטיבית באמצעות חוק בקרה הכולל רכיב פרופורציונלי ו/או אינטגרלי לשינוי \(Q(t)\).</div></div>
+      <div class="claim"><div class="n">8.</div><div>המערכת לפי תביעה 1, שבה \(\Omega_{\text{clean}}\) מוגדר כפריזמה בעלת בסיס מרובע התואם את חתך פתח האספקה.</div></div>
+      <div class="claim"><div class="n">9.</div><div>המערכת לפי תביעה 1, שבה פתח האספקה כולל תריסים/דפלקטורים לשינוי שדה הזרימה ולשמירה על תחום נקי בעת תנועת צוות.</div></div>
+      <div class="claim"><div class="n">10.</div><div>המערכת לפי תביעה 1, שבה הבקר מוגדר להפעיל התראה כאשר מתקיימת חריגה מתמשכת מעל משך זמן מינימלי \(T\) כדי להפחית אזעקות שווא.</div></div>
+      <div class="claim"><div class="n">11.</div><div>המערכת לפי תביעה 1, שבה הבקר מבדיל בין מקור פנימי לחדירה חיצונית באמצעות השוואת גרדיאנט ריכוז בין חיישני פנים/חוץ.</div></div>
+      <div class="claim"><div class="n">12.</div><div>המערכת לפי תביעה 1, שבה פתח היניקה/החזרה כולל סינון/ניטרול נוסף (UV‑C/פלזמה/אמצעי אחר) לפני החזרה למערכת.</div></div>
+      <div class="claim"><div class="n">13.</div><div>המערכת לפי תביעה 1, שבה מתבצע כיול ייחוס אוטומטי ל-\(c_{\text{ref}}\) ו-\(\sigma_{\text{ref}}\) בתחילת משמרת או לאחר סגירת דלת.</div></div>
+      <div class="claim"><div class="n">14.</div><div>המערכת לפי תביעה 1, שבה הבקר מבצע אופטימיזציה אנרגטית להפחתת \(Q(t)\) כאשר \(c_{\text{in}}(t)\ll\epsilon\) תוך שמירה על תחום נקי.</div></div>
+    </details>
+
+    <details>
+      <summary>תביעה 15 — תביעה עצמאית (שיטה)</summary>
+      <div class="claim">
+        <div class="n">15.</div>
+        <div>
+          שיטה ליצירת אזור אוויר נקי סביב חולה בחדר אשפוז, הכוללת:
+          (א) אספקת אוויר מסונן דרך פתח בעל חתך מרובע מעל המיטה ליצירת זרימה יורדת על תחום \(\Omega_{\text{clean}}\),
+          (ב) סילוק אוויר דרך פתחי יניקה/החזרה המוגדרים להרחיק מזהמים מהתחום,
+          (ג) מדידת ריכוז אירוסולים/חלקיקים לפחות בנקודה אחת בתוך התחום ובנקודה אחת מחוצה לו,
+          (ד) חישוב מדד חריגה ביחס לערכי ייחוס,
+          (ה) התאמת ספיקת האוויר \(Q(t)\) בהתאם למדד החריגה לשמירה על \(c(\mathbf{x},t)\le\epsilon\) בתוך \(\Omega_{\text{clean}}\).
+        </div>
+      </div>
+    </details>
+
+    <h2 class="anchor" id="variations">וריאציות ושיפורים אפשריים</h2>
+    <ul>
+      <li><b>גאומטריה:</b> מרובע/מלבן/רב‑צלעי/טבעת מרובעת; התאמה לגודל מיטה/ילדים/כיסא.</li>
+      <li><b>מסלול החזרה:</b> יניקה ברצפה (עדיפה לסילוק), יניקה בקירות צד, או שילוב.</li>
+      <li><b>וילון אוויר היקפי:</b> חריצים דקים היקפיים סביב התחום להגברת גבול הזרימה.</li>
+      <li><b>אימות ביולוגי:</b> דגימה מחזורית למסנן/קסטה + ניתוח מהיר (PCR/לטרלי) כאופציה, לא חובה.</li>
+      <li><b>אינטגרציה:</b> חיבור למערכת BMS של בית החולים, רישום נתונים, דוחות אירועים.</li>
+    </ul>
+
+    <h2 class="anchor" id="checklist">צ’קליסט להגשה</h2>
+    <ol>
+      <li>לנסח שם המצאה קצר וברור (Title) + Abstract באנגלית אם צריך.</li>
+      <li>להכין שרטוטים פטנטיים: 2–4 איורים (חתך צד, מבט על, תרשים בלוקים של בקרה וחיישנים).</li>
+      <li>להחליט על “לב ההמצאה” בתביעות: גאומטריית פתח מרובע + תחום נקי מוגדר + חיישנים + בקרה אדפטיבית.</li>
+      <li>להוסיף דוגמאות מספריות (Embodiment): \(A, V, Q, \epsilon\) כדי לחזק הנדסית.</li>
+      <li>לבצע חיפוש קדם‑פטנטי (prior art) ולחדד תביעות מול דומה (laminar flow, air curtains, local clean zones).</li>
+    </ol>
+
+    <div class="hr"></div>
+    <p class="muted small">
+      מסמך זה הוא טיוטה ראשונית. ניתן להתאים לדרישות פורמט של רשות פטנטים ספציפית.
+    </p>
+  </section>
+</main>
+
+<script>
+  function getClaimsText(){
+    const claims = document.querySelectorAll('#claims .claim');
+    let out = 'תביעות (Claims)\\n\\n';
+    claims.forEach((c)=>{
+      const n = c.querySelector('.n')?.innerText?.trim() || '';
+      const txt = c.innerText.replace(/^\\s*\\d+\\.?\\s*/,'').trim();
+      out += (n ? n + ' ' : '') + txt + '\\n\\n';
+    });
+    return out.trim();
+  }
+
+  document.getElementById('copyClaimsBtn').addEventListener('click', async ()=>{
+    try{
+      const txt = getClaimsText();
+      await navigator.clipboard.writeText(txt);
+      alert('התביעות הועתקו ללוח.');
+    }catch(e){
+      alert('לא ניתן להעתיק אוטומטית בדפדפן זה. אפשר לסמן ידנית ולהעתיק.');
+    }
+  });
+</script>
+
+</body>
+</html>
