@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>דלת חשמלית חכמה – אנרגיה ממים + שליטה מהשעון (Bluetooth)</title>
+
+  <!-- Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --accent2:#1e40af;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --r:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.65;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .app{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      min-height:100vh;
+    }
+    aside{
+      position:sticky;
+      top:0;
+      height:100vh;
+      background:linear-gradient(180deg,#0b1220, #0b1220 60%, #0d1730);
+      color:#e5e7eb;
+      padding:18px 16px;
+      border-left:1px solid rgba(255,255,255,.08);
+      overflow:auto;
+    }
+    .brand{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background:rgba(255,255,255,.05);
+      margin-bottom:12px;
+    }
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent), #60a5fa);
+      box-shadow:0 10px 20px rgba(0,0,0,.35);
+    }
+    .brand h1{font-size:14px;margin:0}
+    .brand p{font-size:12px;margin:2px 0 0;opacity:.8}
+
+    .controls{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:white;
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:12px;
+      transition:.15s;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.12)}
+    .btn:active{transform:scale(.98)}
+
+    .search{
+      width:100%;
+      margin:8px 0 10px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:12px;
+      padding:10px;
+    }
+    .search input{
+      width:100%;
+      background:transparent;
+      border:0;
+      color:white;
+      outline:none;
+      font-size:13px;
+    }
+
+    .nav{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .nav a{
+      color:#e5e7eb;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .nav a:hover{background:rgba(255,255,255,.08); text-decoration:none}
+    .nav small{opacity:.75}
+    .favTag{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      opacity:.9;
+    }
+
+    main{padding:22px 22px 60px;}
+    .hero{
+      background:linear-gradient(135deg, #ffffff, #eef2ff);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+      margin-bottom:16px;
+      max-width:1100px;
+    }
+    .hero h2{margin:0 0 6px;font-size:22px}
+    .hero p{margin:0;color:var(--muted)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      max-width:1100px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px 16px;
+    }
+    .card h3{margin:0 0 8px}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-block;
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      margin-left:6px;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi .box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:#ffffff;
+    }
+    .kpi .box b{display:block}
+    .kpi .box span{color:var(--muted); font-size:12px}
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .app{grid-template-columns: 1fr}
+      aside{height:auto; position:relative}
+      .two{grid-template-columns:1fr}
+      .kpi{grid-template-columns:1fr 1fr}
+    }
+
+    pre.mermaid{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      overflow:auto;
+      margin:0;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:white;
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+      vertical-align:top;
+    }
+    th{
+      background:#0b1220;
+      color:white;
+      font-weight:bold;
+      font-size:13px;
+    }
+    tr:last-child td{border-bottom:none}
+
+    .code{
+      font-family:var(--mono);
+      background:#0b1220;
+      color:#e5e7eb;
+      border-radius:12px;
+      padding:12px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.12);
+      direction:ltr;
+      text-align:left;
+      margin:0;
+    }
+
+    .callout{
+      border:1px solid var(--line);
+      border-right:6px solid var(--accent);
+      background:#f8fafc;
+      border-radius:12px;
+      padding:12px;
+      margin:10px 0;
+    }
+    .callout.warn{border-right-color:var(--warn)}
+    .callout.bad{border-right-color:var(--bad)}
+    .callout.ok{border-right-color:var(--ok)}
+
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .favBtn{
+      border:1px solid var(--line);
+      background:#ffffff;
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .favBtn:hover{background:#f8fafc}
+
+    .floatTop{
+      position:fixed;
+      left:18px;
+      bottom:18px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:white;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      display:none;
+      user-select:none;
+      z-index:9998;
+    }
+
+    .hl{
+      background: #fff7ed;
+      outline: 2px solid #fed7aa;
+      border-radius: 8px;
+      padding: 0 2px;
+    }
+
+    @media print{
+      aside, .floatTop, .noPrint{display:none !important}
+      body{background:white}
+      .card{box-shadow:none}
+      .hero{box-shadow:none}
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="noPrint">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>דלת חכמה – מים + Bluetooth</h1>
+        <p class="muted" style="color:#cbd5e1">מסמך הגשה הנדסי (קובץ יחיד)</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="btnPrint">🖨️ הדפס / שמור PDF</button>
+      <button class="btn" id="btnFavOnly">⭐ מועדפים</button>
+      <button class="btn" id="btnClear">🧹 נקה</button>
+    </div>
+
+    <div class="search" title="חיפוש בתוך המסמך">
+      🔎 <input id="q" type="search" placeholder="חפש: אבטחה / BLE / טורבינה / משוואה / BOM ..." />
+    </div>
+
+    <div class="nav" id="nav">
+      <a href="#s0"><span>תקציר מנהלים</span><small>מה זה ולמה</small></a>
+      <a href="#s1"><span>רעיון ומטרות</span><small>בעיה→פתרון</small></a>
+      <a href="#s2"><span>וריאציות A/B/C</span><small>השוואה</small></a>
+      <a href="#s3"><span>ארכיטקטורה מלאה</span><small>בלוקים + מצבים</small></a>
+      <a href="#s4"><span>מודל אנרגטי</span><small>משוואות + דוגמה</small></a>
+      <a href="#s5"><span>Cardio-Hybrid</span><small>פולסים</small></a>
+      <a href="#s6"><span>אלגוריתם בקרה</span><small>State Machine</small></a>
+      <a href="#s7"><span>אבטחה</span><small>Nonce / HMAC</small></a>
+      <a href="#s8"><span>בטיחות וכשל</span><small>Fail-safe</small></a>
+      <a href="#s9"><span>רכיבים (BOM)</span><small>מפרט</small></a>
+      <a href="#s10"><span>MVP</span><small>שלבים</small></a>
+      <a href="#s11"><span>ניסוח לפטנט</span><small>תקציר + Claims</small></a>
+      <a href="#s12"><span>הגנה רכה</span><small>הגבלות</small></a>
+      <a href="#s13"><span>נספחים</span><small>בדיקות</small></a>
+    </div>
+
+    <div style="margin-top:14px; font-size:12px; color:#cbd5e1; opacity:.9;">
+      <div class="callout" style="background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.16); color:#e5e7eb;">
+        <b>טיפ:</b> סמן ⭐ ליד סעיפים חשובים, ואז לחץ “מועדפים”.
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="hero" id="s0" data-search="תקציר מנהלים דלת חכמה מים bluetooth ble אנרגיה טורבינה">
+      <h2>דלת חשמלית חכמה – אנרגיה מזרימת מים + שליטה מהשעון (Bluetooth)</h2>
+      <p>
+        מערכת דלת מונעת-חשמל שמפיקה אנרגיה מקומית מזרימת מים/לחץ מים, אוגרת אותה,
+        ומפעילה מנגנון פתיחה/סגירה לפי פקודה מאובטחת מהשעון. המסמך כולל וריאציות, תרשימים,
+        מודל אנרגטי, אבטחה, בטיחות, BOM ותוכנית MVP.
+      </p>
+
+      <div class="kpi">
+        <div class="box"><b>מקור אנרגיה</b><span>זרימת מים / לחץ מים</span></div>
+        <div class="box"><b>בקרה</b><span>MCU + BLE + חיישנים</span></div>
+        <div class="box"><b>הנעה</b><span>מנוע DC/BLDC + גיר / הידראולי</span></div>
+        <div class="box"><b>בטיחות</b><span>Fail-safe + פתיחה ידנית</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <div class="card" id="s1" data-search="רעיון מטרות open close שעון בלוטוס bluetooth דלת חכמה">
+        <div class="sectionHead">
+          <h3>1) רעיון ומטרות <span class="pill">OPEN / CLOSE מהשעון</span></h3>
+          <button class="favBtn" data-fav="s1">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="callout ok">
+          <b>רעיון:</b> פקודת OPEN/CLOSE מהשעון (BLE) → בקר מקומי בדלת.
+          האנרגיה להפעלה מופקת מזרימת מים (טורבינה/לחץ), נאגרת, ומשמשת להפעלת המנגנון.
+        </div>
+
+        <ul>
+          <li><b>מטרה 1:</b> פעולה גם בלי חיבור קבוע לחשמל (Self-powered או גיבוי).</li>
+          <li><b>מטרה 2:</b> שליטה מדויקת ובטוחה: חיישנים, מניעת תקיעה, חיווי מצב.</li>
+          <li><b>מטרה 3:</b> Cardio-Hybrid – תנועה בפולסים לפי זמינות אנרגיה.</li>
+          <li><b>מטרה 4:</b> אבטחה: אימות וחסימת replay/חיקוי.</li>
+        </ul>
+
+        <div class="callout warn">
+          <b>הבהרה:</b> “מנוע חשמלי העובד על לחץ מים” = מערכת היברידית:
+          מים מספקים אנרגיה (חשמל/כוח), החשמל מפעיל מנוע, או מים עושים עבודה מכנית והחשמל רק לבקרה.
+        </div>
+      </div>
+
+      <div class="card" id="s2" data-search="וריאציות A B C טורבינה גנרטור הידראולי סופרקבל פולסים">
+        <div class="sectionHead">
+          <h3>2) וריאציות מערכת (A/B/C) + השוואה</h3>
+          <button class="favBtn" data-fav="s2">⭐ הוסף למועדפים</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>וריאציה</th>
+              <th>עיקרון</th>
+              <th>יתרונות</th>
+              <th>חסרונות/סיכונים</th>
+              <th>מתי לבחור</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>A – מים→חשמל→מנוע</b></td>
+              <td>טורבינה/גנרטור מטעינים סופר-קבל/סוללה, מנוע פותח/סוגר.</td>
+              <td>מבנה מוכר, שליטה מדויקת, קל לאבחון.</td>
+              <td>תלוי ביעילות והספק זמין; צריך ניהול אנרגיה.</td>
+              <td>הכי טוב ל-MVP ולהדגמה.</td>
+            </tr>
+            <tr>
+              <td><b>B – מים מכאניים + חשמל לבקרה</b></td>
+              <td>לחץ/זרימה מפעילים בוכנה/מפעיל; חשמל רק לשסתומים+BLE.</td>
+              <td>כוח גדול, חשמל מינימלי.</td>
+              <td>מורכבות מכנית/איטום; תחזוקה.</td>
+              <td>לדלת כבדה/תעשייה.</td>
+            </tr>
+            <tr>
+              <td><b>C – Cardio-Hybrid</b></td>
+              <td>אגירה קצרה → דחיפה קצרה → עצירה → חוזר.</td>
+              <td>עובד עם זרימה חלשה/לא רציפה; חסכוני.</td>
+              <td>פתיחה איטית; דורש חיישנים/אלגוריתם.</td>
+              <td>כשההספק נמוך או משתנה.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <b>המלצה:</b> להתחיל ב-A, ואז להוסיף “מצב פולסים” (C) כתכונת תוכנה.
+        </div>
+      </div>
+
+      <div class="card" id="s3" data-search="ארכיטקטורה מלאה תרשים בלוקים מצב state diagram mermaid">
+        <div class="sectionHead">
+          <h3>3) ארכיטקטורה מלאה (Mermaid מתוקן ✔)</h3>
+          <button class="favBtn" data-fav="s3">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="two">
+          <div>
+            <h4 style="margin:0 0 8px">תרשים בלוקים</h4>
+            <pre class="mermaid">
+flowchart TD
+A[מקור מים או צנרת] --> B[מיקרו טורבינה או גנרטור]
+B --> C[יישור DC ורגולציה]
+C --> D[אגירה סופר קבל או סוללה]
+D --> E[מנהל אנרגיה PMU]
+E --> F[בקר MCU למשל ESP32]
+F <--> G[BLE לשעון OPEN CLOSE]
+F --> H[דרייבר מנוע ומנוע עם גיר]
+H --> I[מנגנון דלת או נעילה]
+F --> J[חיישנים סוף מהלך זרם לחץ]
+F --> K[שסתום פריקה או מגביל מומנט]
+            </pre>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px">תרשים מצבים</h4>
+            <pre class="mermaid">
+stateDiagram-v2
+[*] --> Idle
+Idle --> Auth : פקודה מהשעון
+Auth --> EnergyCheck : אימות והרשאה
+EnergyCheck --> OpenPulse : מספיק אנרגיה
+EnergyCheck --> ClosePulse : מספיק אנרגיה
+EnergyCheck --> WaitCharge : אין אנרגיה
+WaitCharge --> EnergyCheck : נטען
+
+OpenPulse --> OpenPulse : פולסים עד פתוח
+OpenPulse --> OpenHold : חיישן פתוח
+OpenHold --> Idle : תם זמן או פקודה
+
+ClosePulse --> ClosePulse : פולסים עד סגור
+ClosePulse --> Locked : חיישן סגור
+Locked --> Idle
+
+OpenPulse --> Fault : תקיעה או זרם גבוה
+ClosePulse --> Fault : תקיעה או זרם גבוה
+Fault --> ManualOverride : שחרור ידני
+ManualOverride --> Idle
+            </pre>
+          </div>
+        </div>
+
+        <div class="callout ok">
+          <b>מה תוקן:</b> אין גרשיים בתוך טקסט Mermaid, והתרשימים נמצאים בתוך
+          <code>&lt;pre class="mermaid"&gt;</code> כדי למנוע שגיאות תחביר.
+        </div>
+      </div>
+
+      <div class="card" id="s4" data-search="מודל אנרגטי משוואות rho g Q h יעילות טורבינה דוגמה מספרית">
+        <div class="sectionHead">
+          <h3>4) מודל אנרגטי: מים → הספק → עבודה לפתיחת דלת</h3>
+          <button class="favBtn" data-fav="s4">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="callout">
+          <b>הספק הידראולי (אידאלי):</b>
+          <div style="margin-top:8px">
+            \( P_{water} = \rho \cdot g \cdot Q \cdot h \)
+          </div>
+          <div class="muted" style="margin-top:6px">
+            \( \rho \approx 1000\,kg/m^3 \), \( g \approx 9.81\,m/s^2 \),
+            \(Q\) [\(m^3/s\)], \(h\) [m] (גובה שקול ללחץ).
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="callout ok">
+            <b>כולל יעילות:</b>
+            <div style="margin-top:8px">
+              \( P_{elec} \approx \eta_t \cdot \eta_g \cdot P_{water} \)
+            </div>
+            <div class="muted" style="margin-top:6px">
+              \(\eta_t\) יעילות טורבינה, \(\eta_g\) יעילות גנרטור/אלקטרוניקה.
+            </div>
+          </div>
+          <div class="callout warn">
+            <b>עבודה לפתיחת דלת:</b>
+            <div style="margin-top:8px">
+              \( W_{door} \approx \tau \cdot \Delta\theta \)
+            </div>
+            <div class="muted" style="margin-top:6px">
+              \(\tau\) מומנט אפקטיבי, \(\Delta\theta\) זווית פתיחה (רדיאנים).
+            </div>
+          </div>
+        </div>
+
+        <h4 style="margin:10px 0 6px">דוגמה מספרית (היתכנות)</h4>
+        <div class="callout">
+          נניח זרימה זמינה \(Q = 6\,L/min = 1\times10^{-4}\,m^3/s\),
+          ולחץ שקול \(h = 10\,m\) (בערך 1 bar), אז:
+          <div style="margin-top:8px">
+            \( P_{water} \approx 1000 \cdot 9.81 \cdot 10^{-4} \cdot 10 \approx 9.81\,W \)
+          </div>
+          עם יעילות כוללת \(\eta \approx 0.35\):
+          <div style="margin-top:8px">
+            \( P_{elec} \approx 3.4\,W \)
+          </div>
+          אם פתיחה דורשת \(W_{door} \approx 20\text{–}40\,J\), זמן טעינה משוער:
+          <div style="margin-top:8px">
+            \( t \approx W/P \approx 6\text{–}12\,s \)
+          </div>
+          <div class="muted" style="margin-top:6px">
+            מתאים במיוחד להפעלה בפולסים + אגירה בסופר-קבל.
+          </div>
+        </div>
+
+        <div class="callout bad">
+          <b>מגבלת מציאות:</b> אם אין זרימה בזמן אמת, צריך אגירה ארוכה (סוללה) או גיבוי.
+          לכן חובה לכלול פתיחה ידנית.
+        </div>
+      </div>
+
+      <div class="card" id="s5" data-search="cardio hybrid פולסים פעימות טעינה פריקה duty cycle supercap">
+        <div class="sectionHead">
+          <h3>5) Cardio-Hybrid: הפעלה בפולסים (פעימות)</h3>
+          <button class="favBtn" data-fav="s5">⭐ הוסף למועדפים</button>
+        </div>
+
+        <p>
+          במקום להפעיל את המנוע רציף, מפעילים אותו ב”פעימות” קצרות:
+          <b>טעינה → דחיפה קצרה → עצירה → מדידה → חוזר</b>.
+        </p>
+
+        <pre class="mermaid">
+flowchart TD
+A[מדידת מתח אגירה] --> B{V >= Vmin?}
+B -- לא --> C[המתנה או טעינה מהמים]
+C --> A
+B -- כן --> D[פולס מנוע Ton]
+D --> E[עצירה Toff]
+E --> F[בדיקת מצב דלת זרם תקיעה]
+F --> G{היעד הושג?}
+G -- לא --> A
+G -- כן --> H[סיום אחיזה או נעילה]
+        </pre>
+
+        <div class="callout ok">
+          <b>פרמטרים ל-MVP:</b> Ton = 200–500ms, Toff = 200–800ms, עם הגבלת זרם וחיישן סוף מהלך.
+        </div>
+      </div>
+
+      <div class="card" id="s6" data-search="אלגוריתם בקרה פסאודו קוד state machine esp32 jam detect">
+        <div class="sectionHead">
+          <h3>6) אלגוריתם בקרה (State Machine) + פסאודו-קוד</h3>
+          <button class="favBtn" data-fav="s6">⭐ הוסף למועדפים</button>
+        </div>
+
+        <pre class="code">/* PSEUDO-CODE (high level) */
+
+state = IDLE
+
+loop:
+  read_sensors()
+  manage_energy()
+
+  if state == IDLE:
+    if ble_command_received():
+      state = AUTH
+
+  if state == AUTH:
+    if verify_nonce_hmac() and policy_allows():
+      state = ENERGY_CHECK
+    else:
+      state = IDLE
+
+  if state == ENERGY_CHECK:
+    if storage_voltage() >= V_MIN:
+      if cmd == OPEN: state = OPEN_PULSE
+      if cmd == CLOSE: state = CLOSE_PULSE
+    else:
+      state = WAIT_CHARGE
+
+  if state == WAIT_CHARGE:
+    if storage_voltage() >= V_MIN: state = ENERGY_CHECK
+
+  if state in [OPEN_PULSE, CLOSE_PULSE]:
+    motor_pulse(T_on)
+    if motor_current() > I_MAX or jam_detected():
+      motor_stop()
+      state = FAULT
+    else:
+      motor_stop()
+      if end_switch_reached():
+        state = (LOCKED if CLOSE else OPEN_HOLD)
+
+  if state == OPEN_HOLD:
+    if timeout() or cmd == CLOSE: state = ENERGY_CHECK
+
+  if state == LOCKED:
+    engage_lock()
+    state = IDLE
+
+  if state == FAULT:
+    engage_safe_mode()
+    if manual_override_detected():
+      state = IDLE
+</pre>
+
+        <div class="callout warn">
+          <b>זיהוי תקיעה:</b> זרם גבוה + אין שינוי במיקום (Hall/אנקודר) + זמן חריג → עצירה מיידית.
+        </div>
+      </div>
+
+      <div class="card" id="s7" data-search="אבטחה BLE nonce hmac replay attack whitelist rssi pairing">
+        <div class="sectionHead">
+          <h3>7) אבטחה: BLE + Nonce/HMAC + מדיניות הרשאות</h3>
+          <button class="favBtn" data-fav="s7">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="callout bad">
+          <b>חשוב:</b> פתיחת דלת היא פעולה קריטית. BLE ללא אימות עלול להיפרץ (replay/spoofing).
+          חובה Nonce + חתימה + חסימת נסיונות.
+        </div>
+
+        <h4 style="margin:10px 0 6px">זרימת אימות מומלצת</h4>
+        <ol>
+          <li>השעון/טלפון שולח בקשת OPEN או CLOSE.</li>
+          <li>הבקר מחזיר nonce חד פעמי + זמן (timestamp קצר).</li>
+          <li>השעון מחזיר חתימה: <code>HMAC(secret, nonce || cmd || ts)</code>.</li>
+          <li>הבקר מאמת: nonce לא שומש, ts בטווח, מכשיר מורשה.</li>
+        </ol>
+
+        <div class="two">
+          <div class="callout ok">
+            <b>קשיחות נוספת:</b>
+            <ul>
+              <li>Whitelist מזהי מכשירים</li>
+              <li>Rate limit + השהייה אחרי כשל</li>
+              <li>בדיקת RSSI (קרבה)</li>
+              <li>אישור פיזי ליד הדלת (אופציונלי)</li>
+            </ul>
+          </div>
+          <div class="callout warn">
+            <b>איומים נפוצים:</b>
+            <ul>
+              <li>Replay</li>
+              <li>Pairing לא מאובטח</li>
+              <li>מכשיר גנוב</li>
+              <li>ניסיון התחברות קרוב לדלת</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s8" data-search="בטיחות כשל fail safe manual override שחרור ידני מגביל מומנט">
+        <div class="sectionHead">
+          <h3>8) בטיחות וכשל: Fail-safe + פתיחה ידנית</h3>
+          <button class="favBtn" data-fav="s8">⭐ הוסף למועדפים</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>מצב כשל</th>
+              <th>תוצאה</th>
+              <th>הגנה</th>
+              <th>חובה ב-MVP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>אין זרימה/אין אנרגיה</td>
+              <td>לא ניתן להפעיל חשמלית</td>
+              <td>פתיחה ידנית מלאה + חיווי</td>
+              <td><b>כן</b></td>
+            </tr>
+            <tr>
+              <td>תקיעה/חסימה</td>
+              <td>חימום/נזק</td>
+              <td>הגבלת זרם, עצירה, רוורס קצר (אופציונלי)</td>
+              <td><b>כן</b></td>
+            </tr>
+            <tr>
+              <td>לחץ גבוה</td>
+              <td>עודף מומנט/מתח</td>
+              <td>רגולציה + שסתום פריקה</td>
+              <td>מומלץ</td>
+            </tr>
+            <tr>
+              <td>כשל חיישן</td>
+              <td>חריגה בזמן</td>
+              <td>Timeout + חיישן נוסף</td>
+              <td>מומלץ</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <b>עקרון Fail-safe:</b> לבחור מדיניות “בטוח” לפי שימוש (בית/משרד/חירום),
+          אבל תמיד לאפשר שחרור ידני.
+        </div>
+      </div>
+
+      <div class="card" id="s9" data-search="BOM רכיבים טורבינה גנרטור סופרקבל esp32 מנוע גיר חיישנים">
+        <div class="sectionHead">
+          <h3>9) רכיבים (BOM) ומפרט</h3>
+          <button class="favBtn" data-fav="s9">⭐ הוסף למועדפים</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>תת מערכת</th>
+              <th>רכיב</th>
+              <th>אפשרויות</th>
+              <th>הערה</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>הפקת אנרגיה</td>
+              <td>מיקרו טורבינה / גנרטור</td>
+              <td>DC generator קטן / alternator קטן + יישור</td>
+              <td>סינון לכלוך חשוב</td>
+            </tr>
+            <tr>
+              <td>אלקטרוניקה</td>
+              <td>יישור + DC/DC</td>
+              <td>Bridge rectifier + Buck/Boost</td>
+              <td>הגנות מתח/זרם</td>
+            </tr>
+            <tr>
+              <td>אגירה</td>
+              <td>סופר קבל / סוללה</td>
+              <td>5–20F / Li-ion קטן</td>
+              <td>סופר קבל לפולסים</td>
+            </tr>
+            <tr>
+              <td>בקר</td>
+              <td>MCU עם BLE</td>
+              <td>ESP32 / nRF52</td>
+              <td>נוח ל-MVP</td>
+            </tr>
+            <tr>
+              <td>הנעה</td>
+              <td>מנוע + גיר</td>
+              <td>DC geared motor / BLDC</td>
+              <td>להוסיף מגביל מומנט</td>
+            </tr>
+            <tr>
+              <td>חיישנים</td>
+              <td>מצב + זרם + לחץ</td>
+              <td>Limit switch / Hall / Current sense / Pressure</td>
+              <td>שילוב מעלה אמינות</td>
+            </tr>
+            <tr>
+              <td>בטיחות</td>
+              <td>שחרור ידני</td>
+              <td>ידית/מפתח/ניתוק גיר</td>
+              <td><b>חובה</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" id="s10" data-search="MVP שלבים אב טיפוס בדיקות תכנון">
+        <div class="sectionHead">
+          <h3>10) תוכנית MVP (אב טיפוס)</h3>
+          <button class="favBtn" data-fav="s10">⭐ הוסף למועדפים</button>
+        </div>
+
+        <ol>
+          <li><b>מדידה:</b> לאמוד Q ו-h בצנרת יעד.</li>
+          <li><b>הפקה+אגירה:</b> טורבינה → יישור → סופר קבל → חיווי מתח.</li>
+          <li><b>מנוע:</b> מנוע DC עם גיר + שני חיישני סוף מהלך.</li>
+          <li><b>BLE:</b> שליטה בסיסית OPEN/CLOSE (טלפון → אחר כך שעון).</li>
+          <li><b>אבטחה:</b> Nonce + HMAC + Whitelist.</li>
+          <li><b>Cardio:</b> פולסים + ניטור תקיעה.</li>
+          <li><b>בדיקות:</b> תקיעה, מתח נמוך, ניסיון פתיחה לא מורשה.</li>
+        </ol>
+
+        <div class="callout ok">
+          <b>קריטריון הצלחה:</b> פעולה חוזרת ובטוחה של OPEN/CLOSE, עם סירוב לפעולה כשאין אנרגיה או הרשאה.
+        </div>
+      </div>
+
+      <div class="card" id="s11" data-search="פטנט ניסוח claims תקציר מערכת דלת אנרגיה מים לביש">
+        <div class="sectionHead">
+          <h3>11) ניסוח לפטנט (בסיס)</h3>
+          <button class="favBtn" data-fav="s11">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="callout">
+          <b>כותרת:</b> מערכת דלת חכמה עם אספקת אנרגיה הידרודינמית ושליטה לבישה מאובטחת.
+        </div>
+
+        <p><b>תקציר:</b>
+          מערכת לפתיחה/סגירה של דלת הכוללת יחידת הפקת אנרגיה מזרימת מים/לחץ מים, יחידת אגירה,
+          בקר הכולל תקשורת BLE עם התקן לביש לקבלת פקודות OPEN/CLOSE, ומנגנון הנעה הכולל מנוע חשמלי
+          או מפעיל היברידי. המערכת כוללת אימות nonce/חתימה, חיישני מצב/זרם/תקיעה, ושחרור ידני.
+        </p>
+
+        <h4 style="margin:10px 0 6px">דוגמאות Claims (תבנית)</h4>
+        <ol>
+          <li>מערכת דלת הכוללת הפקת אנרגיה מזרימת מים, אגירה, ובקר להפעלת מנגנון פתיחה/סגירה.</li>
+          <li>המערכת לפי טענה 1, שבה הבקר מפעיל את המנגנון בפולסים לפי מתח אגירה וסף אנרגיה.</li>
+          <li>המערכת לפי טענה 1, שבה הבקר כולל BLE ומבצע אימות nonce וחתימה קריפטוגרפית.</li>
+          <li>המערכת לפי טענה 1, הכוללת זיהוי תקיעה באמצעות זרם מנוע וחיישן מיקום ועצירה אוטומטית.</li>
+          <li>המערכת לפי טענה 1, הכוללת שחרור ידני לפעולה במקרה חירום.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s12" data-search="הגנה מניעת העתקה הדפסה שמירה html limitations">
+        <div class="sectionHead">
+          <h3>12) הגנה רכה על המסמך (Deterrence בלבד)</h3>
+          <button class="favBtn" data-fav="s12">⭐ הוסף למועדפים</button>
+        </div>
+
+        <div class="callout warn">
+          <b>הערה:</b> אי אפשר למנוע לחלוטין הדפסה/שמירה/העתקה עם HTML בלבד. אפשר רק להקשות.
+        </div>
+
+        <ul>
+          <li>חסימת קליק ימני (רוב המשתמשים).</li>
+          <li>חסימת Ctrl+S / Ctrl+P בחלק מהדפדפנים.</li>
+          <li>המלצה: למסמכי הגשה קריטיים – להפיק PDF.</li>
+        </ul>
+
+        <div class="callout ok">
+          <b>במסמך הזה:</b> מופעלת “הגנה רכה” כדי להקטין טעויות/העתקות לא מכוונות.
+        </div>
+      </div>
+
+      <div class="card" id="s13" data-search="נספחים בדיקות שאלות תכנון יישומים בית חולים תעשיה">
+        <div class="sectionHead">
+          <h3>13) נספחים: בדיקות והרחבות</h3>
+          <button class="favBtn" data-fav="s13">⭐ הוסף למועדפים</button>
+        </div>
+
+        <h4 style="margin:0 0 6px">בדיקות מומלצות</h4>
+        <ul>
+          <li>100 מחזורים פתיחה/סגירה (שחיקה, חום מנוע, יציבות חיישנים).</li>
+          <li>תקיעה מכוונת: עצירה &lt; 200ms.</li>
+          <li>מתח נמוך: סירוב לפעולה אם \(V &lt; V_{min}\).</li>
+          <li>בדיקת אבטחה: ניסיון replay / מכשיר לא מורשה.</li>
+        </ul>
+
+        <h4 style="margin:10px 0 6px">הרחבות אפשריות</h4>
+        <ul>
+          <li>חיישן נוכחות ליד הדלת + פתיחה אוטומטית לאחר אימות קירבה.</li>
+          <li>לוג אירועים (זמן פתיחה/כשל/ניסיון לא מורשה) בזיכרון מקומי.</li>
+          <li>סוללה קטנה לגיבוי בעת חוסר זרימה.</li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="floatTop noPrint" id="topBtn">⬆️ למעלה</div>
+
+<script>
+  // Mermaid
+  mermaid.initialize({ startOnLoad: true });
+
+  // KaTeX
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof renderMathInElement === "function") {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\[", right: "\\]", display: true}
+        ]
+      });
+    }
+  });
+
+  // Favorites
+  const FKEY = "door_doc_favs_v2";
+  const getFavs = () => new Set(JSON.parse(localStorage.getItem(FKEY) || "[]"));
+  const setFavs = (s) => localStorage.setItem(FKEY, JSON.stringify([...s]));
+  const favBtns = document.querySelectorAll(".favBtn");
+
+  function refreshFavUI(){
+    const favs = getFavs();
+    favBtns.forEach(b=>{
+      const id = b.getAttribute("data-fav");
+      b.textContent = favs.has(id) ? "⭐ במועדפים" : "⭐ הוסף למועדפים";
+    });
+
+    document.querySelectorAll("#nav a").forEach(a=>{
+      const id = (a.getAttribute("href")||"").replace("#","");
+      const old = a.querySelector(".favTag");
+      if(old) old.remove();
+      if(getFavs().has(id)){
+        const tag = document.createElement("span");
+        tag.className="favTag";
+        tag.textContent="מועדף";
+        a.appendChild(tag);
+      }
+    });
+  }
+
+  favBtns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.getAttribute("data-fav");
+      const favs = getFavs();
+      favs.has(id) ? favs.delete(id) : favs.add(id);
+      setFavs(favs);
+      refreshFavUI();
+    });
+  });
+  refreshFavUI();
+
+  // Search + highlight
+  const q = document.getElementById("q");
+  const cards = [...document.querySelectorAll(".card, .hero")];
+
+  function clearHighlights(el){
+    el.querySelectorAll(".hl").forEach(s=>{
+      const t = document.createTextNode(s.textContent);
+      s.replaceWith(t);
+    });
+  }
+
+  function highlightFirst(el, term){
+    if(!term) return;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    const texts = [];
+    while(walker.nextNode()) texts.push(walker.currentNode);
+
+    const low = term.toLowerCase();
+    for(const node of texts){
+      const v = node.nodeValue;
+      const idx = v.toLowerCase().indexOf(low);
+      if(idx === -1) continue;
+
+      const before = document.createTextNode(v.slice(0, idx));
+      const mid = document.createElement("span");
+      mid.className="hl";
+      mid.textContent = v.slice(idx, idx + term.length);
+      const after = document.createTextNode(v.slice(idx + term.length));
+      const frag = document.createDocumentFragment();
+      frag.appendChild(before); frag.appendChild(mid); frag.appendChild(after);
+      node.parentNode.replaceChild(frag, node);
+      break; // highlight first match only (fast, less messy)
+    }
+  }
+
+  function applyFilter(term, favOnly=false){
+    cards.forEach(c=>{
+      clearHighlights(c);
+      c.style.display = "";
+    });
+
+    const favs = getFavs();
+    cards.forEach(c=>{
+      const id = c.id || "";
+      const text = ((c.getAttribute("data-search") || "") + " " + c.innerText).toLowerCase();
+      const match = !term || text.includes(term.toLowerCase());
+      const favOk = !favOnly || favs.has(id) || id === "s0";
+      if(match && favOk){
+        if(term) highlightFirst(c, term);
+      }else{
+        if(id === "s0" && !favOnly) c.style.display = "";
+        else c.style.display = "none";
+      }
+    });
+  }
+
+  let favOnly = false;
+  document.getElementById("btnFavOnly").addEventListener("click", ()=>{
+    favOnly = !favOnly;
+    document.getElementById("btnFavOnly").textContent = favOnly ? "⭐ כל המסמך" : "⭐ מועדפים";
+    applyFilter(q.value.trim(), favOnly);
+  });
+
+  q.addEventListener("input", ()=> applyFilter(q.value.trim(), favOnly));
+
+  document.getElementById("btnClear").addEventListener("click", ()=>{
+    q.value = "";
+    favOnly = false;
+    document.getElementById("btnFavOnly").textContent = "⭐ מועדפים";
+    applyFilter("", false);
+  });
+
+  document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+  // Scroll-to-top
+  const topBtn = document.getElementById("topBtn");
+  window.addEventListener("scroll", ()=>{
+    topBtn.style.display = (window.scrollY > 600) ? "block" : "none";
+  });
+  topBtn.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
+
+  // Soft protection (deterrence)
+  document.addEventListener("contextmenu", (e)=>{
+    e.preventDefault();
+    toast("קליק ימני נחסם (הגנה רכה).");
+  });
+  document.addEventListener("keydown", (e)=>{
+    const k = e.key.toLowerCase();
+    if((e.ctrlKey || e.metaKey) && (k === "s" || k === "p")){
+      e.preventDefault();
+      toast("קיצור דרך נחסם (הגנה רכה). השתמש בכפתור 'הדפס / שמור PDF'.");
+    }
+  });
+
+  // Toast
+  let toastTimer=null;
+  function toast(msg){
+    let t = document.getElementById("toast");
+    if(!t){
+      t = document.createElement("div");
+      t.id="toast";
+      t.style.position="fixed";
+      t.style.right="18px";
+      t.style.bottom="18px";
+      t.style.padding="10px 12px";
+      t.style.border="1px solid var(--line)";
+      t.style.borderRadius="12px";
+      t.style.background="white";
+      t.style.boxShadow="var(--shadow)";
+      t.style.zIndex="9999";
+      t.style.maxWidth="360px";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.display="block";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.style.display="none"; }, 2200);
+  }
+</script>
+
+</body>
+</html>
