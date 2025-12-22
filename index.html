@@ -1,140 +1,147 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="pageTitle">דף הבית</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="pageTitle">דף הבית</title>
 
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --head:#111827;
-      --link:#2563eb;
-      --shadow:0 6px 18px rgba(0,0,0,0.08);
-      --r:12px;
+<style>
+/* ===== ROOT ===== */
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --head:#111827;
+  --link:#2563eb;
+  --shadow:0 6px 18px rgba(0,0,0,0.08);
+  --r:12px;
 
-      --c-net:#0ea5e9;
-      --c-ui:#a855f7;
-      --c-id:#22c55e;
-      --c-med:#f97316;
-      --c-elec:#f59e0b;
-      --c-thermo:#ef4444;
-      --c-audio:#14b8a6;
-      --c-floor:#64748b;
-      --c-water:#3b82f6;
-      --c-transport:#10b981;
-      --c-hybrid:#06b6d4;
-    }
+  --c-net:#0ea5e9;
+  --c-ui:#a855f7;
+  --c-id:#22c55e;
+  --c-med:#f97316;
+  --c-elec:#f59e0b;
+  --c-thermo:#ef4444;
+  --c-audio:#14b8a6;
+  --c-floor:#64748b;
+  --c-water:#3b82f6;
+  --c-transport:#10b981;
+  --c-hybrid:#06b6d4;
+}
 
-    *{box-sizing:border-box}
-    body{
-      font-family: Arial, sans-serif;
-      background:var(--bg);
-      margin:30px;
-      user-select:none;
-      color:var(--text);
-    }
+*{box-sizing:border-box}
+body{
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  margin:30px;
+  user-select:none;
+  color:var(--text);
+}
 
-    h1{margin:0 0 14px}
+/* ===== HEADER ===== */
+.topbar{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:12px;
+}
+.summary{font-size:14px;color:var(--muted)}
+.langbar{display:flex;gap:8px;flex-wrap:wrap}
+.langbtn{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.langbtn.active{
+  border-color:#111827;
+  box-shadow:0 4px 14px rgba(0,0,0,.15)
+}
 
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      flex-wrap:wrap;
-      gap:10px;
-    }
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  margin-top:14px;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+th,td{
+  padding:14px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle;
+}
+th{
+  background:#111827;
+  color:#fff;
+  text-align:right;
+}
+a{color:var(--link);font-weight:bold;text-decoration:none}
+a:hover{text-decoration:underline}
 
-    .summary{color:var(--muted);font-size:14px}
+/* ===== BADGES ===== */
+.badge{
+  padding:4px 10px;
+  border-radius:999px;
+  color:#fff;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.b-net{background:var(--c-net)}
+.b-ui{background:var(--c-ui)}
+.b-id{background:var(--c-id)}
+.b-med{background:var(--c-med)}
+.b-elec{background:var(--c-elec)}
+.b-thermo{background:var(--c-thermo)}
+.b-audio{background:var(--c-audio)}
+.b-floor{background:var(--c-floor)}
+.b-water{background:var(--c-water)}
+.b-transport{background:var(--c-transport)}
+.b-hybrid{background:var(--c-hybrid)}
 
-    .langbar{display:flex;gap:8px;flex-wrap:wrap}
-    .langbtn{
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:999px;
-      padding:8px 10px;
-      cursor:pointer;
-      font-weight:bold;
-    }
-    .langbtn.active{
-      border-color:#111827;
-      box-shadow:0 4px 12px rgba(0,0,0,.15)
-    }
+.favbtn{
+  width:36px;height:36px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#f9fafb;
+  cursor:pointer;
+  font-size:18px;
+  margin-inline-end:6px;
+}
 
-    table{
-      width:100%;
-      margin-top:14px;
-      border-collapse:collapse;
-      background:#fff;
-      box-shadow:var(--shadow);
-      border-radius:12px;
-      overflow:hidden;
-    }
+footer{
+  margin-top:40px;
+  padding:16px;
+  background:#111827;
+  color:#fff;
+  text-align:center;
+  border-radius:10px;
+}
 
-    th,td{
-      padding:14px;
-      border-bottom:1px solid var(--line);
-      vertical-align:middle;
-    }
-
-    th{
-      background:#111827;
-      color:#fff;
-      text-align:right;
-    }
-
-    a{color:var(--link);font-weight:bold;text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    .badge{
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:#fff;
-      font-weight:bold;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-    }
-
-    .b-med{background:var(--c-med)}
-
-    .favbtn{
-      width:36px;height:36px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#f9fafb;
-      cursor:pointer;
-      font-size:18px;
-    }
-
-    footer{
-      margin-top:40px;
-      padding:16px;
-      background:#111827;
-      color:#fff;
-      border-radius:10px;
-      text-align:center;
-    }
-
-    @media print{body{display:none}}
-    body::before{
-      content:"© כל הזכויות שמורות – קלנסווה";
-      position:fixed;
-      inset:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      font-size:48px;
-      color:rgba(0,0,0,.06);
-      transform:rotate(-30deg);
-      pointer-events:none;
-    }
-  </style>
+/* ===== WATERMARK & PRINT BLOCK ===== */
+@media print{body{display:none}}
+body::before{
+  content:"© כל הזכויות שמורות – קלנסווה";
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:48px;
+  color:rgba(0,0,0,.06);
+  transform:rotate(-30deg);
+  pointer-events:none;
+}
+</style>
 </head>
 
 <body>
@@ -147,7 +154,6 @@
       <strong id="countAll">0</strong>
     </div>
   </div>
-
   <div class="langbar">
     <button class="langbtn active" data-lang="he">🇮🇱 עברית</button>
     <button class="langbtn" data-lang="en">🌍 English</button>
@@ -156,7 +162,7 @@
   </div>
 </div>
 
-<table id="indexTable">
+<table>
 <thead>
 <tr>
   <th data-i18n="thTopic">נושא</th>
@@ -167,103 +173,170 @@
 
 <tbody>
 
-<!-- ✅ METABOLIC RAILWAY MODEL -->
-<tr class="row" data-cat="med" data-key="metabolic_railway_model_he_v3.html">
-  <td>
-    <span class="badge b-med" data-i18n="badgeMetabolicRail">
-      🚆🧬 מודל רכבת מטבולית
-    </span>
-  </td>
-  <td>
-    <button class="favbtn" data-fav="metabolic_railway_model_he_v3.html">☆</button>
-    <a href="metabolic_railway_model_he_v3.html"
-       data-i18n="linkMetabolicRail">
-      מודל רכבת מטבולית – ויסות חומרים בגוף
-    </a>
-    <div class="muted">metabolic_railway_model_he_v3.html</div>
-  </td>
-  <td data-i18n="descMetabolicRail">
-    מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור מרכזית
-    והאיברים כתחנות רכבת מטבוליות לפירוק, ויסות והזרמת סוכר,
-    נוזלים וחומרים – לשמירה על איזון פנימי ואריכות חיים.
-  </td>
+<!-- ================= EXISTING FILES (ALL) ================= -->
+
+<tr>
+<td><span class="badge b-net">🌐🔌 תקשורת ורשתות</span></td>
+<td><a href="usb_network_osi_ipv6_plus_hw_usecase.html">USB + רשת (OSI + IPv6)</a></td>
+<td>חיבור USB כרשת מלאה לפי מודל 7 שכבות</td>
+</tr>
+
+<tr>
+<td><span class="badge b-ui">🖐️📺 ממשק אדם–מסך</span></td>
+<td><a href="fingerprint_gesture_full_v5_he.html">מסכים חכמים לפי טביעת אצבע</a></td>
+<td>מסכים אינטראקטיביים עם אימות ביומטרי</td>
+</tr>
+
+<tr>
+<td><span class="badge b-id">📱🌍 זיהוי זהות</span></td>
+<td><a href="bivdn_multilang_full_mobile.html">BIVDN</a></td>
+<td>זיהוי זהות רב־לשוני לנייד</td>
+</tr>
+
+<tr>
+<td><span class="badge b-med">🧬🧲 רפואה חכמה</span></td>
+<td><a href="bio_magnet_therapy.html">מגנט ביולוגי</a></td>
+<td>הולכת תרופות מבוקרת בגוף</td>
+</tr>
+
+<tr>
+<td><span class="badge b-thermo">🌱🛢️ נפט ביולוגי</span></td>
+<td><a href="plant_gas_to_bio_oil_mvp_he.html">גזים → נפט</a></td>
+<td>המרת גזים מצמחים לנפט ביולוגי</td>
+</tr>
+
+<tr>
+<td><span class="badge b-med">🧼🫁 אוויר נקי</span></td>
+<td><a href="patent_clean_air_square_zone_he.html">אזור אוויר נקי</a></td>
+<td>בועת אוויר נקי ריבועית</td>
+</tr>
+
+<tr>
+<td><span class="badge b-elec">⚡ חשמל</span></td>
+<td><a href="electricity_models_plus_simulations_bilingual_toggle.html">מודלי חשמל</a></td>
+<td>מודלים וסימולציות פיזיקליות</td>
+</tr>
+
+<tr>
+<td><span class="badge b-audio">🎧 אנרגיה וקול</span></td>
+<td><a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html">אוזניות נטענות</a></td>
+<td>טעינה מאנרגיית קול</td>
+</tr>
+
+<tr>
+<td><span class="badge b-floor">🧱⚡ רצפה חכמה</span></td>
+<td><a href="smart_floor_pressure_to_energy_model_he.html">רצפה חכמה</a></td>
+<td>הפקת אנרגיה מלחץ</td>
+</tr>
+
+<tr>
+<td><span class="badge b-water">🌊👟 מים</span></td>
+<td><a href="water_walking_shoes_sonar_pump.html">הליכה על מים</a></td>
+<td>נעליים סונאריות</td>
+</tr>
+
+<tr>
+<td><span class="badge b-transport">🚆💧 תחבורה</span></td>
+<td><a href="water_gas_train_blue.html">רכבת מים–גז</a></td>
+<td>תחבורה היברידית</td>
+</tr>
+
+<tr>
+<td><span class="badge b-hybrid">🌊🌬️ היברידי</span></td>
+<td><a href="water_air_shoes_trilingual_flow.html">מים–אוויר</a></td>
+<td>נעליים היברידיות</td>
+</tr>
+
+<tr>
+<td><span class="badge b-transport">✈️📄 פטנט</span></td>
+<td><a href="patent_smart_boarding_token_he.html">כרטיס טיסה חכם</a></td>
+<td>Token דינמי לאבטחת תעופה</td>
+</tr>
+
+<!-- ================= NEW FILE ================= -->
+
+<tr>
+<td>
+<span class="badge b-med" data-i18n="badgeMetabolicRail">
+🚆🧬 מודל רכבת מטבולית
+</span>
+</td>
+<td>
+<a href="metabolic_railway_model_he_v3.html"
+   data-i18n="linkMetabolicRail">
+מודל רכבת מטבולית – ויסות חומרים בגוף
+</a>
+</td>
+<td data-i18n="descMetabolicRail">
+מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור
+והאיברים כתחנות מטבוליות לפירוק וויסות חומרים בגוף
+</td>
 </tr>
 
 </tbody>
 </table>
 
 <footer>
-  © כל הזכויות שמורות – קלנסווה<br>
-  אין להעתיק, לשכפל, לצלם או להפיץ ללא אישור מפורש
+© כל הזכויות שמורות – קלנסווה
 </footer>
 
 <script>
 const dict={
-  he:{
-    pageTitle:"דף הבית",
-    welcome:"ברוכים הבאים",
-    summaryPrefix:"סך הכל קבצים:",
-    thTopic:"נושא",
-    thLink:"קישור",
-    thDesc:"תיאור",
-    badgeMetabolicRail:"🚆🧬 מודל רכבת מטבולית",
-    linkMetabolicRail:"מודל רכבת מטבולית – ויסות חומרים בגוף",
-    descMetabolicRail:
-    "מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור מרכזית והאיברים כתחנות רכבת מטבוליות לפירוק, ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי ואריכות חיים."
-  },
-  en:{
-    pageTitle:"Home",
-    welcome:"Welcome",
-    summaryPrefix:"Total files:",
-    thTopic:"Topic",
-    thLink:"Link",
-    thDesc:"Description",
-    badgeMetabolicRail:"🚆🧬 Metabolic Railway Model",
-    linkMetabolicRail:"Metabolic Railway Model – Body Regulation",
-    descMetabolicRail:
-    "A systemic biological model treating the pancreas as a central source station and organs as metabolic railway stations for regulation, breakdown, and distribution of glucose and substances."
-  },
-  ar:{
-    pageTitle:"الصفحة الرئيسية",
-    welcome:"مرحباً",
-    summaryPrefix:"إجمالي الملفات:",
-    thTopic:"الموضوع",
-    thLink:"الرابط",
-    thDesc:"الوصف",
-    badgeMetabolicRail:"🚆🧬 نموذج القطار الأيضي",
-    linkMetabolicRail:"نموذج القطار الأيضي – تنظيم الجسم",
-    descMetabolicRail:
-    "نموذج بيولوجي منظومي يعتبر البنكرياس محطة مركزية والأعضاء محطات أيضية لتنظيم وتوزيع المواد."
-  },
-  ru:{
-    pageTitle:"Главная",
-    welcome:"Добро пожаловать",
-    summaryPrefix:"Всего файлов:",
-    thTopic:"Тема",
-    thLink:"Ссылка",
-    thDesc:"Описание",
-    badgeMetabolicRail:"🚆🧬 Метаболическая железная дорога",
-    linkMetabolicRail:"Метаболическая модель организма",
-    descMetabolicRail:
-    "Системная биологическая модель с поджелудочной железой как центральной станцией и органами как метаболическими узлами."
-  }
+he:{
+pageTitle:"דף הבית",
+welcome:"ברוכים הבאים",
+summaryPrefix:"סך הכל קבצים:",
+thTopic:"נושא",thLink:"קישור",thDesc:"תיאור",
+badgeMetabolicRail:"🚆🧬 מודל רכבת מטבולית",
+linkMetabolicRail:"מודל רכבת מטבולית – ויסות חומרים בגוף",
+descMetabolicRail:
+"מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור והאיברים כתחנות רכבת מטבוליות לפירוק וויסות חומרים לשמירה על איזון פנימי ואריכות חיים."
+},
+en:{
+pageTitle:"Home",welcome:"Welcome",summaryPrefix:"Total files:",
+thTopic:"Topic",thLink:"Link",thDesc:"Description",
+badgeMetabolicRail:"🚆🧬 Metabolic Railway Model",
+linkMetabolicRail:"Metabolic Railway Model – Body Regulation",
+descMetabolicRail:
+"Systemic biological model treating the pancreas as a central station and organs as metabolic regulation nodes."
+},
+ar:{
+pageTitle:"الصفحة الرئيسية",welcome:"مرحباً",summaryPrefix:"إجمالي الملفات:",
+thTopic:"الموضوع",thLink:"الرابط",thDesc:"الوصف",
+badgeMetabolicRail:"🚆🧬 نموذج القطار الأيضي",
+linkMetabolicRail:"نموذج القطار الأيضي",
+descMetabolicRail:
+"نموذج بيولوجي منظومي يعتبر البنكرياس محطة مركزية والأعضاء محطات تنظيم أيضي."
+},
+ru:{
+pageTitle:"Главная",welcome:"Добро пожаловать",summaryPrefix:"Всего файлов:",
+thTopic:"Тема",thLink:"Ссылка",thDesc:"Описание",
+badgeMetabolicRail:"🚆🧬 Метаболическая железная дорога",
+linkMetabolicRail:"Метаболическая модель",
+descMetabolicRail:
+"Системная биологическая модель с поджелудочной железой как центральной станцией."
+}
 };
 
 function setLang(l){
-  document.documentElement.lang=l;
-  document.documentElement.dir=(l==="en"||l==="ru")?"ltr":"rtl";
-  document.querySelectorAll("[data-i18n]").forEach(e=>{
-    const k=e.dataset.i18n;
-    if(dict[l][k]) e.textContent=dict[l][k];
-  });
+document.documentElement.lang=l;
+document.documentElement.dir=(l==="en"||l==="ru")?"ltr":"rtl";
+document.querySelectorAll("[data-i18n]").forEach(e=>{
+const k=e.dataset.i18n;
+if(dict[l]&&dict[l][k]) e.textContent=dict[l][k];
+});
 }
 
 document.querySelectorAll(".langbtn").forEach(b=>{
-  b.onclick=()=>{setLang(b.dataset.lang)}
+b.onclick=()=>{
+document.querySelectorAll(".langbtn").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+setLang(b.dataset.lang);
+};
 });
 
 document.getElementById("countAll").textContent=
-  document.querySelectorAll("tbody tr").length;
+document.querySelectorAll("tbody tr").length;
 
 setLang("he");
 </script>
