@@ -17,7 +17,6 @@
       --shadow:0 6px 18px rgba(0,0,0,0.08);
       --r:12px;
 
-      /* category colors */
       --c-net:#0ea5e9;
       --c-ui:#a855f7;
       --c-id:#22c55e;
@@ -40,1244 +39,234 @@
       color:var(--text);
     }
 
-    h1{ margin:0 0 14px; }
+    h1{margin:0 0 14px}
 
     .topbar{
       display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:flex-end;
       justify-content:space-between;
-      margin-bottom:14px;
-    }
-
-    .controls{
-      display:flex;
+      align-items:flex-end;
       flex-wrap:wrap;
       gap:10px;
-      align-items:flex-end;
-      margin-bottom:10px;
     }
 
-    .control{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width:220px;
-    }
+    .summary{color:var(--muted);font-size:14px}
 
-    label{
-      font-weight:bold;
-      font-size:13px;
-      color:#374151;
-    }
-
-    input, select, button{
-      padding:10px 12px;
-      font-size:15px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:white;
-      outline:none;
-    }
-
-    input:focus, select:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 3px rgba(59,130,246,0.15);
-    }
-
-    .langbar{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
+    .langbar{display:flex;gap:8px;flex-wrap:wrap}
     .langbtn{
-      cursor:pointer;
       border:1px solid var(--line);
-      background:white;
+      background:#fff;
       border-radius:999px;
       padding:8px 10px;
+      cursor:pointer;
       font-weight:bold;
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
     }
-
     .langbtn.active{
       border-color:#111827;
-      box-shadow:0 6px 16px rgba(17,24,39,0.12);
-      transform:translateY(-1px);
-    }
-
-    .summary{
-      margin:6px 0 6px;
-      color:var(--muted);
-      font-size:14px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15)
     }
 
     table{
       width:100%;
+      margin-top:14px;
       border-collapse:collapse;
-      background:var(--card);
-      border-radius:var(--r);
-      overflow:hidden;
+      background:#fff;
       box-shadow:var(--shadow);
+      border-radius:12px;
+      overflow:hidden;
     }
 
-    th, td{
+    th,td{
       padding:14px;
       border-bottom:1px solid var(--line);
-      text-align:right;
-      vertical-align:top;
+      vertical-align:middle;
     }
 
     th{
-      background:var(--head);
-      color:white;
-      font-size:16px;
-      position:sticky;
-      top:0;
-      z-index:2;
+      background:#111827;
+      color:#fff;
+      text-align:right;
     }
 
-    tr:last-child td{border-bottom:none}
-
-    a{
-      color:var(--link);
-      text-decoration:none;
-      font-weight:bold;
-    }
-    a:hover{ text-decoration:underline; }
-
-    .topic{
-      font-weight:bold;
-      color:#374151;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+    a{color:var(--link);font-weight:bold;text-decoration:none}
+    a:hover{text-decoration:underline}
 
     .badge{
-      font-size:12px;
-      font-weight:bold;
       padding:4px 10px;
       border-radius:999px;
-      color:white;
+      font-size:12px;
+      color:#fff;
+      font-weight:bold;
       display:inline-flex;
       align-items:center;
       gap:6px;
-      white-space:nowrap;
     }
 
-    .b-net{background:var(--c-net)}
-    .b-ui{background:var(--c-ui)}
-    .b-id{background:var(--c-id)}
     .b-med{background:var(--c-med)}
-    .b-elec{background:var(--c-elec)}
-    .b-thermo{background:var(--c-thermo)}
-    .b-audio{background:var(--c-audio)}
-    .b-floor{background:var(--c-floor)}
-    .b-water{background:var(--c-water)}
-    .b-transport{background:var(--c-transport)}
-    .b-hybrid{background:var(--c-hybrid)}
-
-    .desc{ color:#111827; line-height:1.5; }
-    .muted{ color:var(--muted); font-size:13px; }
-
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-start;
-      margin-top:8px;
-    }
-
-    .smallbtn{
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#f9fafb;
-      cursor:pointer;
-      font-weight:bold;
-      font-size:13px;
-    }
-    .smallbtn:hover{ background:#eef2ff; }
-
-    .fav-wrap{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
 
     .favbtn{
-      width:36px;
-      height:36px;
+      width:36px;height:36px;
       border-radius:10px;
       border:1px solid var(--line);
       background:#f9fafb;
       cursor:pointer;
       font-size:18px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      transition:transform .12s ease, background .12s ease, border .12s ease;
-    }
-    .favbtn:hover{ background:#fff7ed; border-color:#fdba74; transform:translateY(-1px); }
-    .favbtn.active{ background:#fffbeb; border-color:#f59e0b; }
-
-    .favpill{
-      display:none;
-      font-size:12px;
-      font-weight:bold;
-      padding:3px 8px;
-      border-radius:999px;
-      background:#fffbeb;
-      border:1px solid #f59e0b;
-      color:#92400e;
-      white-space:nowrap;
-    }
-    tr.fav .favpill{ display:inline-flex; }
-
-    .fav-only{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:white;
-      height:42px;
-    }
-    .fav-only input{ width:18px; height:18px; }
-
-    .empty{
-      margin-top:12px;
-      padding:14px;
-      border-radius:12px;
-      background:white;
-      border:1px dashed #cbd5e1;
-      color:#475569;
-      display:none;
-    }
-
-    /* 🔒 חסימת הדפסה */
-    @media print { body { display: none !important; } }
-
-    /* 💧 סימן מים (ללא שם אישי) */
-    body::before {
-      content: "© כל הזכויות שמורות – קלנסווה";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 48px;
-      color: rgba(0,0,0,0.08);
-      pointer-events: none;
-      z-index: 9999;
-      white-space: nowrap;
     }
 
     footer{
       margin-top:40px;
-      padding:15px;
+      padding:16px;
       background:#111827;
-      color:#f9fafb;
+      color:#fff;
+      border-radius:10px;
       text-align:center;
-      font-size:14px;
-      border-radius:8px;
-      line-height:1.6;
     }
 
-    /* Mobile: convert table into cards */
-    @media (max-width: 820px){
-      body{ margin:14px; }
-      th{ position:static; }
-      table, thead, tbody, tr, td, th{ display:block; width:100%; }
-      thead{ display:none; }
-      tr{
-        border-bottom:1px solid var(--line);
-        padding:12px;
-      }
-      table{
-        overflow:visible;
-        border-radius:14px;
-      }
-      tr:last-child{ border-bottom:none; }
-      td{
-        border-bottom:none;
-        padding:8px 0;
-        text-align:right;
-      }
-      td[data-label]::before{
-        content: attr(data-label);
-        display:block;
-        font-weight:bold;
-        color:#334155;
-        margin-bottom:6px;
-        font-size:13px;
-      }
-      .control{ min-width: 100%; }
-      .topbar{ align-items:stretch; }
-      .langbar{ justify-content:flex-start; }
-      .favbtn{ width:40px; height:40px; }
-    }
-
-    /* LTR fixes */
-    [dir="ltr"] th, [dir="ltr"] td{ text-align:left; }
-
-    /* ✅ FIX: נושא + קישור באותו גובה */
-    #indexTable th,
-    #indexTable td{
-      vertical-align: middle;
-    }
-    #indexTable td.topic{
-      display:flex;
-      align-items:center;
-    }
-    #indexTable .fav-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    #indexTable .fav-wrap > div{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-    }
-
-    /* ✅ Viewer Modal */
-    .viewer{
+    @media print{body{display:none}}
+    body::before{
+      content:"© כל הזכויות שמורות – קלנסווה";
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.55);
-      display:none;
-      z-index:999999;
-      padding:14px;
-    }
-    .viewer.open{ display:block; }
-
-    .viewer-inner{
-      background:#fff;
-      height:100%;
-      width:100%;
-      border-radius:14px;
-      overflow:hidden;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
       display:flex;
-      flex-direction:column;
-    }
-
-    .viewer-bar{
-      display:flex;
+      justify-content:center;
       align-items:center;
-      gap:10px;
-      padding:10px;
-      border-bottom:1px solid #e5e7eb;
-      background:#111827;
-      color:#fff;
-    }
-
-    .viewer-title{
-      flex:1;
-      font-weight:bold;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .viewer-btn{
-      border:1px solid rgba(255,255,255,0.25);
-      background:rgba(255,255,255,0.08);
-      color:#fff;
-      padding:8px 10px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:bold;
-      font-size:13px;
-    }
-    .viewer-btn:hover{ background:rgba(255,255,255,0.16); }
-
-    .viewer-frame{
-      border:0;
-      width:100%;
-      height:100%;
-      background:#fff;
+      font-size:48px;
+      color:rgba(0,0,0,.06);
+      transform:rotate(-30deg);
+      pointer-events:none;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="topbar">
-    <div>
-      <h1 data-i18n="welcome">ברוכים הבאים</h1>
-      <div class="summary">
-        <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
-        <strong id="countAll">0</strong>
-        ·
-        <span data-i18n="summaryShown">מוצגים כעת:</span>
-        <strong id="countShown">0</strong>
-        ·
-        <span data-i18n="summaryFav">מועדפים:</span>
-        <strong id="countFav">0</strong>
-      </div>
-    </div>
-
-    <div class="langbar" aria-label="Language selector">
-      <button class="langbtn active" data-lang="he">🇮🇱 <span>עברית</span></button>
-      <button class="langbtn" data-lang="en">🌍 <span>English</span></button>
-      <button class="langbtn" data-lang="ar">🇵🇸 <span>العربية</span></button>
-      <button class="langbtn" data-lang="ru">🇷🇺 <span>Русский</span></button>
+<div class="topbar">
+  <div>
+    <h1 data-i18n="welcome">ברוכים הבאים</h1>
+    <div class="summary">
+      <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
+      <strong id="countAll">0</strong>
     </div>
   </div>
 
-  <div class="controls">
-    <div class="control">
-      <label for="search" data-i18n="searchLabel">חיפוש</label>
-      <input id="search" type="text" placeholder="הקלד מילה/שם קובץ/תיאור…" data-i18n-ph="searchPh">
-      <div class="muted" data-i18n="searchHint">מחפש בתוך נושא, שם קובץ ותיאור.</div>
-    </div>
-
-    <div class="control">
-      <label for="category" data-i18n="filterLabel">סינון לפי קטגוריה</label>
-      <select id="category">
-        <option value="all" data-i18n="filterAll">הכל</option>
-        <option value="net" data-i18n="catNet">תקשורת ורשתות</option>
-        <option value="ui" data-i18n="catUi">ממשק אדם–מסך</option>
-        <option value="id" data-i18n="catId">זיהוי זהות</option>
-        <option value="med" data-i18n="catMed">רפואה חכמה</option>
-        <option value="elec" data-i18n="catElec">חשמל וסימולציות</option>
-        <option value="thermo" data-i18n="catThermo">תרמודינמיקה</option>
-        <option value="audio" data-i18n="catAudio">אנרגיה וקול</option>
-        <option value="floor" data-i18n="catFloor">אנרגיה מהרצפה</option>
-        <option value="water" data-i18n="catWater">תנועה על מים</option>
-        <option value="transport" data-i18n="catTransport">תחבורה</option>
-        <option value="hybrid" data-i18n="catHybrid">הנעה היברידית</option>
-      </select>
-
-      <div class="actions">
-        <button class="smallbtn" id="resetBtn" data-i18n="resetBtn">איפוס</button>
-        <button class="smallbtn" id="openAllBtn" data-i18n="openAllBtn">פתח את כל הקישורים</button>
-        <button class="smallbtn" id="clearFavBtn" data-i18n="clearFavBtn">נקה מועדפים</button>
-      </div>
-    </div>
-
-    <div class="control">
-      <label data-i18n="favOnlyLabel">תצוגה</label>
-      <div class="fav-only">
-        <input type="checkbox" id="favOnly">
-        <span data-i18n="favOnlyText">הצג מועדפים בלבד</span>
-      </div>
-      <div class="muted" data-i18n="favHint">הכוכב נשמר בדפדפן (LocalStorage).</div>
-    </div>
+  <div class="langbar">
+    <button class="langbtn active" data-lang="he">🇮🇱 עברית</button>
+    <button class="langbtn" data-lang="en">🌍 English</button>
+    <button class="langbtn" data-lang="ar">🇵🇸 العربية</button>
+    <button class="langbtn" data-lang="ru">🇷🇺 Русский</button>
   </div>
-
-  <div class="empty" id="emptyBox" data-i18n="empty">
-    לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה אחרת.
-  </div>
-
-  <table id="indexTable">
-    <thead>
-      <tr>
-        <th data-i18n="thTopic">נושא</th>
-        <th data-i18n="thLink">שם הקובץ / קישור</th>
-        <th data-i18n="thDesc">תיאור</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr class="row" data-cat="net" data-key="usb_network_osi_ipv6_plus_hw_usecase.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-net" data-i18n="badgeNet">🌐🔌 תקשורת ורשתות</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="usb_network_osi_ipv6_plus_hw_usecase.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
-              <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descUsb">
-          חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="ui" data-key="fingerprint_gesture_full_v5_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-ui" data-i18n="badgeUi">🖐️📺 ממשק אדם–מסך</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="fingerprint_gesture_full_v5_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
-              <div class="muted">fingerprint_gesture_full_v5_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descFp">
-          מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="ui" data-key="new 8.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-ui" data-i18n="badgeLightBio">💡🖐️ תאורה חכמה ביומטרית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="new 8.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="new%208.html" data-i18n="linkLightBio">תאורה ללא מפסיקים — הצבעה + טביעת אצבע</a>
-              <div class="muted">new 8.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descLightBio">
-          דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="id" data-key="bivdn_multilang_full_mobile.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-id" data-i18n="badgeId">📱🌍 זיהוי זהות רב־לשוני</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="bivdn_multilang_full_mobile.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
-              <div class="muted">bivdn_multilang_full_mobile.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descBivdn">
-          מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים
-        </td>
-      </tr>
-
-      <!-- ✅ ADDED FILE: bio_magnet_therapy.html -->
-      <tr class="row" data-cat="med" data-key="bio_magnet_therapy.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="bio_magnet_therapy.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
-              <div class="muted">bio_magnet_therapy.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descBio">
-          מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
-        </td>
-      </tr>
-      <!-- ✅ END ADDED FILE -->
-
-      <!-- ✅ ADDED FILE: plant_gas_to_bio_oil_mvp_he.html -->
-      <tr class="row" data-cat="thermo" data-key="plant_gas_to_bio_oil_mvp_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgePlantOil">🌱🛢️ גזים → נפט ביולוגי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="plant_gas_to_bio_oil_mvp_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="plant_gas_to_bio_oil_mvp_he.html" data-i18n="linkPlantOil">המרת גזים מצמחים לנפט ביולוגי (MVP)</a>
-              <div class="muted">plant_gas_to_bio_oil_mvp_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPlantOil">
-          מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.
-        </td>
-      </tr>
-      <!-- ✅ END ADDED FILE -->
-
-      <!-- ✅ ADDED FILE: patent_clean_air_square_zone_he.html -->
-      <tr class="row" data-cat="med" data-key="patent_clean_air_square_zone_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeCleanAir">🧼🫁 אזור אוויר נקי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_clean_air_square_zone_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_clean_air_square_zone_he.html" data-i18n="linkCleanAir">פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)</a>
-              <div class="muted">patent_clean_air_square_zone_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descCleanAir">
-          יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.
-        </td>
-      </tr>
-      <!-- ✅ END ADDED FILE -->
-
-      <tr class="row" data-cat="elec" data-key="electricity_models_plus_simulations_bilingual_toggle.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="electricity_models_plus_simulations_bilingual_toggle.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
-              <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
-      </tr>
-
-      <tr class="row" data-cat="thermo" data-key="thermosiphon_flow_calculator_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="thermosiphon_flow_calculator_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
-              <div class="muted">thermosiphon_flow_calculator_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
-      </tr>
-
-      <tr class="row" data-cat="audio" data-key="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
-              <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
-      </tr>
-
-      <tr class="row" data-cat="floor" data-key="smart_floor_pressure_to_energy_model_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_floor_pressure_to_energy_model_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
-              <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
-      </tr>
-
-      <tr class="row" data-cat="water" data-key="water_walking_shoes_sonar_pump.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_walking_shoes_sonar_pump.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
-              <div class="muted">water_walking_shoes_sonar_pump.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="water_gas_train_blue.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_gas_train_blue.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
-              <div class="muted">water_gas_train_blue.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
-      </tr>
-
-      <tr class="row" data-cat="hybrid" data-key="water_air_shoes_trilingual_flow.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_air_shoes_trilingual_flow.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
-              <div class="muted">water_air_shoes_trilingual_flow.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="patent_smart_boarding_token_he.html">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_smart_boarding_token_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_smart_boarding_token_he.html" data-i18n="linkPatent">כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט</a>
-              <div class="muted">patent_smart_boarding_token_he.html</div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPatent">
-          מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
-
-  <footer>
-    © כל הזכויות שמורות – קלנסווה<br>
-    אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
-  </footer>
-
-  <div id="viewer" class="viewer" aria-hidden="true">
-    <div class="viewer-inner">
-      <div class="viewer-bar">
-        <button id="viewerClose" class="viewer-btn" type="button">⬅ חזרה למסך המרכזי</button>
-        <div class="viewer-title" id="viewerTitle">Preview</div>
-        <button id="viewerOpenNew" class="viewer-btn" type="button">פתח בלשונית חדשה ↗</button>
-      </div>
-      <iframe id="viewerFrame" class="viewer-frame" src="" loading="lazy"></iframe>
-    </div>
-  </div>
-
-  <script>
-    // ⛔ חסימת הדפסה (Ctrl/Cmd+P)
-    window.addEventListener('keydown', function (e) {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
-        e.preventDefault();
-        alert('הדפסה חסומה – כל הזכויות שמורות');
-      }
-    });
-
-    // ⛔ חסימת קליק ימני
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // ⛔ חסימת בחירת טקסט
-    document.addEventListener('selectstart', e => e.preventDefault());
-
-    // --- Search + Filter + Favorites ---
-    const searchEl = document.getElementById('search');
-    const catEl = document.getElementById('category');
-    const rows = Array.from(document.querySelectorAll('tr.row'));
-    const emptyBox = document.getElementById('emptyBox');
-    const countAll = document.getElementById('countAll');
-    const countShown = document.getElementById('countShown');
-    const countFav = document.getElementById('countFav');
-    const favOnlyEl = document.getElementById('favOnly');
-
-    const LS_KEY = "index_favorites_v1";
-
-    function loadFavs(){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        const arr = raw ? JSON.parse(raw) : [];
-        return new Set(Array.isArray(arr) ? arr : []);
-      }catch(e){
-        return new Set();
-      }
-    }
-
-    function saveFavs(set){
-      localStorage.setItem(LS_KEY, JSON.stringify(Array.from(set)));
-    }
-
-    let favs = loadFavs();
-
-    function norm(s){
-      return (s || '').toString().toLowerCase().trim();
-    }
-
-    function syncFavUI(){
-      rows.forEach(r=>{
-        const key = r.getAttribute('data-key');
-        const btn = r.querySelector('button.favbtn');
-        const isFav = favs.has(key);
-        r.classList.toggle('fav', isFav);
-        if(btn){
-          btn.classList.toggle('active', isFav);
-          btn.textContent = isFav ? '★' : '☆';
-          btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
-        }
-      });
-      countFav.textContent = String(favs.size);
-    }
-
-    function apply(){
-      const q = norm(searchEl.value);
-      const c = catEl.value;
-      const favOnly = !!favOnlyEl.checked;
-
-      let shown = 0;
-      rows.forEach(r=>{
-        const rCat = r.getAttribute('data-cat');
-        const key = r.getAttribute('data-key');
-        const txt = norm(r.innerText);
-
-        const okCat = (c === 'all') || (rCat === c);
-        const okQ = (!q) || txt.includes(q);
-        const okFav = (!favOnly) || favs.has(key);
-
-        const ok = okCat && okQ && okFav;
-        r.style.display = ok ? '' : 'none';
-        if(ok) shown++;
-      });
-
-      countShown.textContent = String(shown);
-      emptyBox.style.display = (shown === 0) ? 'block' : 'none';
-    }
-
-    // init counts
-    countAll.textContent = String(rows.length);
-
-    // favorite button handlers
-    document.querySelectorAll('button.favbtn').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        const key = btn.getAttribute('data-fav');
-        if(!key) return;
-        if(favs.has(key)) favs.delete(key);
-        else favs.add(key);
-        saveFavs(favs);
-        syncFavUI();
-        apply();
-      });
-    });
-
-    searchEl.addEventListener('input', apply);
-    catEl.addEventListener('change', apply);
-    favOnlyEl.addEventListener('change', apply);
-
-    document.getElementById('resetBtn').addEventListener('click', ()=>{
-      searchEl.value = '';
-      catEl.value = 'all';
-      favOnlyEl.checked = false;
-      apply();
-    });
-
-    document.getElementById('clearFavBtn').addEventListener('click', ()=>{
-      if(favs.size === 0) return;
-      favs = new Set();
-      saveFavs(favs);
-      syncFavUI();
-      apply();
-    });
-
-    // ===== ✅ Viewer (Back to home without editing other files) =====
-    const viewer = document.getElementById('viewer');
-    const viewerFrame = document.getElementById('viewerFrame');
-    const viewerClose = document.getElementById('viewerClose');
-    const viewerTitle = document.getElementById('viewerTitle');
-    const viewerOpenNew = document.getElementById('viewerOpenNew');
-    let lastHref = "";
-
-    function openViewer(href, titleText){
-      lastHref = href;
-      viewerTitle.textContent = titleText || href;
-      viewerFrame.src = href;
-      viewer.classList.add('open');
-      viewer.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeViewer(){
-      viewer.classList.remove('open');
-      viewer.setAttribute('aria-hidden', 'true');
-      viewerFrame.src = "";
-      document.body.style.overflow = '';
-    }
-
-    viewerClose.addEventListener('click', closeViewer);
-    viewer.addEventListener('click', (e)=>{ if(e.target === viewer) closeViewer(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && viewer.classList.contains('open')) closeViewer(); });
-    viewerOpenNew.addEventListener('click', ()=>{ if(lastHref) window.open(lastHref, '_blank'); });
-
-    // intercept table link clicks -> open in viewer
-    document.querySelectorAll('#indexTable tbody a').forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
-        e.preventDefault();
-        const href = a.getAttribute('href');
-        const txt = a.textContent.trim();
-        openViewer(href, txt);
-      });
-    });
-
-    document.getElementById('openAllBtn').addEventListener('click', ()=>{
-      const visibleLinks = rows
-        .filter(r => r.style.display !== 'none')
-        .map(r => r.querySelector('a'))
-        .filter(Boolean);
-
-      if(!visibleLinks.length){
-        alert(window.__i18nLang === 'en' ? 'No links to open for current filters.' :
-              window.__i18nLang === 'ar' ? 'لا توجد روابط لفتحها وفق التصفية الحالية.' :
-              window.__i18nLang === 'ru' ? 'Нет ссылок для открытия при текущих фильтрах.' :
-              'אין קישורים פתוחים לפי הסינון הנוכחי.');
-        return;
-      }
-      openViewer(visibleLinks[0].getAttribute('href'), visibleLinks[0].textContent.trim());
-    });
-
-    // --- i18n ---
-    const dict = {
-      he:{
-        pageTitle:"דף הבית",
-        welcome:"ברוכים הבאים",
-        summaryPrefix:"סך הכל קבצים:",
-        summaryShown:"מוצגים כעת:",
-        summaryFav:"מועדפים:",
-        searchLabel:"חיפוש",
-        searchPh:"הקלד מילה/שם קובץ/תיאור…",
-        searchHint:"מחפש בתוך נושא, שם קובץ ותיאור.",
-        filterLabel:"סינון לפי קטגוריה",
-        filterAll:"הכל",
-        catNet:"תקשורת ורשתות",
-        catUi:"ממשק אדם–מסך",
-        catId:"זיהוי זהות",
-        catMed:"רפואה חכמה",
-        catElec:"חשמל וסימולציות",
-        catThermo:"תרמודינמיקה",
-        catAudio:"אנרגיה וקול",
-        catFloor:"אנרגיה מהרצפה",
-        catWater:"תנועה על מים",
-        catTransport:"תחבורה",
-        catHybrid:"הנעה היברידית",
-        resetBtn:"איפוס",
-        openAllBtn:"פתח את כל הקישורים",
-        clearFavBtn:"נקה מועדפים",
-        favOnlyLabel:"תצוגה",
-        favOnlyText:"הצג מועדפים בלבד",
-        favHint:"הכוכב נשמר בדפדפן (LocalStorage).",
-        favPill:"⭐ מועדף",
-        empty:"לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה אחרת.",
-        thTopic:"נושא",
-        thLink:"שם הקובץ / קישור",
-        thDesc:"תיאור",
-
-        badgeNet:"🌐🔌 תקשורת ורשתות",
-        badgeUi:"🖐️📺 ממשק אדם–מסך",
-        badgeId:"📱🌍 זיהוי זהות רב־לשוני",
-        badgeMed:"🧬🧲 רפואה חכמה",
-        badgeElec:"⚡ חשמל וסימולציות",
-        badgeThermo:"🔥 תרמודינמיקה",
-        badgeAudio:"🎧 אנרגיה וקול",
-        badgeFloor:"🧱⚡ אנרגיה מהרצפה",
-        badgeWater:"🌊👟 תנועה על מים",
-        badgeTransport:"🚆💧 תנועה ותחבורה",
-        badgeHybrid:"🌊🌬️ הנעה היברידית",
-
-        linkUsb:"USB + רשת (OSI + IPv6)",
-        descUsb:"חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי",
-
-        linkFp:"מסכים חכמים לפי טביעת אצבע",
-        descFp:"מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא",
-
-        badgeLightBio:"💡🖐️ תאורה חכמה ביומטרית",
-        linkLightBio:"תאורה ללא מפסיקים — הצבעה + טביעת אצבע",
-        descLightBio:"דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי",
-
-        linkBivdn:"BIVDN – זיהוי זהות נייד",
-        descBivdn:"מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים",
-
-        linkBio:"מגנט ביולוגי להולכת תרופות",
-        descBio:"מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי (\"GPS ביולוגי\") בגוף האדם",
-
-        badgePlantOil:"🌱🛢️ גזים → נפט ביולוגי",
-        linkPlantOil:"המרת גזים מצמחים לנפט ביולוגי (MVP)",
-        descPlantOil:"מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.",
-
-        badgeCleanAir:"🧼🫁 אזור אוויר נקי",
-        linkCleanAir:"פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)",
-        descCleanAir:"יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.",
-
-        linkElec:"מודל חשמל + סימולציות",
-        descElec:"מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות",
-
-        linkThermo:"תרמוסיפון",
-        descThermo:"מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים",
-
-        linkAudio:"אוזניות נטענות מעצמן",
-        descAudio:"טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה",
-
-        linkFloor:"מודל רצפה חכמה",
-        descFloor:"הפקת אנרגיה מלחץ ומיפוי עומסים",
-
-        linkWater:"נעליים להליכה על מים",
-        descWater:"סונאר, משאבות זעירות ושיווי־משקל דינמי",
-
-        linkTrain:"רכבת מים–גז (Blue)",
-        descTrain:"תחבורה מבוססת מים וגז עם יעילות אנרגטית",
-
-        linkHybrid:"נעליים מים–אוויר (תלת־לשוני)",
-        descHybrid:"הליכה וריחוף על מים ואוויר עם זרימה מבוקרת",
-
-        badgePatent:"✈️📄 פטנט — אבטחת תעופה",
-        linkPatent:"כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט",
-        descPatent:"מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס",
-      },
-
-      en:{
-        pageTitle:"Home", welcome:"Welcome", summaryPrefix:"Total files:", summaryShown:"Shown now:", summaryFav:"Favorites:",
-        searchLabel:"Search", searchPh:"Type a keyword / filename / description…", searchHint:"Searches topic, filename and description.",
-        filterLabel:"Filter by category", filterAll:"All", catNet:"Networking & Communications", catUi:"Human–Screen Interface",
-        catId:"Identity", catMed:"Smart Medicine", catElec:"Electricity & Simulations", catThermo:"Thermodynamics",
-        catAudio:"Sound & Energy", catFloor:"Energy from Floors", catWater:"Water Mobility", catTransport:"Transport", catHybrid:"Hybrid Propulsion",
-        resetBtn:"Reset", openAllBtn:"Open all links", clearFavBtn:"Clear favorites", favOnlyLabel:"View", favOnlyText:"Show favorites only",
-        favHint:"Stars are saved in the browser (LocalStorage).", favPill:"⭐ Favorite",
-        empty:"No results found. Try changing the search or category.",
-        thTopic:"Topic", thLink:"File / Link", thDesc:"Description",
-
-        badgeNet:"🌐🔌 Networking & Communications", badgeUi:"🖐️📺 Human–Screen Interface", badgeId:"📱🌍 Multilingual Identity",
-        badgeMed:"🧬🧲 Smart Medicine", badgeElec:"⚡ Electricity & Simulations", badgeThermo:"🔥 Thermodynamics", badgeAudio:"🎧 Sound & Energy",
-        badgeFloor:"🧱⚡ Energy from Floors", badgeWater:"🌊👟 Water Mobility", badgeTransport:"🚆💧 Transport", badgeHybrid:"🌊🌬️ Hybrid Propulsion",
-
-        linkUsb:"USB + Network (OSI + IPv6)",
-        descUsb:"USB as a full network stack (OSI layers), including IPv4/IPv6, hardware diagram and a practical use-case.",
-        linkFp:"Fingerprint-Gesture Smart Screens",
-        descFp:"Interactive screen system driven by fingerprint + gestures, including authentication, algorithms and a full demo.",
-        badgeLightBio:"💡🖐️ Biometric Smart Lighting",
-        linkLightBio:"No-Switch Lighting — Pointing + Fingerprint",
-        descLightBio:"Full system page: architecture, diagrams, security, simulation and prototype for pointing-based lighting with biometric authentication.",
-        linkBivdn:"BIVDN – Mobile Identity",
-        descBivdn:"Multilingual digital identity for mobile: verification, responsive UI, multi-language support, small-screen optimized.",
-        linkBio:"Bio-Magnet Drug Delivery",
-        descBio:"Research concept to reduce IV infusion: smart patch based on DNA, electrical signature and therapeutic navigation (\"biological GPS\").",
-
-        badgePlantOil:"🌱🛢️ Gases → Bio-Oil",
-        linkPlantOil:"Plant Gas to Bio-Oil (MVP)",
-        descPlantOil:"MVP model for producing bio-oil from gases emitted by plants in indoor spaces: capture, conversion, thermal process and urban application.",
-
-        badgeCleanAir:"🧼🫁 Clean-Air Zone",
-        linkCleanAir:"Patent: Square Clean-Air Zone",
-        descCleanAir:"Creating a square clean-air “bubble” around a patient/defined area using airflow supply, controlled dispersion, and particle/pollutant monitoring.",
-
-        linkElec:"Electricity Models + Simulations",
-        descElec:"Physical models, equations and interactive simulations.",
-        linkThermo:"Thermosiphon",
-        descThermo:"Thermosiphon flow calculator based on physical parameters.",
-        linkAudio:"Self-Charging Headphones",
-        descAudio:"Self charging from sound energy – theoretical model and simulation.",
-        linkFloor:"Smart Floor Model",
-        descFloor:"Energy harvesting from pressure and load mapping.",
-        linkWater:"Water-Walking Shoes",
-        descWater:"Sonar, micro-pumps and dynamic balance.",
-        linkTrain:"Water–Gas Train (Blue)",
-        descTrain:"Transport concept based on water and gas with energy efficiency.",
-        linkHybrid:"Water–Air Shoes (Trilingual)",
-        descHybrid:"Walking/hovering on water and air with controlled flow.",
-        badgePatent:"✈️📄 Patent — Aviation Security",
-        linkPatent:"Smart Boarding Pass (Dynamic Token) — Patent Draft",
-        descPatent:"A smart digital boarding pass with multi-step verification, rolling token, anti-replay and automatic revocation after boarding."
-      },
-
-      ar:{
-        pageTitle:"الصفحة الرئيسية", welcome:"مرحباً", summaryPrefix:"إجمالي الملفات:", summaryShown:"المعروض الآن:", summaryFav:"المفضلة:",
-        searchLabel:"بحث", searchPh:"اكتب كلمة / اسم ملف / وصف…", searchHint:"يبحث داخل العنوان واسم الملف والوصف.",
-        filterLabel:"تصفية حسب الفئة", filterAll:"الكل", catNet:"الشبكات والاتصالات", catUi:"واجهة الإنسان–الشاشة", catId:"الهوية",
-        catMed:"طب ذكي", catElec:"الكهرباء والمحاكاة", catThermo:"الديناميكا الحرارية", catAudio:"الصوت والطاقة", catFloor:"طاقة من الأرضيات",
-        catWater:"حركة على الماء", catTransport:"النقل", catHybrid:"دفع هجين",
-        resetBtn:"إعادة ضبط", openAllBtn:"افتح كل الروابط", clearFavBtn:"مسح المفضلة", favOnlyLabel:"عرض", favOnlyText:"عرض المفضلة فقط",
-        favHint:"يتم حفظ النجمة في المتصفح (LocalStorage).", favPill:"⭐ مفضّل",
-        empty:"لا توجد نتائج. جرّب تغيير البحث أو الفئة.", thTopic:"الموضوع", thLink:"الملف / الرابط", thDesc:"الوصف",
-
-        badgeNet:"🌐🔌 الشبكات والاتصالات", badgeUi:"🖐️📺 واجهة الإنسان–الشاشة", badgeId:"📱🌍 هوية متعددة اللغات",
-        badgeMed:"🧬🧲 طب ذكي", badgeElec:"⚡ الكهرباء والمحاكاة", badgeThermo:"🔥 الديناميكا الحرارية", badgeAudio:"🎧 الصوت والطاقة",
-        badgeFloor:"🧱⚡ طاقة من الأرضيات", badgeWater:"🌊👟 حركة على الماء", badgeTransport:"🚆💧 النقل", badgeHybrid:"🌊🌬️ دفع هجين",
-
-        linkUsb:"USB + شبكة (OSI + IPv6)",
-        descUsb:"USB كنظام شبكة كامل (طبقات OSI) مع IPv4/IPv6 ومخطط عتاد وسيناريو عملي.",
-        linkFp:"شاشات ذكية ببصمة وإيماءات",
-        descFp:"نظام شاشات تفاعلي يعتمد على البصمة والإيماءات مع التحقق والخوارزميات وعرض كامل.",
-        badgeLightBio:"💡🖐️ إضاءة ذكية بيومترية",
-        linkLightBio:"إضاءة بدون مفاتيح — الإشارة + بصمة",
-        descLightBio:"صفحة نظام كاملة: بنية، مخططات، أمان، محاكاة ونموذج أولي لتشغيل الإضاءة بالإشارة مع تحقق بيومتري.",
-        linkBivdn:"BIVDN – هوية محمولة",
-        descBivdn:"هوية رقمية متعددة اللغات للموبايل: تحقق، واجهة متجاوبة، دعم لغات متعددة، مناسبة للشاشات الصغيرة.",
-        linkBio:"مغناطيس حيوي لإيصال الدواء",
-        descBio:"فكرة بحثية لتقليل التسريب الوريدي: رقعة ذكية تعتمد على DNA وتوقيع كهربائي وتوجيه علاجي (\"GPS\" حيوي).",
-
-        badgePlantOil:"🌱🛢️ غازات → نفط حيوي",
-        linkPlantOil:"تحويل غازات النباتات إلى نفط حيوي (MVP)",
-        descPlantOil:"نموذج MVP لإنتاج نفط حيوي من غازات تنبعث من النباتات في أماكن مغلقة: التقاط، تحويل، عملية حرارية وتطبيق حضري.",
-
-        badgeCleanAir:"🧼🫁 منطقة هواء نظيف",
-        linkCleanAir:"براءة: منطقة هواء نظيف مربعة",
-        descCleanAir:"إنشاء “فقاعة” هواء نظيف مربعة حول المريض/منطقة محددة عبر تزويد الهواء، توزيع مضبوط، ومراقبة الجسيمات/الملوثات.",
-
-        linkElec:"نماذج كهرباء + محاكاة",
-        descElec:"نماذج فيزيائية ومعادلات ومحاكاة تفاعلية.",
-        linkThermo:"الثرموسيفون",
-        descThermo:"حاسبة تدفق ثرموسيفون وفق المعلمات الفيزيائية.",
-        linkAudio:"سماعات تشحن نفسها",
-        descAudio:"شحن ذاتي من طاقة الصوت – نموذج نظري ومحاكاة.",
-        linkFloor:"نموذج أرضية ذكية",
-        descFloor:"توليد طاقة من الضغط ورسم خرائط الأحمال.",
-        linkWater:"أحذية للمشي على الماء",
-        descWater:"سونار ومضخات دقيقة وتوازن ديناميكي.",
-        linkTrain:"قطار ماء–غاز (Blue)",
-        descTrain:"مفهوم نقل يعتمد الماء والغاز بكفاءة طاقية.",
-        linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
-        descHybrid:"المشي/التحليق على الماء والهواء بتدفق مُتحكم به.",
-        badgePatent:"✈️📄 براءة — أمن الطيران",
-        linkPatent:"بطاقة صعود ذكية (Token ديناميكي) — مسودة براءة",
-        descPatent:"بطاقة صعود رقمية ذكية مع تحقق متعدد المراحل، Token متغير، منع إعادة الاستخدام وإلغاء تلقائي بعد الصعود."
-      },
-
-      ru:{
-        pageTitle:"Главная", welcome:"Добро пожаловать", summaryPrefix:"Всего файлов:", summaryShown:"Показано сейчас:", summaryFav:"Избранное:",
-        searchLabel:"Поиск", searchPh:"Введите слово / имя файла / описание…", searchHint:"Поиск по теме, имени файла и описанию.",
-        filterLabel:"Фильтр по категории", filterAll:"Все", catNet:"Сети и связь", catUi:"Интерфейс человек–экран", catId:"Идентификация",
-        catMed:"Умная медицина", catElec:"Электричество и симуляции", catThermo:"Термодинамика", catAudio:"Звук и энергия",
-        catFloor:"Энергия от пола", catWater:"Движение по воде", catTransport:"Транспорт", catHybrid:"Гибридная тяга",
-        resetBtn:"Сброс", openAllBtn:"Открыть все ссылки", clearFavBtn:"Очистить избранное", favOnlyLabel:"Вид",
-        favOnlyText:"Показывать только избранное", favHint:"Звёздочки сохраняются в браузере (LocalStorage).", favPill:"⭐ Избранное",
-        empty:"Ничего не найдено. Попробуйте изменить поиск или категорию.", thTopic:"Тема", thLink:"Файл / Ссылка", thDesc:"Описание",
-
-        badgeNet:"🌐🔌 Сети и связь", badgeUi:"🖐️📺 Интерфейс человек–экран", badgeId:"📱🌍 Многоязычная идентификация",
-        badgeMed:"🧬🧲 Умная медицина", badgeElec:"⚡ Электричество и симуляции", badgeThermo:"🔥 Термодинамика", badgeAudio:"🎧 Звук и энергия",
-        badgeFloor:"🧱⚡ Энергия от пола", badgeWater:"🌊👟 Движение по воде", badgeTransport:"🚆💧 Транспорт", badgeHybrid:"🌊🌬️ Гибридная тяга",
-
-        linkUsb:"USB + сеть (OSI + IPv6)",
-        descUsb:"USB как полноценная сеть (уровни OSI), включая IPv4/IPv6, схема железа и практический сценарий.",
-        linkFp:"Умные экраны по отпечатку и жестам",
-        descFp:"Интерактивная система экранов: отпечаток + жесты, аутентификация, алгоритмы и полный демо-режим.",
-        badgeLightBio:"💡🖐️ Биометрическое умное освещение",
-        linkLightBio:"Освещение без выключателей — указание + отпечаток",
-        descLightBio:"Полная страница системы: архитектура, схемы, безопасность, симуляция и прототип управления светом по указанию с биометрической проверкой.",
-        linkBivdn:"BIVDN – мобильная идентификация",
-        descBivdn:"Многоязычная цифровая идентификация для мобильных: проверка, адаптивный интерфейс, поддержка языков, оптимизация для маленьких экранов.",
-        linkBio:"Био-магнитная доставка лекарств",
-        descBio:"Исследовательская концепция: умный пластырь на основе ДНК, электрической подписи и терапевтической навигации (\"био-GPS\").",
-
-        badgePlantOil:"🌱🛢️ Газы → Био-нефть",
-        linkPlantOil:"Газы растений в био-нефть (MVP)",
-        descPlantOil:"MVP-модель получения био-нефти из газов, выделяемых растениями в помещениях: захват, преобразование, тепловой процесс и городской сценарий.",
-
-        badgeCleanAir:"🧼🫁 Зона чистого воздуха",
-        linkCleanAir:"Патент: квадратная зона чистого воздуха",
-        descCleanAir:"Создание квадратного «пузыря» чистого воздуха вокруг пациента/заданной зоны за счёт подачи воздуха, управляемого распределения и мониторинга частиц/загрязнений.",
-
-        linkElec:"Модели электричества + симуляции",
-        descElec:"Физические модели, уравнения и интерактивные симуляции.",
-        linkThermo:"Термосифон",
-        descThermo:"Калькулятор потока термосифона по физическим параметрам.",
-        linkAudio:"Самозаряжающиеся наушники",
-        descAudio:"Самозаряд от энергии звука — теоретическая модель и симуляция.",
-        linkFloor:"Модель умного пола",
-        descFloor:"Сбор энергии от давления и карта нагрузок.",
-        linkWater:"Обувь для ходьбы по воде",
-        descWater:"Сонар, микропомпы и динамическая устойчивость.",
-        linkTrain:"Поезд вода–газ (Blue)",
-        descTrain:"Транспортная концепция на воде и газе с повышенной энергоэффективностью.",
-        linkHybrid:"Обувь вода–воздух (трёхъязычная)",
-        descHybrid:"Ходьба/парение по воде и воздуху с управляемым потоком.",
-        badgePatent:"✈️📄 Патент — авиационная безопасность",
-        linkPatent:"Умный посадочный талон (динамический Token) — черновик патента",
-        descPatent:"Умный посадочный талон: многоэтапная проверка, меняющийся токен, anti-replay и автоматическая аннуляция после посадки."
-      }
-    };
-
-    function setLang(lang){
-      const L = dict[lang] ? lang : "he";
-      const root = document.documentElement;
-      window.__i18nLang = L;
-
-      if(L === "en" || L === "ru"){
-        root.lang = L;
-        root.dir = "ltr";
-      } else if(L === "ar"){
-        root.lang = "ar";
-        root.dir = "rtl";
-      } else {
-        root.lang = "he";
-        root.dir = "rtl";
-      }
-
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const key = el.getAttribute("data-i18n");
-        if(dict[L][key] !== undefined){
-          el.textContent = dict[L][key];
-        }
-      });
-
-      document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
-        const key = el.getAttribute("data-i18n-ph");
-        if(dict[L][key] !== undefined){
-          el.setAttribute("placeholder", dict[L][key]);
-        }
-      });
-
-      document.querySelectorAll("option[data-i18n]").forEach(opt=>{
-        const key = opt.getAttribute("data-i18n");
-        if(dict[L][key] !== undefined){
-          opt.textContent = dict[L][key];
-        }
-      });
-
-      document.querySelectorAll(".langbtn").forEach(btn=>{
-        btn.classList.toggle("active", btn.getAttribute("data-lang") === L);
-      });
-
-      apply();
-    }
-
-    document.querySelectorAll(".langbtn").forEach(btn=>{
-      btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
-    });
-
-    // init
-    syncFavUI();
-    setLang("he");
-    apply();
-  </script>
+</div>
+
+<table id="indexTable">
+<thead>
+<tr>
+  <th data-i18n="thTopic">נושא</th>
+  <th data-i18n="thLink">קישור</th>
+  <th data-i18n="thDesc">תיאור</th>
+</tr>
+</thead>
+
+<tbody>
+
+<!-- ✅ METABOLIC RAILWAY MODEL -->
+<tr class="row" data-cat="med" data-key="metabolic_railway_model_he_v3.html">
+  <td>
+    <span class="badge b-med" data-i18n="badgeMetabolicRail">
+      🚆🧬 מודל רכבת מטבולית
+    </span>
+  </td>
+  <td>
+    <button class="favbtn" data-fav="metabolic_railway_model_he_v3.html">☆</button>
+    <a href="metabolic_railway_model_he_v3.html"
+       data-i18n="linkMetabolicRail">
+      מודל רכבת מטבולית – ויסות חומרים בגוף
+    </a>
+    <div class="muted">metabolic_railway_model_he_v3.html</div>
+  </td>
+  <td data-i18n="descMetabolicRail">
+    מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור מרכזית
+    והאיברים כתחנות רכבת מטבוליות לפירוק, ויסות והזרמת סוכר,
+    נוזלים וחומרים – לשמירה על איזון פנימי ואריכות חיים.
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+<footer>
+  © כל הזכויות שמורות – קלנסווה<br>
+  אין להעתיק, לשכפל, לצלם או להפיץ ללא אישור מפורש
+</footer>
+
+<script>
+const dict={
+  he:{
+    pageTitle:"דף הבית",
+    welcome:"ברוכים הבאים",
+    summaryPrefix:"סך הכל קבצים:",
+    thTopic:"נושא",
+    thLink:"קישור",
+    thDesc:"תיאור",
+    badgeMetabolicRail:"🚆🧬 מודל רכבת מטבולית",
+    linkMetabolicRail:"מודל רכבת מטבולית – ויסות חומרים בגוף",
+    descMetabolicRail:
+    "מודל ביולוגי־מערכתי המדמה את הבנקריאס כתחנת מקור מרכזית והאיברים כתחנות רכבת מטבוליות לפירוק, ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי ואריכות חיים."
+  },
+  en:{
+    pageTitle:"Home",
+    welcome:"Welcome",
+    summaryPrefix:"Total files:",
+    thTopic:"Topic",
+    thLink:"Link",
+    thDesc:"Description",
+    badgeMetabolicRail:"🚆🧬 Metabolic Railway Model",
+    linkMetabolicRail:"Metabolic Railway Model – Body Regulation",
+    descMetabolicRail:
+    "A systemic biological model treating the pancreas as a central source station and organs as metabolic railway stations for regulation, breakdown, and distribution of glucose and substances."
+  },
+  ar:{
+    pageTitle:"الصفحة الرئيسية",
+    welcome:"مرحباً",
+    summaryPrefix:"إجمالي الملفات:",
+    thTopic:"الموضوع",
+    thLink:"الرابط",
+    thDesc:"الوصف",
+    badgeMetabolicRail:"🚆🧬 نموذج القطار الأيضي",
+    linkMetabolicRail:"نموذج القطار الأيضي – تنظيم الجسم",
+    descMetabolicRail:
+    "نموذج بيولوجي منظومي يعتبر البنكرياس محطة مركزية والأعضاء محطات أيضية لتنظيم وتوزيع المواد."
+  },
+  ru:{
+    pageTitle:"Главная",
+    welcome:"Добро пожаловать",
+    summaryPrefix:"Всего файлов:",
+    thTopic:"Тема",
+    thLink:"Ссылка",
+    thDesc:"Описание",
+    badgeMetabolicRail:"🚆🧬 Метаболическая железная дорога",
+    linkMetabolicRail:"Метаболическая модель организма",
+    descMetabolicRail:
+    "Системная биологическая модель с поджелудочной железой как центральной станцией и органами как метаболическими узлами."
+  }
+};
+
+function setLang(l){
+  document.documentElement.lang=l;
+  document.documentElement.dir=(l==="en"||l==="ru")?"ltr":"rtl";
+  document.querySelectorAll("[data-i18n]").forEach(e=>{
+    const k=e.dataset.i18n;
+    if(dict[l][k]) e.textContent=dict[l][k];
+  });
+}
+
+document.querySelectorAll(".langbtn").forEach(b=>{
+  b.onclick=()=>{setLang(b.dataset.lang)}
+});
+
+document.getElementById("countAll").textContent=
+  document.querySelectorAll("tbody tr").length;
+
+setLang("he");
+</script>
 
 </body>
 </html>
