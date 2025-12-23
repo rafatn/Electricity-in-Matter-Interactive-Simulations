@@ -986,6 +986,35 @@
         <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
       </tr>
 
+      <!-- ✅✅ ADDED: smart_water_powered_door_full_plus_fixed_he.html -->
+      <tr class="row" data-cat="water"
+          data-key="smart_water_powered_door_full_plus_fixed_he.html"
+          data-org=""
+          data-tags="water,door,electric,hydraulic,pressure,energy,smart,control,security,valve">
+        <td class="topic" data-label="נושא">
+          <span class="badge b-water" data-i18n="badgeWaterDoor">🚪💧 דלת חכמה מונעת מים</span>
+        </td>
+        <td data-label="קישור">
+          <div class="fav-wrap">
+            <button class="favbtn" type="button" data-fav="smart_water_powered_door_full_plus_fixed_he.html" aria-label="Favorite">☆</button>
+            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+            <div>
+              <a href="smart_water_powered_door_full_plus_fixed_he.html" data-i18n="linkWaterDoor">דלת חשמלית עם מים — מודל מלא</a>
+              <div class="muted">smart_water_powered_door_full_plus_fixed_he.html</div>
+              <div class="tagbar">
+                <span class="tag" data-tag="water">#water</span>
+                <span class="tag" data-tag="door">#door</span>
+                <span class="tag" data-tag="pressure">#pressure</span>
+                <span class="tag" data-tag="energy">#energy</span>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td class="desc" data-label="תיאור" data-i18n="descWaterDoor">
+          מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.
+        </td>
+      </tr>
+
       <tr class="row" data-cat="transport"
           data-key="water_gas_train_blue.html"
           data-org=""
@@ -1215,7 +1244,6 @@
         activeTagsRow.appendChild(pill);
       });
 
-      // highlight selected tags in rows
       document.querySelectorAll('.tag').forEach(el=>{
         const t = norm(el.getAttribute('data-tag'));
         el.classList.toggle('selected', activeTags.has(t));
@@ -1264,12 +1292,10 @@
       countShown.textContent = String(shown);
       emptyBox.style.display = (shown === 0) ? 'block' : 'none';
 
-      // after filter, apply sort (stable)
       applySort();
     }
 
-    // Sort: rearrange DOM
-    const originalOrder = rows.slice(); // keep reference order
+    const originalOrder = rows.slice();
 
     function getTitleText(r){
       const a = r.querySelector('a');
@@ -1297,16 +1323,13 @@
         });
       }
 
-      // only reorder visible+hidden in DOM; visibility preserved
       const frag = document.createDocumentFragment();
       list.forEach(r=>frag.appendChild(r));
       tbody.appendChild(frag);
     }
 
-    // init counts
     countAll.textContent = String(rows.length);
 
-    // favorite button handlers
     document.querySelectorAll('button.favbtn').forEach(btn=>{
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
@@ -1321,7 +1344,6 @@
       });
     });
 
-    // tag click handlers (multi-select)
     document.querySelectorAll('.tag').forEach(tagEl=>{
       tagEl.addEventListener('click', (e)=>{
         e.preventDefault();
@@ -1361,7 +1383,7 @@
       apply();
     });
 
-    // ===== ✅ Viewer (Back to home without editing other files) =====
+    // ===== ✅ Viewer =====
     const viewer = document.getElementById('viewer');
     const viewerFrame = document.getElementById('viewerFrame');
     const viewerClose = document.getElementById('viewerClose');
@@ -1390,7 +1412,6 @@
     document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && viewer.classList.contains('open')) closeViewer(); });
     viewerOpenNew.addEventListener('click', ()=>{ if(lastHref) window.open(lastHref, '_blank'); });
 
-    // intercept table link clicks -> open in viewer
     function bindLinkInterception(){
       document.querySelectorAll('#indexTable tbody a').forEach(a=>{
         a.addEventListener('click', (e)=>{
@@ -1420,7 +1441,6 @@
       openViewer(visibleLinks[0].getAttribute('href'), visibleLinks[0].textContent.trim());
     });
 
-    // Open all tabs (popup may block)
     document.getElementById('openAllTabsBtn').addEventListener('click', ()=>{
       const visibleLinks = rows
         .filter(r => r.style.display !== 'none')
@@ -1570,6 +1590,11 @@
         linkWater:"נעליים להליכה על מים",
         descWater:"סונאר, משאבות זעירות ושיווי־משקל דינמי",
 
+        // ✅ added translations
+        badgeWaterDoor:"🚪💧 דלת חכמה מונעת מים",
+        linkWaterDoor:"דלת חשמלית עם מים — מודל מלא",
+        descWaterDoor:"מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.",
+
         linkTrain:"רכבת מים–גז (Blue)",
         descTrain:"תחבורה מבוססת מים וגז עם יעילות אנרגטית",
 
@@ -1701,6 +1726,11 @@
         linkWater:"Water-Walking Shoes",
         descWater:"Sonar, micro-pumps and dynamic balance.",
 
+        // ✅ added translations
+        badgeWaterDoor:"🚪💧 Water-Powered Smart Door",
+        linkWaterDoor:"Water-Powered Electric Door — Full Model",
+        descWaterDoor:"A smart door system driven by water pressure/flow: valves, control logic, actuation mechanism, safety and backup options.",
+
         linkTrain:"Water–Gas Train (Blue)",
         descTrain:"Transport concept based on water and gas with energy efficiency.",
 
@@ -1823,6 +1853,12 @@
         descFloor:"توليد طاقة من الضغط ورسم خرائط الأحمال.",
         linkWater:"أحذية للمشي على الماء",
         descWater:"سونار ومضخات دقيقة وتوازن ديناميكي.",
+
+        // ✅ added translations
+        badgeWaterDoor:"🚪💧 باب ذكي يعمل بالماء",
+        linkWaterDoor:"باب كهربائي بالماء — نموذج كامل",
+        descWaterDoor:"نظام باب ذكي يعتمد ضغط/تدفق الماء: صمامات، تحكم، آلية تشغيل، سلامة وخيارات احتياط.",
+
         linkTrain:"قطار ماء–غاز (Blue)",
         descTrain:"مفهوم نقل يعتمد الماء والغاز بكفاءة طاقية.",
         linkHybrid:"أحذية ماء–هواء (ثلاثي اللغة)",
@@ -1943,6 +1979,12 @@
         descFloor:"Сбор энергии от давления и карта нагрузок.",
         linkWater:"Обувь для ходьбы по воде",
         descWater:"Сонар, микропомпы и динамическая устойчивость.",
+
+        // ✅ added translations
+        badgeWaterDoor:"🚪💧 Умная дверь на воде",
+        linkWaterDoor:"Электрическая дверь на воде — полная модель",
+        descWaterDoor:"Умная дверь, работающая от давления/потока воды: клапаны, управление, привод, безопасность и резервные режимы.",
+
         linkTrain:"Поезд вода–газ (Blue)",
         descTrain:"Транспортная концепция на воде и газе с повышенной энергоэффективностью.",
         linkHybrid:"Обувь вода–воздух (трёхъязычная)",
@@ -2001,7 +2043,6 @@
       btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-lang")));
     });
 
-    // restore last settings
     (function restore(){
       try{
         const s = localStorage.getItem(LS_SORT);
@@ -2068,7 +2109,6 @@
           const ao = new Set(a.orgs);
           b.orgs.forEach(o=>{ if(ao.has(o)) w += 1; });
 
-          // edge if strong enough
           if(w >= 3){
             edges.push({a:a.id, b:b.id, w});
           }
@@ -2082,9 +2122,7 @@
       const W = canvas.getBoundingClientRect().width;
       const H = canvas.getBoundingClientRect().height;
 
-      // simple force layout (few iterations)
       for(let step=0; step<180; step++){
-        // repulsion
         for(let i=0;i<nodes.length;i++){
           for(let j=i+1;j<nodes.length;j++){
             const a = nodes[i], b = nodes[j];
@@ -2099,7 +2137,6 @@
           }
         }
 
-        // attraction along edges
         edges.forEach(e=>{
           const a = e.na, b = e.nb;
           const dx = b.x - a.x;
@@ -2112,7 +2149,6 @@
           b.vx -= fx; b.vy -= fy;
         });
 
-        // integrate & clamp
         nodes.forEach(n=>{
           n.vx *= 0.88;
           n.vy *= 0.88;
@@ -2123,10 +2159,8 @@
         });
       }
 
-      // clear
       ctx.clearRect(0,0,W,H);
 
-      // edges
       ctx.lineWidth = 1;
       edges.forEach(e=>{
         ctx.globalAlpha = Math.min(0.75, 0.15 + e.w*0.12);
@@ -2138,14 +2172,12 @@
       });
       ctx.globalAlpha = 1;
 
-      // nodes
       nodes.forEach(n=>{
         ctx.beginPath();
         ctx.arc(n.x, n.y, 9, 0, Math.PI*2);
         ctx.fillStyle = favs.has(n.id) ? "#f59e0b" : "#111827";
         ctx.fill();
 
-        // label
         ctx.font = "12px Arial";
         ctx.fillStyle = "#111827";
         const label = n.title.length > 26 ? n.title.slice(0,26) + "…" : n.title;
@@ -2176,12 +2208,10 @@
     graphClose.addEventListener('click', closeGraph);
     graph.addEventListener('click', (e)=>{ if(e.target === graph) closeGraph(); });
 
-    // click node -> open viewer
     canvas.addEventListener('click', (e)=>{
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      // detect nearest node
       let hit = null;
       for(const n of graphNodes){
         const dx = n.x - x;
@@ -2200,7 +2230,6 @@
       }
     });
 
-    // init
     syncFavUI();
     renderActiveTags();
     setLang("he");
