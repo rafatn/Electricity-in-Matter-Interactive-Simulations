@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>משתלבות חכמות: אגירת חום/קור + רשת חישה/תקשורת תשתיתית</title>
+
+  <!-- Mermaid (diagrams) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,0.06);
+      --card: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.7);
+      --muted2: rgba(255,255,255,0.55);
+      --brand: #7c3aed;
+      --brand2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+      --r: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(124,58,237,0.28), transparent 55%),
+        radial-gradient(900px 700px at 85% 20%, rgba(34,197,94,0.22), transparent 55%),
+        radial-gradient(800px 650px at 50% 100%, rgba(245,158,11,0.18), transparent 55%),
+        var(--bg);
+      line-height:1.6;
+    }
+    a{ color: #a78bfa; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--stroke);
+    }
+    .topbar{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      justify-content: space-between;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 280px;
+    }
+    .logo{
+      width: 40px; height:40px;
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(124,58,237,0.95), rgba(34,197,94,0.85));
+      box-shadow: 0 12px 40px rgba(124,58,237,0.25);
+    }
+    .brand h1{
+      font-size: 16px;
+      margin:0;
+      line-height:1.2;
+    }
+    .brand p{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted2);
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .search{
+      flex: 1;
+      max-width: 520px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+    }
+    .search input{
+      width:100%;
+      border:0;
+      outline:none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .pill{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .pill:hover{ background: rgba(255,255,255,0.10); }
+
+    main{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 18px 70px;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 980px){
+      main{ grid-template-columns: 1fr; }
+      .brand{ min-width: unset; }
+      .search{ max-width: unset; }
+    }
+
+    .sidebar{
+      position: sticky;
+      top: 74px;
+      align-self: start;
+      border: 1px solid var(--stroke);
+      background: var(--panel);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .toc-title{
+      display:flex; align-items:center; justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .toc-title h2{
+      margin:0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .toc small{ color: var(--muted2); }
+    .toc a{
+      display:block;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .toc a:hover{
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.10);
+      text-decoration:none;
+    }
+    .toc a .tag{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-inline-start: 8px;
+    }
+
+    .content{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(900px 260px at 20% 0%, rgba(124,58,237,0.25), transparent 60%);
+      pointer-events:none;
+    }
+    .hero h2{
+      position:relative;
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: 0.2px;
+    }
+    .hero p{
+      position:relative;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 70ch;
+    }
+    .chips{
+      position:relative;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.86);
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+    .dot{
+      width:10px; height:10px; border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 0 6px rgba(124,58,237,0.18);
+    }
+    .dot.g{ background: var(--brand2); box-shadow: 0 0 0 6px rgba(34,197,94,0.16); }
+    .dot.w{ background: var(--warn); box-shadow: 0 0 0 6px rgba(245,158,11,0.14); }
+
+    section{
+      border: 1px solid var(--stroke);
+      background: var(--panel);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sec-h{
+      padding: 14px 16px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    .sec-h h3{
+      margin:0;
+      font-size: 16px;
+    }
+    .sec-b{
+      padding: 14px 16px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .col-6{ grid-column: span 6; }
+    .col-12{ grid-column: span 12; }
+    .col-4{ grid-column: span 4; }
+    .col-8{ grid-column: span 8; }
+    @media (max-width: 900px){
+      .col-6,.col-4,.col-8{ grid-column: span 12; }
+    }
+
+    .card{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .card h4{
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.92);
+    }
+    .card p, .card li{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .card ul{ margin: 8px 0 0; padding-inline-start: 18px; }
+    .kbd{
+      font-family: var(--mono);
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 12px;
+    }
+
+    .note{
+      border-inline-start: 4px solid var(--brand);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.25);
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    .warn{
+      border-inline-start-color: var(--warn);
+      background: rgba(245,158,11,0.10);
+      border-color: rgba(245,158,11,0.25);
+    }
+    .danger{
+      border-inline-start-color: var(--danger);
+      background: rgba(239,68,68,0.10);
+      border-color: rgba(239,68,68,0.25);
+    }
+
+    .steps{
+      counter-reset: step;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .steps li{
+      counter-increment: step;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px 12px 12px 48px;
+      position:relative;
+    }
+    .steps li:before{
+      content: counter(step);
+      position:absolute;
+      inset-inline-start: 12px;
+      top: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: rgba(34,197,94,0.16);
+      border: 1px solid rgba(34,197,94,0.30);
+      color: rgba(255,255,255,0.92);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    code, pre{
+      font-family: var(--mono);
+    }
+    pre{
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 12px;
+      overflow:auto;
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .split{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.86);
+      font-size: 12px;
+    }
+    .badge .mini{
+      width:8px; height:8px; border-radius:50%;
+      background: rgba(167,139,250,0.95);
+    }
+    .footer{
+      margin-top: 18px;
+      text-align:center;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    .highlight{
+      outline: 2px solid rgba(124,58,237,0.45);
+      outline-offset: 3px;
+      border-radius: 12px;
+    }
+
+    @media print{
+      header, .sidebar, .actions, .pill{ display:none !important; }
+      main{ grid-template-columns: 1fr; }
+      body{ background: #fff; color: #000; }
+      section, .hero{ box-shadow:none; background:#fff; border:1px solid #ddd; }
+      .card, pre{ background:#f8f8f8; border:1px solid #ddd; color:#111; }
+      .note{ background:#f3f0ff; border-color:#c4b5fd; color:#111; }
+      a{ color:#111; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand" title="מסמך יישום — מערכת מדרכה חכמה">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>משתלבות חכמות לתשתית עירונית</h1>
+        <p>אגירת חום/קור • חישה תת־קרקעית • רשת Mesh עם מזהים קבועים</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="search" role="search">
+        <span style="opacity:.75">🔎</span>
+        <input id="q" type="search" placeholder="חפש בתוך המסמך (למשל: BLE, רעידת אדמה, MAC, שכבות...)" />
+        <span id="hits" style="font-size:12px;color:rgba(255,255,255,.55)"></span>
+      </div>
+      <button class="pill" id="expandAll" title="פתח/סגור הכל">פתח הכל</button>
+      <button class="pill" id="toTop" title="חזור למעלה">⬆️</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <aside class="sidebar">
+    <div class="toc-title">
+      <h2>תוכן עניינים</h2>
+      <small>גרסה: v1</small>
+    </div>
+    <nav class="toc" id="toc"></nav>
+
+    <div class="note warn" style="margin-top:12px">
+      <b>הערה חשובה:</b> זה מסמך הנדסי לתכנון והטמעה. לביצוע מסחרי/מוניציפלי יידרש תיאום תקנים, בטיחות, ובדיקות מעבדה/שטח.
+    </div>
+  </aside>
+
+  <div class="content">
+
+    <div class="hero" id="intro">
+      <h2>מה זה “משתלבת חכמה” לפי הרעיון שלך?</h2>
+      <p>
+        מדרכה צבעונית שבה הצבע/החומר <b>אוגר טמפרטורה</b> (קור בחורף / חום בקיץ),
+        ובאותו זמן כל משתלבת היא “צומת תשתית” עם <b>חישה + תקשורת</b>.
+        האריח הראשון שפוגש אסון (רעידת אדמה, שקיעה, בולען, הצפה) מפיץ הודעת התרעה לכל השכנים,
+        וכך מתקבלת <b>רשת Mesh צפופה</b> שממפה את האירוע בזמן אמת.
+      </p>
+
+      <div class="chips" aria-label="תכונות מרכזיות">
+        <div class="chip"><span class="dot"></span>זיהוי תרחישים תת־קרקעיים</div>
+        <div class="chip"><span class="dot g"></span>Mesh מבוזר (ללא “אנשים” באמצע)</div>
+        <div class="chip"><span class="dot w"></span>אגירת חום/קור משולבת חישה</div>
+        <div class="chip"><span class="dot"></span>מזהה קבוע לכל אריח (UID/MAC)</div>
+      </div>
+    </div>
+
+    <details open class="sec" id="system">
+      <summary class="sec-h">
+        <h3>1) תמונת מערכת: רכיבים ומה עובר לאן</h3>
+        <span class="badge"><span class="mini"></span>מפה עירונית בזמן אמת</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>מה מרכיב את המערכת?</h4>
+              <ul>
+                <li><b>אריחים חכמים</b> (Sensor+Comm) בפריסה צפופה.</li>
+                <li><b>Gateway</b> מקומי (עמוד תאורה/ארון תקשורת) שמרכז אירועים.</li>
+                <li><b>שרת/ענן/עירייה</b> להצגת מפה, לוגים והתרעות.</li>
+                <li><b>מפת התקנה</b>: שיוך UID של אריח למיקום על המדרכה.</li>
+              </ul>
+              <div class="note">
+                “כרטיס הרשת” באריח מיועד לתקשורת תשתיתית בלבד:
+                הודעות מצב, מדידות, והתרעות — לא חיבור משתמשים.
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>דיאגרמת ארכיטקטורה (Mesh → Gateway → מפה)</h4>
+              <div class="mermaid">
+flowchart RL
+  A["אריח חכם #A<br/>חישה+UID"] --- B["אריח חכם #B<br/>Mesh"]
+  B --- C["אריח חכם #C<br/>Mesh"]
+  C --- D["אריח חכם #D<br/>Mesh"]
+  B -->|ALERT/CONFIRM| E["Gateway מקומי<br/>BLE/Thread/LoRa backhaul"]
+  E --> F["שרת/דשבורד עירוני<br/>מפה + אנליטיקה"]
+  F --> G["התרעות<br/>תפעול/חירום/תחזוקה"]
+              </div>
+              <div class="split">
+                <span class="badge"><span class="mini"></span>תומך “גל התרעה”</span>
+                <span class="badge"><span class="mini"></span>מיקום לפי UID↔מפה</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="stack">
+      <summary class="sec-h">
+        <h3>2) מבנה האריח: שכבות מומלצות (Stack) ומה תפקיד כל שכבה</h3>
+        <span class="badge"><span class="mini"></span>2 שכבות ליבה + איטום</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>הצעה לשכבות (ניתן להתאים לפי ייצור)</h4>
+              <ul>
+                <li><b>שכבה A — פני שטח צבעוניים</b>: ציפוי עמיד שחיקה + טקסטורה נגד החלקה + פיגמנטים תרמיים.</li>
+                <li><b>שכבה B — אגירת חום/קור</b>: חומר אגירה תרמית (PCM/מינרלים/ג׳ל) + תעלות/כיסים לפיזור תרמי.</li>
+                <li><b>שכבה C — חישה+תקשורת</b>: MCU + מודול Mesh + חיישנים + דפוס מוליך דק (כמו PCB מודפס).</li>
+                <li><b>שכבה D — איטום/צימוד לקרקע</b>: חומר יציקה/איטום, ניקוז, עמידות מים/מלחים.</li>
+              </ul>
+              <div class="note warn">
+                אם יש דרישה “לעמוד במים”: חשוב לכלול אטימה, ניקוז, והגנה מקורוזיה (כולל מחברים).
+              </div>
+            </div>
+          </div>
+
+          <div class="col-8">
+            <div class="card">
+              <h4>הדגמת חתך שכבות (מילולי)</h4>
+              <pre>
+[אוויר/גשם]
+  ├─ שכבה A: ציפוי צבעוני עמיד + נגד החלקה
+  ├─ שכבה B: אגירה תרמית (קור/חום) + פיזור תרמי
+  ├─ שכבה C: אלקטרוניקה אטומה:
+  │     MCU + Mesh + חיישנים + UID/MAC
+  │     דפוס מוליך דק (כמו "תקשורת/חישה" בתוך האריח)
+  └─ שכבה D: איטום/מצע/ניקוז + הצמדה לקרקע
+[קרקע]
+              </pre>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <h4>איפה “הגאומטריה” נכנסת?</h4>
+              <p>
+                בתוך שכבה C אפשר להטמיע <b>דפוס מוליכים</b> (למשל הדפסה מוליכה/PCB דק),
+                כשהדפוס נגזר מצורת המשתלבת/התבנית. הדפוס יכול לשמש:
+              </p>
+              <ul>
+                <li>צימוד תקשורתי קצר־טווח בין שכנים</li>
+                <li>חיישן קיבולי למים/סדקים</li>
+                <li>“חתימה” חומרית לזיהוי סוג/מיקום</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="sensors">
+      <summary class="sec-h">
+        <h3>3) חיישנים: מה לשים באריח כדי לזהות אסון אמיתי</h3>
+        <span class="badge"><span class="mini"></span>סט מינימלי/מתקדם</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>סט מינימלי (לגרסה ראשונה)</h4>
+              <ul>
+                <li><b>טמפרטורה</b> (2 נקודות: קרוב לפני שטח + בעומק)</li>
+                <li><b>תאוצה/רטט (IMU)</b> לזיהוי דפוסי רעידה ושקיעה</li>
+                <li><b>לחות/מוליכות</b> לזיהוי מים/הצפה/חדירה</li>
+              </ul>
+              <div class="note">
+                סט מינימלי מאפשר: רעידה חריגה + מים + שינוי תרמי → “מועמד לאירוע”.
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>סט מתקדם (דיוק גבוה + תחזוקה נמוכה)</h4>
+              <ul>
+                <li><b>Strain / מאמץ</b> (שינוי קשיחות, סדק מתפתח)</li>
+                <li><b>לחץ מים</b> או חיישן קיבולי מוגן</li>
+                <li><b>חיישן מגנטי/אינקלינומטר</b> לזיהוי תזוזת אריח/תשתית</li>
+                <li><b>Self-test</b> פנימי: סוללה/חיישנים/תקשורת</li>
+              </ul>
+              <div class="note warn">
+                באזורים של בולענים/שקיעות: strain + IMU נותנים יתרון משמעותי.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card">
+              <h4>איך מבדילים בין “צעדים רגילים” לבין “אסון”?</h4>
+              <ul>
+                <li>צעדים הם <b>אירוע קצר</b>, מקומי מאוד, עם תדרים/עוצמות אופייניים.</li>
+                <li>רעידת אדמה היא <b>מתואמת מרחבית</b>: הרבה אריחים רואים את אותו “גל”.</li>
+                <li>שקיעה/בולען: שינוי איטי בעומס/שיפוע + חריגות נקודתיות חוזרות.</li>
+                <li>הצפה: עליה עקבית בלחות/מוליכות + “שפת מים” שמתקדמת בין אריחים.</li>
+              </ul>
+              <div class="note">
+                לכן: <b>אימות שכנים</b> (Neighbor confirmation) הוא לב ההמצאה — לא רק חיישן בודד.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="network">
+      <summary class="sec-h">
+        <h3>4) תקשורת ומזהים (UID/MAC): איך “אריחים מדברים” בלי אנשים</h3>
+        <span class="badge"><span class="mini"></span>Mesh + מפת התקנה</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>אפשרויות תקשורת מתאימות לאריחים</h4>
+              <ul>
+                <li><b>BLE Mesh</b>: מתאים לטווח קצר בין אריחים, צריכת חשמל נמוכה.</li>
+                <li><b>802.15.4 (Thread/Zigbee)</b>: Mesh יציב, תעשייתי, ניהול רשת טוב.</li>
+                <li><b>Backhaul מה-Gateway</b>: Ethernet/סלולר/LoRa/סיב — תלוי תשתית עירונית.</li>
+              </ul>
+              <div class="note">
+                בפועל: האריחים עושים Mesh קצר־טווח, וה-Gateway מעביר למרכז.
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>מזהים: מה בדיוק נשמר באריח?</h4>
+              <ul>
+                <li><b>UID קבוע</b> (צרוב בייצור) – מספר סידורי/מפתח זהות.</li>
+                <li><b>MAC/Network ID</b> – מזהה תקשורת (או נגזר מה-UID).</li>
+                <li><b>טבלת שכנים</b> – מי סביבי (לימוד אוטומטי לאחר התקנה).</li>
+                <li><b>מפתח הצפנה</b> – לתעבורת Mesh חתומה.</li>
+              </ul>
+              <div class="note warn">
+                מומלץ שההודעות יהיו חתומות (Integrity) כדי למנוע “הזרקת התרעות”.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card">
+              <h4>איך משייכים UID למיקום על המדרכה?</h4>
+              <ol class="steps">
+                <li><b>בהתקנה</b>: כל אריח נסרק (QR/ברקוד/ NFC) והאפליקציה רושמת את נקודת המיקום (GPS + רפרנס לתכנית).</li>
+                <li><b>לימוד שכנים</b>: האריחים מבצעים “Hello” ולומדים מי צמוד למי (Topological map).</li>
+                <li><b>אימות</b>: המפה בשרת בודקת שהקשרים הגיוניים (גרף סדור), ומתריעה על אריח חסר/שגוי.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="protocol">
+      <summary class="sec-h">
+        <h3>5) פרוטוקול אירועים: ALERT → CONFIRM → MAP</h3>
+        <span class="badge"><span class="mini"></span>התרעה מתגלגלת</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-7">
+            <div class="card">
+              <h4>תרשים זרימה — איך ההתרעה מתפשטת</h4>
+              <div class="mermaid">
+flowchart TD
+  S[חיישנים דוגמים] --> D{חריגה?}
+  D -- לא --> S
+  D -- כן --> A[נוצר ALERT מקומי<br/>כולל UID, סוג, עוצמה, זמן]
+  A --> N[שידור לשכנים]
+  N --> C{שכנים מאשרים?}
+  C -- לא --> R[סיווג: רעש/צעדים<br/>לוג בלבד]
+  C -- כן --> E[Escalation: העלאת רמת אירוע]
+  E --> G[שליחה ל-Gateway]
+  G --> M[מיפוי אירוע בשרת<br/>Heatmap + כיוון התפשטות]
+  M --> O[התרעה תפעולית/חירום]
+              </div>
+            </div>
+          </div>
+          <div class="col-5">
+            <div class="card">
+              <h4>מבנה הודעה מומלץ (דוגמה)</h4>
+              <pre>
+{
+  "msg": "ALERT",
+  "uid": "PAVER-0x12AB34",
+  "ts": 1734970000,
+  "type": "seismic | sink | flood | temp_anom",
+  "score": 0.0..1.0,
+  "features": {
+    "acc_rms": 0.18,
+    "tilt_deg": 0.9,
+    "temp_top": 12.4,
+    "temp_depth": 9.8,
+    "moist": 0.72
+  },
+  "hop": 0,
+  "sig": "HMAC/..."
+}
+              </pre>
+              <div class="note">
+                <b>score</b> הוא ציון “כמה זה אירוע אמיתי”, שמחושב מקומית + מאומת שכנים.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="power">
+      <summary class="sec-h">
+        <h3>6) חשמל והפעלה: איך האריח “חי” לאורך זמן</h3>
+        <span class="badge"><span class="mini"></span>צריכה נמוכה + אגירה</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>גישה מעשית (הכי פשוט ליישום)</h4>
+              <ul>
+                <li><b>סוללה + SuperCap</b>: האריח ישן רוב הזמן, מתעורר למדידה/שידור.</li>
+                <li><b>דגימה מחזורית</b>: כל X שניות דגימה קצרה, ובאירוע — דגימה מהירה.</li>
+                <li><b>OTA</b>: עדכוני קושחה דרך ה-Gateway (לשיפור אלגוריתמים).</li>
+              </ul>
+              <div class="note warn">
+                הכי חשוב: <b>תכנון צריכת חשמל</b> מהיום הראשון (Sleep עמוק, שידורים קצרים).
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>גישה מתקדמת (אנרגיה מהסביבה)</h4>
+              <ul>
+                <li><b>תרמו-חשמל (TEG)</b>: ניצול הפרשי טמפרטורה בין פני שטח לעומק.</li>
+                <li><b>פיאזו</b>: ניצול דריכה/רטט להטענת קבל.</li>
+                <li><b>PV דק</b>: אפשרי בשוליים/אזורי אור, אך דורש עמידות/ניקוי.</li>
+              </ul>
+              <div class="note">
+                אפשר לשלב: סוללה קטנה + Harvesting כדי להאריך חיים משמעותית.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details open class="sec" id="build">
+      <summary class="sec-h">
+        <h3>7) תכנית יישום שלב־אחר־שלב (MVP → פיילוט → פריסה)</h3>
+        <span class="badge"><span class="mini"></span>מה לעשות בפועל</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>שלבי עבודה מומלצים</h4>
+              <ol class="steps">
+                <li><b>הגדרת יעד</b>: בחר תרחיש מוביל (רעידה / שקיעה / הצפה) + מדדי הצלחה (False alarm, זמן תגובה, כיסוי).</li>
+                <li><b>אב-טיפוס אריח</b>: קופסה אטומה בתוך אריח דמה (מדפסת/יציקה), IMU+טמפ'+לחות + Mesh בסיסי.</li>
+                <li><b>פרוטוקול Mesh</b>: הודעות ALERT/CONFIRM + מפת שכנים + הצפנה בסיסית.</li>
+                <li><b>אלגוריתם “ציון אירוע”</b>: חוקים פשוטים (thresholds) + אימות מרחבי (לפחות N שכנים).</li>
+                <li><b>Gateway</b>: מכשיר אחד שמאזין, מרכז, ושולח לשרת (מחשב קטן/ראוטר תעשייתי).</li>
+                <li><b>דשבורד</b>: מפה (נקודות/Heatmap) + ציר זמן + לוגים + סטטוס סוללות.</li>
+                <li><b>פיילוט שטח</b>: 20–50 אריחים בקטע מדרכה קטן, איסוף נתונים 4–8 שבועות.</li>
+                <li><b>שיפור</b>: עדכון אלגוריתם, סינון צעדים/רכבים, כיול ספים לפי העיר/חומר.</li>
+                <li><b>פריסה מדורגת</b>: הוספת Gateways, סטנדרט התקנה, ונוהל תחזוקה (החלפת אריח פגום כמו אריח רגיל).</li>
+              </ol>
+
+              <div class="note">
+                טיפ פרקטי: בהתחלה אל תנסה “הכול”. בחר אירוע אחד (למשל הצפה) והוכח זיהוי+מיפוי.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card">
+              <h4>רשימת BOM מינימלית לאריח (כיוון)</h4>
+              <ul>
+                <li>MCU + Radio (BLE/802.15.4)</li>
+                <li>IMU (תאוצה/ג׳יירו)</li>
+                <li>2× חיישני טמפרטורה (Top/Depth)</li>
+                <li>חיישן לחות/מוליכות מוגן</li>
+                <li>סוללה + SuperCap + ניהול טעינה</li>
+                <li>איטום (Potting) + מארז פנימי</li>
+              </ul>
+              <div class="note warn">
+                כל רכיב חייב להיות מותאם לרטיבות, טמפ’, זעזועים, מלחים ושחיקה.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card">
+              <h4>רשימת BOM ל-Gateway (כיוון)</h4>
+              <ul>
+                <li>מודול רדיו תואם Mesh (BLE/Thread coordinator)</li>
+                <li>Backhaul: Ethernet/4G/5G/סיב</li>
+                <li>אחסון לוגים מקומי + שעון זמן</li>
+                <li>UPS/גיבוי קצר (רצוי)</li>
+              </ul>
+              <div class="note">
+                Gateways אפשר לשלב בעמודי תאורה/תחנות אוטובוס/ארונות קיימים.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="algo">
+      <summary class="sec-h">
+        <h3>8) אלגוריתם בסיסי לזיהוי אירועים (פשוט אבל עובד)</h3>
+        <span class="badge"><span class="mini"></span>ספים + אימות שכנים</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>עקרון: ציון אירוע מקומי + “הסכמה” מרחבית</h4>
+              <p>
+                במקום “להאמין” לחיישן יחיד, מחשבים <b>score</b> מקומי (0..1) ואז דורשים
+                <b>N שכנים</b> שיראו אירוע דומה בתוך חלון זמן קצר.
+              </p>
+              <pre>
+score = w1 * norm(acc_rms) +
+        w2 * norm(|tilt|) +
+        w3 * norm(moist) +
+        w4 * norm(|temp_top - temp_depth|)
+
+if score > T_local:
+    broadcast ALERT
+    wait responses (CONFIRM/REJECT) for Δt
+    if confirms >= N:
+        escalate & forward to Gateway
+    else:
+        log as noise
+              </pre>
+              <div class="note">
+                בהמשך אפשר להחליף את הנורמליזציה/משקלים במודל למידה — אבל MVP טוב מתחיל פשוט.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="civil">
+      <summary class="sec-h">
+        <h3>9) הנדסה אזרחית: התקנה, איטום, ניקוז ועמידות</h3>
+        <span class="badge"><span class="mini"></span>שדה אמיתי</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>מה חייבים לפתור כדי שזה יחזיק שנים</h4>
+              <ul>
+                <li><b>איטום פנימי</b>: Potting/מארז IP גבוה לאלקטרוניקה.</li>
+                <li><b>ניקוז</b>: מים לא יעמדו בתוך שכבות האריח.</li>
+                <li><b>החלפה</b>: אריח חייב להיות ניתן להחלפה בלי “לקרוע” חצי מדרכה.</li>
+                <li><b>שחיקה</b>: פני שטח עמידים, צבע שלא דוהה מהר.</li>
+              </ul>
+              <div class="note warn">
+                נקודת כשל נפוצה: חדירת מים למחברים/סדקים. עדיף תכנון ללא מחברים חשופים.
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>הטמעה במקומות עם מים/הצפות</h4>
+              <ul>
+                <li>הקשחה נגד קורוזיה</li>
+                <li>חומרים לא מתנפחים במים</li>
+                <li>לוגיקה שמכירה “מצב רטוב תמיד” ולא מתריעה סתם</li>
+              </ul>
+              <div class="note">
+                אפשר להגדיר “מצב חירום הצפה” שבו האריחים מעלים קצב דיווח.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="security">
+      <summary class="sec-h">
+        <h3>10) אבטחה: איך מונעים זיוף התרעות</h3>
+        <span class="badge"><span class="mini"></span>חתימה + הרשאות</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>מינימום הכרחי</h4>
+              <ul>
+                <li><b>הודעות חתומות</b> (HMAC/Signature) כדי למנוע “הזרקת ALERT”.</li>
+                <li><b>מפתחות לכל אריח</b> (ייחודי) + מפתח רשת (משותף) לפי אזור.</li>
+                <li><b>רמות הרשאה</b>: אריחים בלבד יכולים להרים ALERT, Gateway מאשר ומשדר למרכז.</li>
+                <li><b>OTA מאובטח</b>: עדכוני קושחה חתומים בלבד.</li>
+              </ul>
+              <div class="note danger">
+                בלי חתימה והקשחה בסיסית — כל אחד יכול לשדר “רעידת אדמה” מזויפת. אבטחה היא חלק מהמערכת.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="tests">
+      <summary class="sec-h">
+        <h3>11) בדיקות שטח: איך מוכיחים שזה עובד</h3>
+        <span class="badge"><span class="mini"></span>מדידה אמיתית</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-6">
+            <div class="card">
+              <h4>תרחישי בדיקה מומלצים</h4>
+              <ul>
+                <li><b>צעדים/ריצה</b>: לבדוק שאין התרעות שווא.</li>
+                <li><b>רכב/משאית ליד</b>: הבחנה בין תנועה רגילה לאירוע.</li>
+                <li><b>רטיבות</b>: שפיכת מים/גשם מלאכותי, מעקב “שפת מים”.</li>
+                <li><b>זעזוע מבוקר</b>: פטיש גומי/מכשיר רטט, ולראות התפשטות.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <h4>מדדים (KPIs)</h4>
+              <ul>
+                <li><b>False Alarm Rate</b>: כמה התרעות שווא ליום/שבוע.</li>
+                <li><b>Detection Latency</b>: זמן מרגע אירוע עד התרעה במרכז.</li>
+                <li><b>Spatial Consistency</b>: האם המפה מתאימה למציאות.</li>
+                <li><b>Battery Life</b>: זמן עבודה בין תחזוקות.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="roadmap">
+      <summary class="sec-h">
+        <h3>12) מפת דרכים לשדרוגים</h3>
+        <span class="badge"><span class="mini"></span>אחרי ה-MVP</span>
+      </summary>
+      <div class="sec-b">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>מה לשדרג בהמשך</h4>
+              <ul>
+                <li><b>הנדסת “גאומטריה”</b>: דפוסים מוליכים שונים לפי אזור/עומק/מטרה.</li>
+                <li><b>למידה</b>: מודל שמסווג אוטומטית אירועים לפי נתוני פיילוט.</li>
+                <li><b>Self-healing Mesh</b>: מסלולים חלופיים כשאריח מת/מוצף.</li>
+                <li><b>אינטגרציה עירונית</b>: פתיחת קריאות תחזוקה אוטומטיות, שילוב GIS.</li>
+              </ul>
+              <div class="note">
+                אפשר להפוך את המדרכה ל”מערכת עצבים” של העיר — צפופה, מקומית, ומיידית.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div class="footer">
+      מסמך טכני — משתלבות חכמות (אגירת חום/קור + Mesh חישה/תקשורת).<br/>
+      ניתן לערוך ולהוסיף שרטוטים/תביעות פטנט/מפרטי BOM לפי צורך.
+    </div>
+
+  </div>
+</main>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "dark" });
+
+  const toc = document.getElementById('toc');
+  const sections = [...document.querySelectorAll('details.sec[id]')];
+  const extraAnchors = [{id:'intro', title:'פתיחה והסבר כללי'}].concat(
+    sections.map(d => ({ id: d.id, title: d.querySelector('h3')?.innerText?.trim() || d.id }))
+  );
+
+  toc.innerHTML = extraAnchors.map((s, i) => {
+    const tag = i === 0 ? 'INTRO' : `S${i}`;
+    return `<a href="#${s.id}">${s.title} <span class="tag">${tag}</span></a>`;
+  }).join('');
+
+  toc.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if(!a) return;
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if(!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - 82;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+
+  document.getElementById('toTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  let expanded = true;
+  const btn = document.getElementById('expandAll');
+  btn.addEventListener('click', () => {
+    expanded = !expanded;
+    sections.forEach(s => s.open = expanded);
+    btn.textContent = expanded ? 'סגור הכל' : 'פתח הכל';
+  });
+  btn.textContent = 'סגור הכל';
+
+  const input = document.getElementById('q');
+  const hits = document.getElementById('hits');
+
+  function clearHighlights(){
+    document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+  }
+  function search(){
+    clearHighlights();
+    const q = input.value.trim().toLowerCase();
+    if(!q){ hits.textContent = ""; return; }
+
+    let found = 0;
+    sections.forEach(d => {
+      const text = d.innerText.toLowerCase();
+      if(text.includes(q)){
+        d.open = true;
+        d.classList.add('highlight');
+        found++;
+      }
+    });
+
+    const intro = document.getElementById('intro');
+    if(intro && intro.innerText.toLowerCase().includes(q)){
+      intro.classList.add('highlight');
+      found++;
+    }
+
+    hits.textContent = found ? `${found} תוצאות` : 'אין תוצאות';
+  }
+
+  input.addEventListener('input', () => {
+    window.clearTimeout(window.__t);
+    window.__t = window.setTimeout(search, 120);
+  });
+
+  window.addEventListener('load', () => {
+    if(location.hash){
+      const id = location.hash.slice(1);
+      const el = document.getElementById(id);
+      if(el){
+        const y = el.getBoundingClientRect().top + window.scrollY - 82;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+  });
+</script>
+</body>
+</html>
