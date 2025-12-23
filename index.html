@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,15 +7,28 @@
 
   <style>
     :root{
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --head:#111827;
+      /* ===== Base (Light) ===== */
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --bg2:#ecfeff;
+
+      --card:rgba(255,255,255,0.78);
+      --cardSolid:#ffffff;
+      --card2:rgba(255,255,255,0.60);
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,0.35);
+
+      --head:#0b1220;
       --link:#2563eb;
-      --shadow:0 6px 18px rgba(0,0,0,0.08);
-      --r:12px;
+
+      --shadow: 0 18px 50px rgba(2,6,23,0.10);
+      --shadow2: 0 10px 22px rgba(2,6,23,0.10);
+      --r:16px;
+      --r2:22px;
+
+      --focus: rgba(59,130,246,0.18);
 
       /* category colors */
       --c-net:#0ea5e9;
@@ -32,122 +45,174 @@
       --c-bio:#8b5cf6;
 
       /* tag colors */
-      --tag-bg:#eef2ff;
-      --tag-bd:#c7d2fe;
+      --tag-bg: rgba(238,242,255,0.85);
+      --tag-bd: rgba(199,210,254,0.9);
       --tag-tx:#3730a3;
 
       --ok:#16a34a;
       --warn:#f59e0b;
       --danger:#ef4444;
+
+      --glass: blur(14px);
+    }
+
+    /* ===== Dark Theme Overrides ===== */
+    html[data-theme="dark"]{
+      --bg0:#070a12;
+      --bg1:#0b1020;
+      --bg2:#061b1f;
+
+      --card:rgba(15,23,42,0.62);
+      --cardSolid:#0b1220;
+      --card2:rgba(2,6,23,0.55);
+
+      --text:#e5e7eb;
+      --muted:#a3adc2;
+      --line:rgba(148,163,184,0.18);
+
+      --head:#0b1220;
+      --link:#93c5fd;
+
+      --shadow: 0 22px 60px rgba(0,0,0,0.55);
+      --shadow2: 0 12px 26px rgba(0,0,0,0.45);
+
+      --focus: rgba(147,197,253,0.16);
+
+      --tag-bg: rgba(30,41,59,0.70);
+      --tag-bd: rgba(148,163,184,0.20);
+      --tag-tx:#e5e7eb;
     }
 
     *{box-sizing:border-box}
+
     body{
-      font-family: Arial, sans-serif;
-      background:var(--bg);
-      margin:30px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0;
       user-select:none;
       color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, var(--bg1), transparent 55%),
+        radial-gradient(1100px 650px at 85% 0%, var(--bg2), transparent 55%),
+        radial-gradient(900px 540px at 40% 95%, rgba(59,130,246,0.18), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+      padding:22px;
     }
 
-    h1{ margin:0 0 14px; }
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+    }
+
+    /* Subtle page grid */
+    .container::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(to right, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.65), transparent 65%);
+      opacity:0.55;
+      z-index:0;
+    }
+
+    /* Skip link (accessibility) */
+    .skip{
+      position:absolute;
+      top:-40px;
+      right:14px;
+      background:var(--cardSolid);
+      border:1px solid var(--line);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow:var(--shadow2);
+      color:var(--text);
+      z-index:9999999;
+    }
+    .skip:focus{ top:14px; outline:none; box-shadow:0 0 0 4px var(--focus), var(--shadow2); }
+
+    /* ===== Header / Hero ===== */
+    .hero{
+      position:relative;
+      z-index:1;
+      background: linear-gradient(135deg, rgba(59,130,246,0.16), rgba(168,85,247,0.14), rgba(20,184,166,0.12));
+      border:1px solid var(--line);
+      border-radius:var(--r2);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:-60px;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35), transparent 45%),
+                  radial-gradient(circle at 80% 30%, rgba(255,255,255,0.22), transparent 50%),
+                  radial-gradient(circle at 50% 90%, rgba(255,255,255,0.18), transparent 55%);
+      filter: blur(18px);
+      opacity:0.85;
+      pointer-events:none;
+    }
 
     .topbar{
+      position:relative;
+      z-index:2;
       display:flex;
+      gap:14px;
       flex-wrap:wrap;
-      gap:10px;
       align-items:flex-end;
       justify-content:space-between;
-      margin-bottom:14px;
+      padding:18px 18px 14px;
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
     }
 
-    .controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:flex-end;
-      margin-bottom:10px;
-    }
-
-    .control{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width:220px;
-    }
-
-    label{
-      font-weight:bold;
-      font-size:13px;
-      color:#374151;
-    }
-
-    input, select, button{
-      padding:10px 12px;
-      font-size:15px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:white;
-      outline:none;
-    }
-
-    input:focus, select:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 3px rgba(59,130,246,0.15);
-    }
-
-    .langbar{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .langbtn{
-      cursor:pointer;
-      border:1px solid var(--line);
-      background:white;
-      border-radius:999px;
-      padding:8px 10px;
-      font-weight:bold;
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
-    }
-
-    .langbtn.active{
-      border-color:#111827;
-      box-shadow:0 6px 16px rgba(17,24,39,0.12);
-      transform:translateY(-1px);
+    h1{
+      margin:0 0 8px;
+      font-size:28px;
+      letter-spacing:-0.02em;
     }
 
     .summary{
-      margin:6px 0 6px;
       color:var(--muted);
       font-size:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
     }
-
-    .summary strong{ color:#111827; }
+    .summary strong{
+      color:var(--text);
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+    }
 
     .pillrow{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
       align-items:center;
-      margin-top:8px;
+      margin-top:10px;
     }
 
     .active-tag{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:7px 10px;
+      padding:8px 10px;
       border-radius:999px;
-      border:1px solid #c7d2fe;
-      background:#eef2ff;
-      color:#3730a3;
-      font-weight:bold;
+      border:1px solid var(--tag-bd);
+      background:var(--tag-bg);
+      color:var(--tag-tx);
+      font-weight:700;
       font-size:13px;
+      box-shadow: 0 8px 18px rgba(2,6,23,0.08);
     }
     .active-tag button{
       border:none;
@@ -155,16 +220,197 @@
       cursor:pointer;
       font-size:16px;
       padding:0 2px;
-      color:#3730a3;
+      color:inherit;
+      opacity:0.9;
+    }
+    .active-tag button:hover{ opacity:1; transform:translateY(-1px); }
+
+    .langbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .langbtn, .themebtn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.50);
+      color:var(--text);
+      border-radius:999px;
+      padding:9px 12px;
+      font-weight:800;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      box-shadow: 0 8px 20px rgba(2,6,23,0.08);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+    html[data-theme="dark"] .langbtn,
+    html[data-theme="dark"] .themebtn{
+      background: rgba(2,6,23,0.35);
+    }
+
+    .langbtn:hover, .themebtn:hover{
+      transform:translateY(-1px);
+      box-shadow: 0 12px 26px rgba(2,6,23,0.14);
+    }
+
+    .langbtn.active{
+      border-color: rgba(15,23,42,0.85);
+      background: rgba(255,255,255,0.70);
+    }
+    html[data-theme="dark"] .langbtn.active{
+      border-color: rgba(226,232,240,0.45);
+      background: rgba(2,6,23,0.45);
+    }
+
+    /* ===== Controls Card ===== */
+    .controls{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r2);
+      box-shadow:var(--shadow2);
+      padding:14px;
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      display:grid;
+      grid-template-columns: 1.25fr 1fr 1fr 0.85fr;
+      gap:12px;
+    }
+
+    .control{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-width:0;
+      padding:10px;
+      border-radius:16px;
+      background: rgba(255,255,255,0.42);
+      border:1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 10px 22px rgba(2,6,23,0.06);
+    }
+    html[data-theme="dark"] .control{
+      background: rgba(2,6,23,0.35);
+      border-color: rgba(148,163,184,0.14);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    label{
+      font-weight:900;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:0.02em;
+      text-transform:uppercase;
+    }
+
+    input, select, button{
+      font-size:15px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.92);
+      color:var(--text);
+      outline:none;
+      padding:11px 12px;
+      transition: box-shadow .14s ease, border-color .14s ease, transform .14s ease, background .14s ease;
+    }
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select{
+      background: rgba(2,6,23,0.55);
+    }
+
+    input:focus, select:focus{
+      border-color: rgba(59,130,246,0.55);
+      box-shadow:0 0 0 4px var(--focus);
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+      margin-top:6px;
+    }
+
+    .smallbtn{
+      padding:9px 11px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.78);
+      cursor:pointer;
+      font-weight:900;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow: 0 10px 20px rgba(2,6,23,0.08);
+    }
+    html[data-theme="dark"] .smallbtn{
+      background: rgba(2,6,23,0.42);
+    }
+    .smallbtn:hover{ transform:translateY(-1px); }
+
+    .smallbtn.ok{
+      border-color: rgba(34,197,94,0.35);
+      background: rgba(34,197,94,0.10);
+    }
+    .smallbtn.ok:hover{ background: rgba(34,197,94,0.16); }
+
+    .smallbtn.danger{
+      border-color: rgba(239,68,68,0.35);
+      background: rgba(239,68,68,0.10);
+    }
+    .smallbtn.danger:hover{ background: rgba(239,68,68,0.16); }
+
+    .fav-only{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.70);
+      height:44px;
+      box-shadow: 0 10px 20px rgba(2,6,23,0.06);
+    }
+    html[data-theme="dark"] .fav-only{
+      background: rgba(2,6,23,0.35);
+    }
+    .fav-only input{ width:18px; height:18px; }
+
+    /* ===== Table ===== */
+    .table-wrap{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      border-radius:var(--r2);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border:1px solid var(--line);
+      background: var(--cardSolid);
+    }
+    html[data-theme="dark"] .table-wrap{
+      background: rgba(2,6,23,0.55);
     }
 
     table{
       width:100%;
-      border-collapse:collapse;
-      background:var(--card);
-      border-radius:var(--r);
-      overflow:hidden;
-      box-shadow:var(--shadow);
+      border-collapse:separate;
+      border-spacing:0;
+      background:transparent;
     }
 
     th, td{
@@ -175,26 +421,48 @@
     }
 
     th{
-      background:var(--head);
-      color:white;
-      font-size:16px;
+      background: rgba(11,18,32,0.92);
+      color:#fff;
+      font-size:15px;
       position:sticky;
       top:0;
       z-index:2;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     tr:last-child td{border-bottom:none}
 
+    /* zebra + hover */
+    tbody tr{
+      transition: transform .14s ease, background .14s ease;
+      background: rgba(255,255,255,0.00);
+    }
+    tbody tr:nth-child(2n){
+      background: rgba(148,163,184,0.06);
+    }
+    html[data-theme="dark"] tbody tr:nth-child(2n){
+      background: rgba(148,163,184,0.05);
+    }
+
+    tbody tr:hover{
+      background: rgba(59,130,246,0.10);
+      transform: translateY(-1px);
+    }
+    html[data-theme="dark"] tbody tr:hover{
+      background: rgba(147,197,253,0.10);
+    }
+
     a{
       color:var(--link);
       text-decoration:none;
-      font-weight:bold;
+      font-weight:900;
     }
     a:hover{ text-decoration:underline; }
 
     .topic{
-      font-weight:bold;
-      color:#374151;
+      font-weight:900;
+      color:var(--text);
       display:flex;
       gap:10px;
       align-items:center;
@@ -203,118 +471,74 @@
 
     .badge{
       font-size:12px;
-      font-weight:bold;
-      padding:4px 10px;
+      font-weight:900;
+      padding:6px 12px;
       border-radius:999px;
       color:white;
       display:inline-flex;
       align-items:center;
-      gap:6px;
+      gap:8px;
       white-space:nowrap;
+      box-shadow: 0 10px 22px rgba(2,6,23,0.10);
     }
+    .b-net{background:linear-gradient(135deg, rgba(14,165,233,1), rgba(56,189,248,1))}
+    .b-ui{background:linear-gradient(135deg, rgba(168,85,247,1), rgba(236,72,153,1))}
+    .b-id{background:linear-gradient(135deg, rgba(34,197,94,1), rgba(16,185,129,1))}
+    .b-med{background:linear-gradient(135deg, rgba(249,115,22,1), rgba(245,158,11,1))}
+    .b-elec{background:linear-gradient(135deg, rgba(245,158,11,1), rgba(251,191,36,1))}
+    .b-thermo{background:linear-gradient(135deg, rgba(239,68,68,1), rgba(244,63,94,1))}
+    .b-audio{background:linear-gradient(135deg, rgba(20,184,166,1), rgba(34,211,238,1))}
+    .b-floor{background:linear-gradient(135deg, rgba(100,116,139,1), rgba(148,163,184,1))}
+    .b-water{background:linear-gradient(135deg, rgba(59,130,246,1), rgba(99,102,241,1))}
+    .b-transport{background:linear-gradient(135deg, rgba(16,185,129,1), rgba(34,197,94,1))}
+    .b-hybrid{background:linear-gradient(135deg, rgba(6,182,212,1), rgba(14,165,233,1))}
+    .b-bio{background:linear-gradient(135deg, rgba(139,92,246,1), rgba(168,85,247,1))}
 
-    .b-net{background:var(--c-net)}
-    .b-ui{background:var(--c-ui)}
-    .b-id{background:var(--c-id)}
-    .b-med{background:var(--c-med)}
-    .b-elec{background:var(--c-elec)}
-    .b-thermo{background:var(--c-thermo)}
-    .b-audio{background:var(--c-audio)}
-    .b-floor{background:var(--c-floor)}
-    .b-water{background:var(--c-water)}
-    .b-transport{background:var(--c-transport)}
-    .b-hybrid{background:var(--c-hybrid)}
-    .b-bio{background:var(--c-bio)}
-
-    .desc{ color:#111827; line-height:1.5; }
-    .muted{ color:var(--muted); font-size:13px; }
-
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-start;
-      margin-top:8px;
+    .desc{
+      color:var(--text);
+      line-height:1.55;
     }
-
-    .smallbtn{
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#f9fafb;
-      cursor:pointer;
-      font-weight:bold;
-      font-size:13px;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-    }
-    .smallbtn:hover{ background:#eef2ff; }
-
-    .smallbtn.danger{ border-color:#fecaca; background:#fff1f2; }
-    .smallbtn.danger:hover{ background:#ffe4e6; }
-
-    .smallbtn.ok{ border-color:#bbf7d0; background:#f0fdf4; }
-    .smallbtn.ok:hover{ background:#dcfce7; }
 
     .fav-wrap{
       display:flex;
-      gap:8px;
-      align-items:center;
+      gap:10px;
+      align-items:flex-start;
       flex-wrap:wrap;
     }
 
     .favbtn{
-      width:36px;
-      height:36px;
-      border-radius:10px;
+      width:38px;
+      height:38px;
+      border-radius:14px;
       border:1px solid var(--line);
-      background:#f9fafb;
+      background: rgba(255,255,255,0.75);
       cursor:pointer;
       font-size:18px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      transition:transform .12s ease, background .12s ease, border .12s ease;
+      transition:transform .12s ease, background .12s ease, border .12s ease, box-shadow .12s ease;
+      box-shadow: 0 10px 18px rgba(2,6,23,0.08);
     }
-    .favbtn:hover{ background:#fff7ed; border-color:#fdba74; transform:translateY(-1px); }
-    .favbtn.active{ background:#fffbeb; border-color:#f59e0b; }
+    html[data-theme="dark"] .favbtn{
+      background: rgba(2,6,23,0.45);
+    }
+    .favbtn:hover{ background: rgba(255,247,237,0.95); border-color: rgba(253,186,116,0.85); transform:translateY(-1px); }
+    .favbtn.active{ background: rgba(255,251,235,0.95); border-color:#f59e0b; }
 
     .favpill{
       display:none;
       font-size:12px;
-      font-weight:bold;
-      padding:3px 8px;
+      font-weight:900;
+      padding:4px 10px;
       border-radius:999px;
-      background:#fffbeb;
-      border:1px solid #f59e0b;
+      background: rgba(255,251,235,0.95);
+      border:1px solid rgba(245,158,11,0.85);
       color:#92400e;
       white-space:nowrap;
+      margin-top:6px;
     }
     tr.fav .favpill{ display:inline-flex; }
-
-    .fav-only{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:white;
-      height:42px;
-    }
-    .fav-only input{ width:18px; height:18px; }
-
-    .empty{
-      margin-top:12px;
-      padding:14px;
-      border-radius:12px;
-      background:white;
-      border:1px dashed #cbd5e1;
-      color:#475569;
-      display:none;
-    }
 
     .tagbar{
       display:flex;
@@ -328,20 +552,51 @@
       align-items:center;
       gap:6px;
       font-size:12px;
-      font-weight:bold;
-      padding:4px 8px;
+      font-weight:900;
+      padding:5px 10px;
       border-radius:999px;
       background:var(--tag-bg);
       border:1px solid var(--tag-bd);
       color:var(--tag-tx);
       cursor:pointer;
       user-select:none;
+      transition: transform .12s ease, filter .12s ease;
     }
     .tag:hover{ filter:brightness(0.98); transform:translateY(-1px); }
     .tag.selected{
-      background:#111827;
-      border-color:#111827;
+      background: rgba(11,18,32,0.95);
+      border-color: rgba(11,18,32,0.95);
       color:#fff;
+    }
+
+    .empty{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background:var(--card);
+      border:1px dashed rgba(148,163,184,0.55);
+      color:var(--muted);
+      display:none;
+      box-shadow: var(--shadow2);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+    }
+
+    footer{
+      position:relative;
+      z-index:1;
+      margin-top:18px;
+      padding:14px 12px;
+      background: rgba(11,18,32,0.92);
+      color:#f8fafc;
+      text-align:center;
+      font-size:14px;
+      border-radius:16px;
+      line-height:1.6;
+      border:1px solid rgba(148,163,184,0.18);
+      box-shadow: var(--shadow2);
     }
 
     /* 🔒 חסימת הדפסה */
@@ -360,54 +615,9 @@
       z-index: 9999;
       white-space: nowrap;
     }
-
-    footer{
-      margin-top:40px;
-      padding:15px;
-      background:#111827;
-      color:#f9fafb;
-      text-align:center;
-      font-size:14px;
-      border-radius:8px;
-      line-height:1.6;
+    html[data-theme="dark"] body::before{
+      color: rgba(255,255,255,0.06);
     }
-
-    /* Mobile: convert table into cards */
-    @media (max-width: 820px){
-      body{ margin:14px; }
-      th{ position:static; }
-      table, thead, tbody, tr, td, th{ display:block; width:100%; }
-      thead{ display:none; }
-      tr{
-        border-bottom:1px solid var(--line);
-        padding:12px;
-      }
-      table{
-        overflow:visible;
-        border-radius:14px;
-      }
-      tr:last-child{ border-bottom:none; }
-      td{
-        border-bottom:none;
-        padding:8px 0;
-        text-align:right;
-      }
-      td[data-label]::before{
-        content: attr(data-label);
-        display:block;
-        font-weight:bold;
-        color:#334155;
-        margin-bottom:6px;
-        font-size:13px;
-      }
-      .control{ min-width: 100%; }
-      .topbar{ align-items:stretch; }
-      .langbar{ justify-content:flex-start; }
-      .favbtn{ width:40px; height:40px; }
-    }
-
-    /* LTR fixes */
-    [dir="ltr"] th, [dir="ltr"] td{ text-align:left; }
 
     /* ✅ FIX: נושא + קישור באותו גובה */
     #indexTable th,
@@ -441,14 +651,18 @@
     .viewer.open{ display:block; }
 
     .viewer-inner{
-      background:#fff;
+      background:var(--cardSolid);
       height:100%;
       width:100%;
-      border-radius:14px;
+      border-radius:18px;
       overflow:hidden;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+      box-shadow:0 18px 60px rgba(0,0,0,0.35);
       display:flex;
       flex-direction:column;
+      border:1px solid rgba(148,163,184,0.22);
+    }
+    html[data-theme="dark"] .viewer-inner{
+      background:#0b1220;
     }
 
     .viewer-bar{
@@ -456,14 +670,16 @@
       align-items:center;
       gap:10px;
       padding:10px;
-      border-bottom:1px solid #e5e7eb;
-      background:#111827;
+      border-bottom:1px solid rgba(148,163,184,0.20);
+      background: rgba(11,18,32,0.92);
       color:#fff;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .viewer-title{
       flex:1;
-      font-weight:bold;
+      font-weight:900;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -471,22 +687,24 @@
 
     .viewer-btn{
       border:1px solid rgba(255,255,255,0.25);
-      background:rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.10);
       color:#fff;
-      padding:8px 10px;
-      border-radius:10px;
+      padding:9px 11px;
+      border-radius:14px;
       cursor:pointer;
-      font-weight:bold;
+      font-weight:900;
       font-size:13px;
+      transition: transform .12s ease, background .12s ease;
     }
-    .viewer-btn:hover{ background:rgba(255,255,255,0.16); }
+    .viewer-btn:hover{ background:rgba(255,255,255,0.18); transform:translateY(-1px); }
 
     .viewer-frame{
       border:0;
       width:100%;
       height:100%;
-      background:#fff;
+      background:var(--cardSolid);
     }
+    html[data-theme="dark"] .viewer-frame{ background:#0b1220; }
 
     /* ✅ Graph modal */
     .graph{
@@ -499,606 +717,695 @@
     }
     .graph.open{ display:block; }
     .graph-inner{
-      background:#fff;
+      background:var(--cardSolid);
       height:100%;
       width:100%;
-      border-radius:14px;
+      border-radius:18px;
       overflow:hidden;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+      box-shadow:0 18px 60px rgba(0,0,0,0.35);
       display:flex;
       flex-direction:column;
+      border:1px solid rgba(148,163,184,0.22);
     }
+    html[data-theme="dark"] .graph-inner{
+      background:#0b1220;
+    }
+
     .graph-bar{
       display:flex;
       align-items:center;
       gap:10px;
       padding:10px;
-      border-bottom:1px solid #e5e7eb;
-      background:#111827;
+      border-bottom:1px solid rgba(148,163,184,0.20);
+      background: rgba(11,18,32,0.92);
       color:#fff;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .graph-title{ flex:1; font-weight:bold; }
-    .graph-canvas{ flex:1; width:100%; height:100%; display:block; background:#fff; }
+    .graph-title{ flex:1; font-weight:900; }
+    .graph-canvas{ flex:1; width:100%; height:100%; display:block; background:var(--cardSolid); }
+    html[data-theme="dark"] .graph-canvas{ background:#0b1220; }
+
     .hint{
       color:#e5e7eb;
       font-size:12px;
       opacity:.9;
     }
+
+    /* Scrollbar (nice-to-have) */
+    ::-webkit-scrollbar{ height:10px; width:10px; }
+    ::-webkit-scrollbar-thumb{
+      background: rgba(148,163,184,0.35);
+      border-radius: 999px;
+      border:2px solid rgba(255,255,255,0.0);
+    }
+    html[data-theme="dark"] ::-webkit-scrollbar-thumb{
+      background: rgba(148,163,184,0.22);
+    }
+
+    /* Mobile: convert table into cards */
+    @media (max-width: 980px){
+      .controls{ grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 820px){
+      body{ padding:14px; }
+      .topbar{ padding:14px; }
+      h1{ font-size:24px; }
+
+      th{ position:static; }
+      table, thead, tbody, tr, td, th{ display:block; width:100%; }
+      thead{ display:none; }
+
+      tbody tr{
+        border-bottom:1px solid var(--line);
+        padding:12px;
+        border-radius:16px;
+        margin:10px;
+        background: rgba(255,255,255,0.55);
+        box-shadow: 0 10px 22px rgba(2,6,23,0.08);
+      }
+      html[data-theme="dark"] tbody tr{
+        background: rgba(2,6,23,0.35);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+      }
+      tbody tr:nth-child(2n){ background: rgba(255,255,255,0.55); }
+      html[data-theme="dark"] tbody tr:nth-child(2n){ background: rgba(2,6,23,0.35); }
+
+      tbody tr:hover{ transform:none; }
+
+      .table-wrap{
+        overflow:visible;
+        border-radius:18px;
+        background: transparent;
+        border:none;
+        box-shadow:none;
+      }
+
+      td{
+        border-bottom:none;
+        padding:8px 0;
+        text-align:right;
+      }
+      td[data-label]::before{
+        content: attr(data-label);
+        display:block;
+        font-weight:900;
+        color:var(--muted);
+        margin-bottom:6px;
+        font-size:12px;
+        letter-spacing:0.02em;
+        text-transform:uppercase;
+      }
+
+      .langbar{ justify-content:flex-start; }
+      .favbtn{ width:40px; height:40px; }
+      .summary strong{ padding:4px 9px; }
+    }
+
+    /* LTR fixes */
+    [dir="ltr"] th, [dir="ltr"] td{ text-align:left; }
   </style>
 </head>
 
 <body>
+  <a class="skip" href="#main">דלג לתוכן</a>
 
-  <div class="topbar">
-    <div>
-      <h1 data-i18n="welcome">ברוכים הבאים</h1>
-      <div class="summary">
-        <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
-        <strong id="countAll">0</strong>
-        ·
-        <span data-i18n="summaryShown">מוצגים כעת:</span>
-        <strong id="countShown">0</strong>
-        ·
-        <span data-i18n="summaryFav">מועדפים:</span>
-        <strong id="countFav">0</strong>
+  <div class="container">
+    <section class="hero">
+      <div class="topbar">
+        <div>
+          <h1 data-i18n="welcome">ברוכים הבאים</h1>
+          <div class="summary">
+            <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
+            <strong id="countAll">0</strong>
+            <span aria-hidden="true">·</span>
+            <span data-i18n="summaryShown">מוצגים כעת:</span>
+            <strong id="countShown">0</strong>
+            <span aria-hidden="true">·</span>
+            <span data-i18n="summaryFav">מועדפים:</span>
+            <strong id="countFav">0</strong>
+          </div>
+          <div class="pillrow" id="activeTagsRow" style="display:none;"></div>
+        </div>
+
+        <div class="langbar" aria-label="Language selector">
+          <button class="themebtn" id="themeBtn" type="button" title="Theme">🌙 <span id="themeTxt">Dark</span></button>
+          <button class="langbtn active" data-lang="he">🇮🇱 <span>עברית</span></button>
+          <button class="langbtn" data-lang="en">🌍 <span>English</span></button>
+          <button class="langbtn" data-lang="ar">🇵🇸 <span>العربية</span></button>
+          <button class="langbtn" data-lang="ru">🇷🇺 <span>Русский</span></button>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls" id="main">
+      <div class="control">
+        <label for="search" data-i18n="searchLabel">חיפוש</label>
+        <input id="search" type="text" placeholder="הקלד מילה/שם קובץ/תיאור/תגית…" data-i18n-ph="searchPh">
+        <div class="muted" data-i18n="searchHint">מחפש בתוך נושא, שם קובץ, תיאור, תגיות ואיברים.</div>
       </div>
 
-      <div class="pillrow" id="activeTagsRow" style="display:none;"></div>
+      <div class="control">
+        <label for="category" data-i18n="filterLabel">סינון לפי קטגוריה</label>
+        <select id="category">
+          <option value="all" data-i18n="filterAll">הכל</option>
+          <option value="net" data-i18n="catNet">תקשורת ורשתות</option>
+          <option value="ui" data-i18n="catUi">ממשק אדם–מסך</option>
+          <option value="id" data-i18n="catId">זיהוי זהות</option>
+          <option value="med" data-i18n="catMed">רפואה חכמה</option>
+          <option value="bio" data-i18n="catBio">מודלים ביולוגיים</option>
+          <option value="elec" data-i18n="catElec">חשמל וסימולציות</option>
+          <option value="thermo" data-i18n="catThermo">תרמודינמיקה</option>
+          <option value="audio" data-i18n="catAudio">אנרגיה וקול</option>
+          <option value="floor" data-i18n="catFloor">אנרגיה מהרצפה</option>
+          <option value="water" data-i18n="catWater">תנועה על מים</option>
+          <option value="transport" data-i18n="catTransport">תחבורה</option>
+          <option value="hybrid" data-i18n="catHybrid">הנעה היברידית</option>
+        </select>
+
+        <div class="actions">
+          <button class="smallbtn" id="resetBtn" data-i18n="resetBtn">איפוס</button>
+          <button class="smallbtn ok" id="openAllBtn" data-i18n="openAllBtn">פתח קישור ראשון (ב־Viewer)</button>
+          <button class="smallbtn" id="openAllTabsBtn" data-i18n="openAllTabsBtn">פתח את כולם בלשוניות</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <label for="organ" data-i18n="organLabel">סינון לפי איבר</label>
+        <select id="organ">
+          <option value="all" data-i18n="organAll">הכל</option>
+          <option value="pancreas" data-i18n="organPancreas">לבלב</option>
+          <option value="liver" data-i18n="organLiver">כבד</option>
+          <option value="kidney" data-i18n="organKidney">כליות</option>
+          <option value="heart" data-i18n="organHeart">לב</option>
+          <option value="lung" data-i18n="organLung">ריאות</option>
+          <option value="spleen" data-i18n="organSpleen">טחול</option>
+          <option value="blood" data-i18n="organBlood">דם</option>
+          <option value="air" data-i18n="organAir">אוויר/נשימה</option>
+          <option value="skin" data-i18n="organSkin">עור</option>
+        </select>
+
+        <div class="actions">
+          <button class="smallbtn" id="graphBtn" data-i18n="graphBtn">מפת קשרים (Graph)</button>
+          <button class="smallbtn danger" id="clearFavBtn" data-i18n="clearFavBtn">נקה מועדפים</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <label data-i18n="sortLabel">מיון</label>
+        <select id="sort">
+          <option value="default" data-i18n="sortDefault">ברירת מחדל</option>
+          <option value="title" data-i18n="sortTitle">לפי כותרת</option>
+          <option value="file" data-i18n="sortFile">לפי שם קובץ</option>
+          <option value="favFirst" data-i18n="sortFavFirst">מועדפים בראש</option>
+        </select>
+
+        <label data-i18n="favOnlyLabel" style="margin-top:8px;">תצוגה</label>
+        <div class="fav-only">
+          <input type="checkbox" id="favOnly">
+          <span data-i18n="favOnlyText">הצג מועדפים בלבד</span>
+        </div>
+        <div class="muted" data-i18n="favHint">הכוכב נשמר בדפדפן (LocalStorage).</div>
+      </div>
     </div>
 
-    <div class="langbar" aria-label="Language selector">
-      <button class="langbtn active" data-lang="he">🇮🇱 <span>עברית</span></button>
-      <button class="langbtn" data-lang="en">🌍 <span>English</span></button>
-      <button class="langbtn" data-lang="ar">🇵🇸 <span>العربية</span></button>
-      <button class="langbtn" data-lang="ru">🇷🇺 <span>Русский</span></button>
+    <div class="empty" id="emptyBox" data-i18n="empty">
+      לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה/איבר אחרת.
     </div>
+
+    <div class="table-wrap">
+      <table id="indexTable">
+        <thead>
+          <tr>
+            <th data-i18n="thTopic">נושא</th>
+            <th data-i18n="thLink">שם הקובץ / קישור</th>
+            <th data-i18n="thDesc">תיאור</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- ===================== -->
+          <!-- ✅ LIST OF ALL FILES  -->
+          <!-- ===================== -->
+
+          <tr class="row" data-cat="net"
+              data-key="usb_network_osi_ipv6_plus_hw_usecase.html"
+              data-org=""
+              data-tags="usb,network,osi,ipv6,ipv4,protocol,hardware">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-net" data-i18n="badgeNet">🌐🔌 תקשורת ורשתות</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="usb_network_osi_ipv6_plus_hw_usecase.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
+                  <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="usb">#usb</span>
+                    <span class="tag" data-tag="ipv6">#ipv6</span>
+                    <span class="tag" data-tag="osi">#osi</span>
+                    <span class="tag" data-tag="hardware">#hardware</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descUsb">
+              חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="ui"
+              data-key="fingerprint_gesture_full_v5_he.html"
+              data-org="skin"
+              data-tags="fingerprint,gesture,ui,screen,biometric,auth">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-ui" data-i18n="badgeUi">🖐️📺 ממשק אדם–מסך</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="fingerprint_gesture_full_v5_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
+                  <div class="muted">fingerprint_gesture_full_v5_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="fingerprint">#fingerprint</span>
+                    <span class="tag" data-tag="gesture">#gesture</span>
+                    <span class="tag" data-tag="auth">#auth</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descFp">
+              מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="ui"
+              data-key="new 8.html"
+              data-org="skin"
+              data-tags="lighting,biometric,fingerprint,pointing,ui,security">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-ui" data-i18n="badgeLightBio">💡🖐️ תאורה חכמה ביומטרית</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="new 8.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="new%208.html" data-i18n="linkLightBio">תאורה ללא מפסיקים — הצבעה + טביעת אצבע</a>
+                  <div class="muted">new 8.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="lighting">#lighting</span>
+                    <span class="tag" data-tag="biometric">#biometric</span>
+                    <span class="tag" data-tag="security">#security</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descLightBio">
+              דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="id"
+              data-key="bivdn_multilang_full_mobile.html"
+              data-org=""
+              data-tags="identity,mobile,multilang,verification,ui">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-id" data-i18n="badgeId">📱🌍 זיהוי זהות רב־לשוני</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="bivdn_multilang_full_mobile.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
+                  <div class="muted">bivdn_multilang_full_mobile.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="identity">#identity</span>
+                    <span class="tag" data-tag="multilang">#multilang</span>
+                    <span class="tag" data-tag="mobile">#mobile</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descBivdn">
+              מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="med"
+              data-key="bio_magnet_therapy.html"
+              data-org="blood,heart"
+              data-tags="drug,delivery,dna,magnet,gps,therapy,patch">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="bio_magnet_therapy.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
+                  <div class="muted">bio_magnet_therapy.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="drug">#drug</span>
+                    <span class="tag" data-tag="dna">#dna</span>
+                    <span class="tag" data-tag="therapy">#therapy</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descBio">
+              מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="thermo"
+              data-key="plant_gas_to_bio_oil_mvp_he.html"
+              data-org=""
+              data-tags="plants,gas,biooil,urban,thermal,conversion">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-thermo" data-i18n="badgePlantOil">🌱🛢️ גזים → נפט ביולוגי</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="plant_gas_to_bio_oil_mvp_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="plant_gas_to_bio_oil_mvp_he.html" data-i18n="linkPlantOil">המרת גזים מצמחים לנפט ביולוגי (MVP)</a>
+                  <div class="muted">plant_gas_to_bio_oil_mvp_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="plants">#plants</span>
+                    <span class="tag" data-tag="gas">#gas</span>
+                    <span class="tag" data-tag="thermal">#thermal</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descPlantOil">
+              מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="med"
+              data-key="patent_clean_air_square_zone_he.html"
+              data-org="lung,air"
+              data-tags="cleanair,airflow,filter,particles,hospital,zone">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-med" data-i18n="badgeCleanAir">🧼🫁 אזור אוויר נקי</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="patent_clean_air_square_zone_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="patent_clean_air_square_zone_he.html" data-i18n="linkCleanAir">פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)</a>
+                  <div class="muted">patent_clean_air_square_zone_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="cleanair">#cleanair</span>
+                    <span class="tag" data-tag="hospital">#hospital</span>
+                    <span class="tag" data-tag="particles">#particles</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descCleanAir">
+              יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="bio"
+              data-key="metabolic_railway_model_he_v3.html"
+              data-org="pancreas,liver,kidney,blood,spleen"
+              data-tags="metabolism,pancreas,insulin,glucose,liver,kidney,spleen,railway,stations,homeostasis">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-bio" data-i18n="badgeMetabolicRail">🚆🧬 מודל רכבת מטבולית</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="metabolic_railway_model_he_v3.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="metabolic_railway_model_he_v3.html" data-i18n="linkMetabolicRail">מודל רכבת מטבולית – ויסות חומרים בגוף</a>
+                  <div class="muted">metabolic_railway_model_he_v3.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="pancreas">#pancreas</span>
+                    <span class="tag" data-tag="glucose">#glucose</span>
+                    <span class="tag" data-tag="homeostasis">#homeostasis</span>
+                    <span class="tag" data-tag="stations">#stations</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descMetabolicRail">
+              מודל ביולוגי־מערכתי: הלבלב כתחנת מקור מרכזית, והאיברים כתחנות “רכבת” מטבוליות לפירוק/ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי.
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="elec"
+              data-key="electricity_models_plus_simulations_bilingual_toggle.html"
+              data-org=""
+              data-tags="electricity,physics,simulation,model,interactive">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="electricity_models_plus_simulations_bilingual_toggle.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
+                  <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="electricity">#electricity</span>
+                    <span class="tag" data-tag="simulation">#simulation</span>
+                    <span class="tag" data-tag="interactive">#interactive</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
+          </tr>
+
+          <tr class="row" data-cat="thermo"
+              data-key="thermosiphon_flow_calculator_he.html"
+              data-org=""
+              data-tags="thermosiphon,flow,calculator,physics,heat">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="thermosiphon_flow_calculator_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
+                  <div class="muted">thermosiphon_flow_calculator_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="heat">#heat</span>
+                    <span class="tag" data-tag="flow">#flow</span>
+                    <span class="tag" data-tag="calculator">#calculator</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
+          </tr>
+
+          <tr class="row" data-cat="audio"
+              data-key="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html"
+              data-org=""
+              data-tags="audio,energy,headphones,selfcharging,harvesting,signal">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
+                  <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="audio">#audio</span>
+                    <span class="tag" data-tag="energy">#energy</span>
+                    <span class="tag" data-tag="harvesting">#harvesting</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
+          </tr>
+
+          <tr class="row" data-cat="floor"
+              data-key="smart_floor_pressure_to_energy_model_he.html"
+              data-org=""
+              data-tags="floor,energy,pressure,harvesting,loads">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="smart_floor_pressure_to_energy_model_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
+                  <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="floor">#floor</span>
+                    <span class="tag" data-tag="pressure">#pressure</span>
+                    <span class="tag" data-tag="energy">#energy</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
+          </tr>
+
+          <tr class="row" data-cat="water"
+              data-key="water_walking_shoes_sonar_pump.html"
+              data-org=""
+              data-tags="water,shoes,sonar,pump,balance">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="water_walking_shoes_sonar_pump.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
+                  <div class="muted">water_walking_shoes_sonar_pump.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="water">#water</span>
+                    <span class="tag" data-tag="sonar">#sonar</span>
+                    <span class="tag" data-tag="pump">#pump</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
+          </tr>
+
+          <tr class="row" data-cat="water"
+              data-key="smart_water_powered_door_full_plus_fixed_he.html"
+              data-org=""
+              data-tags="water,door,electric,hydraulic,pressure,energy,smart,control,security,valve">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-water" data-i18n="badgeWaterDoor">🚪💧 דלת חכמה מונעת מים</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="smart_water_powered_door_full_plus_fixed_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="smart_water_powered_door_full_plus_fixed_he.html" data-i18n="linkWaterDoor">דלת חשמלית עם מים — מודל מלא</a>
+                  <div class="muted">smart_water_powered_door_full_plus_fixed_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="water">#water</span>
+                    <span class="tag" data-tag="door">#door</span>
+                    <span class="tag" data-tag="pressure">#pressure</span>
+                    <span class="tag" data-tag="energy">#energy</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descWaterDoor">
+              מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.
+            </td>
+          </tr>
+
+          <tr class="row" data-cat="transport"
+              data-key="water_gas_train_blue.html"
+              data-org=""
+              data-tags="train,transport,water,gas,efficiency">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="water_gas_train_blue.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
+                  <div class="muted">water_gas_train_blue.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="train">#train</span>
+                    <span class="tag" data-tag="transport">#transport</span>
+                    <span class="tag" data-tag="efficiency">#efficiency</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
+          </tr>
+
+          <tr class="row" data-cat="hybrid"
+              data-key="water_air_shoes_trilingual_flow.html"
+              data-org=""
+              data-tags="hybrid,water,air,shoes,flow,trilingual">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="water_air_shoes_trilingual_flow.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
+                  <div class="muted">water_air_shoes_trilingual_flow.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="hybrid">#hybrid</span>
+                    <span class="tag" data-tag="flow">#flow</span>
+                    <span class="tag" data-tag="trilingual">#trilingual</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
+          </tr>
+
+          <tr class="row" data-cat="transport"
+              data-key="patent_smart_boarding_token_he.html"
+              data-org=""
+              data-tags="patent,aviation,token,security,boarding,auth">
+            <td class="topic" data-label="נושא">
+              <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
+            </td>
+            <td data-label="קישור">
+              <div class="fav-wrap">
+                <button class="favbtn" type="button" data-fav="patent_smart_boarding_token_he.html" aria-label="Favorite">☆</button>
+                <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
+                <div>
+                  <a href="patent_smart_boarding_token_he.html" data-i18n="linkPatent">כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט</a>
+                  <div class="muted">patent_smart_boarding_token_he.html</div>
+                  <div class="tagbar">
+                    <span class="tag" data-tag="patent">#patent</span>
+                    <span class="tag" data-tag="token">#token</span>
+                    <span class="tag" data-tag="security">#security</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="desc" data-label="תיאור" data-i18n="descPatent">
+              מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      © כל הזכויות שמורות – קלנסווה<br>
+      אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
+    </footer>
   </div>
-
-  <div class="controls">
-    <div class="control">
-      <label for="search" data-i18n="searchLabel">חיפוש</label>
-      <input id="search" type="text" placeholder="הקלד מילה/שם קובץ/תיאור/תגית…" data-i18n-ph="searchPh">
-      <div class="muted" data-i18n="searchHint">מחפש בתוך נושא, שם קובץ, תיאור, תגיות ואיברים.</div>
-    </div>
-
-    <div class="control">
-      <label for="category" data-i18n="filterLabel">סינון לפי קטגוריה</label>
-      <select id="category">
-        <option value="all" data-i18n="filterAll">הכל</option>
-        <option value="net" data-i18n="catNet">תקשורת ורשתות</option>
-        <option value="ui" data-i18n="catUi">ממשק אדם–מסך</option>
-        <option value="id" data-i18n="catId">זיהוי זהות</option>
-        <option value="med" data-i18n="catMed">רפואה חכמה</option>
-        <option value="bio" data-i18n="catBio">מודלים ביולוגיים</option>
-        <option value="elec" data-i18n="catElec">חשמל וסימולציות</option>
-        <option value="thermo" data-i18n="catThermo">תרמודינמיקה</option>
-        <option value="audio" data-i18n="catAudio">אנרגיה וקול</option>
-        <option value="floor" data-i18n="catFloor">אנרגיה מהרצפה</option>
-        <option value="water" data-i18n="catWater">תנועה על מים</option>
-        <option value="transport" data-i18n="catTransport">תחבורה</option>
-        <option value="hybrid" data-i18n="catHybrid">הנעה היברידית</option>
-      </select>
-
-      <div class="actions">
-        <button class="smallbtn" id="resetBtn" data-i18n="resetBtn">איפוס</button>
-        <button class="smallbtn ok" id="openAllBtn" data-i18n="openAllBtn">פתח קישור ראשון (ב־Viewer)</button>
-        <button class="smallbtn" id="openAllTabsBtn" data-i18n="openAllTabsBtn">פתח את כולם בלשוניות</button>
-      </div>
-    </div>
-
-    <div class="control">
-      <label for="organ" data-i18n="organLabel">סינון לפי איבר</label>
-      <select id="organ">
-        <option value="all" data-i18n="organAll">הכל</option>
-        <option value="pancreas" data-i18n="organPancreas">לבלב</option>
-        <option value="liver" data-i18n="organLiver">כבד</option>
-        <option value="kidney" data-i18n="organKidney">כליות</option>
-        <option value="heart" data-i18n="organHeart">לב</option>
-        <option value="lung" data-i18n="organLung">ריאות</option>
-        <option value="spleen" data-i18n="organSpleen">טחול</option>
-        <option value="blood" data-i18n="organBlood">דם</option>
-        <option value="air" data-i18n="organAir">אוויר/נשימה</option>
-        <option value="skin" data-i18n="organSkin">עור</option>
-      </select>
-
-      <div class="actions">
-        <button class="smallbtn" id="graphBtn" data-i18n="graphBtn">מפת קשרים (Graph)</button>
-        <button class="smallbtn danger" id="clearFavBtn" data-i18n="clearFavBtn">נקה מועדפים</button>
-      </div>
-    </div>
-
-    <div class="control">
-      <label data-i18n="sortLabel">מיון</label>
-      <select id="sort">
-        <option value="default" data-i18n="sortDefault">ברירת מחדל</option>
-        <option value="title" data-i18n="sortTitle">לפי כותרת</option>
-        <option value="file" data-i18n="sortFile">לפי שם קובץ</option>
-        <option value="favFirst" data-i18n="sortFavFirst">מועדפים בראש</option>
-      </select>
-
-      <label data-i18n="favOnlyLabel" style="margin-top:8px;">תצוגה</label>
-      <div class="fav-only">
-        <input type="checkbox" id="favOnly">
-        <span data-i18n="favOnlyText">הצג מועדפים בלבד</span>
-      </div>
-      <div class="muted" data-i18n="favHint">הכוכב נשמר בדפדפן (LocalStorage).</div>
-    </div>
-  </div>
-
-  <div class="empty" id="emptyBox" data-i18n="empty">
-    לא נמצאו תוצאות. נסה לשנות את החיפוש או לבחור קטגוריה/איבר אחרת.
-  </div>
-
-  <table id="indexTable">
-    <thead>
-      <tr>
-        <th data-i18n="thTopic">נושא</th>
-        <th data-i18n="thLink">שם הקובץ / קישור</th>
-        <th data-i18n="thDesc">תיאור</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <!-- ===================== -->
-      <!-- ✅ LIST OF ALL FILES  -->
-      <!-- ===================== -->
-
-      <tr class="row" data-cat="net"
-          data-key="usb_network_osi_ipv6_plus_hw_usecase.html"
-          data-org=""
-          data-tags="usb,network,osi,ipv6,ipv4,protocol,hardware">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-net" data-i18n="badgeNet">🌐🔌 תקשורת ורשתות</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="usb_network_osi_ipv6_plus_hw_usecase.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="usb_network_osi_ipv6_plus_hw_usecase.html" data-i18n="linkUsb">USB + רשת (OSI + IPv6)</a>
-              <div class="muted">usb_network_osi_ipv6_plus_hw_usecase.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="usb">#usb</span>
-                <span class="tag" data-tag="ipv6">#ipv6</span>
-                <span class="tag" data-tag="osi">#osi</span>
-                <span class="tag" data-tag="hardware">#hardware</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descUsb">
-          חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="ui"
-          data-key="fingerprint_gesture_full_v5_he.html"
-          data-org="skin"
-          data-tags="fingerprint,gesture,ui,screen,biometric,auth">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-ui" data-i18n="badgeUi">🖐️📺 ממשק אדם–מסך</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="fingerprint_gesture_full_v5_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="fingerprint_gesture_full_v5_he.html" data-i18n="linkFp">מסכים חכמים לפי טביעת אצבע</a>
-              <div class="muted">fingerprint_gesture_full_v5_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="fingerprint">#fingerprint</span>
-                <span class="tag" data-tag="gesture">#gesture</span>
-                <span class="tag" data-tag="auth">#auth</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descFp">
-          מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="ui"
-          data-key="new 8.html"
-          data-org="skin"
-          data-tags="lighting,biometric,fingerprint,pointing,ui,security">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-ui" data-i18n="badgeLightBio">💡🖐️ תאורה חכמה ביומטרית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="new 8.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="new%208.html" data-i18n="linkLightBio">תאורה ללא מפסיקים — הצבעה + טביעת אצבע</a>
-              <div class="muted">new 8.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="lighting">#lighting</span>
-                <span class="tag" data-tag="biometric">#biometric</span>
-                <span class="tag" data-tag="security">#security</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descLightBio">
-          דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="id"
-          data-key="bivdn_multilang_full_mobile.html"
-          data-org=""
-          data-tags="identity,mobile,multilang,verification,ui">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-id" data-i18n="badgeId">📱🌍 זיהוי זהות רב־לשוני</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="bivdn_multilang_full_mobile.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="bivdn_multilang_full_mobile.html" data-i18n="linkBivdn">BIVDN – זיהוי זהות נייד</a>
-              <div class="muted">bivdn_multilang_full_mobile.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="identity">#identity</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-                <span class="tag" data-tag="mobile">#mobile</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descBivdn">
-          מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="med"
-          data-key="bio_magnet_therapy.html"
-          data-org="blood,heart"
-          data-tags="drug,delivery,dna,magnet,gps,therapy,patch">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="bio_magnet_therapy.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
-              <div class="muted">bio_magnet_therapy.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="drug">#drug</span>
-                <span class="tag" data-tag="dna">#dna</span>
-                <span class="tag" data-tag="therapy">#therapy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descBio">
-          מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="thermo"
-          data-key="plant_gas_to_bio_oil_mvp_he.html"
-          data-org=""
-          data-tags="plants,gas,biooil,urban,thermal,conversion">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgePlantOil">🌱🛢️ גזים → נפט ביולוגי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="plant_gas_to_bio_oil_mvp_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="plant_gas_to_bio_oil_mvp_he.html" data-i18n="linkPlantOil">המרת גזים מצמחים לנפט ביולוגי (MVP)</a>
-              <div class="muted">plant_gas_to_bio_oil_mvp_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="plants">#plants</span>
-                <span class="tag" data-tag="gas">#gas</span>
-                <span class="tag" data-tag="thermal">#thermal</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPlantOil">
-          מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="med"
-          data-key="patent_clean_air_square_zone_he.html"
-          data-org="lung,air"
-          data-tags="cleanair,airflow,filter,particles,hospital,zone">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeCleanAir">🧼🫁 אזור אוויר נקי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_clean_air_square_zone_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_clean_air_square_zone_he.html" data-i18n="linkCleanAir">פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)</a>
-              <div class="muted">patent_clean_air_square_zone_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="cleanair">#cleanair</span>
-                <span class="tag" data-tag="hospital">#hospital</span>
-                <span class="tag" data-tag="particles">#particles</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descCleanAir">
-          יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="bio"
-          data-key="metabolic_railway_model_he_v3.html"
-          data-org="pancreas,liver,kidney,blood,spleen"
-          data-tags="metabolism,pancreas,insulin,glucose,liver,kidney,spleen,railway,stations,homeostasis">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-bio" data-i18n="badgeMetabolicRail">🚆🧬 מודל רכבת מטבולית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="metabolic_railway_model_he_v3.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="metabolic_railway_model_he_v3.html" data-i18n="linkMetabolicRail">מודל רכבת מטבולית – ויסות חומרים בגוף</a>
-              <div class="muted">metabolic_railway_model_he_v3.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="pancreas">#pancreas</span>
-                <span class="tag" data-tag="glucose">#glucose</span>
-                <span class="tag" data-tag="homeostasis">#homeostasis</span>
-                <span class="tag" data-tag="stations">#stations</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descMetabolicRail">
-          מודל ביולוגי־מערכתי: הלבלב כתחנת מקור מרכזית, והאיברים כתחנות “רכבת” מטבוליות לפירוק/ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="elec"
-          data-key="electricity_models_plus_simulations_bilingual_toggle.html"
-          data-org=""
-          data-tags="electricity,physics,simulation,model,interactive">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="electricity_models_plus_simulations_bilingual_toggle.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
-              <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="electricity">#electricity</span>
-                <span class="tag" data-tag="simulation">#simulation</span>
-                <span class="tag" data-tag="interactive">#interactive</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
-      </tr>
-
-      <tr class="row" data-cat="thermo"
-          data-key="thermosiphon_flow_calculator_he.html"
-          data-org=""
-          data-tags="thermosiphon,flow,calculator,physics,heat">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="thermosiphon_flow_calculator_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
-              <div class="muted">thermosiphon_flow_calculator_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="heat">#heat</span>
-                <span class="tag" data-tag="flow">#flow</span>
-                <span class="tag" data-tag="calculator">#calculator</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
-      </tr>
-
-      <tr class="row" data-cat="audio"
-          data-key="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html"
-          data-org=""
-          data-tags="audio,energy,headphones,selfcharging,harvesting,signal">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
-              <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="audio">#audio</span>
-                <span class="tag" data-tag="energy">#energy</span>
-                <span class="tag" data-tag="harvesting">#harvesting</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
-      </tr>
-
-      <tr class="row" data-cat="floor"
-          data-key="smart_floor_pressure_to_energy_model_he.html"
-          data-org=""
-          data-tags="floor,energy,pressure,harvesting,loads">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_floor_pressure_to_energy_model_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
-              <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="floor">#floor</span>
-                <span class="tag" data-tag="pressure">#pressure</span>
-                <span class="tag" data-tag="energy">#energy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
-      </tr>
-
-      <tr class="row" data-cat="water"
-          data-key="water_walking_shoes_sonar_pump.html"
-          data-org=""
-          data-tags="water,shoes,sonar,pump,balance">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_walking_shoes_sonar_pump.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
-              <div class="muted">water_walking_shoes_sonar_pump.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="water">#water</span>
-                <span class="tag" data-tag="sonar">#sonar</span>
-                <span class="tag" data-tag="pump">#pump</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
-      </tr>
-
-      <!-- ✅✅ ADDED: smart_water_powered_door_full_plus_fixed_he.html -->
-      <tr class="row" data-cat="water"
-          data-key="smart_water_powered_door_full_plus_fixed_he.html"
-          data-org=""
-          data-tags="water,door,electric,hydraulic,pressure,energy,smart,control,security,valve">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-water" data-i18n="badgeWaterDoor">🚪💧 דלת חכמה מונעת מים</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_water_powered_door_full_plus_fixed_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_water_powered_door_full_plus_fixed_he.html" data-i18n="linkWaterDoor">דלת חשמלית עם מים — מודל מלא</a>
-              <div class="muted">smart_water_powered_door_full_plus_fixed_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="water">#water</span>
-                <span class="tag" data-tag="door">#door</span>
-                <span class="tag" data-tag="pressure">#pressure</span>
-                <span class="tag" data-tag="energy">#energy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descWaterDoor">
-          מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="transport"
-          data-key="water_gas_train_blue.html"
-          data-org=""
-          data-tags="train,transport,water,gas,efficiency">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_gas_train_blue.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
-              <div class="muted">water_gas_train_blue.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="train">#train</span>
-                <span class="tag" data-tag="transport">#transport</span>
-                <span class="tag" data-tag="efficiency">#efficiency</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
-      </tr>
-
-      <tr class="row" data-cat="hybrid"
-          data-key="water_air_shoes_trilingual_flow.html"
-          data-org=""
-          data-tags="hybrid,water,air,shoes,flow,trilingual">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_air_shoes_trilingual_flow.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
-              <div class="muted">water_air_shoes_trilingual_flow.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="hybrid">#hybrid</span>
-                <span class="tag" data-tag="flow">#flow</span>
-                <span class="tag" data-tag="trilingual">#trilingual</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
-      </tr>
-
-      <tr class="row" data-cat="transport"
-          data-key="patent_smart_boarding_token_he.html"
-          data-org=""
-          data-tags="patent,aviation,token,security,boarding,auth">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_smart_boarding_token_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_smart_boarding_token_he.html" data-i18n="linkPatent">כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט</a>
-              <div class="muted">patent_smart_boarding_token_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="patent">#patent</span>
-                <span class="tag" data-tag="token">#token</span>
-                <span class="tag" data-tag="security">#security</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPatent">
-          מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
-
-  <footer>
-    © כל הזכויות שמורות – קלנסווה<br>
-    אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
-  </footer>
 
   <!-- Viewer -->
   <div id="viewer" class="viewer" aria-hidden="true">
@@ -1138,6 +1445,50 @@
 
     // ⛔ חסימת בחירת טקסט
     document.addEventListener('selectstart', e => e.preventDefault());
+
+    // ===== Theme (Light/Dark) =====
+    const THEME_KEY = "index_theme_v1";
+    const themeBtn = document.getElementById("themeBtn");
+    const themeTxt = document.getElementById("themeTxt");
+
+    function applyTheme(t){
+      const theme = (t === "dark" || t === "light") ? t : "light";
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_KEY, theme);
+
+      // small UI label
+      if(theme === "dark"){
+        themeBtn.textContent = "☀️ ";
+        const s = document.createElement("span");
+        s.id = "themeTxt";
+        s.textContent = "Light";
+        themeBtn.appendChild(s);
+      }else{
+        themeBtn.textContent = "🌙 ";
+        const s = document.createElement("span");
+        s.id = "themeTxt";
+        s.textContent = "Dark";
+        themeBtn.appendChild(s);
+      }
+    }
+
+    (function initTheme(){
+      try{
+        const saved = localStorage.getItem(THEME_KEY);
+        if(saved){
+          applyTheme(saved);
+          return;
+        }
+      }catch(e){}
+      // default: follow system preference
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      applyTheme(prefersDark ? "dark" : "light");
+    })();
+
+    themeBtn.addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") || "light";
+      applyTheme(cur === "dark" ? "light" : "dark");
+    });
 
     // --- Search + Filter + Favorites + Tags + Sort ---
     const searchEl = document.getElementById('search');
@@ -1450,7 +1801,7 @@
       if(!visibleLinks.length){
         alert(window.__i18nLang === 'en' ? 'No links to open for current filters.' :
               window.__i18nLang === 'ar' ? 'لا توجد روابط لفتحها وفق التصفية الحالية.' :
-              window.__i18nLang === 'ru' ? 'Нет ссылок для открытия при текущих фильтрах.' :
+              window.__i18nLang === 'ru' ? 'Нет ссылок для открытия при текущих фильтров.' :
               'אין קישורים פתוחים לפי הסינון הנוכחי.');
         return;
       }
@@ -1590,7 +1941,6 @@
         linkWater:"נעליים להליכה על מים",
         descWater:"סונאר, משאבות זעירות ושיווי־משקל דינמי",
 
-        // ✅ added translations
         badgeWaterDoor:"🚪💧 דלת חכמה מונעת מים",
         linkWaterDoor:"דלת חשמלית עם מים — מודל מלא",
         descWaterDoor:"מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.",
@@ -1726,7 +2076,6 @@
         linkWater:"Water-Walking Shoes",
         descWater:"Sonar, micro-pumps and dynamic balance.",
 
-        // ✅ added translations
         badgeWaterDoor:"🚪💧 Water-Powered Smart Door",
         linkWaterDoor:"Water-Powered Electric Door — Full Model",
         descWaterDoor:"A smart door system driven by water pressure/flow: valves, control logic, actuation mechanism, safety and backup options.",
@@ -1854,7 +2203,6 @@
         linkWater:"أحذية للمشي على الماء",
         descWater:"سونار ومضخات دقيقة وتوازن ديناميكي.",
 
-        // ✅ added translations
         badgeWaterDoor:"🚪💧 باب ذكي يعمل بالماء",
         linkWaterDoor:"باب كهربائي بالماء — نموذج كامل",
         descWaterDoor:"نظام باب ذكي يعتمد ضغط/تدفق الماء: صمامات، تحكم، آلية تشغيل، سلامة وخيارات احتياط.",
@@ -1980,7 +2328,6 @@
         linkWater:"Обувь для ходьбы по воде",
         descWater:"Сонар, микропомпы и динамическая устойчивость.",
 
-        // ✅ added translations
         badgeWaterDoor:"🚪💧 Умная дверь на воде",
         linkWaterDoor:"Электрическая дверь на воде — полная модель",
         descWaterDoor:"Умная дверь, работающая от давления/потока воды: клапаны, управление, привод, безопасность и резервные режимы.",
@@ -2175,11 +2522,11 @@
       nodes.forEach(n=>{
         ctx.beginPath();
         ctx.arc(n.x, n.y, 9, 0, Math.PI*2);
-        ctx.fillStyle = favs.has(n.id) ? "#f59e0b" : "#111827";
+        ctx.fillStyle = favs.has(n.id) ? "#f59e0b" : (document.documentElement.getAttribute("data-theme")==="dark" ? "#e5e7eb" : "#0b1220");
         ctx.fill();
 
         ctx.font = "12px Arial";
-        ctx.fillStyle = "#111827";
+        ctx.fillStyle = (document.documentElement.getAttribute("data-theme")==="dark" ? "#e5e7eb" : "#0b1220");
         const label = n.title.length > 26 ? n.title.slice(0,26) + "…" : n.title;
         ctx.fillText(label, n.x + 12, n.y + 4);
       });
@@ -2235,6 +2582,5 @@
     setLang("he");
     apply();
   </script>
-
 </body>
 </html>
