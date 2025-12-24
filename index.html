@@ -774,15 +774,18 @@
       <div>
         <h1 data-i18n="welcome">ברוכים הבאים</h1>
         <div class="summary">
-          <span data-i18n="summaryPrefix">סך הכל קבצים:</span>
-          <strong id="countAll">0</strong>
-          <span aria-hidden="true">·</span>
-          <span data-i18n="summaryShown">מוצגים כעת:</span>
-          <strong id="countShown">0</strong>
-          <span aria-hidden="true">·</span>
-          <span data-i18n="summaryFav">מועדפים:</span>
-          <strong id="countFav">0</strong>
+            <span>סך הכל קבצים:</span> <strong id="countAll">0</strong>
+            <span>·</span>
+
+            <span>מוצגים כעת:</span> <strong id="countShown">0</strong>
+            <span>·</span>
+
+            <span>מועדפים:</span> <strong id="countFav">0</strong>
+            <span>·</span>
+
+            <span>מבקרים:</span> <strong id="visitCounter">—</strong>
         </div>
+
         <div class="pillrow" id="activeTagsRow" style="display:none;"></div>
       </div>
 
@@ -2598,5 +2601,21 @@
   setLang("he");
   apply();
 </script>
+
+
+  <script>
+(function(){
+  const counterId = "index-main-page-visits"; // מזהה ייחודי לדף
+  fetch("https://api.countapi.xyz/hit/" + counterId)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("visitCounter").textContent = data.value;
+    })
+    .catch(() => {
+      document.getElementById("visitCounter").textContent = "—";
+    });
+})();
+</script>
+
 </body>
 </html>
