@@ -2598,6 +2598,22 @@
   setLang("he");
   apply();
 </script>
+<script>
+(function(){
+  // מזהה ייחודי לדף שלך (אפשר לשנות שם)
+  const counterId = "rafat-index-page";
+
+  // שירות חינמי ללא חשבון
+  fetch("https://api.countapi.xyz/hit/" + counterId)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("visitCounter").textContent = data.value;
+    })
+    .catch(() => {
+      document.getElementById("visitCounter").textContent = "—";
+    });
+})();
+</script>
 
 </body>
 </html>
