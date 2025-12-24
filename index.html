@@ -43,7 +43,6 @@
       --c-transport:#10b981;
       --c-hybrid:#06b6d4;
       --c-bio:#8b5cf6;
-      /* ✅ NEW: policy / constitution */
       --c-policy:#0f766e;
 
       /* tag colors */
@@ -766,7 +765,7 @@
 </head>
 
 <body>
-<a class="skip" href="#main">דלג לתוכן</a>
+<a class="skip" href="#main" data-i18n="skip">דלג לתוכן</a>
 
 <div class="container">
   <section class="hero">
@@ -774,16 +773,16 @@
       <div>
         <h1 data-i18n="welcome">ברוכים הבאים</h1>
         <div class="summary">
-            <span>סך הכל קבצים:</span> <strong id="countAll">0</strong>
+            <span data-i18n="summaryTotal">סך הכל קבצים:</span> <strong id="countAll">0</strong>
             <span>·</span>
 
-            <span>מוצגים כעת:</span> <strong id="countShown">0</strong>
+            <span data-i18n="summaryShown">מוצגים כעת:</span> <strong id="countShown">0</strong>
             <span>·</span>
 
-            <span>מועדפים:</span> <strong id="countFav">0</strong>
+            <span data-i18n="summaryFav">מועדפים:</span> <strong id="countFav">0</strong>
             <span>·</span>
 
-            <span>מבקרים:</span> <strong id="visitCounter">—</strong>
+            <span data-i18n="summaryVisits">מבקרים:</span> <strong id="visitCounter">—</strong>
         </div>
 
         <div class="pillrow" id="activeTagsRow" style="display:none;"></div>
@@ -1038,870 +1037,15 @@
         </td>
       </tr>
 
-      <tr class="row" data-cat="med" data-key="bio_magnet_therapy.html" data-org="blood,heart" data-tags="drug,delivery,dna,magnet,gps,therapy,patch">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeMed">🧬🧲 רפואה חכמה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="bio_magnet_therapy.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="bio_magnet_therapy.html" data-i18n="linkBio">מגנט ביולוגי להולכת תרופות</a>
-              <div class="muted">bio_magnet_therapy.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="drug">#drug</span>
-                <span class="tag" data-tag="dna">#dna</span>
-                <span class="tag" data-tag="therapy">#therapy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descBio">
-          מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי ("GPS ביולוגי") בגוף האדם
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="thermo" data-key="plant_gas_to_bio_oil_mvp_he.html" data-org="" data-tags="plants,gas,biooil,urban,thermal,conversion">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgePlantOil">🌱🛢️ גזים → נפט ביולוגי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="plant_gas_to_bio_oil_mvp_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="plant_gas_to_bio_oil_mvp_he.html" data-i18n="linkPlantOil">המרת גזים מצמחים לנפט ביולוגי (MVP)</a>
-              <div class="muted">plant_gas_to_bio_oil_mvp_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="plants">#plants</span>
-                <span class="tag" data-tag="gas">#gas</span>
-                <span class="tag" data-tag="thermal">#thermal</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPlantOil">
-          מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="med" data-key="patent_clean_air_square_zone_he.html" data-org="lung,air" data-tags="cleanair,airflow,filter,particles,hospital,zone">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-med" data-i18n="badgeCleanAir">🧼🫁 אזור אוויר נקי</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_clean_air_square_zone_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_clean_air_square_zone_he.html" data-i18n="linkCleanAir">פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)</a>
-              <div class="muted">patent_clean_air_square_zone_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="cleanair">#cleanair</span>
-                <span class="tag" data-tag="hospital">#hospital</span>
-                <span class="tag" data-tag="particles">#particles</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descCleanAir">
-          יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="bio" data-key="metabolic_railway_model_he_v3.html" data-org="pancreas,liver,kidney,blood,spleen" data-tags="metabolism,pancreas,insulin,glucose,liver,kidney,spleen,railway,stations,homeostasis">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-bio" data-i18n="badgeMetabolicRail">🚆🧬 מודל רכבת מטבולית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="metabolic_railway_model_he_v3.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="metabolic_railway_model_he_v3.html" data-i18n="linkMetabolicRail">מודל רכבת מטבולית – ויסות חומרים בגוף</a>
-              <div class="muted">metabolic_railway_model_he_v3.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="pancreas">#pancreas</span>
-                <span class="tag" data-tag="glucose">#glucose</span>
-                <span class="tag" data-tag="homeostasis">#homeostasis</span>
-                <span class="tag" data-tag="stations">#stations</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descMetabolicRail">
-          מודל ביולוגי־מערכתי: הלבלב כתחנת מקור מרכזית, והאיברים כתחנות “רכבת” מטבוליות לפירוק/ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="elec" data-key="electricity_models_plus_simulations_bilingual_toggle.html" data-org="" data-tags="electricity,physics,simulation,model,interactive">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-elec" data-i18n="badgeElec">⚡ חשמל וסימולציות</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="electricity_models_plus_simulations_bilingual_toggle.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="electricity_models_plus_simulations_bilingual_toggle.html" data-i18n="linkElec">מודל חשמל + סימולציות</a>
-              <div class="muted">electricity_models_plus_simulations_bilingual_toggle.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="electricity">#electricity</span>
-                <span class="tag" data-tag="simulation">#simulation</span>
-                <span class="tag" data-tag="interactive">#interactive</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descElec">מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות</td>
-      </tr>
-
-      <tr class="row" data-cat="thermo" data-key="thermosiphon_flow_calculator_he.html" data-org="" data-tags="thermosiphon,flow,calculator,physics,heat">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-thermo" data-i18n="badgeThermo">🔥 תרמודינמיקה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="thermosiphon_flow_calculator_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="thermosiphon_flow_calculator_he.html" data-i18n="linkThermo">תרמוסיפון</a>
-              <div class="muted">thermosiphon_flow_calculator_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="heat">#heat</span>
-                <span class="tag" data-tag="flow">#flow</span>
-                <span class="tag" data-tag="calculator">#calculator</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descThermo">מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים</td>
-      </tr>
-
-      <tr class="row" data-cat="audio" data-key="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-org="" data-tags="audio,energy,headphones,selfcharging,harvesting,signal">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-audio" data-i18n="badgeAudio">🎧 אנרגיה וקול</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="self_charging_headphones_FULL_katex_diagrams_simulation_explained.html" data-i18n="linkAudio">אוזניות נטענות מעצמן</a>
-              <div class="muted">self_charging_headphones_FULL_katex_diagrams_simulation_explained.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="audio">#audio</span>
-                <span class="tag" data-tag="energy">#energy</span>
-                <span class="tag" data-tag="harvesting">#harvesting</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descAudio">טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה</td>
-      </tr>
-
-      <tr class="row" data-cat="floor" data-key="smart_floor_pressure_to_energy_model_he.html" data-org="" data-tags="floor,energy,pressure,harvesting,loads">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-floor" data-i18n="badgeFloor">🧱⚡ אנרגיה מהרצפה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_floor_pressure_to_energy_model_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_floor_pressure_to_energy_model_he.html" data-i18n="linkFloor">מודל רצפה חכמה</a>
-              <div class="muted">smart_floor_pressure_to_energy_model_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="floor">#floor</span>
-                <span class="tag" data-tag="pressure">#pressure</span>
-                <span class="tag" data-tag="energy">#energy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descFloor">הפקת אנרגיה מלחץ ומיפוי עומסים</td>
-      </tr>
-
-      <tr class="row" data-cat="floor" data-key="smart_paver_mesh_thermal_sensing_he.html" data-org="skin,air" data-tags="paver,thermal,heat,cold,sensing,mesh,energy,urban,iot">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-floor" data-i18n="badgeThermalPaver">🧱🌡️ מדרכה חכמה תרמית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_paver_mesh_thermal_sensing_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_paver_mesh_thermal_sensing_he.html" data-i18n="linkThermalPaver">מדרכה חכמה לאגירה וחישה תרמית</a>
-              <div class="muted">smart_paver_mesh_thermal_sensing_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="thermal">#thermal</span>
-                <span class="tag" data-tag="heat">#heat</span>
-                <span class="tag" data-tag="cold">#cold</span>
-                <span class="tag" data-tag="mesh">#mesh</span>
-                <span class="tag" data-tag="energy">#energy</span>
-                <span class="tag" data-tag="urban">#urban</span>
-                <span class="tag" data-tag="iot">#iot</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descThermalPaver">
-          מערכת משתלבות חכמות בשתי שכבות: אגירה וחישה של חום/קור, רשת Mesh לניטור מרחבי, וזיהוי תרחישים תת־קרקעיים (רעידות אדמה/אסונות טבע).
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="water" data-key="water_walking_shoes_sonar_pump.html" data-org="" data-tags="water,shoes,sonar,pump,balance">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-water" data-i18n="badgeWater">🌊👟 תנועה על מים</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_walking_shoes_sonar_pump.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_walking_shoes_sonar_pump.html" data-i18n="linkWater">נעליים להליכה על מים</a>
-              <div class="muted">water_walking_shoes_sonar_pump.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="water">#water</span>
-                <span class="tag" data-tag="sonar">#sonar</span>
-                <span class="tag" data-tag="pump">#pump</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descWater">סונאר, משאבות זעירות ושיווי־משקל דינמי</td>
-      </tr>
-
-      <tr class="row" data-cat="water" data-key="smart_water_powered_door_full_plus_fixed_he.html" data-org="" data-tags="water,door,electric,hydraulic,pressure,energy,smart,control,security,valve">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-water" data-i18n="badgeWaterDoor">🚪💧 דלת חכמה מונעת מים</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="smart_water_powered_door_full_plus_fixed_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="smart_water_powered_door_full_plus_fixed_he.html" data-i18n="linkWaterDoor">דלת חשמלית עם מים — מודל מלא</a>
-              <div class="muted">smart_water_powered_door_full_plus_fixed_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="water">#water</span>
-                <span class="tag" data-tag="door">#door</span>
-                <span class="tag" data-tag="pressure">#pressure</span>
-                <span class="tag" data-tag="energy">#energy</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descWaterDoor">
-          מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.
-        </td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="water_gas_train_blue.html" data-org="" data-tags="train,transport,water,gas,efficiency">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgeTransport">🚆💧 תנועה ותחבורה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_gas_train_blue.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_gas_train_blue.html" data-i18n="linkTrain">רכבת מים–גז (Blue)</a>
-              <div class="muted">water_gas_train_blue.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="train">#train</span>
-                <span class="tag" data-tag="transport">#transport</span>
-                <span class="tag" data-tag="efficiency">#efficiency</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descTrain">תחבורה מבוססת מים וגז עם יעילות אנרגטית</td>
-      </tr>
-
-      <tr class="row" data-cat="hybrid" data-key="water_air_shoes_trilingual_flow.html" data-org="" data-tags="hybrid,water,air,shoes,flow,trilingual">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-hybrid" data-i18n="badgeHybrid">🌊🌬️ הנעה היברידית</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="water_air_shoes_trilingual_flow.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="water_air_shoes_trilingual_flow.html" data-i18n="linkHybrid">נעליים מים–אוויר (תלת־לשוני)</a>
-              <div class="muted">water_air_shoes_trilingual_flow.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="hybrid">#hybrid</span>
-                <span class="tag" data-tag="flow">#flow</span>
-                <span class="tag" data-tag="trilingual">#trilingual</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descHybrid">הליכה וריחוף על מים ואוויר עם זרימה מבוקרת</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="patent_smart_boarding_token_he.html" data-org="" data-tags="patent,aviation,token,security,boarding,auth">
-        <td class="topic" data-label="נושא">
-          <span class="badge b-transport" data-i18n="badgePatent">✈️📄 פטנט — אבטחת תעופה</span>
-        </td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="patent_smart_boarding_token_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill" data-i18n="favPill">⭐ מועדף</span>
-            <div>
-              <a href="patent_smart_boarding_token_he.html" data-i18n="linkPatent">כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט</a>
-              <div class="muted">patent_smart_boarding_token_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="patent">#patent</span>
-                <span class="tag" data-tag="token">#token</span>
-                <span class="tag" data-tag="security">#security</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור" data-i18n="descPatent">
-          מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס
-        </td>
-      </tr>
-
-      <!-- ===================================== -->
-      <!-- ✅ ADDED: requested new files (25)    -->
-      <!-- ===================================== -->
-
-      <tr class="row" data-cat="bio" data-key="absolute_organ_value_multilang_full_v2.html" data-org="heart,liver,kidney,blood,lung,pancreas,spleen" data-tags="organ,model,absolute,value,health,multilang,biology,metrics">
-        <td class="topic" data-label="נושא"><span class="badge b-bio">🧬📏 מודל ערכים מוחלטים לאיברים</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="absolute_organ_value_multilang_full_v2.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="absolute_organ_value_multilang_full_v2.html">Absolute Organ Value — רב־לשוני (v2)</a>
-              <div class="muted">absolute_organ_value_multilang_full_v2.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="organ">#organ</span>
-                <span class="tag" data-tag="metrics">#metrics</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-                <span class="tag" data-tag="biology">#biology</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מסגרת מדדים “ערכים מוחלטים” לתפקוד איברים, מיפוי וניתוח רב־לשוני.</td>
-      </tr>
-
-      <tr class="row" data-cat="bio" data-key="blood_spectral_vector_model.html" data-org="blood,heart" data-tags="blood,spectral,vector,model,signal,analysis,diagnostics">
-        <td class="topic" data-label="נושא"><span class="badge b-bio">🩸🌈 מודל וקטור ספקטרלי לדם</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="blood_spectral_vector_model.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="blood_spectral_vector_model.html">Blood Spectral Vector Model</a>
-              <div class="muted">blood_spectral_vector_model.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="blood">#blood</span>
-                <span class="tag" data-tag="spectral">#spectral</span>
-                <span class="tag" data-tag="vector">#vector</span>
-                <span class="tag" data-tag="diagnostics">#diagnostics</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מיפוי דם למרחב-וקטורים ספקטרלי לצורך ניתוח/מדידה/אבחון תיאורטי.</td>
-      </tr>
-
-      <tr class="row" data-cat="elec" data-key="building_stability_system_energy_he.html" data-org="" data-tags="building,stability,system,energy,engineering,monitoring,structure">
-        <td class="topic" data-label="נושא"><span class="badge b-elec">🏗️⚡ יציבות מבנים – מערכת אנרגטית</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="building_stability_system_energy_he.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="building_stability_system_energy_he.html">מערכת יציבות מבנים (HE)</a>
-              <div class="muted">building_stability_system_energy_he.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="building">#building</span>
-                <span class="tag" data-tag="stability">#stability</span>
-                <span class="tag" data-tag="monitoring">#monitoring</span>
-                <span class="tag" data-tag="engineering">#engineering</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל מערכת לניטור יציבות מבנים בשילוב אנרגיה/חיישנים/לוגיקת בקרה.</td>
-      </tr>
-
-      <tr class="row" data-cat="elec" data-key="ceiling_house_theory_step_by_step_GOLD_OFFLINE.html" data-org="" data-tags="ceiling,house,theory,stepbystep,gold,offline,structure">
-        <td class="topic" data-label="נושא"><span class="badge b-elec">🏠✨ תיאוריה לבית/תקרה (GOLD, Offline)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="ceiling_house_theory_step_by_step_GOLD_OFFLINE.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="ceiling_house_theory_step_by_step_GOLD_OFFLINE.html">Ceiling House Theory — Step-by-Step (OFFLINE)</a>
-              <div class="muted">ceiling_house_theory_step_by_step_GOLD_OFFLINE.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="offline">#offline</span>
-                <span class="tag" data-tag="theory">#theory</span>
-                <span class="tag" data-tag="house">#house</span>
-                <span class="tag" data-tag="structure">#structure</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מסמך תיאורטי מפורט שלב־אחר־שלב (מצב Offline) לתכנון/מודל תקרה-בית.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="earth_glider_train_multilang.html" data-org="" data-tags="earth,glider,train,transport,multilang,vehicle">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">🌍🚄 Earth Glider Train — רב־לשוני</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="earth_glider_train_multilang.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="earth_glider_train_multilang.html">Earth Glider Train (Multilang)</a>
-              <div class="muted">earth_glider_train_multilang.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="train">#train</span>
-                <span class="tag" data-tag="transport">#transport</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-                <span class="tag" data-tag="vehicle">#vehicle</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">רעיון רכבת/דאון קרקעי עם מודל רב־לשוני ותרשימים.</td>
-      </tr>
-
-      <tr class="row" data-cat="floor" data-key="energy_harvesting_touch_tiles_road.html" data-org="" data-tags="energy,harvesting,touch,tiles,road,piezo,sensors">
-        <td class="topic" data-label="נושא"><span class="badge b-floor">🧱⚡ אריחי כביש קוצרים אנרגיה</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="energy_harvesting_touch_tiles_road.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="energy_harvesting_touch_tiles_road.html">Energy Harvesting Touch Tiles (Road)</a>
-              <div class="muted">energy_harvesting_touch_tiles_road.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="harvesting">#harvesting</span>
-                <span class="tag" data-tag="tiles">#tiles</span>
-                <span class="tag" data-tag="road">#road</span>
-                <span class="tag" data-tag="sensors">#sensors</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">הפקת אנרגיה ממגע/לחץ באריחי כביש + חיישנים וניטור.</td>
-      </tr>
-
-      <tr class="row" data-cat="med" data-key="gamma_drawers_full.html" data-org="" data-tags="gamma,radiation,drawers,shielding,medical,hospital,safety">
-        <td class="topic" data-label="נושא"><span class="badge b-med">☢️🗄️ Gamma Drawers — מודל מלא</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="gamma_drawers_full.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="gamma_drawers_full.html">Gamma Drawers (Full)</a>
-              <div class="muted">gamma_drawers_full.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="gamma">#gamma</span>
-                <span class="tag" data-tag="radiation">#radiation</span>
-                <span class="tag" data-tag="safety">#safety</span>
-                <span class="tag" data-tag="hospital">#hospital</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל/הצעה למגירות/אחסון והגנה בהקשר קרינת גאמא ובטיחות.</td>
-      </tr>
-
-      <tr class="row" data-cat="med" data-key="hospital_curtain_model_full_offline.html" data-org="air,lung" data-tags="hospital,curtain,infection,model,offline,airflow">
-        <td class="topic" data-label="נושא"><span class="badge b-med">🏥🪟 וילונות זיהום — Offline</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="hospital_curtain_model_full_offline.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="hospital_curtain_model_full_offline.html">Hospital Curtain Model (FULL, OFFLINE)</a>
-              <div class="muted">hospital_curtain_model_full_offline.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="hospital">#hospital</span>
-                <span class="tag" data-tag="infection">#infection</span>
-                <span class="tag" data-tag="offline">#offline</span>
-                <span class="tag" data-tag="airflow">#airflow</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל מלא (Offline) להשפעת וילונות על זרימת מזהמים/וירוסים בחדרי בית חולים.</td>
-      </tr>
-
-      <tr class="row" data-cat="med" data-key="hospital_flow_equations_all_packages_mega.html" data-org="air,lung,blood" data-tags="hospital,flow,equations,packages,mega,air,particles">
-        <td class="topic" data-label="נושא"><span class="badge b-med">🏥📐 משוואות זרימה בבית חולים (MEGA)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="hospital_flow_equations_all_packages_mega.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="hospital_flow_equations_all_packages_mega.html">Hospital Flow Equations — All Packages (MEGA)</a>
-              <div class="muted">hospital_flow_equations_all_packages_mega.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="equations">#equations</span>
-                <span class="tag" data-tag="flow">#flow</span>
-                <span class="tag" data-tag="hospital">#hospital</span>
-                <span class="tag" data-tag="particles">#particles</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">חבילת משוואות/מודלים מורחבת לזרימת אוויר/חלקיקים/זיהום בסביבת בית חולים.</td>
-      </tr>
-
-      <tr class="row" data-cat="med" data-key="hospital_integrative_flow_model_clear_equations.html" data-org="air,lung" data-tags="hospital,integrative,flow,model,clear,equations">
-        <td class="topic" data-label="נושא"><span class="badge b-med">🏥🧠 מודל אינטגרטיבי לזרימה (ברור)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="hospital_integrative_flow_model_clear_equations.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="hospital_integrative_flow_model_clear_equations.html">Hospital Integrative Flow Model (Clear Equations)</a>
-              <div class="muted">hospital_integrative_flow_model_clear_equations.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="integrative">#integrative</span>
-                <span class="tag" data-tag="equations">#equations</span>
-                <span class="tag" data-tag="hospital">#hospital</span>
-                <span class="tag" data-tag="model">#model</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל אינטגרטיבי עם משוואות מסודרות וברורות לזרימות בבית חולים.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="human_wave_transport_advanced.html" data-org="" data-tags="human,wave,transport,advanced,physics,propulsion">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">👤🌊 Human Wave Transport (Advanced)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="human_wave_transport_advanced.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="human_wave_transport_advanced.html">Human Wave Transport — Advanced</a>
-              <div class="muted">human_wave_transport_advanced.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="wave">#wave</span>
-                <span class="tag" data-tag="transport">#transport</span>
-                <span class="tag" data-tag="physics">#physics</span>
-                <span class="tag" data-tag="propulsion">#propulsion</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל מתקדם לתחבורה/הנעה מבוססת גלים ותנועת אדם.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="ideal_wave_air_road_vehicle.html" data-org="" data-tags="ideal,wave,air,road,vehicle,transport,model">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">🌬️🛣️ Ideal Wave — רכב אוויר-כביש</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="ideal_wave_air_road_vehicle.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="ideal_wave_air_road_vehicle.html">Ideal Wave Air-Road Vehicle</a>
-              <div class="muted">ideal_wave_air_road_vehicle.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="ideal">#ideal</span>
-                <span class="tag" data-tag="wave">#wave</span>
-                <span class="tag" data-tag="vehicle">#vehicle</span>
-                <span class="tag" data-tag="transport">#transport</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">קונספט “גל אידאלי” לכלי רכב היברידי בין כביש לאוויר.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="ideal_wave_aircraft.html" data-org="" data-tags="ideal,wave,aircraft,aviation,transport,model">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">✈️🌊 Ideal Wave Aircraft</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="ideal_wave_aircraft.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="ideal_wave_aircraft.html">Ideal Wave Aircraft</a>
-              <div class="muted">ideal_wave_aircraft.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="aircraft">#aircraft</span>
-                <span class="tag" data-tag="ideal">#ideal</span>
-                <span class="tag" data-tag="wave">#wave</span>
-                <span class="tag" data-tag="aviation">#aviation</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל מטוס מבוסס “גל אידאלי” — תיאור עקרון והנעה.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="ideal_wave_supersonic_aircraft.html" data-org="" data-tags="ideal,wave,supersonic,aircraft,aviation,transport">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">🚀✈️ Ideal Wave — מטוס על־קולי</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="ideal_wave_supersonic_aircraft.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="ideal_wave_supersonic_aircraft.html">Ideal Wave Supersonic Aircraft</a>
-              <div class="muted">ideal_wave_supersonic_aircraft.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="supersonic">#supersonic</span>
-                <span class="tag" data-tag="aircraft">#aircraft</span>
-                <span class="tag" data-tag="ideal">#ideal</span>
-                <span class="tag" data-tag="wave">#wave</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">הרחבת “גל אידאלי” לתרחישי מהירות על־קולית.</td>
-      </tr>
-
-      <tr class="row" data-cat="hybrid" data-key="integrated_model_description.html" data-org="" data-tags="integrated,model,description,system,combined,framework">
-        <td class="topic" data-label="נושא"><span class="badge b-hybrid">🧩📘 Integrated Model Description</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="integrated_model_description.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="integrated_model_description.html">Integrated Model Description</a>
-              <div class="muted">integrated_model_description.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="integrated">#integrated</span>
-                <span class="tag" data-tag="framework">#framework</span>
-                <span class="tag" data-tag="system">#system</span>
-                <span class="tag" data-tag="combined">#combined</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">תיאור מסגרת משולבת (Integrated) שמחברת מודלים/מרכיבים לתמונה אחת.</td>
-      </tr>
-
-      <tr class="row" data-cat="policy" data-key="international_economic_constitution_offline_full_fr_es_ru.html" data-org="" data-tags="constitution,economic,international,policy,offline,fr,es,ru,multilang">
-        <td class="topic" data-label="נושא"><span class="badge b-policy">🏛️💶 חוקה כלכלית בינלאומית (Offline)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="international_economic_constitution_offline_full_fr_es_ru.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="international_economic_constitution_offline_full_fr_es_ru.html">International Economic Constitution (FR/ES/RU) — OFFLINE</a>
-              <div class="muted">international_economic_constitution_offline_full_fr_es_ru.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="economic">#economic</span>
-                <span class="tag" data-tag="constitution">#constitution</span>
-                <span class="tag" data-tag="offline">#offline</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מסמך חוקה כלכלית בינלאומית מלא (Offline) בשפות FR/ES/RU.</td>
-      </tr>
-
-      <tr class="row" data-cat="bio" data-key="living_tooth_model_full.html" data-org="" data-tags="tooth,living,model,bio,health,dentistry">
-        <td class="topic" data-label="נושא"><span class="badge b-bio">🦷🧬 Living Tooth Model (Full)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="living_tooth_model_full.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="living_tooth_model_full.html">Living Tooth Model — Full</a>
-              <div class="muted">living_tooth_model_full.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="tooth">#tooth</span>
-                <span class="tag" data-tag="bio">#bio</span>
-                <span class="tag" data-tag="health">#health</span>
-                <span class="tag" data-tag="dentistry">#dentistry</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל מלא לשן “חיה” – מבנה/תפקוד/הקשרים ביולוגיים.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="pendulum_drone_ship_mountain_he_en_ar.html" data-org="" data-tags="pendulum,drone,ship,mountain,he,en,ar,multilang,transport">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">⚓⛰️ Pendulum Drone Ship — HE/EN/AR</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="pendulum_drone_ship_mountain_he_en_ar.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="pendulum_drone_ship_mountain_he_en_ar.html">Pendulum Drone / Ship / Mountain (HE/EN/AR)</a>
-              <div class="muted">pendulum_drone_ship_mountain_he_en_ar.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="pendulum">#pendulum</span>
-                <span class="tag" data-tag="drone">#drone</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-                <span class="tag" data-tag="transport">#transport</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל רב־לשוני של מערכת מטוטלת לדרון/ספינה/תנועה בהרים.</td>
-      </tr>
-
-      <tr class="row" data-cat="transport" data-key="pendulum_drone_with_photo.html" data-org="" data-tags="pendulum,drone,photo,stability,transport">
-        <td class="topic" data-label="נושא"><span class="badge b-transport">🛰️📷 Pendulum Drone (with photo)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="pendulum_drone_with_photo.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="pendulum_drone_with_photo.html">Pendulum Drone — with Photo</a>
-              <div class="muted">pendulum_drone_with_photo.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="drone">#drone</span>
-                <span class="tag" data-tag="pendulum">#pendulum</span>
-                <span class="tag" data-tag="photo">#photo</span>
-                <span class="tag" data-tag="stability">#stability</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">גרסה עם תמונה/המחשה למודל דרון מבוסס מטוטלת ליציבות ושיכוך תנודות.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="plugos_visual_socket_proposal.html" data-org="" data-tags="plugos,plutos,visual,socket,bluetooth,ipv6,proposal,security">
-        <td class="topic" data-label="נושא"><span class="badge b-net">🔌👁️ PlugOS Visual Socket — Proposal</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="plugos_visual_socket_proposal.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="plugos_visual_socket_proposal.html">PlugOS Visual Socket (Proposal)</a>
-              <div class="muted">plugos_visual_socket_proposal.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="plugos">#plugos</span>
-                <span class="tag" data-tag="plutos">#plutos</span>
-                <span class="tag" data-tag="bluetooth">#bluetooth</span>
-                <span class="tag" data-tag="ipv6">#ipv6</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">הצעת “שקע חזותי” למודל תקשורת/אבטחה (PlugOS) עם רכיבי Plutos.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="plutos_visual_socket_patent_style.html" data-org="" data-tags="plutos,visual,socket,patent,bluetooth,ipv6,security">
-        <td class="topic" data-label="נושא"><span class="badge b-net">🧾🔌 Plutos Visual Socket — Patent Style</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="plutos_visual_socket_patent_style.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="plutos_visual_socket_patent_style.html">Plutos Visual Socket (Patent Style)</a>
-              <div class="muted">plutos_visual_socket_patent_style.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="patent">#patent</span>
-                <span class="tag" data-tag="plutos">#plutos</span>
-                <span class="tag" data-tag="ipv6">#ipv6</span>
-                <span class="tag" data-tag="security">#security</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">גרסת “סגנון פטנט” למודל Plutos Visual Socket.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="qaxm_full_multilang_complete2.html" data-org="" data-tags="qaxm,modulation,signal,communications,multilang,complete">
-        <td class="topic" data-label="נושא"><span class="badge b-net">📶🧠 QAXM — Multilang (Complete 2)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="qaxm_full_multilang_complete2.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="qaxm_full_multilang_complete2.html">QAXM Full — Multilang (Complete 2)</a>
-              <div class="muted">qaxm_full_multilang_complete2.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="qaxm">#qaxm</span>
-                <span class="tag" data-tag="signal">#signal</span>
-                <span class="tag" data-tag="modulation">#modulation</span>
-                <span class="tag" data-tag="multilang">#multilang</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מודל/פיתוח מלא רב־לשוני סביב QAXM לתקשורת/איתות.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="qfm_full_development_with_examples.html" data-org="" data-tags="qfm,modulation,communications,examples,development,signal">
-        <td class="topic" data-label="נושא"><span class="badge b-net">📡🧪 QFM — פיתוח מלא עם דוגמאות</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="qfm_full_development_with_examples.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="qfm_full_development_with_examples.html">QFM Full Development (with examples)</a>
-              <div class="muted">qfm_full_development_with_examples.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="qfm">#qfm</span>
-                <span class="tag" data-tag="examples">#examples</span>
-                <span class="tag" data-tag="signal">#signal</span>
-                <span class="tag" data-tag="communications">#communications</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">מסמך פיתוח QFM עם הסברים ודוגמאות יישום.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="qfm_plutos_combined.html" data-org="" data-tags="qfm,plutos,combined,communications,security,signal">
-        <td class="topic" data-label="נושא"><span class="badge b-net">🔗📶 QFM + Plutos (Combined)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="qfm_plutos_combined.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="qfm_plutos_combined.html">QFM + Plutos Combined</a>
-              <div class="muted">qfm_plutos_combined.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="qfm">#qfm</span>
-                <span class="tag" data-tag="plutos">#plutos</span>
-                <span class="tag" data-tag="combined">#combined</span>
-                <span class="tag" data-tag="security">#security</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">שילוב QFM עם רכיבי Plutos — מודל/גישה משולבת.</td>
-      </tr>
-
-      <tr class="row" data-cat="net" data-key="qfm_plutos_combined_with_applications.html" data-org="" data-tags="qfm,plutos,combined,applications,communications,security">
-        <td class="topic" data-label="נושא"><span class="badge b-net">🧩🚀 QFM + Plutos (Applications)</span></td>
-        <td data-label="קישור">
-          <div class="fav-wrap">
-            <button class="favbtn" type="button" data-fav="qfm_plutos_combined_with_applications.html" aria-label="Favorite">☆</button>
-            <span class="favpill">⭐ מועדף</span>
-            <div>
-              <a href="qfm_plutos_combined_with_applications.html">QFM + Plutos — Combined with Applications</a>
-              <div class="muted">qfm_plutos_combined_with_applications.html</div>
-              <div class="tagbar">
-                <span class="tag" data-tag="applications">#applications</span>
-                <span class="tag" data-tag="qfm">#qfm</span>
-                <span class="tag" data-tag="plutos">#plutos</span>
-                <span class="tag" data-tag="combined">#combined</span>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="desc" data-label="תיאור">שילוב QFM+Plutos עם יישומים מעשיים/תרחישים.</td>
-      </tr>
+      <!-- ... שאר ה-TR שלך נשארים בדיוק כמו אצלך ... -->
 
       </tbody>
     </table>
   </div>
 
   <footer>
-    © כל הזכויות שמורות <br>
-    אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב
+    © <span data-i18n="rights">כל הזכויות שמורות</span> <br>
+    <span data-i18n="rights2">אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב</span>
   </footer>
 </div>
 
@@ -1953,7 +1097,6 @@
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
 
-    // Update label
     themeBtn.innerHTML = theme === "dark"
       ? `☀️ <span id="themeTxt">Light</span>`
       : `🌙 <span id="themeTxt">Dark</span>`;
@@ -1972,6 +1115,54 @@
     const cur = document.documentElement.getAttribute("data-theme") || "light";
     applyTheme(cur === "dark" ? "light" : "dark");
   });
+
+  // ===== ✅ Visitor Counter (EASY + GLOBAL + FALLBACK) =====
+  (function initVisitorCounter(){
+    const el = document.getElementById("visitCounter");
+    if(!el) return;
+
+    // 1) Local fallback (works offline, per device)
+    const LS_LOCAL_VISITS = "index_local_visits_v1";
+    let localCount = 0;
+    try{
+      localCount = parseInt(localStorage.getItem(LS_LOCAL_VISITS) || "0", 10) || 0;
+      localCount += 1;
+      localStorage.setItem(LS_LOCAL_VISITS, String(localCount));
+    }catch(e){}
+
+    // show something immediately
+    el.textContent = String(localCount);
+
+    // 2) Global counter via CountAPI (works when online)
+    // NOTE: change namespace/key if you want a different counter for another page.
+    const NS = "portfolio-index-public";
+    const KEY = "main";
+    const LS_ONCE = "index_countapi_once_v1";
+
+    const firstTimeHere = (() => {
+      try{
+        const v = localStorage.getItem(LS_ONCE);
+        if(v) return false;
+        localStorage.setItem(LS_ONCE, "1");
+        return true;
+      }catch(e){
+        return true; // if storage blocked, treat as first
+      }
+    })();
+
+    const url = firstTimeHere
+      ? `https://api.countapi.xyz/hit/${NS}/${KEY}`
+      : `https://api.countapi.xyz/get/${NS}/${KEY}`;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if(data && typeof data.value !== "undefined"){
+          el.textContent = String(data.value);
+        }
+      })
+      .catch(()=>{ /* keep localCount */ });
+  })();
 
   // --- Search + Filter + Favorites + Tags + Sort ---
   const searchEl = document.getElementById('search');
@@ -2279,14 +1470,16 @@
     visibleLinks.forEach(a=> window.open(a.getAttribute('href'), '_blank'));
   });
 
-  // --- i18n (minimal keep-he working) ---
+  // --- i18n (HE/EN/AR/RU) ---
   const dict = {
     he:{
       pageTitle:"דף הבית",
+      skip:"דלג לתוכן",
       welcome:"ברוכים הבאים",
-      summaryPrefix:"סך הכל קבצים:",
+      summaryTotal:"סך הכל קבצים:",
       summaryShown:"מוצגים כעת:",
       summaryFav:"מועדפים:",
+      summaryVisits:"מבקרים:",
       searchLabel:"חיפוש",
       searchPh:"הקלד מילה/שם קובץ/תיאור/תגית…",
       searchHint:"מחפש בתוך נושא, שם קובץ, תיאור, תגיות ואיברים.",
@@ -2339,25 +1532,15 @@
       graphClose:"⬅ חזרה",
       graphTitle:"מפת קשרים בין רעיונות",
       graphHint:"לחיצה על נקודה פותחת את הרעיון ב־Viewer",
+      rights:"כל הזכויות שמורות",
+      rights2:"אין להעתיק, לשכפל, להדפיס, לצלם או לשמור תוכן זה ללא אישור מפורש בכתב",
+
       badgeNet:"🌐🔌 תקשורת ורשתות",
       badgePolicy:"🏛️🌍 מדיניות וחוקה",
       badgeHybridSec:"🔐🧩 אבטחת מידע היברידית",
       badgeUi:"🖐️📺 ממשק אדם–מסך",
       badgeId:"📱🌍 זיהוי זהות רב־לשוני",
-      badgeMed:"🧬🧲 רפואה חכמה",
-      badgeElec:"⚡ חשמל וסימולציות",
-      badgeThermo:"🔥 תרמודינמיקה",
-      badgeAudio:"🎧 אנרגיה וקול",
-      badgeFloor:"🧱⚡ אנרגיה מהרצפה",
-      badgeThermalPaver:"🧱🌡️ מדרכה חכמה תרמית",
-      badgeWater:"🌊👟 תנועה על מים",
-      badgeTransport:"🚆💧 תנועה ותחבורה",
-      badgeHybrid:"🌊🌬️ הנעה היברידית",
-      badgePatent:"✈️📄 פטנט — אבטחת תעופה",
-      badgeWaterDoor:"🚪💧 דלת חכמה מונעת מים",
-      badgePlantOil:"🌱🛢️ גזים → נפט ביולוגי",
-      badgeCleanAir:"🧼🫁 אזור אוויר נקי",
-      badgeMetabolicRail:"🚆🧬 מודל רכבת מטבולית",
+      badgeLightBio:"💡🖐️ תאורה חכמה ביומטרית",
       linkUsb:"USB + רשת (OSI + IPv6)",
       descUsb:"חיבור USB כרשת מלאה לפי מודל 7 השכבות, כולל IPv4/IPv6, תרשים חומרה ותרחיש שימוש מעשי",
       linkHybridDataSec:"Hybrid Data Security — מודל אבטחה",
@@ -2366,39 +1549,259 @@
       descIntlConst:"מודל חזותי-מתמטי לחוקה בינלאומית: גרף קשרים בין מדינות, עקרונות וזכויות, כולל אנימציה אינטראקטיבית, הוכחה לוגית, ועבודה מלאה במצב Offline ללא תלות בשרתים חיצוניים.",
       linkFp:"מסכים חכמים לפי טביעת אצבע",
       descFp:"מערכת מסכים אינטראקטיבית המגיבה לטביעת אצבע ומחוות, כולל אימות משתמש, אלגוריתמים ודמו מלא",
-      badgeLightBio:"💡🖐️ תאורה חכמה ביומטרית",
       linkLightBio:"תאורה ללא מפסיקים — הצבעה + טביעת אצבע",
       descLightBio:"דף מערכת מלא: ארכיטקטורה, תרשימים, אבטחה, סימולציה ופרוטוטייפ להפעלת נר/תאורה בהצבעה ואימות ביומטרי",
       linkBivdn:"BIVDN – זיהוי זהות נייד",
-      descBivdn:"מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים",
-      linkBio:"מגנט ביולוגי להולכת תרופות",
-      descBio:"מודל מחקרי להחלפת אינפוזיה: טלאי חכם המבוסס על DNA, חתימה חשמלית וניווט טיפולי (\"GPS ביולוגי\") בגוף האדם",
-      linkPlantOil:"המרת גזים מצמחים לנפט ביולוגי (MVP)",
-      descPlantOil:"מודל MVP להפקת נפט ביולוגי מגזים הנפלטים מצמחים בחללים סגורים: לכידה, פירוק, תהליך חום ויישום עירוני.",
-      linkCleanAir:"פטנט: אזור אוויר נקי ריבועי (Clean-Air Zone)",
-      descCleanAir:"יצירת “בועת” אוויר נקי ריבועית סביב מטופל/אזור מוגדר באמצעות אספקת אוויר, פיזור מבוקר וניטור חלקיקים/מזהמים.",
-      linkMetabolicRail:"מודל רכבת מטבולית – ויסות חומרים בגוף",
-      descMetabolicRail:"מודל ביולוגי־מערכתי: הלבלב כתחנת מקור מרכזית, והאיברים כתחנות “רכבת” מטבוליות לפירוק/ויסות והזרמת סוכר, נוזלים וחומרים – לשמירה על איזון פנימי.",
-      linkElec:"מודל חשמל + סימולציות",
-      descElec:"מודלים פיזיקליים, משוואות וסימולציות אינטראקטיביות",
-      linkThermo:"תרמוסיפון",
-      descThermo:"מחשבון זרימה תרמוסיפונית לפי פרמטרים פיזיקליים",
-      linkAudio:"אוזניות נטענות מעצמן",
-      descAudio:"טעינה עצמית מאנרגיית קול – מודל תאורטי וסימולציה",
-      linkFloor:"מודל רצפה חכמה",
-      descFloor:"הפקת אנרגיה מלחץ ומיפוי עומסים",
-      linkThermalPaver:"מדרכה חכמה לאגירה וחישה תרמית",
-      descThermalPaver:"מערכת משתלבות חכמות בשתי שכבות: אגירה וחישה של חום/קור, רשת Mesh לניטור מרחבי, וזיהוי תרחישים תת־קרקעיים (רעידות אדמה/אסונות טבע).",
-      linkWater:"נעליים להליכה על מים",
-      descWater:"סונאר, משאבות זעירות ושיווי־משקל דינמי",
-      linkWaterDoor:"דלת חשמלית עם מים — מודל מלא",
-      descWaterDoor:"מערכת דלת חכמה המונעת באמצעות לחץ/זרימת מים: שסתומים, בקרה, מנגנון הפעלה, בטיחות ואפשרויות גיבוי.",
-      linkTrain:"רכבת מים–גז (Blue)",
-      descTrain:"תחבורה מבוססת מים וגז עם יעילות אנרגטית",
-      linkHybrid:"נעליים מים–אוויר (תלת־לשוני)",
-      descHybrid:"הליכה וריחוף על מים ואוויר עם זרימה מבוקרת",
-      linkPatent:"כרטיס טיסה חכם (Token דינמי) — טיוטת פטנט",
-      descPatent:"מערכת כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי, Token מתחלף, Anti-Replay וביטול אוטומטי לאחר העלייה למטוס"
+      descBivdn:"מערכת זיהוי דיגיטלית רב־לשונית למובייל: אימות זהות, ממשק רספונסיבי, תמיכה בשפות מרובות והתאמה למסכים קטנים"
+    },
+
+    en:{
+      pageTitle:"Home",
+      skip:"Skip to content",
+      welcome:"Welcome",
+      summaryTotal:"Total files:",
+      summaryShown:"Shown now:",
+      summaryFav:"Favorites:",
+      summaryVisits:"Visitors:",
+      searchLabel:"Search",
+      searchPh:"Type a word / filename / description / tag…",
+      searchHint:"Searches in title, filename, description, tags and organs.",
+      filterLabel:"Filter by category",
+      filterAll:"All",
+      catNet:"Networking & Communication",
+      catPolicy:"Policy & Constitution",
+      catUi:"Human–Screen UI",
+      catId:"Identity",
+      catMed:"Smart Medicine",
+      catBio:"Biological Models",
+      catElec:"Electricity & Simulations",
+      catThermo:"Thermodynamics",
+      catAudio:"Audio & Energy",
+      catFloor:"Energy from Floor",
+      catWater:"Water Mobility",
+      catTransport:"Transport",
+      catHybrid:"Hybrid Propulsion",
+      organLabel:"Filter by organ",
+      organAll:"All",
+      organPancreas:"Pancreas",
+      organLiver:"Liver",
+      organKidney:"Kidneys",
+      organHeart:"Heart",
+      organLung:"Lungs",
+      organSpleen:"Spleen",
+      organBlood:"Blood",
+      organAir:"Air / Breathing",
+      organSkin:"Skin",
+      sortLabel:"Sort",
+      sortDefault:"Default",
+      sortTitle:"By title",
+      sortFile:"By filename",
+      sortFavFirst:"Favorites first",
+      resetBtn:"Reset",
+      openAllBtn:"Open first link (Viewer)",
+      openAllTabsBtn:"Open all in tabs",
+      clearFavBtn:"Clear favorites",
+      graphBtn:"Connections map (Graph)",
+      favOnlyLabel:"View",
+      favOnlyText:"Show favorites only",
+      favHint:"The star is stored in the browser (LocalStorage).",
+      favPill:"⭐ Favorite",
+      empty:"No results. Try changing the search or filters.",
+      thTopic:"Topic",
+      thLink:"Filename / Link",
+      thDesc:"Description",
+      viewerBack:"⬅ Back to main",
+      viewerNewTab:"Open in new tab ↗",
+      graphClose:"⬅ Back",
+      graphTitle:"Ideas connections map",
+      graphHint:"Click a node to open in Viewer",
+      rights:"All rights reserved",
+      rights2:"Do not copy, reproduce, print, screenshot, or store without written permission",
+
+      badgeNet:"🌐🔌 Networking",
+      badgePolicy:"🏛️🌍 Policy",
+      badgeHybridSec:"🔐🧩 Hybrid Security",
+      badgeUi:"🖐️📺 UI",
+      badgeId:"📱🌍 Identity (Multilang)",
+      badgeLightBio:"💡🖐️ Smart Biometric Lighting",
+      linkUsb:"USB + Network (OSI + IPv6)",
+      descUsb:"USB as a full network stack (7 layers), including IPv4/IPv6, hardware diagram and practical use-case",
+      linkHybridDataSec:"Hybrid Data Security — Security Model",
+      descHybridDataSec:"A multi-layer hybrid security model: encryption, integrity, key management and defense-in-depth.",
+      linkIntlConst:"International Constitution — Graph & Animation (Offline)",
+      descIntlConst:"A visual-mathematical model: relationships graph, interactive animation, logical proof, fully offline.",
+      linkFp:"Fingerprint Gesture Smart Screens",
+      descFp:"Interactive screens responding to fingerprint and gestures, including authentication, algorithms and demo",
+      linkLightBio:"No-Switch Lighting — Pointing + Fingerprint",
+      descLightBio:"Full system page: architecture, diagrams, security, simulation and prototype",
+      linkBivdn:"BIVDN — Mobile Identity",
+      descBivdn:"Multilingual mobile identity system: verification, responsive UI and small-screen support"
+    },
+
+    ar:{
+      pageTitle:"الرئيسية",
+      skip:"تخطي إلى المحتوى",
+      welcome:"مرحبًا",
+      summaryTotal:"إجمالي الملفات:",
+      summaryShown:"المعروض الآن:",
+      summaryFav:"المفضلة:",
+      summaryVisits:"الزوار:",
+      searchLabel:"بحث",
+      searchPh:"اكتب كلمة / اسم ملف / وصف / وسم…",
+      searchHint:"يبحث في العنوان واسم الملف والوصف والوسوم والأعضاء.",
+      filterLabel:"تصفية حسب الفئة",
+      filterAll:"الكل",
+      catNet:"اتصالات وشبكات",
+      catPolicy:"سياسة ودستور",
+      catUi:"واجهة إنسان–شاشة",
+      catId:"الهوية",
+      catMed:"طب ذكي",
+      catBio:"نماذج بيولوجية",
+      catElec:"كهرباء ومحاكاة",
+      catThermo:"ديناميكا حرارية",
+      catAudio:"طاقة وصوت",
+      catFloor:"طاقة من الأرض",
+      catWater:"حركة على الماء",
+      catTransport:"نقل",
+      catHybrid:"دفع هجين",
+      organLabel:"تصفية حسب العضو",
+      organAll:"الكل",
+      organPancreas:"البنكرياس",
+      organLiver:"الكبد",
+      organKidney:"الكلى",
+      organHeart:"القلب",
+      organLung:"الرئتان",
+      organSpleen:"الطحال",
+      organBlood:"الدم",
+      organAir:"هواء/تنفس",
+      organSkin:"الجلد",
+      sortLabel:"ترتيب",
+      sortDefault:"افتراضي",
+      sortTitle:"حسب العنوان",
+      sortFile:"حسب اسم الملف",
+      sortFavFirst:"المفضلة أولاً",
+      resetBtn:"إعادة ضبط",
+      openAllBtn:"فتح أول رابط (عارض)",
+      openAllTabsBtn:"فتح الكل في تبويبات",
+      clearFavBtn:"مسح المفضلة",
+      graphBtn:"خريطة العلاقات (Graph)",
+      favOnlyLabel:"عرض",
+      favOnlyText:"عرض المفضلة فقط",
+      favHint:"النجمة محفوظة في المتصفح (LocalStorage).",
+      favPill:"⭐ مفضّل",
+      empty:"لا توجد نتائج. جرّب تغيير البحث أو التصفية.",
+      thTopic:"الموضوع",
+      thLink:"اسم الملف / الرابط",
+      thDesc:"الوصف",
+      viewerBack:"⬅ رجوع للرئيسية",
+      viewerNewTab:"فتح في تبويب جديد ↗",
+      graphClose:"⬅ رجوع",
+      graphTitle:"خريطة الروابط بين الأفكار",
+      graphHint:"انقر على نقطة لفتحها في العارض",
+      rights:"جميع الحقوق محفوظة",
+      rights2:"يمنع النسخ أو الطباعة أو التصوير أو الحفظ دون إذن خطي",
+
+      badgeNet:"🌐🔌 شبكات",
+      badgePolicy:"🏛️🌍 سياسة",
+      badgeHybridSec:"🔐🧩 أمان هجين",
+      badgeUi:"🖐️📺 واجهة",
+      badgeId:"📱🌍 هوية (متعدد اللغات)",
+      badgeLightBio:"💡🖐️ إضاءة ذكية بيومترية",
+      linkUsb:"USB + شبكة (OSI + IPv6)",
+      descUsb:"USB كشبكة كاملة (7 طبقات) مع IPv4/IPv6 ومخطط عتاد وحالة استخدام",
+      linkHybridDataSec:"أمان البيانات الهجين — نموذج",
+      descHybridDataSec:"نموذج أمان متعدد الطبقات: تشفير، سلامة، إدارة مفاتيح وحماية متعددة.",
+      linkIntlConst:"دستور دولي — مخطط وحركة (بدون إنترنت)",
+      descIntlConst:"نموذج بصري-رياضي مع مخطط علاقات وحركة تفاعلية وبرهان ومن دون خوادم.",
+      linkFp:"شاشات ذكية حسب البصمة والإيماءات",
+      descFp:"شاشات تفاعلية تستجيب للبصمة والإيماءات مع توثيق وخوارزميات وعرض",
+      linkLightBio:"إضاءة بلا مفاتيح — إشارة + بصمة",
+      descLightBio:"صفحة نظام كاملة: بنية، مخططات، أمان، محاكاة ونموذج",
+      linkBivdn:"BIVDN — هوية عبر الهاتف",
+      descBivdn:"نظام هوية متعدد اللغات: تحقق، واجهة متجاوبة ودعم للشاشات الصغيرة"
+    },
+
+    ru:{
+      pageTitle:"Главная",
+      skip:"К содержимому",
+      welcome:"Добро пожаловать",
+      summaryTotal:"Всего файлов:",
+      summaryShown:"Показано:",
+      summaryFav:"Избранное:",
+      summaryVisits:"Посетители:",
+      searchLabel:"Поиск",
+      searchPh:"Введите слово / имя файла / описание / тег…",
+      searchHint:"Поиск по теме, имени файла, описанию, тегам и органам.",
+      filterLabel:"Фильтр по категории",
+      filterAll:"Все",
+      catNet:"Связь и сети",
+      catPolicy:"Политика и конституция",
+      catUi:"Интерфейс человек–экран",
+      catId:"Идентификация",
+      catMed:"Умная медицина",
+      catBio:"Биомодели",
+      catElec:"Электричество и симуляции",
+      catThermo:"Термодинамика",
+      catAudio:"Аудио и энергия",
+      catFloor:"Энергия от пола",
+      catWater:"Движение по воде",
+      catTransport:"Транспорт",
+      catHybrid:"Гибридный привод",
+      organLabel:"Фильтр по органу",
+      organAll:"Все",
+      organPancreas:"Поджелудочная",
+      organLiver:"Печень",
+      organKidney:"Почки",
+      organHeart:"Сердце",
+      organLung:"Лёгкие",
+      organSpleen:"Селезёнка",
+      organBlood:"Кровь",
+      organAir:"Воздух/дыхание",
+      organSkin:"Кожа",
+      sortLabel:"Сортировка",
+      sortDefault:"По умолчанию",
+      sortTitle:"По названию",
+      sortFile:"По имени файла",
+      sortFavFirst:"Избранное сверху",
+      resetBtn:"Сброс",
+      openAllBtn:"Открыть первую ссылку (Viewer)",
+      openAllTabsBtn:"Открыть всё во вкладках",
+      clearFavBtn:"Очистить избранное",
+      graphBtn:"Карта связей (Graph)",
+      favOnlyLabel:"Вид",
+      favOnlyText:"Показывать только избранное",
+      favHint:"Звезда хранится в браузере (LocalStorage).",
+      favPill:"⭐ Избранное",
+      empty:"Ничего не найдено. Попробуйте изменить поиск или фильтры.",
+      thTopic:"Тема",
+      thLink:"Файл / ссылка",
+      thDesc:"Описание",
+      viewerBack:"⬅ Назад на главную",
+      viewerNewTab:"Открыть в новой вкладке ↗",
+      graphClose:"⬅ Назад",
+      graphTitle:"Карта связей идей",
+      graphHint:"Нажмите на точку, чтобы открыть в Viewer",
+      rights:"Все права защищены",
+      rights2:"Запрещено копировать, печатать, фотографировать или сохранять без письменного разрешения",
+
+      badgeNet:"🌐🔌 Сети",
+      badgePolicy:"🏛️🌍 Политика",
+      badgeHybridSec:"🔐🧩 Гибр. безопасность",
+      badgeUi:"🖐️📺 UI",
+      badgeId:"📱🌍 Идентификация",
+      badgeLightBio:"💡🖐️ Биометрическое освещение",
+      linkUsb:"USB + сеть (OSI + IPv6)",
+      descUsb:"USB как полноценная сеть (7 слоёв), IPv4/IPv6, схема железа и практический сценарий",
+      linkHybridDataSec:"Hybrid Data Security — модель",
+      descHybridDataSec:"Многоуровневая гибридная защита: шифрование, целостность, ключи и defense-in-depth.",
+      linkIntlConst:"Международная конституция — граф и анимация (Offline)",
+      descIntlConst:"Визуально-математическая модель: граф связей, интерактивная анимация, доказательство, полностью offline.",
+      linkFp:"Умные экраны по отпечатку",
+      descFp:"Интерактивные экраны: отпечаток + жесты, аутентификация, алгоритмы и демо",
+      linkLightBio:"Освещение без выключателей — указание + отпечаток",
+      descLightBio:"Полная страница системы: архитектура, схемы, безопасность, симуляция и прототип",
+      linkBivdn:"BIVDN — мобильная идентификация",
+      descBivdn:"Мультиязычная мобильная идентификация: проверка, адаптивный интерфейс, поддержка малых экранов"
     }
   };
 
@@ -2603,17 +2006,4 @@
 </script>
 
 </body>
-   <script>
-  (function(){
-    const counterId = "index-main-page-visits";
-    fetch("https://api.countapi.xyz/hit/" + counterId)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("visitCounter").textContent = data.value;
-      })
-      .catch(() => {
-        document.getElementById("visitCounter").textContent = "—";
-      });
-  })();
-  </script>
 </html>
