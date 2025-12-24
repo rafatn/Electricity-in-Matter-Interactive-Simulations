@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מודל זרימה – מערכות הגוף ↔ מחלקות + משוואות (מסודר ומפורט, ללא ספריות חיצוניות)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
+      --head:#0f172a; --shadow:0 10px 26px rgba(0,0,0,.08); --r:14px;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.75}
+    header{position:sticky;top:0;z-index:10;background:rgba(246,247,251,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    h1{margin:6px 0 6px;color:var(--head)}
+    .sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+    .grid{display:grid;gap:14px}
+    @media(min-width:900px){.grid{grid-template-columns:1.15fr .85fr}}
+    .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;border:1px solid #f0f1f5}
+    .toc a{display:inline-block;margin:4px 0;padding:6px 10px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:#1d4ed8;font-weight:700}
+    .toc a:hover{background:#eef2ff}
+    .note{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;color:#0f172a}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+    th{background:#111827;color:#fff;border-bottom:none}
+    .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800}
+    .p-ok{background:#dcfce7;color:#166534}
+    .p-w{background:#ffedd5;color:#9a3412}
+    .p-b{background:#fee2e2;color:#991b1b}
+
+    /* ------- Flow (simple SVG-like boxes) ------- */
+    .flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .box{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;min-width:150px}
+    .box b{display:block;margin-bottom:4px}
+    .arrow{font-weight:900;color:#334155}
+    .group{border:1px solid var(--line);border-radius:14px;padding:12px;background:#f9fafb}
+    .group-title{font-weight:900;color:#0f172a;margin-bottom:8px}
+    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:900}
+    button.primary{background:#111827;border-color:#111827;color:#fff}
+    details{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#fff}
+    summary{cursor:pointer;font-weight:900}
+
+    /* ------- Equations: pure HTML/CSS, always visible ------- */
+    .eq-card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+    .eq-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:8px}
+    .eq-head .name{font-weight:900}
+    .eq-head .why{color:var(--muted);font-size:13px}
+    .eq{
+      background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;
+      overflow-x:auto; direction:ltr; text-align:left;
+      font-size:20px;
+    }
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;font-size:13px;color:#334155;background:#0b1220;color:#e5e7eb;padding:10px;border-radius:12px;overflow:auto;direction:ltr;text-align:left}
+    .frac{display:inline-block;vertical-align:middle;text-align:center;line-height:1.15}
+    .frac > span{display:block;padding:0 6px}
+    .frac .top{border-bottom:2px solid #0f172a;padding-bottom:4px}
+    .frac .bot{padding-top:4px}
+    .sym{font-weight:900}
+    .u{color:var(--muted);font-size:13px}
+    .bul{margin:8px 0 0;padding-right:18px}
+    .bul li{margin:6px 0}
+    .ex{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;margin-top:10px}
+    .ex b{color:#9a3412}
+
+    @media print{
+      header,.btns{display:none}
+      body{background:#fff}
+      .card{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>מודל זרימה – מערכות הגוף ↔ מחלקות בית חולים</h1>
+    <p class="sub">גרסה מסודרת ומפורטת — <b>ללא KaTeX / Mermaid</b> כדי שהמשוואות תמיד יופיעו בבירור בכל מכשיר.</p>
+    <div class="toc">
+      <a href="#flow">מודל זרימה</a>
+      <a href="#matrix">מיפוי למחלקות</a>
+      <a href="#equations">משוואות + הסבר מפורט</a>
+      <a href="#cases">תרחישים לדוגמה</a>
+    </div>
+    <div class="btns">
+      <button class="primary" onclick="window.print()">🖨️ הדפסה / PDF</button>
+      <button onclick="toggleBig()">🔍 הגדל/הקטן נוסחאות</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <div class="card" id="flow">
+      <h2>1) מודל זרימה (Flow) – “איך מחלקות משתפות פעולה”</h2>
+      <p class="note">
+        זה מודל עבודה כללי: <b>מיון</b> מזהה מערכת(ות) מעורבות → מפנה למחלקות רלוונטיות → <b>טיפול נמרץ</b> מרכז (כאשר רב־מערכתי) → שיקום/המשך טיפול.
+      </p>
+
+      <div class="group">
+        <div class="group-title">זרימה בסיסית</div>
+        <div class="flow" aria-label="Flow model">
+          <div class="box"><b>חולה מגיע</b><span class="u">אמבולנס / הגעה עצמאית</span></div>
+          <div class="arrow">→</div>
+          <div class="box"><b>מיון (ER)</b><span class="u">Triaging + בדיקות ראשוניות</span></div>
+          <div class="arrow">→</div>
+          <div class="box"><b>זיהוי מערכות</b><span class="u">לב / נשימה / מוח / כליות / זיהום…</span></div>
+          <div class="arrow">→</div>
+          <div class="box"><b>מחלקה ייעודית</b><span class="u">לפי המערכת הדומיננטית</span></div>
+          <div class="arrow">→</div>
+          <div class="box"><b>ICU אם רב־מערכתי</b><span class="u">ניטור + תמיכה</span></div>
+          <div class="arrow">→</div>
+          <div class="box"><b>שיקום / שחרור</b><span class="u">המשך טיפול ומעקב</span></div>
+        </div>
+      </div>
+
+      <details>
+        <summary>מה זה “רב־מערכתי” בשפה פשוטה?</summary>
+        <ul class="bul">
+          <li>כשיותר ממערכת אחת “נופלת” או בסיכון: לדוגמה <b>זיהום</b> גורם לירידת לחץ (לב וכלי דם) + פגיעה בכליות + בלבול (מוח).</li>
+          <li>במצב כזה, צריך מקום שמרכז את כל המערכות יחד → לרוב <b>טיפול נמרץ</b>.</li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="card" id="matrix">
+      <h2>2) מיפוי מערכות ↔ מחלקות (Matrix)</h2>
+      <p class="sub">מי “אחראי” כשיש חשד לפגיעה במערכת מסוימת.</p>
+      <table>
+        <tr>
+          <th>מערכת גוף</th>
+          <th>מחלקות עיקריות</th>
+          <th>הערה תפעולית</th>
+        </tr>
+        <tr>
+          <td><b>עצבים</b></td>
+          <td>נוירולוגיה, נוירוכירורגיה, שיקום</td>
+          <td>סימנים דחופים: חולשה חד־צדדית, בלבול חריף</td>
+        </tr>
+        <tr>
+          <td><b>לב וכלי דם</b></td>
+          <td>קרדיולוגיה, כירורגיה, טיפול נמרץ</td>
+          <td>סימנים: לחץ דם נמוך, כאב חזה, הפרעות קצב</td>
+        </tr>
+        <tr>
+          <td><b>נשימה</b></td>
+          <td>ריאות, הרדמה, טיפול נמרץ</td>
+          <td>סימנים: סטורציה נמוכה, מאמץ נשימתי</td>
+        </tr>
+        <tr>
+          <td><b>כליות</b></td>
+          <td>נפרולוגיה, פנימית</td>
+          <td>סימנים: ירידה במתן שתן, קריאטינין עולה</td>
+        </tr>
+        <tr>
+          <td><b>זיהום/חיסון</b></td>
+          <td>זיהומיות, פנימית, טיפול נמרץ</td>
+          <td>סימנים: חום + ירידת לחץ + בלבול → חשד לספסיס</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" id="equations">
+    <h2>3) משוואות קליניות – מסודר וברור + הסבר מפורט</h2>
+    <p class="note">
+      כאן המשוואות מוצגות כטקסט מתמטי “אמיתי” ב־HTML/CSS (לא תלוי באינטרנט).  
+      בכל משוואה: <b>מה היא אומרת</b>, <b>מה מודדים</b>, <b>איך מפרשים</b>, ודוגמה.
+    </p>
+
+    <!-- 1) Q = ΔP / R -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.1 זרימת דם – אנלוגיית חוק אוהם (Hemodynamic Ohm)</div>
+        <div class="why">קישור בין לב/לחץ/כלי דם</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">Q</span> = <span class="frac"><span class="top">ΔP</span><span class="bot">R</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>מה זה אומר?</b> הזרימה (Q) גדלה כשיש הפרש לחץ גדול (ΔP), וקטנה כשיש התנגדות גבוהה (R).</li>
+        <li><b>פרשנות קלינית:</b> אם לחץ יורד או ההתנגדות עולה → פחות זרימה לרקמות → סיכון לאי־ספיקה.</li>
+        <li><b>חיבורים בין מערכות:</b> לב (יוצר לחץ) + כלי דם (התנגדות) + איברים (מקבלים זרימה).</li>
+        <li><b>איפה זה חשוב?</b> מיון, טיפול נמרץ, קרדיולוגיה, ניתוחים (הרדמה).</li>
+      </ul>
+      <div class="ex">
+        <b>דוגמה:</b> אם ΔP יורד בחצי (למשל משוק), וה־R נשאר דומה → Q יורד בערך בחצי → פחות אספקת דם למוח/כליות.
+      </div>
+      <div class="mono">LaTeX: Q = \frac{\Delta P}{R}</div>
+    </div>
+
+    <!-- 2) CO = HR × SV -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.2 תפוקת לב (Cardiac Output)</div>
+        <div class="why">כמה דם הלב מזרים בדקה</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">CO</span> = <span class="sym">HR</span> × <span class="sym">SV</span>
+      </div>
+      <ul class="bul">
+        <li><b>CO</b> = תפוקת לב (ליטר/דקה), <b>HR</b> = דופק (פעימות/דקה), <b>SV</b> = נפח פעימה (מ״ל/פעימה).</li>
+        <li><b>מה זה אומר?</b> הלב מזרים יותר דם אם הדופק עולה או אם כל פעימה “דוחפת” יותר דם.</li>
+        <li><b>סיכון:</b> דופק גבוה מדי יכול להפחית מילוי לב → למרות HR גבוה, SV יורד.</li>
+        <li><b>מחלקות:</b> קרדיולוגיה, ICU, חדר ניתוח, מיון.</li>
+      </ul>
+      <div class="ex">
+        <b>דוגמה מספרית:</b> HR=80, SV=70 מ״ל → CO≈5600 מ״ל/דקה (=5.6 ל׳/דקה).
+      </div>
+      <div class="mono">LaTeX: CO = HR \times SV</div>
+    </div>
+
+    <!-- 3) DO2 = CO × CaO2 -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.3 אספקת חמצן לרקמות (Oxygen Delivery)</div>
+        <div class="why">קישור בין לב ↔ דם ↔ נשימה</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">DO₂</span> = <span class="sym">CO</span> × <span class="sym">CaO₂</span>
+      </div>
+      <ul class="bul">
+        <li><b>DO₂</b> תלוי ב־<b>כמה דם מגיע</b> (CO) וב־<b>כמה חמצן יש בדם</b> (CaO₂).</li>
+        <li><b>משמעות:</b> גם אם הריאות “בסדר”, אנמיה (Hb נמוך) יכולה להוריד CaO₂ → פחות חמצן לרקמות.</li>
+        <li><b>מחלקות:</b> ICU, מיון, הרדמה, המטולוגיה, קרדיולוגיה.</li>
+      </ul>
+      <div class="ex">
+        <b>דוגמה:</b> חולה עם CO תקין אבל Hb נמוך → DO₂ יורד → עייפות/חולשה/חמצת לקטית אפשרית.
+      </div>
+      <div class="mono">LaTeX: DO_2 = CO \times CaO_2</div>
+    </div>
+
+    <!-- 4) VA = (VT - VD) × RR -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.4 אוורור נאדיות (Alveolar Ventilation)</div>
+        <div class="why">מודד את ה”אוורור האפקטיבי” שמגיע לחילוף גזים</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">Vₐ</span> = ( <span class="sym">Vₜ</span> − <span class="sym">Vᴅ</span> ) × <span class="sym">RR</span>
+      </div>
+      <ul class="bul">
+        <li><b>Vₜ</b> = נפח נשימה, <b>Vᴅ</b> = חלל מת (אוויר שלא משתתף בחילוף גזים), <b>RR</b> = קצב נשימה.</li>
+        <li><b>מה זה אומר?</b> נשימות קטנות ומהירות יכולות להיראות “הרבה”, אבל אם Vₜ קטן ומתקרב ל־Vᴅ → Vₐ נמוך.</li>
+        <li><b>מחלקות:</b> ריאות, ICU, הרדמה, מיון.</li>
+      </ul>
+      <div class="ex">
+        <b>דוגמה:</b> RR עולה מאוד אך Vₜ קטן (נשימה שטחית) → עדיין Vₐ נמוך → CO₂ יכול לעלות.
+      </div>
+      <div class="mono">LaTeX: V_A = (V_T - V_D)\times RR</div>
+    </div>
+
+    <!-- 5) Henderson-Hasselbalch -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.5 חומצה־בסיס (Henderson–Hasselbalch)</div>
+        <div class="why">הבנת pH: איזון בין ריאות לכליות</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">pH</span> = 6.1 + log( <span class="frac"><span class="top">HCO₃⁻</span><span class="bot">0.03 × PaCO₂</span></span> )
+      </div>
+      <ul class="bul">
+        <li><b>בפשטות:</b> HCO₃⁻ (כליות/מטבוליזם) מול PaCO₂ (ריאות/אוורור).</li>
+        <li><b>אם PaCO₂ עולה</b> (היפו־ונטילציה) → המכנה גדל → pH יורד (חמצת נשימתית).</li>
+        <li><b>אם HCO₃⁻ יורד</b> (שלשולים/כשל כלייתי/חמצת מטבולית) → המונה קטן → pH יורד.</li>
+        <li><b>מחלקות:</b> ICU, פנימית, נפרולוגיה, ריאות, הרדמה.</li>
+      </ul>
+      <details>
+        <summary>איך עובדים עם זה בצוות?</summary>
+        <ul class="bul">
+          <li>בודקים גזים בדם (ABG): pH, PaCO₂, HCO₃⁻.</li>
+          <li>מחליטים: הבעיה נשימתית או מטבולית? ואז מחפשים את הסיבה במחלקה המתאימה.</li>
+        </ul>
+      </details>
+      <div class="mono">LaTeX: pH = 6.1 + \log\left(\frac{HCO_3^-}{0.03\times PaCO_2}\right)</div>
+    </div>
+
+    <!-- 6) Clearance -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.6 פינוי כלייתי (Clearance)</div>
+        <div class="why">כמה “פלזמה” הכליה מנקה מהחומר בדקה</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">C</span> = <span class="frac"><span class="top">U × V</span><span class="bot">P</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>U</b> = ריכוז החומר בשתן, <b>V</b> = קצב יצירת שתן, <b>P</b> = ריכוז בדם.</li>
+        <li><b>מטרה:</b> הערכת תפקוד כלייתי (ולפעמים מינון תרופות).</li>
+        <li><b>מחלקות:</b> נפרולוגיה, פנימית, ICU, תרופות קליניות.</li>
+      </ul>
+      <div class="ex">
+        <b>דוגמה:</b> אם V יורד משמעותית (אוליגוריה) → clearance יורד → הצטברות חומרים/תרופות.
+      </div>
+      <div class="mono">LaTeX: C = \frac{U\times V}{P}</div>
+    </div>
+
+    <div class="note">
+      אם תרצה, אפשר להוסיף כאן עוד נוסחאות “יומיומיות” במחלקות:  
+      <b>MAP</b>, <b>GFR/CKD-EPI</b>, <b>Anion Gap</b>, <b>PaO₂/FiO₂</b>, <b>Shock Index</b>, ועוד — עם דוגמאות.
+    </div>
+  
+    <!-- ===== ADDITIONAL CLINICAL EQUATIONS ===== -->
+    <h2 style="margin-top:28px">3.7–3.11 נוסחאות נוספות שימושיות (מיון / ICU / פנימית)</h2>
+    <p class="sub">נוסחאות “עבודה” נפוצות לצוותים. מוצגות באופן קריא גם בלי אינטרנט.</p>
+
+    <!-- 7) MAP -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.7 לחץ עורקי ממוצע (MAP)</div>
+        <div class="why">מדד מרכזי לפרפוזיה (זרימת דם לרקמות)</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">MAP</span> ≈ <span class="frac"><span class="top">SBP + 2×DBP</span><span class="bot">3</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>SBP</b> = לחץ סיסטולי, <b>DBP</b> = לחץ דיאסטולי.</li>
+        <li><b>מה זה אומר?</b> MAP הוא “הלחץ האפקטיבי” שמניע דם לאיברים לאורך זמן (במיוחד בזמן דיאסטולה).</li>
+        <li><b>כלל אצבע:</b> בהרבה מצבים, שואפים ל־MAP ≥ 65 (תלוי מטופל/הנחיות מקומיות).</li>
+        <li><b>מחלקות:</b> מיון, ICU, הרדמה, קרדיולוגיה.</li>
+      </ul>
+      <div class="ex"><b>דוגמה:</b> SBP=90, DBP=50 → MAP≈(90+100)/3=63 → גבולי לפרפוזיה.</div>
+      <div class="mono">LaTeX: MAP \approx \frac{SBP + 2\cdot DBP}{3}</div>
+    </div>
+
+    <!-- 8) Shock Index -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.8 מדד שוק (Shock Index)</div>
+        <div class="why">סמן מהיר לזיהוי הידרדרות המודינמית</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">SI</span> = <span class="frac"><span class="top">HR</span><span class="bot">SBP</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>מה זה אומר?</b> יחס בין דופק ללחץ סיסטולי. כשהדופק עולה והלחץ יורד → SI עולה.</li>
+        <li><b>פרשנות:</b> ערך גבוה יותר יכול לרמוז על שוק/דימום/התייבשות — תמיד בהקשר קליני.</li>
+        <li><b>מחלקות:</b> מיון, טראומה, ICU.</li>
+      </ul>
+      <div class="ex"><b>דוגמה:</b> HR=120, SBP=90 → SI=1.33 (מדאיג יותר מאשר 0.7).</div>
+      <div class="mono">LaTeX: SI = \frac{HR}{SBP}</div>
+    </div>
+
+    <!-- 9) P/F ratio -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.9 יחס PaO₂/FiO₂ (P/F ratio)</div>
+        <div class="why">מדד לחומרת כשל נשימתי/חמצון</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">P/F</span> = <span class="frac"><span class="top">PaO₂</span><span class="bot">FiO₂</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>PaO₂</b> = לחץ חמצן בדם עורקי (מ־ABG), <b>FiO₂</b> = ריכוז חמצן נשאף (0.21 באוויר חדר).</li>
+        <li><b>מה זה אומר?</b> כמה “יעיל” מעבר החמצן מהריאות לדם תחת FiO₂ נתון.</li>
+        <li><b>מחלקות:</b> ריאות, ICU, הרדמה, מיון.</li>
+      </ul>
+      <div class="ex"><b>דוגמה:</b> PaO₂=80 עם FiO₂=0.40 → P/F=200 → חמצון ירוד (דורש הערכה וטיפול).</div>
+      <div class="mono">LaTeX: \frac{PaO_2}{FiO_2}</div>
+    </div>
+
+    <!-- 10) Anion Gap -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.10 פער אניונים (Anion Gap)</div>
+        <div class="why">עוזר לאבחן סוגי חמצת מטבולית</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">AG</span> = (Na⁺ + K⁺) − (Cl⁻ + HCO₃⁻)
+      </div>
+      <ul class="bul">
+        <li><b>גרסה נפוצה נוספת:</b> AG = Na⁺ − (Cl⁻ + HCO₃⁻) (לעיתים מתעלמים מ־K⁺).</li>
+        <li><b>מה זה אומר?</b> כשיש “חומצות לא נמדדות” בדם → AG עולה.</li>
+        <li><b>קישור למחלקות:</b> פנימית, ICU, נפרולוגיה, זיהומיות (למשל ספסיס/לקטט).</li>
+      </ul>
+      <div class="ex"><b>דוגמה:</b> Na=140, Cl=100, HCO₃=18 → AG≈22 (מוגבר) → לחשוב על לקטט/קטונים/רעלים ועוד.</div>
+      <div class="mono">LaTeX: AG=(Na^+ + K^+) - (Cl^- + HCO_3^-)</div>
+    </div>
+
+    <!-- 11) Osmolarity (estimated) -->
+    <div class="eq-card">
+      <div class="eq-head">
+        <div class="name">3.11 אוסמולריות משוערת בפלזמה (Estimated Osmolarity)</div>
+        <div class="why">הערכת מצב נוזלים/נתרן/גלוקוז (תלוי שימוש מקומי)</div>
+      </div>
+      <div class="eq" data-eq>
+        <span class="sym">Osm</span> ≈ 2×Na⁺ + <span class="frac"><span class="top">Glucose</span><span class="bot">18</span></span> + <span class="frac"><span class="top">BUN</span><span class="bot">2.8</span></span>
+      </div>
+      <ul class="bul">
+        <li><b>יחידות:</b> Na ב־mEq/L; גלוקוז ו־BUN ב־mg/dL (המרה לכן יש חילוק 18 ו־2.8).</li>
+        <li><b>מטרה:</b> לחשוד בהיפראוסמולריות, הפרעות נתרן, היפרגליקמיה, התייבשות.</li>
+        <li><b>מחלקות:</b> פנימית, אנדוקרינולוגיה, ICU, מיון.</li>
+      </ul>
+      <div class="ex"><b>דוגמה:</b> Na=150, Glu=360, BUN=28 → Osm≈300+20+10=330 (גבוה) → הערכת מצב נוזלים/סוכר.</div>
+      <div class="mono">LaTeX: Osm \approx 2Na + \frac{Glu}{18} + \frac{BUN}{2.8}</div>
+    </div>
+
+    <div class="note">
+      אם תרצה, אפשר להוסיף גם “חבילות” לפי מחלקה:  
+      <b>ריאות</b> (A–a gradient), <b>קרדיולוגיה</b> (EF, SVR), <b>כליות</b> (FeNa), <b>תרופות</b> (Cockcroft–Gault).  
+    </div>
+
+</div>
+
+  <div class="card" id="cases">
+    <h2>4) תרחישים קליניים שמראים קשרי מערכות ↔ מחלקות</h2>
+
+    <details open>
+      <summary>ספסיס (Sepsis) – הדוגמה הכי רב־מערכתית</summary>
+      <ul class="bul">
+        <li><b>מערכת חיסון/זיהום:</b> גורם ראשי → זיהומיות/פנימית.</li>
+        <li><b>לב וכלי דם:</b> ירידת לחץ → MAP↓ → זרימת דם Q↓ → ICU/קרדיולוגיה.</li>
+        <li><b>כליות:</b> ירידה במתן שתן/קריאטינין↑ → נפרולוגיה.</li>
+        <li><b>עצבים:</b> בלבול/דליריום → נוירולוגיה/ICU.</li>
+      </ul>
+      <div class="note">לכן בספסיס יש משמעות גדולה למשוואות: Q=ΔP/R, CO=HR×SV, DO₂=CO×CaO₂.</div>
+    </details>
+
+    <details>
+      <summary>קוצר נשימה חריף</summary>
+      <ul class="bul">
+        <li>שאלת מפתח: בעיה בריאות (Vₐ נמוך)? או בעיה לבבית (CO נמוך גורם לגודש)?</li>
+        <li>מחלקות: ריאות/הרדמה ↔ קרדיולוגיה ↔ ICU לפי חומרה.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>כשל כלייתי חריף</summary>
+      <ul class="bul">
+        <li>בדיקה: פינוי (C) יורד, מתן שתן יורד, הפרעות אלקטרוליטים.</li>
+        <li>קשר: כליות ↔ לב (נפחים) ↔ חומצה־בסיס (HCO₃⁻).</li>
+      </ul>
+    </details>
+  
+  <div class="card" id="packages">
+    <h2>5) חבילות לפי מחלקה – נוסחאות “עבודה” + איך משתמשים בהן</h2>
+    <p class="note">
+      מטרת החבילות: ליצור <b>שפה משותפת</b> בין צוותים. זהו חומר לימודי/ארגוני ואינו מחליף פרוטוקולים מקומיים,
+      הדרכת מומחים או שיקול דעת קליני.
+    </p>
+
+    <details open>
+      <summary>5.1 ריאות / הרדמה – חמצון ואוורור</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">יחס חמצון (P/F)</div><div class="why">מדד מהיר לאיכות מעבר חמצן</div></div>
+        <div class="eq" data-eq><span class="sym">P/F</span> = <span class="frac"><span class="top">PaO₂</span><span class="bot">FiO₂</span></span></div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> לוקחים PaO₂ מ־ABG, ו־FiO₂ מהמכשור/מסכה. משווים לאורך זמן.</li>
+          <li><b>מה זה “מראה”:</b> ירידה ב־P/F → חמצון ירוד → צורך בהערכת סיבה (דלקת ריאות/בצקת/ARDS וכו').</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">אוורור נאדיות (Vₐ)</div><div class="why">האוורור האפקטיבי שמגיע לחילוף גזים</div></div>
+        <div class="eq" data-eq><span class="sym">Vₐ</span> = ( <span class="sym">Vₜ</span> − <span class="sym">Vᴅ</span> ) × <span class="sym">RR</span></div>
+        <ul class="bul">
+          <li><b>דגש:</b> נשימה מהירה ושטחית יכולה להיראות “הרבה”, אבל אם Vₜ קטן → Vₐ נמוך → CO₂ עולה.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">משוואת הגז האלוואולרי (Alveolar Gas Equation) – גרסה שימושית</div><div class="why">הערכת PAO₂ וחישוב A–a</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">PAO₂</span> ≈ FiO₂ × (P<sub>atm</sub> − P<sub>H₂O</sub>) − <span class="frac"><span class="top">PaCO₂</span><span class="bot">R</span></span>
+        </div>
+        <ul class="bul">
+          <li><b>שימוש:</b> להעריך “כמה חמצן אמור להיות בנאדיות” ואז להשוות ל־PaO₂ בדם.</li>
+          <li><b>הערה:</b> הערכים המדויקים (P<sub>atm</sub>, P<sub>H₂O</sub>, R) תלויים בסביבה/הנחות – משתמשים לפי פרקטיקה מקומית.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">A–a Gradient (פער אלוואולי–עורקי)</div><div class="why">עוזר להבדיל בין היפו־ונטילציה לבעיית דיפוזיה/שנט</div></div>
+        <div class="eq" data-eq><span class="sym">A–a</span> = <span class="sym">PAO₂</span> − <span class="sym">PaO₂</span></div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> מחשבים PAO₂ (מהמשוואה) ואז מחסרים PaO₂ (ABG). פער גדול יכול לרמוז על בעיית ריאות/שנט.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>5.2 קרדיולוגיה / ICU – זרימה, לחץ והתנגדות</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">תפוקת לב</div><div class="why">כמה דם בדקה</div></div>
+        <div class="eq" data-eq><span class="sym">CO</span> = <span class="sym">HR</span> × <span class="sym">SV</span></div>
+        <ul class="bul"><li><b>שימוש:</b> להבין אם ירידת לחץ היא “בעיה של משאבה” (CO נמוך) או “בעיה של כלי דם” (SVR נמוך).</li></ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">MAP</div><div class="why">לחץ אפקטיבי לפרפוזיה</div></div>
+        <div class="eq" data-eq><span class="sym">MAP</span> ≈ <span class="frac"><span class="top">SBP + 2×DBP</span><span class="bot">3</span></span></div>
+        <ul class="bul"><li><b>שימוש:</b> ניטור/יעד טיפול; במיוחד בשוק/ספסיס/הרדמה.</li></ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">SVR – התנגדות מערכתית (Systemic Vascular Resistance)</div><div class="why">מדד “כמה כלי הדם מכווצים”</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">SVR</span> = <span class="frac"><span class="top">(MAP − CVP) × 80</span><span class="bot">CO</span></span>
+        </div>
+        <ul class="bul">
+          <li><b>משמעות:</b> SVR נמוך אופייני לשוק ואזודילטטיבי (למשל ספסיס); SVR גבוה בשוק קרדיוגני/כיווץ חזק.</li>
+          <li><b>הערה:</b> CVP/CO לרוב מערכים מנוטרים/אקו/מערכת ניטור – לפי ציוד/פרוטוקול.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">EF – מקטע פליטה (Ejection Fraction)</div><div class="why">הערכת תפקוד סיסטולי</div></div>
+        <div class="eq" data-eq><span class="sym">EF</span> = <span class="frac"><span class="top">SV</span><span class="bot">EDV</span></span> × 100%</div>
+        <ul class="bul">
+          <li><b>שימוש:</b> בעיקר באקו לב. EF נמוך יכול להסביר CO נמוך ותסמיני אי־ספיקת לב.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>5.3 נפרולוגיה / פנימית – תפקוד כלייתי ונוזלים</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Clearance (פינוי)</div><div class="why">“כמה פלזמה” מנוקה בדקה</div></div>
+        <div class="eq" data-eq><span class="sym">C</span> = <span class="frac"><span class="top">U × V</span><span class="bot">P</span></span></div>
+        <ul class="bul"><li><b>שימוש:</b> הערכת פינוי חומר/תרופה בהתאם להנחיות מקומיות.</li></ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">FeNa – חלק מופרש של נתרן (Fractional Excretion of Sodium)</div><div class="why">עוזר בהבדלה של סוגי AKI במצבים מסוימים</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">FeNa%</span> = <span class="frac"><span class="top">U<sub>Na</sub> × P<sub>Cr</sub></span><span class="bot">P<sub>Na</sub> × U<sub>Cr</sub></span></span> × 100
+        </div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> צריך נתרן/קריאטינין בדם ובשתן. הפרשנות תלויה בהקשר (משתנים, CKD, ספסיס וכו').</li>
+          <li><b>מטרה:</b> לעיתים מסייע להבדיל בין “פרה־רנלי” מול “אינטרינזי” — לפי פרוטוקול המחלקה.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">אוסמולריות משוערת</div><div class="why">הערכת היפראוסמולריות/נתרן/גלוקוז</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">Osm</span> ≈ 2×Na⁺ + <span class="frac"><span class="top">Glucose</span><span class="bot">18</span></span> + <span class="frac"><span class="top">BUN</span><span class="bot">2.8</span></span>
+        </div>
+        <ul class="bul"><li><b>שימוש:</b> במיוחד בהיפרנתרמיה/היפרגליקמיה/התייבשות – לפי נוהל.</li></ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>5.4 חומצה–בסיס / מעבדה – פענוח מהיר</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Henderson–Hasselbalch</div><div class="why">הבסיס להבנת pH</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">pH</span> = 6.1 + log( <span class="frac"><span class="top">HCO₃⁻</span><span class="bot">0.03 × PaCO₂</span></span> )
+        </div>
+        <ul class="bul">
+          <li><b>כלל אצבע:</b> PaCO₂ = “ריאות”, HCO₃⁻ = “כליות/מטבולי”.</li>
+          <li><b>שימוש:</b> עוזר לזהות אם הבעיה נשימתית או מטבולית ואז להפנות לחיפוש סיבה במחלקות המתאימות.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Anion Gap</div><div class="why">סיווג חמצת מטבולית</div></div>
+        <div class="eq" data-eq><span class="sym">AG</span> = (Na⁺ + K⁺) − (Cl⁻ + HCO₃⁻)</div>
+        <ul class="bul">
+          <li><b>שימוש:</b> AG מוגבר → לחשוב על חומצות “לא נמדדות” (לקטט, קטונים וכו') — לפי הערכה קלינית.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>5.5 מיון / טראומה – איתור מהיר של סיכון</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Shock Index</div><div class="why">אינדקס מהיר להחמרה</div></div>
+        <div class="eq" data-eq><span class="sym">SI</span> = <span class="frac"><span class="top">HR</span><span class="bot">SBP</span></span></div>
+        <ul class="bul">
+          <li><b>שימוש:</b> מעקב מגמה (לא מספר בודד) יחד עם סטורציה, מצב הכרה, תפוקת שתן, לקטט וכו'.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">אומדן אספקת חמצן (DO₂)</div><div class="why">לזהות “האם הרקמות מקבלות חמצן”</div></div>
+        <div class="eq" data-eq><span class="sym">DO₂</span> = <span class="sym">CO</span> × <span class="sym">CaO₂</span></div>
+        <ul class="bul">
+          <li><b>שימוש:</b> אם לחץ/CO נמוך או Hb נמוך → DO₂ יורד → סיכון להיפופרפוזיה.</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="note">
+      רוצה שאוסיף גם <b>חבילת תרופות/מינונים</b> (Cockcroft–Gault), <b>ספסיס</b> (לקטט/פינוי לקטט) או <b>נוירולוגיה</b> (GCS, NIHSS) באותה צורה?
+    </div>
+  </div>
+
+
+  <div class="card" id="extraPackages">
+    <h2>6) חבילות נוספות (ספסיס / נוירולוגיה / תרופות)</h2>
+    <p class="note">
+      החבילות הבאות נועדו להדרכה ולשפה משותפת. שימוש בפועל נעשה לפי פרוטוקולים מקומיים, הנחיות משרד הבריאות/האגודה המקצועית,
+      והערכת רופא/ה.
+    </p>
+
+    <details open>
+      <summary>6.1 חבילת ספסיס (Sepsis) – זיהוי, חומרה, תגובה טיפולית</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">qSOFA (סקר מהיר בספסיס – ליד מיטה)</div><div class="why">איתור סיכון גבוה (כלי סינון)</div></div>
+        <div class="eq" data-eq>
+          qSOFA = (RR ≥ 22) + (SBP ≤ 100) + (שינוי במצב הכרה)
+        </div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> לא “אבחנה”, אלא דגל אדום. אם גבוה/מדאיג → מעריכים ספסיס, לוקחים בדיקות, ומפעילים צוות מתאים.</li>
+          <li><b>מחלקות:</b> מיון, פנימית, ICU, זיהומיות.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">SOFA – עיקרון</div><div class="why">הערכת כשל רב־מערכתי</div></div>
+        <div class="eq" data-eq>
+          SOFA = ניקוד (נשימה) + (קרישה) + (כבד) + (לב/לחץ) + (עצבים) + (כליות)
+        </div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> מחשבים לפי רכיבים קליניים/מעבדתיים (לפי טבלאות SOFA). מגמה עולה = החמרה רב־מערכתית.</li>
+          <li><b>למה זה חשוב?</b> מחבר ישירות את “מיפוי המערכות” לעולם המחלקות.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">לקטט (Lactate) – מדד היפופרפוזיה אפשרי</div><div class="why">מעקב אחר תגובה לטיפול</div></div>
+        <div class="eq" data-eq>
+          ΔLactate = Lactate<sub>t0</sub> − Lactate<sub>t1</sub> &nbsp;&nbsp; (פינוי/ירידה לאורך זמן)
+        </div>
+        <ul class="bul">
+          <li><b>רעיון:</b> ירידה בלקטט לאורך זמן יכולה לרמוז על שיפור בפרפוזיה (תלוי סיבה/מצב).</li>
+          <li><b>מחלקות:</b> מיון, ICU, פנימית, זיהומיות.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">MAP יעד + קשר לזרימה</div><div class="why">קישור למשוואות ההמודינמיות</div></div>
+        <div class="eq" data-eq>
+          MAP ≈ <span class="frac"><span class="top">SBP + 2×DBP</span><span class="bot">3</span></span> &nbsp;&nbsp; → &nbsp;&nbsp;
+          Q = <span class="frac"><span class="top">ΔP</span><span class="bot">R</span></span>
+        </div>
+        <ul class="bul">
+          <li><b>רעיון:</b> בספסיס יש ואזודילטציה → R יורד, ולעיתים MAP יורד → Q לרקמות יורד.</li>
+          <li><b>פעולה תפעולית:</b> ניטור לחץ, נוזלים/ואזופרסורים לפי נוהל, והערכה של כליות/מוח/עור.</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר לספסיס (ארגוני)</summary>
+        <ul class="bul">
+          <li><b>זיהוי:</b> חשד לזיהום + סימני החמרה (לחץ יורד/טכיקרדיה/בלבול/לקטט).</li>
+          <li><b>בדיקות:</b> תרביות לפי נוהל, לקטט, ספירה, כימיה, גזים לפי צורך.</li>
+          <li><b>תגובה:</b> אנטיביוטיקה בזמן + נוזלים/לחץ/חמצון לפי פרוטוקול.</li>
+          <li><b>הסלמה:</b> אם רב־מערכתי → ICU.</li>
+        </ul>
+      </details>
+    </details>
+
+    <details>
+      <summary>6.2 חבילת נוירולוגיה – הערכה מהירה והעברה בין מחלקות</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">GCS (Glasgow Coma Scale) – עיקרון</div><div class="why">מדד תודעה סטנדרטי</div></div>
+        <div class="eq" data-eq>
+          GCS = E (עיניים) + V (דיבור) + M (תנועה)
+        </div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> מתעדים E/V/M לפי סקאלה סטנדרטית. ירידה במגמה = דגל אדום.</li>
+          <li><b>מחלקות:</b> מיון, נוירולוגיה, טראומה, ICU, הרדמה.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">FAST (שבץ – סקר מהיר)</div><div class="why">איתור מהיר של חשד לשבץ</div></div>
+        <div class="eq" data-eq>
+          FAST = Face (פנים) + Arm (יד) + Speech (דיבור) + Time (זמן)
+        </div>
+        <ul class="bul">
+          <li><b>עיקרון:</b> הופעה פתאומית של אסימטריה בפנים/חולשת יד/הפרעת דיבור → זמן קריטי → הפעלת מסלול שבץ.</li>
+          <li><b>מחלקות:</b> מיון ↔ נוירולוגיה ↔ דימות (CT) ↔ ICU/שבץ לפי נוהל.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">MAP ↔ מוח (פרפוזיה מוחית – רעיון)</div><div class="why">למה לחץ דם חשוב לנוירולוגיה</div></div>
+        <div class="eq" data-eq>
+          CPP ≈ MAP − ICP  (עיקרון) 
+        </div>
+        <ul class="bul">
+          <li><b>CPP</b> = לחץ פרפוזיה מוחי, <b>ICP</b> = לחץ תוך־גולגולתי.</li>
+          <li><b>משמעות ארגונית:</b> אם MAP יורד או ICP עולה → פרפוזיה מוחית יורדת → החמרה נוירולוגית אפשרית.</li>
+          <li><b>מחלקות:</b> נוירולוגיה/נוירוכירורגיה/ICU/הרדמה.</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר לשבץ חשוד</summary>
+        <ul class="bul">
+          <li><b>זיהוי</b> (FAST) + תיעוד זמן “Last Known Well”.</li>
+          <li><b>בדיקה</b> נוירולוגית + מדדים חיוניים + גלוקוז.</li>
+          <li><b>דימות</b> לפי נוהל (CT/CTA) והחלטה טיפולית.</li>
+        </ul>
+      </details>
+    </details>
+
+    <details>
+      <summary>6.3 חבילת תרופות – התאמת מינונים לפי תפקוד כלייתי (עקרונות)</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Cockcroft–Gault (אומדן CrCl)</div><div class="why">אומדן פינוי קריאטינין למינון תרופות – לפי שימוש מקומי</div></div>
+        <div class="eq" data-eq>
+          CrCl ≈ <span class="frac"><span class="top">(140 − Age) × Weight</span><span class="bot">72 × SCr</span></span>
+          &nbsp;&nbsp; (× 0.85 לנשים – לפי נוסחאות נפוצות)
+        </div>
+        <ul class="bul">
+          <li><b>Age</b> שנים, <b>Weight</b> ק״ג, <b>SCr</b> קריאטינין בדם (mg/dL) — התאמות תלויות פרוטוקול.</li>
+          <li><b>מה עושים עם זה?</b> מחלקים תרופות לקבוצות: “דורש התאמת מינון”, “איסור/זהירות”, “אין שינוי”.</li>
+          <li><b>מחלקות:</b> פנימית, נפרולוגיה, זיהומיות, ICU, רוקחות קלינית.</li>
+        </ul>
+        <div class="ex"><b>דוגמה:</b> ירידה חדה ב־CrCl → סיכון הצטברות תרופות → התאמת מינון/הארכת מרווח לפי הנחיות.</div>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">עיקרון “ריכוז תלוי זמן” מול “תלוי שיא”</div><div class="why">למה לפעמים משנים מרווח ולפעמים מינון</div></div>
+        <div class="eq" data-eq>
+          Time-dependent: לשמור % זמן מעל MIC &nbsp;&nbsp; | &nbsp;&nbsp; Peak-dependent: להגיע לשיא גבוה
+        </div>
+        <ul class="bul">
+          <li><b>מסר ארגוני:</b> האופן שבו מתאימים מינון (להקטין מנה/להאריך מרווח) יכול להשתנות לפי סוג התרופה.</li>
+          <li>בפועל: לפי רוקחות קלינית/זיהומיות/נוהל.</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר להתאמת מינון לפי כליות</summary>
+        <ul class="bul">
+          <li>לקבוע תפקוד כלייתי (CrCl/eGFR) לפי מדיניות.</li>
+          <li>לבדוק אם התרופה מתפנה כלייתית ומה ההמלצה הרשמית.</li>
+          <li>לתעד שינוי מינון ומעקב (קריאטינין, תפוקת שתן, רמות תרופה אם יש).</li>
+        </ul>
+      </details>
+    </details>
+
+    <div class="note">
+      אם תרצה, אוכל להוסיף גם: <b>חבילת סוכרת/היפרגליקמיה</b> (תיקון נתרן, קטונים), <b>חבילת דימום/קרישה</b> (INR, פיברינוגן),
+      או <b>חבילת ילדים/פגים</b> (ניטור נשימתי/נוזלים) – באותו סגנון.
+    </div>
+  </div>
+
+
+  <div class="card" id="morePackages">
+    <h2>7) חבילות נוספות לפי בקשה (סוכרת / קרישה-דימום / ילדים-פגים)</h2>
+    <p class="note">
+      גם כאן: תוכן הדרכתי ותפעולי. יש לעבוד לפי פרוטוקולים מקומיים, הנחיות מעודכנות, ושיקול דעת קליני.
+      בחלק מהנוסחאות יש הבדלי גרסאות בין בתי חולים – ציינתי זאת במפורש.
+    </p>
+
+    <details open>
+      <summary>7.1 חבילת סוכרת / היפרגליקמיה (כולל HHS/DKA – עקרונות)</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">אוסמולריות יעילה (Effective Osmolality)</div><div class="why">חשוב בהיפראוסמולריות (HHS) והערכת מצב נוזלים</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">EffOsm</span> ≈ 2×Na⁺ + <span class="frac"><span class="top">Glucose</span><span class="bot">18</span></span>
+        </div>
+        <ul class="bul">
+          <li><b>למה “יעילה”?</b> מתעלמים מ־BUN כי לרוב אינו יוצר טוניות אפקטיבית באותה צורה.</li>
+          <li><b>יחידות:</b> גלוקוז ב־mg/dL (לכן /18). אם משתמשים ב־mmol/L → אין צורך בחילוק.</li>
+          <li><b>מחלקות:</b> מיון, פנימית, אנדוקרינולוגיה, ICU.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">תיקון נתרן בהיפרגליקמיה (Corrected Sodium)</div><div class="why">גלוקוז גבוה “מוריד” נתרן מדוד – חשוב לתכנון נוזלים</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">Na⁺<sub>corr</sub></span> ≈ Na⁺<sub>meas</sub> + 1.6 × <span class="frac"><span class="top">(Glucose − 100)</span><span class="bot">100</span></span>
+        </div>
+        <ul class="bul">
+          <li><b>הערה:</b> קיימות גרסאות עם מקדם 2.0–2.4 במצבים מסוימים; עובדים לפי מדיניות מקומית.</li>
+          <li><b>שימוש:</b> אם הנתרן “באמת” גבוה/נמוך – זה משנה סוג וקצב נוזלים.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">Gap אניוני (AG) – לזיהוי חמצת קטוטית אפשרית</div><div class="why">DKA לרוב עם AG מוגבר</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">AG</span> = Na⁺ − (Cl⁻ + HCO₃⁻)  &nbsp;&nbsp; (גרסה נפוצה)
+        </div>
+        <ul class="bul">
+          <li><b>איך משתמשים:</b> AG מוגבר + קטונים/קליניקה → תומך בחמצת קטוטית; תמיד בהקשר מעבדתי/קליני.</li>
+          <li><b>מחלקות:</b> מיון, פנימית, ICU, אנדוקרינולוגיה.</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר (ארגוני) להיפרגליקמיה קשה</summary>
+        <ul class="bul">
+          <li><b>אבחנה:</b> סוכר גבוה + מצב הכרה/התייבשות + בדיקת קטונים/AG/אוסמולריות.</li>
+          <li><b>סיכון:</b> הפרעות אלקטרוליטים (בפרט אשלגן) → ניטור לפי נוהל.</li>
+          <li><b>טיפול:</b> נוזלים + אינסולין + תיקון אלקטרוליטים לפי פרוטוקול מחלקתי.</li>
+          <li><b>הסלמה:</b> שינוי הכרה/חמצת קשה/אי יציבות → ICU.</li>
+        </ul>
+      </details>
+    </details>
+
+    <details>
+      <summary>7.2 חבילת קרישה / דימום (אנטיקואגולציה, טראומה, ניתוח)</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">INR – עיקרון</div><div class="why">סטנדרטיזציה של PT</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">INR</span> = <span class="frac"><span class="top">PT<sub>patient</sub></span><span class="bot">PT<sub>normal</sub></span></span><sup>ISI</sup>
+        </div>
+        <ul class="bul">
+          <li><b>שימוש:</b> מעקב טיפול (למשל וורפרין) והערכת נטייה לדימום/קרישה בהתאם להקשר.</li>
+          <li><b>מחלקות:</b> פנימית, המטולוגיה, כירורגיה, מיון, ICU.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">יחס INR/PTT ↔ סיכון דימום (רמת עיקרון)</div><div class="why">שפה משותפת לצוותים</div></div>
+        <div class="eq" data-eq>
+          דימום ≈ (תפקוד טסיות) + (פיברינוגן) + (מסלול PT/INR) + (מסלול aPTT) + (טמפ׳/חמצת)
+        </div>
+        <ul class="bul">
+          <li><b>מסר:</b> בטראומה/ספסיס/היפותרמיה/חמצת – הקרישה נפגעת. לכן לא מסתכלים רק על INR.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">חוק “דילול” בסיסי (Concept) בעירויי נוזלים/דם</div><div class="why">למה נפח גדול יכול לדלל פקטורים/טסיות</div></div>
+        <div class="eq" data-eq>
+          Concentration ↓ כש־Volume ↑  (עיקרון דילול)
+        </div>
+        <ul class="bul">
+          <li><b>שימוש:</b> עוזר להסביר למה בהחייאה מסיבית צריך להעריך גם פקטורים/טסיות/פיברינוגן לפי פרוטוקול.</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר לדימום משמעותי (ארגוני)</summary>
+        <ul class="bul">
+          <li><b>זיהוי:</b> מדדים חיוניים, ירידה בהמוגלובין, דימום פעיל, Shock Index עולה.</li>
+          <li><b>מעבדה:</b> ספירה, INR/aPTT, פיברינוגן, גזים/לקטט לפי נוהל.</li>
+          <li><b>תגובה:</b> הפעלת פרוטוקול דימום/טראומה, תיקון היפותרמיה/חמצת.</li>
+        </ul>
+      </details>
+    </details>
+
+    <details>
+      <summary>7.3 חבילת ילדים / פגים (עקרונות ניטור ונוזלים)</summary>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">MAP בילדים – כלל אצבע לגבול תחתון</div><div class="why">הערכת פרפוזיה לפי גיל – משתנה בין הנחיות</div></div>
+        <div class="eq" data-eq>
+          <span class="sym">SBP(min)</span> ≈ 70 + 2×Age(שנים)  &nbsp;&nbsp; (כלל אצבע נפוץ)
+        </div>
+        <ul class="bul">
+          <li><b>הערה חשובה:</b> זה כלל אצבע להדרכה בלבד; בילדים יש טווחים לפי גיל/משקל והנחיות מחלקת ילדים.</li>
+          <li><b>שימוש:</b> דגל אדום לזיהוי ירידת לחץ משמעותית.</li>
+          <li><b>מחלקות:</b> מיון ילדים, ילדים, טיפול נמרץ ילדים, פגים.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">חישוב מינוני תרופות/נוזלים לפי משקל</div><div class="why">בפדיאטריה כמעט הכל לפי kg</div></div>
+        <div class="eq" data-eq>
+          Dose = (mg/kg) × Weight(kg)
+        </div>
+        <ul class="bul">
+          <li><b>מסר תפעולי:</b> תמיד לאמת משקל, ולוודא יחידות (mg vs mcg) ו־concentration.</li>
+          <li><b>מחלקות:</b> ילדים, פגים, הרדמה ילדים, ICU ילדים.</li>
+        </ul>
+      </div>
+
+      <div class="eq-card">
+        <div class="eq-head"><div class="name">קצב נוזלים (Concept)</div><div class="why">התאמת ml/kg/hr לפי גיל ומצב</div></div>
+        <div class="eq" data-eq>
+          Rate = (ml/kg/hr) × Weight(kg)
+        </div>
+        <ul class="bul">
+          <li><b>הערה:</b> ערכי ה־ml/kg/hr נקבעים לפי פרוטוקול (תחזוקה/התייבשות/שוק/פגים).</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>Workflow קצר: ילד עם מצוקה נשימתית</summary>
+        <ul class="bul">
+          <li><b>ABC:</b> נתיב אוויר, נשימה, סירקולציה.</li>
+          <li><b>מדדים:</b> סטורציה, קצב נשימה, מאמץ נשימתי, מצב הכרה.</li>
+          <li><b>הסלמה:</b> אם כשל נשימתי/עייפות → הרדמה/טיפול נמרץ ילדים.</li>
+        </ul>
+      </details>
+    </details>
+
+    <div class="note">
+      אם תרצה “לסגור את זה לגמרי” לארגון: אפשר להוסיף בכל חבילה <b>דף 1 מסכם</b> עם “מה לבדוק”, “מתי להסלים”, “לאיזה מחלקה מתקשרים”,
+      ולהכניס זה גם לטבלת החלטה למיון.
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+let big = false;
+function toggleBig(){
+  big = !big;
+  document.querySelectorAll('[data-eq]').forEach(el=>{
+    el.style.fontSize = big ? '26px' : '20px';
+  });
+}
+</script>
+
+</body>
+</html>

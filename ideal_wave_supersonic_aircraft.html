@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>המטוס–גל האידיאלי – שדות, קור, אור, גל ומסלול על־קולי</title>
+  <style>
+    :root {
+      --bg: #020310;
+      --card-bg: #070b1c;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent-soft: rgba(0, 212, 255, 0.25);
+      --text-main: #f9fafb;
+      --text-soft: #c7d2fe;
+      --border-soft: rgba(148, 163, 184, 0.4);
+      --radius: 18px;
+      --gap: 1.1rem;
+      --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.65);
+      --transition: 0.25s ease;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #111827 0, #020310 45%, #000000 100%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      padding: 1.1rem;
+      display: flex;
+      justify-content: center;
+      direction: rtl;
+      text-align: right;
+    }
+    .app {
+      width: 100%;
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .icon { font-size: 1.5rem; }
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      max-width: 780px;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+    .card {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.13), transparent 55%),
+                  var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 0 0, rgba(0, 212, 255, 0.06), transparent 45%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .card h3 {
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0.25rem;
+    }
+    p, li {
+      font-size: 0.83rem;
+      line-height: 1.6;
+    }
+    ul {
+      margin: 0.2rem 0 0.2rem 1rem;
+      padding-right: 0.2rem;
+    }
+    .diagram {
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      padding: 0.6rem;
+      margin-top: 0.45rem;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .diagram-row {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .diagram-col {
+      flex: 1 1 160px;
+      border-radius: 10px;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+    }
+    .diagram-tag {
+      font-size: 0.72rem;
+      opacity: 0.9;
+      margin-bottom: 0.2rem;
+      color: #93c5fd;
+    }
+    .label {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .eq {
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: inline-block;
+      margin: 0.05rem 0;
+    }
+    .eq-block { display: block; margin: 0.12rem 0; }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    .pill {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 0.18rem 0.6rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+    footer {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <h1>
+          <span class="icon">🌊✈️</span>
+          <span>המטוס–גל האידיאלי – שדות, קור, אור, גל ומסלול על־קולי</span>
+        </h1>
+      </div>
+      <p class="subtitle">
+        הרחבה של מודל המטוס–גל: המטוס נע כהפרעה מתקדמת (גל) באוויר, עם שדה אלקטרומגנטי מאוזן, ליבה קריוגנית,
+        אנטנות–גליל סופגות אור, הרתעת בעלי חיים – וכעת גם <b>מסלול על־קולי נפרד</b> שאינו מתנגש עם נתיבי מטוסים רגילים.
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>1. גל קול כהשראה – הפרעה מתפשטת באוויר</h2>
+        <p>
+          גל קול באוויר הוא לא גוף שעובר במרחב, אלא <b>הפרעה בלחץ ובצפיפות</b> המתפשטת ע"י תנודות של חלקיקי האוויר.
+        </p>
+        <p class="eq eq-block">
+          p(x,t) = p₀ + p'(x,t) &nbsp;&nbsp; , &nbsp; ρ(x,t) = ρ₀ + ρ'(x,t)
+        </p>
+        <p class="eq eq-block">
+          ∂²p' / ∂t² = c² ∇²p'
+        </p>
+        <p>
+          ההפרעה דועכת עם מרחק וזמן. הרעיון כאן: <b>המטוס עצמו הוא ההפרעה</b> – גל זרימה–שדה שנע קדימה.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>2. המטוס–גל – הפרעה מתקדמת Φ(x − Vt)</h2>
+        <p>
+          פונקציית "פוטנציאל הפרעה" משולב באוויר סביב המטוס:
+        </p>
+        <p class="eq eq-block">
+          φ(x,t) = Φ(x − Vt)
+        </p>
+        <p>
+          הצורה Φ נשמרת, ורק זזה קדימה. המטוס "רוכב" בתוך בועת גל זו, במקום להילחם בכל פעם בזרימת אוויר חדשה.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>3. שדה אלקטרומגנטי וליבה קריוגנית כמעצבי גל</h2>
+        <p class="eq eq-block">
+          F_EM = q ( E + v × B )
+        </p>
+        <p>
+          השדה מעצב את חזית הדחיסה, הצדדים והזנב של הזרימה. ליבה קריוגנית (חנקן נוזלי) יוצרת גל טמפרטורה ΔT המשפיע
+          על צפיפות ומהירות הקול, ומאפשרת שליטה עדינה בפרופיל הגל.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>4. אנטנות–גליל סופגות אור – בנק אנרגיית הגל</h2>
+        <p>
+          האנטנות–גליל (מוטות סולריים–קבליים) מספקות אנרגיה חשמלית שקטה לשדה, לקור ולבקרה.
+        </p>
+        <p class="eq eq-block">
+          A_cyl = 2 · π · R · H , &nbsp; P_light,cyl ≈ I_irr(h) · A_cyl , &nbsp; P_elec,cyl ≈ η_PV · P_light,cyl
+        </p>
+        <p>
+          עבור N גלילים מתקבל P_elec,total ≈ N · P_elec,cyl, ובנוסף אגירת אנרגיה בקבל–על בכל גליל.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>5. הרתעת בעלי חיים – החיות מרגישות את הגל לפני הגוף</h2>
+        <p>
+          נגדיר פוטנציאל "אי־נוחות" לחיות:
+        </p>
+        <p class="eq eq-block">
+          Φ_avoid(r) = k₁ · B(r)² + k₂ · ΔT(r) + k₃ · |∇p(r)|
+        </p>
+        <p class="eq eq-block">
+          F_bio = −∇Φ_avoid(r)
+        </p>
+        <p>
+          בעלי כנף וחרקים מרגישים את השינויים בשדה, בלחץ ובטמפרטורה ובוחרים להתרחק מהאזור עוד לפני מפגש פיזי עם המטוס.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>6. פסי גובה/אנרגיה – V, C, H</h2>
+        <div class="diagram">
+          <div class="diagram-row">
+            <div class="diagram-col">
+              <div class="diagram-tag">פס V – Atmosphere Band</div>
+              <div class="label">טיסה "רגילה" באטמוספרה</div>
+              <ul>
+                <li>גובה נמוך–בינוני.</li>
+                <li>מטוס מתנהג כמו מטוס משופר.</li>
+                <li>גל אוויר קיים, אך שדה חלש.</li>
+              </ul>
+            </div>
+            <div class="diagram-col">
+              <div class="diagram-tag">פס C – Field-Balanced Band</div>
+              <div class="label">מטוס–גל בשדה מאוזן</div>
+              <ul>
+                <li>גובה שיוט גבוה.</li>
+                <li>שדה EM מאזֵן חלק מכבידה+גרר.</li>
+                <li>גל זרימה–שדה יציב סביב המטוס.</li>
+              </ul>
+            </div>
+            <div class="diagram-col">
+              <div class="diagram-tag">פס H – High / Star-Holographic Band</div>
+              <div class="label">שולי האטמוספרה וניווט כוכבים</div>
+              <ul>
+                <li>אוויר דליל מאוד, כמעט חלל.</li>
+                <li>פחות גל–אוויר, יותר שדה + קור.</li>
+                <li>ניווט לפי שדה כוכבים (Star Tracker).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>7. מסלול על־קולי – "נתיב גל" נפרד ממטוסים רגילים</h2>
+        <p>
+          כדי שהמטוס–גל ינוע במהירות על־קולית בלי להתנגש במטוסים רגילים, מגדירים לו <b>מסלול על־קולי נפרד</b>:
+        </p>
+        <ul>
+          <li><b>גובה ייעודי:</b> שכבת גובה צרה בפס C/H שבה מותרת טיסה על־קולית, רחוקה מנתיבי נוסעים רגילים.</li>
+          <li><b>"תעלת גל":</b> המטוס נע בתוך גל לחץ–שדה שמוגדר מראש כמו מסלול אנרגטי – לא רק קו במפה.</li>
+          <li><b>מעטפת בטיחות:</b> סביב המסלול מוגדר רדיוס מרחבי שבו אסורה כניסת כלי טיס אחרים.</li>
+        </ul>
+        <p class="eq eq-block">
+          Corridor = { (x,y,z,t) : |r − r_path(t)| ≤ R_safety , &nbsp; M ≥ 1 }
+        </p>
+        <p>
+          כאשר r_path(t) הוא מסלול הזמן–מרחב של המטוס–גל, R_safety – רדיוס בטיחות, ו־M מספר מאך (מהירות על־קולית M ≥ 1).
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>8. מניעת התנגשויות – שילוב גל + מערכת הנחיה</h2>
+        <p>
+          בנוסף להפרדה בגובה, מוגדרת מערכת הנחיה ורישות שמונעת חפיפה עם נתיבי טיסה רגילים:
+        </p>
+        <ul>
+          <li><b>Layering:</b> מטוסים רגילים נשארים בפסי גובה V/C נמוכים יותר, המטוס–גל העל־קולי בפס C/H מוגבה.</li>
+          <li><b>Signature:</b> לכל מטוס–גל יש חתימת שדה EM/IR ברורה, המופיעה ברדאר/מערכות בקרה.</li>
+          <li><b>תכנון מסלול:</b> אלגוריתם ייעודי מתכנן מסלול על־קולי רק במקטעים שאין בהם תנועה אזרחית צפופה.</li>
+        </ul>
+        <p class="eq eq-block">
+          For all aircraft i,j: &nbsp; d(r_i(t), r_j(t)) ≥ d_min &nbsp;  + הפרדה בשכבת גובה Δh_min
+        </p>
+        <p>
+          כלומר: מרחק מרחבי וזווית גובה מינימליים נשמרים בכל זמן, בעזרת שילוב שדה, חיישנים ובקרת תנועה.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>9. סיכום – מסלול על־קולי שלא מתנגש עם מטוסים רגילים</h2>
+        <p>
+          המודל המשולב נותן:
+        </p>
+        <ul>
+          <li>מטוס–גל באטמוספרה (V/C) – גל זרימה–שדה יעיל וחסכוני.</li>
+          <li>פס H – חיבור לשדה הכוכבים ולטיסה גבוהה מאוד.</li>
+          <li>מסלול על־קולי נפרד – "תעלת גל" בגובה ומרחב נפרדים מנתיבי טיסה רגילים.</li>
+          <li>שמירה על חיות באוויר – בעזרת גל הרתעה ביולוגי.</li>
+          <li>שמירה על הפרדה מכלי טיס אחרים – באמצעות שכבות גובה, חתימת שדה ובקרת מסלול.</li>
+        </ul>
+        <div class="pill-row">
+          <span class="pill">מסלול על־קולי נפרד</span>
+          <span class="pill">פסי גובה V / C / H</span>
+          <span class="pill">גל זרימה–שדה</span>
+          <span class="pill">הפרדה ממטוסים רגילים</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      מודל רעיוני–הנדסי בלבד – דורש מחקר, רגולציה, סימולציה וניסוי לפני יישום מעשי.
+    </footer>
+  </div>
+</body>
+</html>

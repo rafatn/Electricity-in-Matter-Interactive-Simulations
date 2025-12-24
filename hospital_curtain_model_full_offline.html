@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>וילונות בבתי חולים: מודל מתמטי + תרשים זרימה + הסבר מלא (אופליין)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
+      --link:#2563eb; --shadow:0 10px 24px rgba(0,0,0,.08); --r:14px;
+      --good:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); line-height:1.7}
+    header{
+      padding:18px 16px; background:linear-gradient(135deg,#111827,#1f2937);
+      color:#fff; position:sticky; top:0; z-index:50;
+      box-shadow:0 6px 18px rgba(0,0,0,.18);
+    }
+    header .wrap{max-width:1100px; margin:0 auto; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    header h1{font-size:18px; margin:0}
+    header .tag{font-size:12px; opacity:.9; padding:6px 10px; border:1px solid rgba(255,255,255,.25); border-radius:999px}
+    main{max-width:1100px; margin:18px auto; padding:0 14px 40px}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} header{position:relative} }
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+      box-shadow:var(--shadow); padding:14px;
+    }
+    h2{margin:0 0 10px; font-size:16px}
+    h3{margin:14px 0 8px; font-size:14px}
+    p{margin:8px 0}
+    ul{margin:8px 0 8px 18px}
+    .muted{color:var(--muted)}
+    a{color:var(--link); text-decoration:none; font-weight:700}
+    a:hover{text-decoration:underline}
+    .note{border-right:4px solid #c7d2fe; background:#eef2ff; padding:10px; border-radius:12px}
+    .warn{border-right:4px solid #fde68a; background:#fffbeb; padding:10px; border-radius:12px}
+    .eq{
+      border:1px solid var(--line);
+      background:#fcfcfd;
+      border-radius:12px;
+      padding:10px;
+      overflow:auto;
+    }
+    .eq pre{
+      margin:0;
+      direction:ltr;
+      text-align:left;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:13px;
+      line-height:1.45;
+      white-space:pre;
+    }
+    .eq .title{font-weight:800; margin-bottom:8px}
+    .step{
+      border:1px solid var(--line);
+      background:#ffffff;
+      border-radius:12px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .step .head{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      font-weight:800;
+    }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:999px;
+      background:#111827; color:#fff; font-weight:900; font-size:13px;
+      flex:0 0 auto;
+    }
+    .controls{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 640px){ .controls{grid-template-columns:1fr} }
+    .ctrl{border:1px dashed var(--line); border-radius:12px; padding:10px; background:#fcfcfd}
+    .ctrl label{display:flex; justify-content:space-between; gap:8px; font-size:13px; font-weight:800}
+    .ctrl input[type="range"]{width:100%}
+    .ctrl small{color:var(--muted); display:block; margin-top:6px}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      appearance:none; border:none; border-radius:12px; padding:10px 12px;
+      background:#111827; color:#fff; font-weight:800; cursor:pointer;
+    }
+    button.secondary{background:#334155}
+    button.ghost{background:transparent; color:#111827; border:1px solid var(--line)}
+    button:active{transform:translateY(1px)}
+    .kpi{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:10px}
+    @media (max-width: 640px){ .kpi{grid-template-columns:1fr} }
+    .kpi .box{border:1px solid var(--line); border-radius:12px; padding:10px; background:#fff}
+    .kpi .box .name{font-size:12px; color:var(--muted)}
+    .kpi .box .val{font-size:18px; font-weight:900; margin-top:4px}
+    .bar{height:10px; border-radius:999px; background:#eef2ff; border:1px solid var(--line); overflow:hidden; margin-top:8px}
+    .bar > i{display:block; height:100%; width:0%}
+    .i-good{background:var(--good)}
+    .i-warn{background:var(--warn)}
+    .i-bad{background:var(--bad)}
+    canvas{width:100%; height:320px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg,#ffffff,#f8fafc)}
+    .legend{display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:8px}
+    .dot{width:10px; height:10px; border-radius:50%}
+    .d-curtain{background:#64748b}
+    .d-air{background:#0ea5e9}
+    .d-aero{background:#ef4444}
+
+    .flow{width:100%; overflow:auto; border:1px solid var(--line); border-radius:12px; background:#fff}
+    .flow svg{min-width:880px; width:100%; height:auto; display:block}
+
+    @media print { body{display:none !important} }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div>
+      <h1>וילונות בחדר אשפוז: הצטברות חלקיקים → פתיחת חלון → זרימה מכוונת → חשיפה</h1>
+      <div class="muted" style="opacity:.92; margin-top:6px; font-size:13px">
+        דף אחד שמכיל <b>הכל</b> ועובד גם <b>בלי אינטרנט</b>: מודל, נוסחאות, הסבר שלבים, תרשים זרימה, וסימולציה.
+      </div>
+    </div>
+    <div class="tag">HTML אחד | אופליין</div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>0) מה אנחנו טוענים כאן?</h2>
+    <p class="note">
+      <b>וילון בד</b> יכול לצבור חלקיקים זעירים (אירוסולים/טיפות מיובשות) שעלולים להכיל וירוסים/חיידקים.
+      כאשר פותחים חלון — <b>דפוס הזרימה משתנה</b> (u עולה), והוילון עלול להשתחרר ממנו חלקיקים אל האוויר.
+      במקביל, פתיחת חלון יכולה גם <b>להגדיל דילול</b> (אוורור). לכן מתקבלת לעיתים תופעה של:
+      <b>שיא זמני (spike)</b> בריכוז, ולאחר מכן ירידה.
+    </p>
+    <div class="warn">
+      זהו מודל הדגמתי (0D/“חדר מעורבב”) כדי להסביר עיקרון. בחדר אמיתי הזרימה לא אחידה, ויש חשיבות למיקום מיטה/חלון/מזגן.
+    </div>
+  </section>
+
+  <div class="grid" style="margin-top:14px">
+
+    <section class="card">
+      <h2>1) המודל המתמטי — עם הסבר מילולי על כל שלב</h2>
+
+      <h3>1.1 משתנים ויחידות</h3>
+      <ul>
+        <li><b>V</b> — נפח החדר [m³]</li>
+        <li><b>C(t)</b> — ריכוז חלקיקים נשימים באוויר [יח'/m³]</li>
+        <li><b>M(t)</b> — מלאי חלקיקים על הוילון (מאגר) [יח']</li>
+        <li><b>S</b> — מקור חלקיקים מהחולה (נשימה/שיעול) [יח'/דקה]</li>
+        <li><b>Λ(u)</b> — קצב פינוי מהאוויר (אוורור/סינון/שקיעה) [1/דקה]</li>
+        <li><b>k_dep</b> — קצב “הדבקה” מהאוויר אל הוילון [m³/דקה]</li>
+        <li><b>k_rel(u)</b> — קצב שחרור מהוילון אל האוויר [1/דקה]</li>
+        <li><b>u</b> — עוצמת זרימה מנורמלת (0=חלון סגור, 1=זרימה חזקה)</li>
+      </ul>
+
+      <h3>1.2 משוואות המערכת</h3>
+      <div class="eq">
+        <div class="title">משוואת האוויר (C):</div>
+        <pre>dC/dt = (S / V) + (k_rel(u) * M / V)  -  Λ(u) * C  -  (k_dep * C / V)</pre>
+      </div>
+
+      <div class="eq" style="margin-top:10px">
+        <div class="title">משוואת הוילון (M):</div>
+        <pre>dM/dt = (k_dep * C)  -  (k_rel(u) * M)</pre>
+      </div>
+
+      <h3>1.3 פירוק מילולי — מה כל איבר עושה?</h3>
+
+      <div class="step">
+        <div class="head"><span class="badge">1</span> מקור לחדר: <span class="muted">(S/V)</span></div>
+        <p>
+          החולה/מקור מדבק מייצר חלקיקים בקצב <b>S</b>. כדי להבין “כמה זה מעלה ריכוז”, מחלקים בנפח <b>V</b>.
+          חדר קטן → ריכוז עולה מהר יותר.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="head"><span class="badge">2</span> שחרור מהוילון: <span class="muted">(k_rel(u)·M / V)</span></div>
+        <p>
+          הוילון הוא מאגר. אם יש מלאי <b>M</b> שנאגר בעבר, זרימה/נפנוף משחררים ממנו חלקיקים לאוויר.
+          זה החלק שמייצג את “פתיחת חלון → שחרור רציף/מכוון”.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="head"><span class="badge">3</span> פינוי מהאוויר: <span class="muted">Λ(u)·C</span></div>
+        <p>
+          אוויר מתנקה בגלל אוורור, פילטרים, ושקיעה. פתיחת חלון יכולה להגדיל חילוף אוויר — לכן Λ(u) יכולה לגדול,
+          ואז הריכוז יורד מהר יותר.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="head"><span class="badge">4</span> הדבקה לוילון: <span class="muted">(k_dep·C / V)</span></div>
+        <p>
+          חלקיקים מהאוויר “נדבקים” לבד. זה מוריד את C ומגדיל את M (דרך המשוואה השנייה).
+          כך נוצר “מאגר” שמחכה לשחרור הבא.
+        </p>
+      </div>
+
+      <h3>1.4 איך פתיחת חלון (u) משנה את המערכת?</h3>
+      <p class="muted">נבחר קשר פשוט (אפשר לכייל לפי נתונים):</p>
+      <div class="eq">
+        <div class="title">קשרי תלות ב-u:</div>
+        <pre>k_rel(u) = k_rel0 * (1 + a*u)
+Λ(u)     = Λ0     + b*u</pre>
+      </div>
+      <ul>
+        <li><b>a</b> — כמה זרימה מגדילה שחרור מהוילון</li>
+        <li><b>b</b> — כמה זרימה מגדילה דילול/פינוי</li>
+      </ul>
+
+      <h3>1.5 מדד חשיפה (מנה נשימתית)</h3>
+      <p>אם אדם נושם בקצב <b>Qb</b> ומסכה עם יעילות <b>η</b>:</p>
+      <div class="eq">
+        <pre>D(T) = ∫(0→T)  (1-η) * Qb * C(t)  dt</pre>
+      </div>
+      <p class="muted">בפשטות: “כמה חלקיקים נכנסו לנשימה לאורך זמן”.</p>
+    </section>
+
+    <aside class="card">
+      <h2>2) תרשים זרימה (מובנה בקובץ)</h2>
+      <p class="muted">SVG — תמיד מוצג (גם בלי אינטרנט).</p>
+
+      <div class="flow" aria-label="תרשים זרימה">
+        <svg viewBox="0 0 980 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <style>
+              .box{fill:#ffffff; stroke:#e5e7eb; stroke-width:2;}
+              .t{font: 700 14px Arial; fill:#111827}
+              .m{font: 400 12px Arial; fill:#6b7280}
+              .arrow{stroke:#111827; stroke-width:2; fill:none; marker-end:url(#arrowHead)}
+              .chip{fill:#111827}
+              .ct{font: 900 12px Arial; fill:#fff}
+            </style>
+            <marker id="arrowHead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#111827"/>
+            </marker>
+          </defs>
+
+          <rect class="box" x="30" y="40" rx="14" ry="14" width="280" height="74"/>
+          <text class="t" x="50" y="70">מקור חלקיקים</text>
+          <text class="m" x="50" y="92">נשימה / שיעול / תנועת צוות</text>
+          <circle class="chip" cx="290" cy="58" r="12"/><text class="ct" x="286" y="63">1</text>
+
+          <rect class="box" x="360" y="40" rx="14" ry="14" width="280" height="74"/>
+          <text class="t" x="380" y="70">אוויר בחדר: C(t)</text>
+          <text class="m" x="380" y="92">ריכוז אירוסולים נשימים</text>
+          <circle class="chip" cx="620" cy="58" r="12"/><text class="ct" x="616" y="63">2</text>
+
+          <rect class="box" x="690" y="40" rx="14" ry="14" width="260" height="74"/>
+          <text class="t" x="710" y="70">וילון: M(t)</text>
+          <text class="m" x="710" y="92">הצטברות על הבד</text>
+          <circle class="chip" cx="930" cy="58" r="12"/><text class="ct" x="926" y="63">3</text>
+
+          <rect class="box" x="360" y="160" rx="14" ry="14" width="280" height="84"/>
+          <text class="t" x="380" y="190">פתיחת חלון / שינוי זרימה</text>
+          <text class="m" x="380" y="212">u עולה → שחרור↑ ו/או דילול↑</text>
+          <text class="m" x="380" y="232">k_rel(u), Λ(u)</text>
+          <circle class="chip" cx="620" cy="178" r="12"/><text class="ct" x="616" y="183">4</text>
+
+          <rect class="box" x="360" y="290" rx="14" ry="14" width="280" height="84"/>
+          <text class="t" x="380" y="320">חשיפה נשימתית</text>
+          <text class="m" x="380" y="342">D(T)=∫(1-η)·Qb·C(t)dt</text>
+          <text class="m" x="380" y="362">תלוי בזמן + קרבה</text>
+          <circle class="chip" cx="620" cy="308" r="12"/><text class="ct" x="616" y="313">5</text>
+
+          <path class="arrow" d="M310 77 L360 77"/>
+          <path class="arrow" d="M640 77 L690 77"/>
+
+          <path class="arrow" d="M640 96 C700 130, 740 130, 820 114"/>
+          <text class="m" x="690" y="132">הדבקה: k_dep·C</text>
+
+          <path class="arrow" d="M820 62 C740 140, 700 140, 640 112"/>
+          <text class="m" x="670" y="152">שחרור: k_rel(u)·M</text>
+
+          <path class="arrow" d="M500 114 L500 160"/>
+          <text class="m" x="515" y="145">שינוי משטר זרימה</text>
+
+          <path class="arrow" d="M500 244 L500 290"/>
+        </svg>
+      </div>
+
+      <h2 style="margin-top:12px">3) סימולציה אינטראקטיבית</h2>
+      <p class="muted">
+        טיפים מהירים:
+        <br/>• <b>M₀ גבוה</b> + <b>u גבוה</b> → רואים “קפיצה” בריכוז בגלל שחרור מהוילון.
+        <br/>• <b>Λ₀ גבוה</b> → דילול מהיר יותר.
+      </p>
+
+      <div class="controls">
+        <div class="ctrl">
+          <label>V <span id="Vv">45</span> m³</label>
+          <input id="V" type="range" min="20" max="120" step="1" value="45">
+          <small>נפח חדר</small>
+        </div>
+        <div class="ctrl">
+          <label>Λ₀ <span id="Lv">0.20</span> 1/min</label>
+          <input id="L" type="range" min="0.05" max="1.20" step="0.01" value="0.20">
+          <small>פינוי בסיסי</small>
+        </div>
+
+        <div class="ctrl">
+          <label>k_dep <span id="Kdepv">0.40</span> m³/min</label>
+          <input id="Kdep" type="range" min="0.00" max="2.00" step="0.01" value="0.40">
+          <small>הדבקה מהאוויר לוילון</small>
+        </div>
+        <div class="ctrl">
+          <label>k_rel0 <span id="Krelv">0.05</span> 1/min</label>
+          <input id="Krel" type="range" min="0.00" max="0.50" step="0.01" value="0.05">
+          <small>שחרור בסיסי</small>
+        </div>
+
+        <div class="ctrl">
+          <label>M₀ <span id="M0v">1200</span></label>
+          <input id="M0" type="range" min="0" max="8000" step="50" value="1200">
+          <small>מלאי התחלתי על הוילון</small>
+        </div>
+        <div class="ctrl">
+          <label>S <span id="Sv">120</span> /min</label>
+          <input id="S" type="range" min="0" max="1200" step="10" value="120">
+          <small>מקור נשימתי</small>
+        </div>
+
+        <div class="ctrl">
+          <label>u <span id="uv">0.30</span></label>
+          <input id="u" type="range" min="0" max="1" step="0.01" value="0.30">
+          <small>עוצמת זרימה (פתיחת חלון)</small>
+        </div>
+        <div class="ctrl">
+          <label>η <span id="etav">0.30</span></label>
+          <input id="eta" type="range" min="0" max="0.95" step="0.01" value="0.30">
+          <small>יעילות מסכה/הגנה</small>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button id="run">הרץ 20 דקות</button>
+        <button id="step" class="secondary">צעד 10 שניות</button>
+        <button id="reset" class="ghost">איפוס</button>
+      </div>
+
+      <div class="kpi">
+        <div class="box">
+          <div class="name">C שיא</div>
+          <div class="val"><span id="Cmax">0</span></div>
+          <div class="bar"><i id="barC" class="i-warn"></i></div>
+        </div>
+        <div class="box">
+          <div class="name">M נוכחי</div>
+          <div class="val"><span id="Mnow">0</span></div>
+          <div class="bar"><i id="barM" class="i-good"></i></div>
+        </div>
+        <div class="box">
+          <div class="name">חשיפה D</div>
+          <div class="val"><span id="Dose">0</span></div>
+          <div class="bar"><i id="barD" class="i-bad"></i></div>
+        </div>
+      </div>
+
+      <canvas id="cv" width="900" height="420"></canvas>
+      <div class="legend">
+        <span><span class="dot d-curtain"></span> וילון</span>
+        <span><span class="dot d-air"></span> כיוון זרימה</span>
+        <span><span class="dot d-aero"></span> אירוסולים</span>
+      </div>
+
+    </aside>
+  </div>
+
+  <section class="card" style="margin-top:14px">
+    <h2>4) כפתור חזרה</h2>
+    <p class="muted">אם יש לך אתר עם index.html באותה תיקייה:</p>
+    <p><a href="index.html">⬅️ חזרה ל-index.html</a></p>
+  </section>
+
+</main>
+
+<script>
+  const el = (id)=>document.getElementById(id);
+  const state = { t:0, C:0, M:1200, dose:0, Cmax:0 };
+
+  function readParams(){
+    const V = +el("V").value;
+    const L0 = +el("L").value;
+    const kdep = +el("Kdep").value;
+    const krel0 = +el("Krel").value;
+    const M0 = +el("M0").value;
+    const S = +el("S").value;
+    const u = +el("u").value;
+    const eta = +el("eta").value;
+
+    // coefficients (tunable)
+    const a = 6.0;   // how much airflow increases release
+    const b = 0.35;  // how much airflow increases removal
+
+    const krel = krel0 * (1 + a*u);
+    const Lambda = L0 + b*u;
+
+    const Qb = 0.010; // m^3/min breathing rate
+    return {V,L0,kdep,krel0,M0,S,u,eta,krel,Lambda,Qb};
+  }
+
+  function updateLabels(p){
+    el("Vv").textContent = p.V.toFixed(0);
+    el("Lv").textContent = p.L0.toFixed(2);
+    el("Kdepv").textContent = p.kdep.toFixed(2);
+    el("Krelv").textContent = p.krel0.toFixed(2);
+    el("M0v").textContent = p.M0.toFixed(0);
+    el("Sv").textContent = p.S.toFixed(0);
+    el("uv").textContent = (+p.u).toFixed(2);
+    el("etav").textContent = (+p.eta).toFixed(2);
+  }
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+  function riskBar(widthPct, which){ el(which).style.width = widthPct + "%"; }
+
+  function refreshKPI(){
+    el("Cmax").textContent = state.Cmax.toFixed(1);
+    el("Mnow").textContent = state.M.toFixed(0);
+    el("Dose").textContent = state.dose.toFixed(1);
+
+    const Cnorm = clamp(state.Cmax / 150.0, 0, 1);
+    const Mnorm = clamp(state.M / 8000.0, 0, 1);
+    const Dnorm = clamp(state.dose / 120.0, 0, 1);
+
+    el("barC").className = (Cnorm<0.33) ? "i-good" : (Cnorm<0.66) ? "i-warn" : "i-bad";
+    el("barM").className = (Mnorm<0.33) ? "i-good" : (Mnorm<0.66) ? "i-warn" : "i-bad";
+    el("barD").className = (Dnorm<0.33) ? "i-good" : (Dnorm<0.66) ? "i-warn" : "i-bad";
+
+    riskBar((Cnorm*100).toFixed(0), "barC");
+    riskBar((Mnorm*100).toFixed(0), "barM");
+    riskBar((Dnorm*100).toFixed(0), "barD");
+  }
+
+  function reset(){
+    const p = readParams();
+    state.t = 0;
+    state.C = 0;
+    state.M = p.M0;
+    state.dose = 0;
+    state.Cmax = 0;
+    particlesReset();
+    updateLabels(p);
+    refreshKPI();
+    draw(p);
+  }
+
+  function step(dtMin){
+    const p = readParams();
+    // dC/dt = S/V + krel*M/V - Lambda*C - kdep*C/V
+    const dC = (p.S/p.V) + (p.krel*state.M/p.V) - (p.Lambda*state.C) - (p.kdep*state.C/p.V);
+    // dM/dt = kdep*C - krel*M
+    const dM = (p.kdep*state.C) - (p.krel*state.M);
+
+    state.C = Math.max(0, state.C + dC*dtMin);
+    state.M = Math.max(0, state.M + dM*dtMin);
+    state.t += dtMin;
+
+    state.Cmax = Math.max(state.Cmax, state.C);
+    state.dose += (1 - p.eta) * p.Qb * state.C * dtMin;
+
+    particlesAdvance(dtMin, p);
+    updateLabels(p);
+    refreshKPI();
+    draw(p);
+  }
+
+  const cv = el("cv");
+  const ctx = cv.getContext("2d");
+  let particles = [];
+
+  function particlesReset(){
+    particles = [];
+    const N = 140;
+    for (let i=0;i<N;i++){
+      particles.push({ x: 0.15 + Math.random()*0.75, y: 0.15 + Math.random()*0.70 });
+    }
+  }
+
+  function particlesAdvance(dtMin, p){
+    const drift = 0.20 + 1.20*p.u;
+    const turb = 0.25*(1 - 0.65*p.u);
+    const resus = clamp((p.krel * state.M)/4000.0, 0, 2);
+
+    for (const q of particles){
+      const rx = (Math.random()-0.5)*turb;
+      const ry = (Math.random()-0.5)*turb;
+      const nearCurtain = (q.x < 0.22);
+      const kick = nearCurtain ? 0.9*resus : 0.0;
+
+      q.x += (0.55*drift + rx + kick)*dtMin*0.06;
+      q.y += (ry)*dtMin*0.06;
+
+      if (q.x > 0.95) q.x = 0.25 + Math.random()*0.1;
+      if (q.x < 0.20) q.x = 0.20;
+      if (q.y > 0.90) q.y = 0.10;
+      if (q.y < 0.10) q.y = 0.90;
+    }
+  }
+
+  function roundRect(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function arrow(ctx, x1,y1,x2,y2, head){
+    const dx=x2-x1, dy=y2-y1;
+    const ang=Math.atan2(dy,dx);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-head*Math.cos(ang-Math.PI/7), y2-head*Math.sin(ang-Math.PI/7));
+    ctx.lineTo(x2-head*Math.cos(ang+Math.PI/7), y2-head*Math.sin(ang+Math.PI/7));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(p){
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0,0,W,H);
+
+    // room
+    roundRect(ctx, 18, 18, W-36, H-36, 16);
+    ctx.fillStyle = "rgba(255,255,255,0.92)"; ctx.fill();
+    ctx.strokeStyle = "rgba(17,24,39,0.18)"; ctx.lineWidth = 2; ctx.stroke();
+
+    // curtain
+    const cx = 40, cy = 40, cw = 90, ch = H-80;
+    roundRect(ctx, cx, cy, cw, ch, 14);
+    ctx.fillStyle = "rgba(100,116,139,0.25)"; ctx.fill();
+    ctx.strokeStyle = "rgba(100,116,139,0.55)"; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.strokeStyle = "rgba(100,116,139,0.35)"; ctx.lineWidth = 1;
+    for (let k=1;k<6;k++){
+      const x = cx + (cw/6)*k;
+      ctx.beginPath(); ctx.moveTo(x, cy+6); ctx.lineTo(x, cy+ch-6); ctx.stroke();
+    }
+
+    // breathing zone
+    const bx = W*0.62, by = H*0.55, bw = W*0.28, bh = H*0.26;
+    roundRect(ctx, bx, by, bw, bh, 14);
+    ctx.fillStyle = "rgba(17,24,39,0.05)"; ctx.fill();
+    ctx.strokeStyle = "rgba(17,24,39,0.12)"; ctx.stroke();
+    ctx.fillStyle = "rgba(17,24,39,0.65)";
+    ctx.font = "bold 16px Arial";
+    ctx.fillText("אזור נשימה", bx+14, by+30);
+
+    // airflow arrows
+    const arrows = 6;
+    const alpha = 0.15 + 0.55*p.u;
+    ctx.strokeStyle = `rgba(14,165,233,${alpha})`;
+    ctx.fillStyle = `rgba(14,165,233,${alpha})`;
+    ctx.lineWidth = 3;
+    for (let i=0;i<arrows;i++){
+      const y = 80 + i*((H-160)/(arrows-1));
+      arrow(ctx, 150, y, W-80, y, 12);
+    }
+
+    // particles alpha by C
+    const calpha = clamp(state.C/120.0, 0.05, 0.9);
+    ctx.fillStyle = `rgba(239,68,68,${calpha})`;
+    for (const q of particles){
+      const x = 18 + (W-36)*q.x;
+      const y = 18 + (H-36)*q.y;
+      ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI*2); ctx.fill();
+    }
+
+    // HUD
+    ctx.fillStyle = "rgba(17,24,39,0.80)";
+    ctx.font = "13px Arial";
+    ctx.fillText(`t=${state.t.toFixed(1)} דק'   C=${state.C.toFixed(1)}   M=${state.M.toFixed(0)}   u=${(+p.u).toFixed(2)}`, 26, H-22);
+    ctx.fillText(`k_rel=${p.krel.toFixed(2)} 1/דק'   Λ=${p.Lambda.toFixed(2)} 1/דק'   D=${state.dose.toFixed(1)}`, 26, H-42);
+  }
+
+  ["V","L","Kdep","Krel","M0","S","u","eta"].forEach(id => el(id).addEventListener("input", () => {
+    const p = readParams();
+    updateLabels(p);
+    refreshKPI();
+    draw(p);
+  }));
+
+  el("reset").addEventListener("click", reset);
+  el("step").addEventListener("click", () => step(1/6));
+  el("run").addEventListener("click", () => { for (let i=0;i<120;i++) step(1/6); });
+
+  // best-effort
+  document.addEventListener("contextmenu", (e)=>e.preventDefault());
+  document.addEventListener("keydown", (e)=>{
+    const k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k==="p" || k==="s")) e.preventDefault();
+  });
+
+  particlesReset();
+  reset();
+</script>
+</body>
+</html>

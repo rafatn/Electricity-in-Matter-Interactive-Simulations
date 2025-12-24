@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>המטוס–גל האידיאלי – מצב אוויר ומצב כביש מרחף</title>
+  <style>
+    :root {
+      --bg: #020310;
+      --card-bg: #070b1c;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent-soft: rgba(0, 212, 255, 0.25);
+      --text-main: #f9fafb;
+      --text-soft: #c7d2fe;
+      --border-soft: rgba(148, 163, 184, 0.4);
+      --radius: 18px;
+      --gap: 1.1rem;
+      --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.65);
+      --transition: 0.25s ease;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #111827 0, #020310 45%, #000000 100%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      padding: 1.1rem;
+      display: flex;
+      justify-content: center;
+      direction: rtl;
+      text-align: right;
+    }
+    .app {
+      width: 100%;
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .icon { font-size: 1.5rem; }
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      max-width: 780px;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+    .card {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.13), transparent 55%),
+                  var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 0 0, rgba(0, 212, 255, 0.06), transparent 45%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .card h3 {
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0.25rem;
+    }
+    p, li {
+      font-size: 0.83rem;
+      line-height: 1.6;
+    }
+    ul {
+      margin: 0.2rem 0 0.2rem 1rem;
+      padding-right: 0.2rem;
+    }
+    .diagram {
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      padding: 0.6rem;
+      margin-top: 0.45rem;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .diagram-row {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .diagram-col {
+      flex: 1 1 160px;
+      border-radius: 10px;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+    }
+    .diagram-tag {
+      font-size: 0.72rem;
+      opacity: 0.9;
+      margin-bottom: 0.2rem;
+      color: #93c5fd;
+    }
+    .label {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .eq {
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: inline-block;
+      margin: 0.05rem 0;
+    }
+    .eq-block { display: block; margin: 0.12rem 0; }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    .pill {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 0.18rem 0.6rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+    footer {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <h1>
+          <span class="icon">✈️🚗</span>
+          <span>המטוס–גל האידיאלי – מצב אוויר ומצב כביש מרחף</span>
+        </h1>
+      </div>
+      <p class="subtitle">
+        הרחבה של מודל המטוס–גל: אותו גוף תעופה–גל יכול לנוע באוויר וגם לשמש כרכב מרחף מעל כביש,
+        ללא מגע גלגלים, במסלול הכביש, עם שמירת מרחק חכמה בין רכב מוביל לרכב עוקב.
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>1. מצב אוויר – תזכורת קצרה למטוס–גל</h2>
+        <p>
+          באוויר, הגוף מתפקד כ<b>מטוס–גל</b>: הפרעה יציבה בלחץ/צפיפות/שדה, המתקדמת עם מהירות המטוס V לפי:
+        </p>
+        <p class="eq eq-block">
+          φ_air(x,t) = Φ_air(x − Vt)
+        </p>
+        <p>
+          השדה האלקטרומגנטי, הליבה הקריוגנית והאנטנות–גליל שומרים על הגל, מפחיתים גרר ומרתיעים בעלי חיים.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>2. מעבר למצב כביש – רכב מרחף מעל המסלול</h2>
+        <p>
+          במצב כביש, אותו גוף נכנס ל<b>מצב רכב מרחף</b> (Road Hover Mode):
+        </p>
+        <ul>
+          <li>גובה מרחף קטן מעל האספלט, למשל h_hover ≈ 10–30 ס"מ.</li>
+          <li>ללא מגע מכני ישיר – אין שחיקת צמיגים ואין רעידות קשות.</li>
+          <li>התנועה היא לאורך ה"פס הגאומטרי" של הכביש (Lane Center Line).</li>
+        </ul>
+        <p>
+          במקום גל באוויר חופשי, נוצר גל לאורך הכביש עצמו:
+        </p>
+        <p class="eq eq-block">
+          φ_road(s,t) = Φ_road(s − Vt)
+        </p>
+        <p>
+          כאשר s הוא קואורדינטת מרחק לאורך הכביש (לפי ציר נתיב), ו־V מהירות הרכב.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>3. איך מרחפים מעל הכביש בלי מגע?</h2>
+        <p>
+          אפשרויות פיזיקליות תאורטיות למיסוך משקל מעל הכביש (לא בהכרח ישימות מיידית):</p>
+        <ul>
+          <li><b>שדה מגנטי + תעלות מוליכות בכביש</b> – כמו MagLev, רק נמוך וגמיש יותר.</li>
+          <li><b>שדה אלקטרוסטטי</b> – יצירת כוח דחייה מול שכבת מטען בקרקע.</li>
+          <li><b>זרימת אוויר נשלטת</b> – כרית אוויר חכמה הנוצרת ע"י גל זרימה מכוון מתחת לגוף.</li>
+        </ul>
+        <p>
+          המודל שלך מאפשר להשתמש באותו <b>שדה אלקטרומגנטי</b> שכבר קיים במטוס–גל, בתוספת שכבה תואמת בכביש, כדי
+          לייצר כוח עילוי אנכי קטן ויציב מעל המסלול.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>4. שמירת מסלול – נעילה על קו מרכז הנתיב</h2>
+        <p>
+          הרכב המרחף נעול על נתיב מוגדר ע"י חישה וגאומטריה:</p>
+        <ul>
+          <li>מצלמות ולידאר לזהוי סימוני כביש וגדרות.</li>
+          <li>שדות מגנטיים/RF משובצים בכביש כ"פסי ניווט".</li>
+          <li>מיפוי מדויק של הכביש (HD Map) המאוחסן במערכת.</li>
+        </ul>
+        <p class="eq eq-block">
+          LaneCenter(s) → r_lane(s) &nbsp; ; &nbsp; r_vehicle(t) → התאמת r_vehicle(t) ל־r_lane(s)
+        </p>
+        <p>
+          הבקרה דואגת שהמיקום הרוחבי (ימין–שמאל) של הרכב נשאר קרוב לקו המרכז של הנתיב, והגובה h_hover נשמר קבוע.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>5. שמירת מרחק בין רכב מוביל לרכב עוקב</h2>
+        <p>
+          שמירת מרחק מבוססת על "חוק מהירות–מטרה" לאורך הציר s של הכביש:
+        </p>
+        <p class="eq eq-block">
+          d(t) = s_lead(t) − s_follow(t)
+        </p>
+        <p>
+          יעד המרחק הרצוי (Headway):</p>
+        <p class="eq eq-block">
+          d_ref(V) = d_min + T_gap · V
+        </p>
+        <p>
+          כאשר d_min – מרחק מינימלי (למשל 5–10 מ'), T_gap – זמן תגובה בטוח (למשל 1–2 שניות), ו־V מהירות הרכב העוקב.
+        </p>
+        <p>
+          אלגוריתם בקרה פשוט:</p>
+        <p class="eq eq-block">
+          e_d(t) = d(t) − d_ref(V)  →  Δa(t) = K_p · e_d(t) + K_d · de_d/dt
+        </p>
+        <p>
+          כלומר: אם הרכב העוקב קרוב מדי – מאיטים; אם רחוק מדי – מזרזים בעדינות. כל זה נעשה בלי בלימת חירום חדה
+          וללא מגע בכביש.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>6. תקשורת בין רכבים – "שיירת גלים" בטוחה</h2>
+        <p>
+          כדי לשמור על מרחקים בצורה יציבה גם בקבוצת רכבים מרחפים, כל רכב משדר ומקבל:</p>
+        <ul>
+          <li>מיקום לאורך הכביש s(t).</li>
+          <li>מהירות V(t).</li>
+          <li>מצב בלימה/האצה מתוכנן.</li>
+        </ul>
+        <p>
+          כך אפשר ליצור <b>שיירת גלים</b>: כל רכב נע בתוך גל מקומי משלו, אבל כל השיירה מתנהגת כמו גל ארוך לאורך הכביש,
+          בלי "הפתעות" פתאומיות בכלי הרכב העוקבים.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>7. אינטגרציה – כלי אחד לשמיים ולכביש</h2>
+        <p>
+          המערכת המלאה:</p>
+        <ul>
+          <li><b>מצב אוויר:</b> מטוס–גל עם פסי גובה V/C/H, שדה מאוזן, אנטנות–אור, ליבה קריוגנית והרתעת בעלי חיים.</li>
+          <li><b>מצב כביש:</b> רכב מרחף מעל הכביש, נעול על נתיב, שומר מרחק אוטומטי מרכב מוביל.</li>
+          <li><b>מעבר בין המצבים:</b> המרה הדרגתית בגובה נמוך – נחיתה רכה על תשתית כביש מותאמת.</li>
+        </ul>
+        <div class="pill-row">
+          <span class="pill">מטוס–גל באוויר</span>
+          <span class="pill">רכב מרחף בכביש</span>
+          <span class="pill">שדה אלקטרומגנטי משותף</span>
+          <span class="pill">שמירת מרחק חכמה</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      מודל רעיוני–הנדסי בלבד – דורש מחקר, רגולציה, סימולציה וניסוי לפני יישום מעשי.
+    </footer>
+  </div>
+</body>
+</html>

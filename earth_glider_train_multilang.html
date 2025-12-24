@@ -1,0 +1,1297 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>רכבת גלשן אדמה בין מדינות – Earth-Glider Rail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg: #050816;
+            --bg-soft: #0b1020;
+            --card: #111827;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56,189,248,0.18);
+            --accent-strong: #06b6d4;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --danger: #f97373;
+            --success: #4ade80;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 1180px;
+            padding: 16px;
+        }
+
+        .glass {
+            background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+            border-radius: 18px;
+            border: 1px solid rgba(148,163,184,0.3);
+            box-shadow:
+                0 24px 60px rgba(15,23,42,0.9),
+                0 0 0 1px rgba(15,23,42,0.9);
+            padding: 18px 18px 24px;
+        }
+
+        @media (min-width: 900px) {
+            .glass { padding: 24px 30px 30px; }
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #facc15 0, #f97316 40%, #0ea5e9 100%);
+            box-shadow: 0 0 18px rgba(56,189,248,0.7);
+        }
+
+        .lang-switcher {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        .lang-btn {
+            border: 1px solid rgba(148,163,184,0.4);
+            background: rgba(15,23,42,0.6);
+            color: var(--muted);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lang-btn span.flag {
+            font-size: 0.9rem;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #0b1120;
+            border-color: transparent;
+            box-shadow: 0 0 0 1px rgba(15,23,42,0.7);
+        }
+
+        .hero {
+            display: grid;
+            gap: 18px;
+        }
+
+        @media (min-width: 900px) {
+            .hero {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+                align-items: stretch;
+                gap: 22px;
+            }
+        }
+
+        .hero-main {
+            position: relative;
+            padding: 16px 16px 18px;
+            border-radius: 16px;
+            background: radial-gradient(circle at top right, rgba(56,189,248,0.15), transparent 50%),
+                        linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.9));
+            border: 1px solid rgba(148,163,184,0.35);
+            overflow: hidden;
+        }
+
+        .hero-main::before {
+            content: "";
+            position: absolute;
+            inset: -40%;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(56,189,248,0.08), transparent 60%),
+                radial-gradient(circle at 80% 10%, rgba(56,189,248,0.06), transparent 55%);
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        .hero-main-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 3px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(56,189,248,0.5);
+            background: rgba(8,47,73,0.7);
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .chip-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(56,189,248,0.9);
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: clamp(1.6rem, 2.1vw + 1rem, 2.2rem);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            max-width: 38rem;
+        }
+
+        .credit {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .credit span.name {
+            color: var(--accent-strong);
+            font-weight: 600;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+            font-size: 0.78rem;
+        }
+
+        .pill {
+            border-radius: 999px;
+            padding: 3px 9px;
+            border: 1px solid rgba(148,163,184,0.45);
+            background: rgba(15,23,42,0.8);
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            color: var(--muted);
+        }
+
+        .pill-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+        }
+
+        .pill-dot.green { background: var(--success); }
+        .pill-dot.red { background: var(--danger); }
+        .pill-dot.blue { background: var(--accent); }
+
+        .hero-visual {
+            border-radius: 16px;
+            background: radial-gradient(circle at 15% 0, rgba(248,250,252,0.05), transparent 55%),
+                        radial-gradient(circle at 80% 100%, rgba(56,189,248,0.16), transparent 55%),
+                        linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+            border: 1px solid rgba(148,163,184,0.4);
+            padding: 14px 14px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-visual-title {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .tunnel-diagram {
+            position: relative;
+            border-radius: 12px;
+            background: linear-gradient(to bottom, #020617, #020617 34%, #facc15 35%, #fbbf24 42%, #78350f 43%, #111827 100%);
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .surface-line {
+            position: absolute;
+            inset-inline: 0;
+            top: 32%;
+            border-top: 2px dashed rgba(15,23,42,0.9);
+            opacity: 0.9;
+        }
+
+        .surface-label {
+            position: absolute;
+            top: 26%;
+            inset-inline-start: 10px;
+            font-size: 0.7rem;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .train-body {
+            position: relative;
+            margin-top: 32%;
+            margin-inline: auto;
+            width: 82%;
+            height: 46px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9, #22c55e);
+            box-shadow:
+                0 0 24px rgba(56,189,248,0.8),
+                0 3px 12px rgba(15,23,42,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-inline: 10px;
+        }
+
+        .train-head {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #fefce8 0, #fde047 35%, #f97316 100%);
+            box-shadow: 0 0 18px rgba(251,191,36,0.9);
+        }
+
+        .train-cabins {
+            flex: 1;
+            display: flex;
+            gap: 4px;
+            justify-content: flex-end;
+        }
+
+        .train-cabin {
+            width: 10px;
+            height: 20px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.5);
+            box-shadow: inset 0 0 0 1px rgba(15,23,42,0.7);
+        }
+
+        .train-depth-label {
+            position: absolute;
+            bottom: 10px;
+            inset-inline-end: 10px;
+            font-size: 0.7rem;
+            color: #e5e7eb;
+        }
+
+        .flow-arcs {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .flow-arc {
+            position: absolute;
+            border-radius: 999px;
+            border: 1px dashed rgba(248,250,252,0.22);
+            opacity: 0.7;
+        }
+
+        .flow-arc.a {
+            width: 62%;
+            height: 46%;
+            inset-inline: 19%;
+            top: 42%;
+        }
+
+        .flow-arc.b {
+            width: 88%;
+            height: 60%;
+            inset-inline: 6%;
+            top: 36%;
+        }
+
+        .flow-arc.c {
+            width: 120%;
+            height: 80%;
+            inset-inline: -10%;
+            top: 30%;
+            opacity: 0.45;
+        }
+
+        .diagram-caption {
+            margin-top: 8px;
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        @media (min-width: 900px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, rgba(148,163,184,0.07), transparent 55%),
+                        linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+            border-radius: 14px;
+            border: 1px solid rgba(30,64,175,0.6);
+            padding: 12px 12px 14px;
+        }
+
+        .card h2 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+        }
+
+        .card h3 {
+            margin: 10px 0 4px;
+            font-size: 0.9rem;
+        }
+
+        .card p, .card li {
+            font-size: 0.8rem;
+            line-height: 1.55;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148,163,184,0.5);
+            color: var(--muted);
+        }
+
+        .flow-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 170px;
+            background: rgba(15,23,42,0.9);
+            border-radius: 12px;
+            padding: 8px 9px;
+            border: 1px solid rgba(148,163,184,0.5);
+            position: relative;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: "➜";
+            position: absolute;
+            inset-inline-end: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        .flow-step-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .flow-step-title {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        .flow-step-text {
+            font-size: 0.76rem;
+            color: var(--muted);
+        }
+
+        .gantt {
+            margin-top: 8px;
+            background: rgba(15,23,42,0.9);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid rgba(148,163,184,0.5);
+        }
+
+        .gantt-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .gantt-row {
+            margin-top: 4px;
+        }
+
+        .gantt-label {
+            font-size: 0.75rem;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+        }
+
+        .gantt-bar-track {
+            height: 7px;
+            border-radius: 999px;
+            background: rgba(15,23,42,1);
+            overflow: hidden;
+        }
+
+        .gantt-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+        }
+
+        .gantt-bar.mid {
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+        }
+
+        .gantt-bar.late {
+            background: linear-gradient(90deg, #f97316, #facc15);
+        }
+
+        .table-scroll {
+            margin-top: 8px;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            min-width: 420px;
+        }
+
+        th, td {
+            padding: 6px 6px;
+            border-bottom: 1px solid rgba(55,65,81,0.9);
+        }
+
+        th {
+            text-align: start;
+            color: var(--muted);
+            font-weight: 500;
+            background: rgba(15,23,42,0.95);
+            position: sticky;
+            inset-block-start: 0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+        }
+
+        .badge.good {
+            background: rgba(34,197,94,0.16);
+            color: #bbf7d0;
+        }
+
+        .badge.warn {
+            background: rgba(234,179,8,0.14);
+            color: #fef9c3;
+        }
+
+        .badge.risk {
+            background: rgba(248,113,113,0.16);
+            color: #fecaca;
+        }
+
+        .footer-note {
+            margin-top: 14px;
+            font-size: 0.7rem;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Language sections */
+        .lang {
+            display: none;
+        }
+        .lang.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="glass">
+        <header class="toolbar">
+            <div class="logo">
+                <span class="logo-badge"></span>
+                <span>Earth‑Glider Rail</span>
+            </div>
+            <div class="lang-switcher" aria-label="Language selector">
+                <button class="lang-btn active" data-lang="he"><span class="flag">🇮🇱</span>עברית</button>
+                <button class="lang-btn" data-lang="ar"><span class="flag">🇵🇸</span>العربية</button>
+                <button class="lang-btn" data-lang="en"><span class="flag">🇬🇧</span>English</button>
+                <button class="lang-btn" data-lang="es"><span class="flag">🇪🇸</span>Español</button>
+                <button class="lang-btn" data-lang="fr"><span class="flag">🇫🇷</span>Français</button>
+                <button class="lang-btn" data-lang="ru"><span class="flag">🇷🇺</span>Русский</button>
+                <button class="lang-btn" data-lang="egy"><span class="flag">🏺</span>Ancient&nbsp;Egyptian*</button>
+            </div>
+        </header>
+
+        <!-- Hebrew -->
+        <section class="lang lang-he active" dir="rtl">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            רכבת תת‑קרקעית בין מדינות
+                        </div>
+                        <h1>רכבת &quot;גלשן אדמה&quot; המחברת מדינה למדינה</h1>
+                        <p class="subtitle">
+                            מערכת תחבורה חדשה, המבוססת על חיקוי חיות החופרות בחול: הרכבת לא חופרת מנהרה קשיחה,
+                            אלא גולשת בתוך שכבת האדמה הרדודה ויוצרת שביל זמני שנעלם מיד אחריה.
+                        </p>
+                        <p class="credit">
+                            פיתוח וייזום: <span class="name">ראפת נאטור</span>. הרעיון מוגש לתועלת האנושות, מדינות, ילדים ומשפחות.
+                        </p>
+                        <div class="hero-meta">
+                            <div class="pill">
+                                <span class="pill-dot green"></span>
+                                מהירות יעד: 500–900 קמ&quot;ש
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot.blue"></span>
+                                עומק גלישה: 20–50 מטר מתחת לפני האדמה
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot red"></span>
+                                ללא מנהרה קשיחה – מינימום בטון וברזל
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">הדמיית חתך – גלישת הרכבת בשכבת האדמה</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">פני הקרקע</div>
+
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 מ' עומק</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        הרכבת מתנהגת כמו &quot;חיה חופרת ענקית&quot;: יוצרת זמנית אזור זרימה של גרגרי אדמה סביב הגוף,
+                        ומיד לאחר מעבר הקרון – האדמה חוזרת למקומה ללא חלל קבוע.
+                    </div>
+                </aside>
+            </section>
+
+            <section class="grid grid-2">
+                <article class="card">
+                    <h2>עקרון הפעולה – ממכונית חופרת לרכבת בין‑מדינתית</h2>
+                    <p>
+                        הרכבת מבוססת על אותו רעיון של רכב יחיד החופר‑גולש באדמה, אבל בקנה מידה של עשרות קרונות.
+                        במקום לחפור מנהרה אחת ולצקת בטון, כל המערכת מתוכננת כך שהאדמה תתנהג כמו
+                        &quot;נוזל גרגירי&quot; רגעי סביב הרכבת.
+                    </p>
+                    <h3>חיקוי חיות חופרות (Bio‑Mimicry)</h3>
+                    <ul>
+                        <li><strong>חפרפרת</strong> – דחיפה וצידוד של האדמה, לא קידוח מלא.</li>
+                        <li><strong>לטאת חול (Sandfish)</strong> – תנועה גלית מהירה שגורמת לחול לזרום כמו מים.</li>
+                        <li><strong>תולעת אדמה</strong> – כיווץ והרחבה של הגוף ל&quot;יניקה&quot; קדימה.</li>
+                    </ul>
+                    <h3>אזור הגלישה</h3>
+                    <p>
+                        עומק אופייני: 20–50 מ' מתחת לפני הקרקע.  
+                        מספיק עמוק בשביל לעקוף תשתיות, כבישים וערים, אך רדוד מספיק כדי לא להיכנס ללחצים גאולוגיים כבדים.
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Bio‑Mimicry</span>
+                        <span class="tag">תנועה גלית</span>
+                        <span class="tag">נוזל גרגירים</span>
+                        <span class="tag">טווח בין‑יבשתי</span>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2>רכבת גמישה – מקטעים חכמים במקום גוף אחד קשיח</h2>
+                    <p>
+                        הרכבת בנויה מסדרה של &quot;חוליות&quot; גמישות, שכל אחת מהן כוללת מנועים,
+                        חיישנים ויכולת תנועה עצמאית. החוליות מתנהגות יחד כמו נחש חול ענק.
+                    </p>
+                    <h3>ראש חפירה חכם</h3>
+                    <ul>
+                        <li>מצב רטט – הפיכת האדמה למעין &quot;אבקה זורמת&quot; סביב הראש.</li>
+                        <li>מצב שינון – פירוק גושים ואבנים קטנות, ללא פיצוצים.</li>
+                        <li>מצב דחיפה – הסעת האדמה לצדדים וסגירה מחדש אחרי המעבר.</li>
+                    </ul>
+                    <h3>מערכת חישה תת‑קרקעית</h3>
+                    <ul>
+                        <li>GPR – רדאר חודר אדמה לזיהוי שכבות, חללים ובולענים.</li>
+                        <li>חיישני צפיפות – התאמת מהירות וצורת הגל לתנאי הקרקע.</li>
+                        <li>מיפוי סיכונים – הימנעות מצנרת, כבלי מתח ותשתיות רגישות.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="card" style="margin-top:16px;">
+                <h2>מסלול בין מדינות – דוגמה: מהמזרח התיכון לאירופה</h2>
+                <p>
+                    הרשת הגלובלית יכולה לחבר מדינות ללא תלות בנתיבי אוויר או ים, ובמינימום פגיעה בשטח.
+                    לדוגמה, ציר אזורי:
+                </p>
+                <ul>
+                    <li>ישראל → ירדן → ערב הסעודית → מצרים → לוב → איטליה → שאר אירופה.</li>
+                    <li>או ציר יבשתי: ישראל → ירדן → עיראק → טורקיה → מזרח אירופה.</li>
+                </ul>
+
+                <div class="flow-row">
+                    <div class="flow-step">
+                        <div class="flow-step-label">שלב 1</div>
+                        <div class="flow-step-title">סריקה גאופיזית</div>
+                        <div class="flow-step-text">
+                            מיפוי שכבות הקרקע, סלעים, מים ובולענים במסלול המיועד.
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-label">שלב 2</div>
+                        <div class="flow-step-title">תכנון מסלול גמיש</div>
+                        <div class="flow-step-text">
+                            מסלול שאינו חייב להיות ישר – ניתן לעקוף הרים, ערים ומכשולים.
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-label">שלב 3</div>
+                        <div class="flow-step-title">הקמת תחנות שקיעה/עלייה</div>
+                        <div class="flow-step-text">
+                            תחנות שבהן הרכבת נכנסת ויוצאת מהאדמה בזווית בטוחה.
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-label">שלב 4</div>
+                        <div class="flow-step-title">הפעלה הדרגתית</div>
+                        <div class="flow-step-text">
+                            התחלה בקטעים אזוריים קצרים, ואיחוד לרשת בינלאומית.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-2" style="margin-top:16px;">
+                <article class="card">
+                    <h2>מודל אנרגיה ותחזוקה</h2>
+                    <h3>מקורות אנרגיה</h3>
+                    <ul>
+                        <li>תאי דלק מימן – טווח נסיעה ארוך, פליטה מינימלית.</li>
+                        <li>סוללות ליתיום‑אוויר – גיבוי והאצה.</li>
+                        <li>השראה מגנטית מהקרקע – טעינה תוך כדי נסיעה, במקטעים ייעודיים.</li>
+                    </ul>
+                    <h3>תחזוקה</h3>
+                    <ul>
+                        <li>אין בטון וברזל לאורך כל המסלול – אין &quot;מנהרה&quot; שצריך לשפץ.</li>
+                        <li>תחנות שירות ממוקדות: מנועים, חיישנים, ראשי חפירה.</li>
+                        <li>בקרת שחיקה של מעטפת הרכבת – שימוש בציפויים מתקדמים.</li>
+                    </ul>
+
+                    <div class="gantt">
+                        <div class="gantt-header">
+                            <span>תוכנית זמנים (הערכה)</span>
+                            <span>שנים</span>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-label">
+                                <span>מחקר ופיתוח אבטיפוס</span>
+                                <span>0–3</span>
+                            </div>
+                            <div class="gantt-bar-track">
+                                <div class="gantt-bar" style="width: 26%;"></div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-label">
+                                <span>פיילוט אזורי (100–300 ק&quot;מ)</span>
+                                <span>3–7</span>
+                            </div>
+                            <div class="gantt-bar-track">
+                                <div class="gantt-bar mid" style="width: 55%;"></div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-label">
+                                <span>רשת בין‑מדינתית</span>
+                                <span>7–15</span>
+                            </div>
+                            <div class="gantt-bar-track">
+                                <div class="gantt-bar late" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2>עלות משוערת ויתרונות מול מנהרות רגילות</h2>
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>פרמטר</th>
+                                <th>מנהרה קלאסית</th>
+                                <th>רכבת גלשן אדמה</th>
+                                <th>הערת סיכון</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>חפירה והנדסה</td>
+                                <td>גבוהה מאוד – בטון, ברזל, כרייה מסיבית</td>
+                                <td>נמוכה בהרבה – שכבת גלישה זמנית</td>
+                                <td><span class="badge good">חיסכון גדול</span></td>
+                            </tr>
+                            <tr>
+                                <td>זמן ביצוע</td>
+                                <td>איטי – עשרות שנים לקווים ארוכים</td>
+                                <td>מהיר יותר – ניתן לעבוד במספר מקטעים במקביל</td>
+                                <td><span class="badge good">יישום מדורג</span></td>
+                            </tr>
+                            <tr>
+                                <td>תחזוקה</td>
+                                <td>שיקום בטון, איטום מים, סדקים</td>
+                                <td>טיפול ברכבת עצמה ובמספר תחנות מפתח</td>
+                                <td><span class="badge good">פחות תשתית קבועה</span></td>
+                            </tr>
+                            <tr>
+                                <td>השפעה סביבתית</td>
+                                <td>פגיעה בקרקע ובנוף בזמן החפירה</td>
+                                <td>רוב הפעולה מתחת לאדמה, ללא שינוי נופי משמעותי</td>
+                                <td><span class="badge warn">נדרש פיקוח סביבתי</span></td>
+                            </tr>
+                            <tr>
+                                <td>בטיחות גאולוגית</td>
+                                <td>רגישות גבוהה לרעידות אדמה</td>
+                                <td>התאמה דינמית למסלול, הימנעות מפירים עמוקים</td>
+                                <td><span class="badge warn">מחקר קרקע חובה</span></td>
+                            </tr>
+                            <tr>
+                                <td>סיכון טכנולוגי</td>
+                                <td>טכנולוגיה מוכרת</td>
+                                <td>חדשנות גבוהה – צריך R&amp;D משמעותי</td>
+                                <td><span class="badge risk">דורש השקעה</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </section>
+
+            <footer class="footer-note">
+                <span>
+                    *המסמך מתאר רעיון עקרוני לרכבת &quot;גלשן אדמה&quot; תת‑קרקעית המחברת בין מדינות,
+                    ללא ייחוס בלעדי – ניתן לפתח למען האנושות, בתנאי שמצוין קרדיט רעיוני לראפת נאטור.
+                </span>
+                <span>
+                    גרסה זו כוללת כפתורי שפה בסיסיים. ניתן להרחיב, לשלב איורים נוספים ולהתאים
+                    כעמוד הצעה למשקיעים, לממשלות או לארגוני תחבורה.
+                </span>
+            </footer>
+        </section>
+
+        <!-- Arabic -->
+        <section class="lang lang-ar" dir="rtl">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            قطار ينزلق داخل طبقة الأرض
+                        </div>
+                        <h1>قطار &quot;متزلّج الأرض&quot; يربط دولة بدولة</h1>
+                        <p class="subtitle">
+                            نظام نقل مستقبلي مستوحى من الحيوانات التي تحفر في الرمال: القطار لا يحفر نفقاً ثابتاً،
+                            بل ينزلق داخل طبقة أرضية ضحلة ويخلق مساراً مؤقتاً يختفي بعد مروره مباشرة.
+                        </p>
+                        <p class="credit">
+                            تطوير وفكرة: <span class="name">رافات ناتور</span>، لصالح البشر، الأطفال والعائلات في كل مكان.
+                        </p>
+                        <div class="hero-meta">
+                            <div class="pill">
+                                <span class="pill-dot green"></span>
+                                سرعة مستهدفة: 500–900 كم/ساعة
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot blue"></span>
+                                عمق الانزلاق: 20–50 م تحت سطح الأرض
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot red"></span>
+                                بدون نفق خرساني مستمر
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">مقطع تخيلي لحركة القطار داخل الأرض</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">سطح الأرض</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 م عمق</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        القطار يعمل كحيوان حافر عملاق: يفتح منطقة تدفق للحبيبات حوله، ثم تعود التربة لمكانها بعد مروره.
+                    </div>
+                </aside>
+            </section>
+
+            <section class="grid grid-2">
+                <article class="card">
+                    <h2>الفكرة الأساسية</h2>
+                    <p>
+                        بدلاً من حفر نفق ضخم واحد، يتحرك القطار داخل طبقة التربة مثل دودة أو حيوان يعيش تحت الرمال.
+                        طبقة التربة حول القطار تصبح بحالة &quot;سائلة&quot; للحظات، ثم تستقر مجدداً.
+                    </p>
+                    <h3>الإلهام من الطبيعة</h3>
+                    <ul>
+                        <li>الخُلد – يدفع التربة جانباً بدلاً من تكسير كل شيء.</li>
+                        <li>سحلية الرمال – حركة متموجة تجعل الرمال تتصرف كسائل.</li>
+                        <li>دودة الأرض – تمدد وانكماش يدفع الجسم للأمام.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h2>من قطار محلي إلى شبكة بين الدول</h2>
+                    <p>
+                        نفس المبدأ يمكن توسيعه لبناء شبكة عالمية: مقاطع إقليمية قصيرة في البداية، ثم ربطها
+                        لتشكيل خطوط بين الدول والقارات، من الشرق الأوسط إلى أوروبا وأفريقيا وآسيا.
+                    </p>
+                    <h3>أعماق آمنة</h3>
+                    <p>
+                        العمق 20–50 م يسمح بتجنّب البنى التحتية الموجودة والأنهار والمدن،
+                        مع الحفاظ على سهولة الصيانة والوصول عند الحاجة.
+                    </p>
+                </article>
+            </section>
+        </section>
+
+        <!-- English -->
+        <section class="lang lang-en" dir="ltr">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            Sub‑surface bio‑inspired rail
+                        </div>
+                        <h1>Earth‑Glider Rail Between Nations</h1>
+                        <p class="subtitle">
+                            A future transportation system inspired by sand‑burrowing animals: instead of digging a rigid tunnel,
+                            the train &quot;surfs&quot; inside a shallow soil layer, creating a temporary path that closes
+                            naturally behind it.
+                        </p>
+                        <p class="credit">
+                            Concept originator: <span class="name">Rafat Natour</span>. Shared as a contribution to global
+                            mobility, for the benefit of children, families and all nations.
+                        </p>
+                        <div class="hero-meta">
+                            <div class="pill">
+                                <span class="pill-dot green"></span>
+                                Target speed: 500–900 km/h
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot blue"></span>
+                                Operating depth: 20–50 m below ground
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot red"></span>
+                                No continuous concrete tunnel
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">Conceptual cross‑section – train gliding in soil</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">Ground surface</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 m depth</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        The train acts like a giant burrowing creature: it temporarily fluidizes grains around its body,
+                        then lets the soil settle back with no permanent hollow tunnel.
+                    </div>
+                </aside>
+            </section>
+
+            <section class="grid grid-2">
+                <article class="card">
+                    <h2>From single vehicle to continental network</h2>
+                    <p>
+                        The same bio‑inspired mechanism used for a small underground vehicle can be scaled up to a multi‑car
+                        train linking neighboring countries. Instead of pouring concrete for thousands of kilometres of tunnel,
+                        we only manage a thin &quot;gliding layer&quot; of soil.
+                    </p>
+                    <h3>Key principles</h3>
+                    <ul>
+                        <li>Flexible segmented train – each segment generates part of the travelling wave.</li>
+                        <li>Dynamic routing – path can curve in 3D to avoid cities, rivers and sensitive zones.</li>
+                        <li>Geo‑sensing – ground‑penetrating radar and density sensors to adapt in real time.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h2>Regional example – Middle East to Europe</h2>
+                    <p>
+                        A demonstration corridor could link the Middle East to Europe, for example:
+                        Israel → Jordan → Saudi Arabia / Egypt → North Africa → Southern Europe, or
+                        via Turkey and Eastern Europe.
+                    </p>
+                    <p>
+                        Stations act as &quot;docking gates&quot; where the train smoothly enters and exits the ground,
+                        using shallow ramps or vertical lift cores.
+                    </p>
+                </article>
+            </section>
+        </section>
+
+        <!-- Spanish -->
+        <section class="lang lang-es" dir="ltr">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            Transporte subterráneo bio‑inspirado
+                        </div>
+                        <h1>Tren &quot;Deslizador de Tierra&quot; entre países</h1>
+                        <p class="subtitle">
+                            Un sistema de transporte futuro inspirado en animales que se mueven bajo la arena:
+                            el tren no excava un túnel rígido, sino que se desliza dentro de una capa poco profunda
+                            del suelo y el terreno se cierra de nuevo detrás de él.
+                        </p>
+                        <p class="credit">
+                            Idea y concepto: <span class="name">Rafat Natour</span>, ofrecido como contribución
+                            a la movilidad global y al bienestar de las personas.
+                        </p>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">Esquema conceptual</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">Superficie</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 m</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        El tren se comporta como una criatura subterránea gigante, abriendo un pasaje momentáneo en el suelo.
+                    </div>
+                </aside>
+            </section>
+        </section>
+
+        <!-- French -->
+        <section class="lang lang-fr" dir="ltr">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            Rail sous‑terrain inspiré du vivant
+                        </div>
+                        <h1>Train &quot;Glisseur de Terre&quot; entre États</h1>
+                        <p class="subtitle">
+                            Un système de transport s’inspirant des animaux fouisseurs: le train ne creuse pas un tunnel
+                            en béton, il glisse dans une couche de sol et laisse la terre se refermer après son passage.
+                        </p>
+                        <p class="credit">
+                            Concept proposé par <span class="name">Rafat Natour</span>, mis à disposition pour un usage
+                            pacifique et coopératif entre pays.
+                        </p>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">Coupe conceptuelle</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">Surface</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 m</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        Le sol se comporte comme un fluide granulaire temporaire autour du train.
+                    </div>
+                </aside>
+            </section>
+        </section>
+
+        <!-- Russian -->
+        <section class="lang lang-ru" dir="ltr">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            Подземный поезд нового поколения
+                        </div>
+                        <h1>Поезд «Земной серфер» между государствами</h1>
+                        <p class="subtitle">
+                            Поезд движется в неглубоком слое грунта, подобно животным, которые зарываются в песок.
+                            Вместо постоянного тоннеля создаётся временный канал, который закрывается после прохождения состава.
+                        </p>
+                        <p class="credit">
+                            Идея и базовая концепция: <span class="name">Rafat Natour</span>.
+                        </p>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">Схематический разрез</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">Поверхность</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">≈ 35 м</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        Система предназначена для межгосударственных линий и минимального воздействия на поверхность.
+                    </div>
+                </aside>
+            </section>
+        </section>
+
+        <!-- Ancient Egyptian (symbolic / explanatory, not real hieroglyphs) -->
+        <section class="lang lang-egy" dir="ltr">
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-main-inner">
+                        <div class="chip">
+                            <span class="chip-dot"></span>
+                            Ancient‑style concept (symbolic)
+                        </div>
+                        <h1>Earth‑Glider Rail – idea written for ancient builders</h1>
+                        <p class="subtitle">
+                            This section does not use authentic hieroglyphs, but a simple description in English
+                            that can later be translated into proper Ancient Egyptian signs by experts.
+                        </p>
+                        <p class="credit">
+                            Idea owner: <span class="name">Rafat Natour</span>. Text prepared for symbolic &quot;Ancient Egyptian&quot; slot.
+                        </p>
+                        <div class="hero-meta">
+                            <div class="pill">
+                                <span class="pill-dot green"></span>
+                                Fast like a falcon over the desert
+                            </div>
+                            <div class="pill">
+                                <span class="pill-dot blue"></span>
+                                Hidden like a scarab under the sand
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <aside class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-title">Symbolic view</div>
+                    <div class="tunnel-diagram">
+                        <div class="surface-line"></div>
+                        <div class="surface-label">Nile soil</div>
+                        <div class="flow-arcs">
+                            <div class="flow-arc a"></div>
+                            <div class="flow-arc b"></div>
+                            <div class="flow-arc c"></div>
+                        </div>
+                        <div class="train-body">
+                            <div class="train-head"></div>
+                            <div class="train-cabins">
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                                <div class="train-cabin"></div>
+                            </div>
+                            <div class="train-depth-label">Under the sand</div>
+                        </div>
+                    </div>
+                    <div class="diagram-caption">
+                        A line beneath the desert, connecting lands as ancient trade routes once did on the surface.
+                    </div>
+                </aside>
+            </section>
+        </section>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const buttons = document.querySelectorAll('.lang-btn');
+        const sections = document.querySelectorAll('.lang');
+
+        function setLang(lang) {
+            sections.forEach(sec => {
+                const has = sec.classList.contains('lang-' + lang);
+                sec.classList.toggle('active', has);
+                if (has) {
+                    // update dir and html lang
+                    if (lang === 'he' || lang === 'ar') {
+                        document.documentElement.dir = 'rtl';
+                    } else {
+                        document.documentElement.dir = 'ltr';
+                    }
+                    document.documentElement.lang = lang;
+                }
+            });
+
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.dataset.lang;
+                setLang(lang);
+            });
+        });
+
+        // default
+        setLang('he');
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הולכת אנשים בתדר שנקבע – מודל מתקדם לפטנט/מאמר</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --bg-panel: #020617;
+            --bg-card: rgba(15, 23, 42, 0.96);
+            --accent: #fbbf24;
+            --accent-soft: #fde68a;
+            --accent-2: #38bdf8;
+            --text-main: #e5e7eb;
+            --text-soft: #9ca3af;
+            --border-soft: rgba(148, 163, 184, 0.4);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", "Alef", sans-serif;
+            background:
+              radial-gradient(circle at top left, #0f172a 0, transparent 55%),
+              radial-gradient(circle at bottom right, #1f2937 0, transparent 55%),
+              var(--bg);
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+        header {
+            padding: 26px 16px 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(18px);
+            background: linear-gradient(to bottom,
+                rgba(15, 23, 42, 0.94),
+                rgba(15, 23, 42, 0.75),
+                transparent 100%
+            );
+            border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+        }
+        header-inner {
+            max-width: 1180px;
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        h1 {
+            margin: 0 0 6px;
+            font-size: 1.85rem;
+            color: var(--accent-soft);
+            letter-spacing: 0.03em;
+        }
+        .subtitle {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-soft);
+        }
+        main {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 10px 14px 60px;
+        }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.3fr);
+            gap: 16px;
+        }
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        section.card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 16px 16px 18px;
+            margin: 10px 0;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.85);
+            position: relative;
+            overflow: hidden;
+        }
+        section.card::before {
+            content: "";
+            position: absolute;
+            inset-inline: 0;
+            top: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                rgba(251, 191, 36, .0) 0%,
+                rgba(251, 191, 36, .6) 40%,
+                rgba(56, 189, 248, .7) 60%,
+                rgba(251, 191, 36, .0) 100%
+            );
+            opacity: 0.8;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        h2 span.index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 250, 252, 0.6);
+            font-size: 0.78rem;
+            color: var(--accent-soft);
+        }
+        h3 {
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-size: 1.02rem;
+            color: #eab308;
+        }
+        p {
+            margin: 5px 0;
+        }
+        ul {
+            margin: 4px 0 8px;
+            padding-right: 22px;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .soft-text {
+            color: var(--text-soft);
+            font-size: 0.9rem;
+        }
+        .highlight {
+            color: var(--accent-soft);
+            font-weight: 600;
+        }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            font-size: 0.78rem;
+            color: #bfdbfe;
+            background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.55), rgba(15, 23, 42, 0.95));
+        }
+        .equation-block {
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            padding: 9px 10px 9px;
+            margin: 8px 0 9px;
+            overflow-x: auto;
+        }
+        .equation-block pre {
+            margin: 0;
+            font-family: "SF Mono", "Consolas", "Courier New", monospace;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            color: #e5e7eb;
+        }
+        .badge-title {
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #93c5fd;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            margin: 2px 4px;
+            font-size: 0.78rem;
+            color: #f9fafb;
+            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.7), rgba(15, 23, 42, 1));
+        }
+        .note {
+            font-size: 0.82rem;
+            color: #9ca3af;
+        }
+        .svg-wrapper {
+            background: radial-gradient(circle at top, rgba(15, 118, 110, 0.7), rgba(15, 23, 42, 1));
+            border-radius: 16px;
+            padding: 10px 10px 14px;
+            border: 1px solid rgba(148, 163, 184, 0.65);
+            box-shadow: inset 0 0 18px rgba(15, 23, 42, 0.9);
+        }
+        .svg-caption {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            color: #e5e7eb;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        .wave-path {
+            stroke-dasharray: 520;
+            stroke-dashoffset: 520;
+            animation: drawWave 4.5s ease-out forwards;
+        }
+        @keyframes drawWave {
+            to { stroke-dashoffset: 0; }
+        }
+        .walker {
+            animation: moveWalker 5.5s ease-in-out infinite alternate;
+        }
+        @keyframes moveWalker {
+            0% { transform: translateX(0px); }
+            100% { transform: translateX(-120px); }
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            margin-top: 6px;
+            font-size: 0.78rem;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        footer {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 10px 16px 24px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <header-inner>
+        <h1>הולכת אנשים בתדר שנקבע</h1>
+        <p class="subtitle">
+            מודל פיזיקלי–ביולוגי מתקדם שבו האדם הוא מידע פיזי רציף, והגל הנושא הוא הדרך והמסלול.
+        </p>
+    </header-inner>
+</header>
+
+<main>
+    <div class="grid-layout">
+        <!-- עמודה שמאלית (בעברית – חזותית ימין) -->
+        <div>
+            <section class="card">
+                <h2><span class="index">1</span> רעיון־על – האדם כמידע, הגל כנושא</h2>
+                <p>
+                    ברעיון זה האדם נתפס כ<strong>מטריצת מסה–מידע</strong>:
+                </p>
+                <ul>
+                    <li>מסה פיזית – אטומים, מולקולות, רקמות, עצמות ונוזלים.</li>
+                    <li>גאומטריה – סידור מרחבי תלת־ממדי של כל חלקי הגוף.</li>
+                    <li>מצבים דינמיים – טמפרטורה, זרימת דם, פעילות עצבית ויינון.</li>
+                    <li>מידע ביולוגי – DNA, תצורת תאים ומערכות גוף.</li>
+                </ul>
+                <p>
+                    כל זה נחשב לשדה מידע רציף שניתן לסחיבה על גבי
+                    <span class="highlight">גל נושא (Carrier Wave)</span> במרחב. הגל אינו משכפל את האדם,
+                    אלא נושא את המסה והמִבנה בפועל לאורך מסלול אנרגטי מוגדר.
+                </p>
+                <p class="soft-text">
+                    בצורה זו, אפשר לתאר העברת אדם מבלי לפרק אותו לביטים מופשטים, אלא
+                    כ<strong>מסה פיזית מלוּוָה בגל</strong>, הנשלטת על ידי תדר, חיכוך, חום ותנאי ביטחון ביולוגיים.
+                </p>
+                <p>
+                    הגל מגדיר:
+                </p>
+                <ul>
+                    <li>את המסלול והציר במרחב.</li>
+                    <li>את קצב ההולכה (תדר ההליכה/הריחוף).</li>
+                    <li>את גבולות התאוצה והחלקה המותרים.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">2</span> מודל הגל – פוטנציאל וכוח לאורך מסלול</h2>
+                <p>
+                    נניח מסלול חד־ממדי \(s\) (קו הליכה/ריחוף) וגל נושא היוצר פוטנציאל:
+                </p>
+                <div class="equation-block">
+<pre>Φ(s,t) = Φ₀ · cos(2π f t − k s)</pre>
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li><code>f</code> – תדר ההולכה / תדר ההליכה שנקבע.</li>
+                    <li><code>k</code> – מספר גל לאורך המסלול.</li>
+                    <li><code>Φ₀</code> – אמפליטודת הפוטנציאל.</li>
+                    <li><code>s</code> – מיקום על המסלול, <code>t</code> – זמן.</li>
+                </ul>
+                <p>
+                    הכוח שהגל מפעיל על הגוף מתקבל מגזירת הפוטנציאל לפי המקום:
+                </p>
+                <div class="equation-block">
+<pre>F_wave(s,t) = −∂Φ/∂s
+             =  k · Φ₀ · sin(2π f t − k s)</pre>
+                </div>
+                <p>
+                    כוח זה הוא המנוע העיקרי של תנועת הגוף על המסלול: דוחף קדימה או אחורה
+                    בהתאם לפאזה של הגל ולמיקום של האדם.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">3</span> הגוף כמטריצת מסה–מידע על גבי הגל</h2>
+                <p>
+                    ניתן לייצג באופן מושגי את מצב הגוף ככפל בין מידע המסה לבין הגל הנושא:
+                </p>
+                <div class="equation-block">
+<pre>H(x,t) = M(x,t) · C(x,t)</pre>
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li><code>M(x,t)</code> – מפת המסה/החומר של הגוף בכל נקודה במרחב.</li>
+                    <li><code>C(x,t)</code> – הגל הנושא (Carrier) במרחב ובזמן.</li>
+                </ul>
+                <p>
+                    הגוף לא "נעלם" ולא "מופיע מחדש", אלא נמצא לאורך כל הדרך בתוך שדה גל
+                    שמוביל אותו במסלול. מבחינת פיזיקה–הנדסה, זה
+                    <span class="highlight">מסוע גלי</span> למסה ביולוגית.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">4</span> כוח החלקה – חיכוך, טמפרטורה ומהירות</h2>
+                <p>
+                    לצד כוח הגל פועל גם <span class="highlight">כוח החלקה</span> הנובע מחיכוך ותלות בטמפרטורה.
+                    משוואת התנועה לאורך המסלול:
+                </p>
+                <div class="equation-block">
+<pre>m · d²s/dt² = F_wave(s,t) − F_slide(v,T)</pre>
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li><code>m</code> – מסה של הגוף.</li>
+                    <li><code>v = ds/dt</code> – מהירות הגוף על המסלול.</li>
+                    <li><code>T</code> – טמפרטורת אזור המגע (רגל/מסלול).</li>
+                </ul>
+
+                <h3>4.1 הגדרת כוח ההחלקה</h3>
+                <p>
+                    נגדיר את כוח ההחלקה כשילוב של חיכוך יבש וחיכוך צמיג, שניהם תלויי טמפרטורה:
+                </p>
+                <div class="equation-block">
+<pre>F_slide(v,T) = μ(T) · N · sgn(v) + γ(T) · v</pre>
+                </div>
+                <p>הגדרות:</p>
+                <ul>
+                    <li><code>N</code> – כוח נורמלי (בקירוב <code>m · g_eff</code>).</li>
+                    <li><code>μ(T)</code> – מקדם חיכוך יבש תלוי טמפרטורה.</li>
+                    <li><code>γ(T)</code> – מקדם חיכוך צמיג תלוי טמפרטורה.</li>
+                    <li><code>sgn(v)</code> – סימן המהירות (כיוון ההחלקה).</li>
+                </ul>
+                <p>תלות פשוטה, להמחשה:</p>
+                <div class="equation-block">
+<pre>μ(T) = μ₀ + β_μ · (T − T₀)
+γ(T) = γ₀ + β_γ · (T − T₀)</pre>
+                </div>
+                <p>
+                    כך, באמצעות חימום/קירור אפשר לעבור בין מצבים:
+                    <span class="chip">נעילה חזקה</span>
+                    <span class="chip">החלקה מבוקרת</span>
+                    <span class="chip">תנועה חופשית</span>
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">5</span> משוואת חום – בקרה דרך חימום וקירור</h2>
+                <p>
+                    הטמפרטורה של אזור המגע משתנה בזמן, ודרכה אנו שולטים בחיכוך ועל כן בצורת ההליכה.
+                    משוואת האנרגיה הבסיסית:
+                </p>
+                <div class="equation-block">
+<pre>C · dT/dt = P_wave + P_fric − P_cool</pre>
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li><code>C</code> – קיבול חום אפקטיבי של שכבת המגע.</li>
+                    <li><code>P_wave</code> – ההספק שהגל משרה כחום.</li>
+                    <li><code>P_fric</code> – הספק חימום מחיכוך: בקירוב <code>P_fric ≈ F_slide · v</code>.</li>
+                    <li><code>P_cool</code> – הספק קירור (הולכה, קרינה, קירור אקטיבי).</li>
+                </ul>
+                <p>מודל קירור פשוט:</p>
+                <div class="equation-block">
+<pre>P_cool = κ · (T − T_env)</pre>
+                </div>
+                <p class="note">
+                    הטמפרטורה משפיעה על μ(T),γ(T) → החיכוך → התנועה, והתנועה משפיעה בחזרה על T דרך החיכוך.
+                    מתקבלת מערכת מצומדת של תנועה–חום.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">6</span> תנאי הליכה יציבה בתדר שנקבע</h2>
+                <h3>6.1 תנאי אי־החלקה מסוכנת</h3>
+                <p>
+                    הכוח המקסימלי שהגל יכול להפעיל:
+                </p>
+                <div class="equation-block">
+<pre>F_wave,max = k · Φ₀</pre>
+                </div>
+                <p>
+                    כדי למנוע החלקה לא מבוקרת, נדרוש שבטמפרטורת עבודה <code>T_op</code>:
+                </p>
+                <div class="equation-block">
+<pre>k · Φ₀ ≤ μ(T_op) · N</pre>
+                </div>
+
+                <h3>6.2 תנאי תאוצה ביולוגית</h3>
+                <p>
+                    אמפליטודת התאוצה מהגל:
+                </p>
+                <div class="equation-block">
+<pre>a_wave,max = (k · Φ₀) / m</pre>
+                </div>
+                <p>
+                    חייבת להיות קטנה מגבול ביולוגי מותר:
+                </p>
+                <div class="equation-block">
+<pre>(k · Φ₀) / m ≤ a_bio,max</pre>
+                </div>
+
+                <h3>6.3 סינכרון תדר ההליכה עם תדר הגל</h3>
+                <p>
+                    לגוף יש תדר צעידה טבעי <code>f_step</code>. דרוש יחס רציונלי יציב בין תדר הגל לתדר הצעידה:
+                </p>
+                <div class="equation-block">
+<pre>f = n · f_step    או    f_step = (m/n) · f</pre>
+                </div>
+                <p class="soft-text">
+                    כאשר התנאים הללו מתקיימים, הצעדים של האדם "מתלבשים" על שלבי הגל,
+                    ותחושת ההליכה הופכת לחלקה ומסונכרנת.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">7</span> ניסוח קומפקטי של המערכת המלאה</h2>
+                <p>
+                    המודל המלא ניתן לייצוג בשלוש משוואות coupled עיקריות:
+                </p>
+
+                <h3>7.1 משוואת התנועה</h3>
+                <div class="equation-block">
+<pre>m · d²s/dt² = k Φ₀ · sin(2π f t − k s)
+              − μ(T) · N · sgn(v)
+              − γ(T) · v</pre>
+                </div>
+
+                <h3>7.2 משוואת הטמפרטורה</h3>
+                <div class="equation-block">
+<pre>C · dT/dt = P_wave(f, Φ₀, v)
+             + F_slide(v,T) · v
+             − κ · (T − T_env)</pre>
+                </div>
+
+                <h3>7.3 תנאי תכן (בטיחות ושליטה)</h3>
+                <div class="equation-block">
+<pre>1)  k · Φ₀ ≤ μ(T_op) · N         (ללא החלקה מסוכנת)
+2)  (k · Φ₀) / m ≤ a_bio,max      (תאוצה ביולוגית מותרת)
+3)  f = n · f_step                (סינכרון תדרים)</pre>
+                </div>
+                <p>
+                    זוהי נקודת פתיחה רשמית למאמר או הצעת פטנט, ומתארת מערכת המשלבת
+                    גל נושא, בקרה תרמית, חיכוך ותדרי צעד.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">8</span> תקציר רשמי להצעת פטנט / מאמר</h2>
+                <p>
+                    במסמך זה מתואר מודל להולכת בני אדם במרחב באמצעות
+                    <span class="highlight">תדר נשיאה</span> קבוע, שבו:
+                </p>
+                <ul>
+                    <li>האדם מיוצג כמטריצת מסה–מידע השומרת על מבנה וזהות ביולוגיים.</li>
+                    <li>גל נושא בתדר <code>f</code> יוצר מסלול אנרגיה המשמש כנתיב הולכה.</li>
+                    <li>החיכוך בין הגוף למסלול נשלט באמצעות חימום–קירור (T), המשפיע על μ(T),γ(T).</li>
+                    <li>נקבעים תנאי תכן למניעת החלקה מסוכנת ולשמירה על תאוצה בתוך גבולות ביולוגיים.</li>
+                    <li>נקבע יחס רציונלי בין תדר הגל לתדר הצעידה הטבעי של האדם.</li>
+                </ul>
+                <p>
+                    שילוב כל הגורמים מאפשר <strong>הולכה מבוקרת של אדם</strong> לאורך מסלול גלי,
+                    תוך שמירה על המסה והמבנה הפיזי, ועל תחושת הליכה יציבה ונוחה.
+                </p>
+            </section>
+        </div>
+
+        <!-- עמודה ימנית (חזותית שמאל) – גרף, אינטואיציה חזותית -->
+        <div>
+            <section class="card">
+                <h2><span class="index">A</span> תרשים חזותי – אדם על מסלול גל</h2>
+                <div class="svg-wrapper">
+                    <!-- SVG סכמטי -->
+                    <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="gradWave" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#38bdf8"/>
+                                <stop offset="50%" stop-color="#fbbf24"/>
+                                <stop offset="100%" stop-color="#22c55e"/>
+                            </linearGradient>
+                            <radialGradient id="gradHuman" cx="50%" cy="40%" r="70%">
+                                <stop offset="0%" stop-color="#fee2e2"/>
+                                <stop offset="100%" stop-color="#f97316"/>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- רקע -->
+                        <rect x="0" y="0" width="320" height="200" fill="rgba(15,23,42,1)"/>
+
+                        <!-- ציר מסלול -->
+                        <line x1="12" y1="150" x2="308" y2="150"
+                              stroke="#4b5563" stroke-width="1.2"
+                              stroke-dasharray="4 4"/>
+
+                        <!-- גל -->
+                        <path class="wave-path"
+                              d="M 10 150
+                                 C 40 120, 80 180, 110 150
+                                 S 180 120, 210 150
+                                 S 260 180, 300 150"
+                              fill="none"
+                              stroke="url(#gradWave)"
+                              stroke-width="3"/>
+
+                        <!-- "אדם" כסמל -->
+                        <g class="walker">
+                            <!-- גוף -->
+                            <rect x="200" y="100" width="14" height="32"
+                                  rx="4" ry="4"
+                                  fill="rgba(15,23,42,0.4)"
+                                  stroke="rgba(248, 250, 252, 0.85)"
+                                  stroke-width="1.2"/>
+                            <!-- ראש -->
+                            <circle cx="207" cy="93" r="7"
+                                    fill="url(#gradHuman)"
+                                    stroke="#fee2e2"
+                                    stroke-width="1.2"/>
+                            <!-- רגליים -->
+                            <line x1="204" y1="132" x2="200" y2="150"
+                                  stroke="#e5e7eb" stroke-width="1.4"/>
+                            <line x1="210" y1="132" x2="214" y2="150"
+                                  stroke="#e5e7eb" stroke-width="1.4"/>
+                        </g>
+
+                        <!-- חץ כיוון תנועה -->
+                        <line x1="60" y1="40" x2="260" y2="40"
+                              stroke="#fbbf24" stroke-width="2"
+                              marker-end="url(#arrowHead)"/>
+                        <!-- חץ -->
+                        <defs>
+                            <marker id="arrowHead" markerWidth="6" markerHeight="6"
+                                    refX="5" refY="3" orient="auto">
+                                <polygon points="0 0, 6 3, 0 6" fill="#fbbf24"/>
+                            </marker>
+                        </defs>
+
+                        <!-- טקסטים באנגלית קטנה (סימון פיזיקלי) -->
+                        <text x="22" y="32" fill="#e5e7eb" font-size="9">Path s</text>
+                        <text x="68" y="58" fill="#e5e7eb" font-size="9">F_wave</text>
+                        <text x="250" y="90" fill="#e5e7eb" font-size="9">Human mass</text>
+                        <text x="230" y="160" fill="#9ca3af" font-size="8">thermal control T</text>
+                    </svg>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-swatch" style="background: linear-gradient(90deg,#38bdf8,#fbbf24);"></span>
+                            <span>גל נושא – מסלול אנרגטי</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch" style="background: #f97316;"></span>
+                            <span>אדם – מסה פיזית על הגל</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch" style="background: #facc15;"></span>
+                            <span>כיוון ההולכה (תדר f)</span>
+                        </div>
+                    </div>
+                    <p class="svg-caption">
+                        התרשים מייצג אדם (המסה הביולוגית) "רוכב" על גל נושא.
+                        צורת הגל, המשרעת והתדר קובעים את מסלול ההולכה, בעוד שחום/קור שולטים על החיכוך והחלקה.
+                    </p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">B</span> אינטואיציה – הסבר מילולי פשוט</h2>
+                <p class="badge-title">1. האדם כציור</p>
+                <p>
+                    דמיין שהגוף הוא ציור מורכב: צבעים, שכבות ומרקמים. אנחנו לא קורעים את הציור ולא משכפלים אותו.
+                    במקום זאת, אנחנו מניחים אותו על <span class="highlight">משטח גל</span> הנע במרחב.
+                </p>
+                <p>
+                    כשהגל נע – הציור (האדם) נע איתו. כשהגל נעצר – הציור נעצר. כך נשמרת המסה וכל המבנה,
+                    אבל מיקומו במרחב משתנה.
+                </p>
+
+                <p class="badge-title">2. מדרגות נעות גלי</p>
+                <p>
+                    תאר לעצמך מדרגות נעות, רק שהמדרגה היא גל סינוס. התדר <code>f</code> קובע:
+                </p>
+                <ul>
+                    <li>כמה "גלים" יש לאורך המסלול.</li>
+                    <li>באיזה קצב הגל מעלה/מוריד את האדם.</li>
+                </ul>
+                <p>
+                    אם תדר הגל מסונכרן עם קצב ההליכה הטבעי <code>f_step</code>,
+                    האדם מרגיש <strong>הליכה חלקה בתדר שנקבע</strong>.
+                </p>
+
+                <p class="badge-title">3. חום, קור והחלקה</p>
+                <p>
+                    חימום קל של המשטח או הרגל יכול לשנות את החיכוך (μ(T), γ(T)):
+                </p>
+                <ul>
+                    <li>חיכוך גבוה – הגוף "נדבק" למסלול (נעילה).</li>
+                    <li>חיכוך בינוני – הליכה נשלטת, צעד אחר צעד.</li>
+                    <li>חיכוך נמוך – החלקה חופשית על הגל.</li>
+                </ul>
+                <p class="soft-text">
+                    מערכת הבקרה התרמית מגדירה מתי האדם נע, מתי הוא נעצר, ובאיזה אופן הוא חווה את ההולכה.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2><span class="index">C</span> שימושים אפשריים והערות סגירה</h2>
+                <p>
+                    המודל יכול להוות בסיס לתרחישים עתידיים שונים, כגון:
+                </p>
+                <ul>
+                    <li>מסלולי הולכה אנכיים בבניינים (במקום מעלית מכנית).</li>
+                    <li>שבילים גלייים להולכת אנשים למרחקים קצרים ללא מאמץ.</li>
+                    <li>מעבר מבוקר בין מפלסים/קומות בעזרת תדר נשיאה ומערכת חיכוך–חום.</li>
+                </ul>
+                <p class="note">
+                    המסמך כתוב כך שניתן להגישו כטיוטת פטנט או כבסיס למאמר מדעי־הנדסי,
+                    לאחר התאמה לנוסח משפטי/אקדמי מלא.
+                </p>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer>
+    מסמך HTML זה מרכז את הרעיון, המשוואות, התרשים וההסבר המילולי – במבנה מעוצב ומוכן להגשה או להמשך פיתוח.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Integrated Antiviral Model · Spread + States + Graph</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 2rem 1rem 3rem;
+    }
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(15,23,42,0.9));
+      border-radius: 1.3rem;
+      border: 1px solid rgba(148,163,184,0.5);
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.9),
+        0 0 70px rgba(56,189,248,0.25);
+      padding: 1.8rem 2rem 2.3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .wrap::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,0.18), transparent 58%),
+        radial-gradient(circle at 100% 0%, rgba(129,140,248,0.18), transparent 58%);
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: -1;
+    }
+    h1 {
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .sub {
+      font-size: 0.92rem;
+      color: #9ca3af;
+      max-width: 640px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.7rem 0 1.2rem;
+      font-size: 0.75rem;
+    }
+    .badge {
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      text-transform: uppercase;
+    }
+    h2 {
+      font-size: 1.15rem;
+      margin: 1.6rem 0 0.45rem;
+      border-bottom: 1px solid rgba(148,163,184,0.5);
+      padding-bottom: 0.25rem;
+    }
+    p {
+      font-size: 0.93rem;
+      color: #e5e7eb;
+      margin: 0.35rem 0 0.5rem;
+    }
+    ul {
+      margin: 0.3rem 0 0.4rem 1.2rem;
+      font-size: 0.9rem;
+    }
+    li { margin: 0.12rem 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 1rem;
+      margin-top: 0.6rem;
+    }
+    .card {
+      background: radial-gradient(circle at top, rgba(15,23,42,0.97), rgba(15,23,42,0.9));
+      border-radius: 1rem;
+      border: 1px solid rgba(71,85,105,0.95);
+      padding: 0.85rem 0.9rem;
+      box-shadow: 0 12px 32px rgba(15,23,42,0.9);
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+    .card p {
+      font-size: 0.9rem;
+    }
+    code, pre {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .equation {
+      font-family: "JetBrains Mono", ui-monospace;
+      font-size: 0.9rem;
+      background: rgba(15,23,42,0.95);
+      border-radius: 0.75rem;
+      border: 1px solid rgba(55,65,81,1);
+      padding: 0.5rem 0.7rem;
+      margin: 0.4rem 0 0.6rem;
+      color: #e5e7eb;
+      overflow-x: auto;
+    }
+    pre {
+      margin-top: 0.7rem;
+      padding: 0.7rem 0.8rem;
+      border-radius: 0.8rem;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(55,65,81,1);
+      font-size: 0.83rem;
+      color: #e5e7eb;
+      overflow-x: auto;
+      position: relative;
+    }
+    pre::before {
+      content: "PYTHON DEMO";
+      position: absolute;
+      top: 0.32rem;
+      right: 0.6rem;
+      font-size: 0.63rem;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.4rem;
+    }
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      text-align: right;
+    }
+    .hl {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Integrated Antiviral Model</h1>
+    <p class="sub">
+      This document describes the fully integrated concept: a 2D airborne spread engine,
+      binary / hex state encoding (including air-risk bits), and a treatment graph with
+      DFS + Dijkstra, all wired together in a single Python module.
+    </p>
+    <div class="badge-row">
+      <span class="badge">Airborne spread</span>
+      <span class="badge">Binary / Hex state</span>
+      <span class="badge">DFS + Dijkstra</span>
+      <span class="badge">Fair treatment logic</span>
+    </div>
+
+    <h2>1. From Room Physics to State Bits</h2>
+    <p>
+      The integrated Python module <code>integrated_virus_model.py</code> first simulates the
+      aerosol-based virus concentration in a room using a 2D grid model. From the summary
+      (max and average concentration), it classifies the airborne risk into three levels:
+      <span class="hl">low</span>, <span class="hl">medium</span>, and <span class="hl">high</span>.
+    </p>
+
+    <p>
+      These risk classes are encoded as extra bits in the binary state vector:
+    </p>
+
+    <div class="equation">
+      bit 16 → air_risk_medium = 1<br />
+      bit 17 → air_risk_high = 1
+    </div>
+
+    <p>
+      The final state ID is a hexadecimal string like <code>0xA3F21</code>, combining virus
+      properties, patient comorbidities, room conditions, and airborne risk into a single
+      compact signature.
+    </p>
+
+    <h2>2. Treatment Graph Construction</h2>
+    <p>
+      Using these states, the module builds a decision graph:
+    </p>
+    <ul>
+      <li><strong>S₀</strong> – baseline room, no UVC, poor ventilation, high air risk, unstable patient.</li>
+      <li><strong>S₁</strong> – UVC activated, air risk reduced, patient still unstable.</li>
+      <li><strong>S₂</strong> – UVC + improved ventilation, air risk further reduced.</li>
+      <li><strong>S₃</strong> – UVC + ventilation + pharmacologic support, patient stabilized.</li>
+    </ul>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Edges as Treatment Actions</h3>
+        <p>
+          Each edge in the graph represents a clinical or environmental action, such as
+          <em>“Activate UVC lighting”</em> or <em>“Optimize room ventilation”</em>. Each edge has
+          an abstract cost combining time, risk, and resource usage.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Air-Risk in the Path</h3>
+        <p>
+          Because the air-risk bits are part of the state, the shortest path must also reduce
+          airborne concentration over time. This links physical reality in the room
+          directly to the optimization logic.
+        </p>
+      </div>
+    </div>
+
+    <h2>3. Python Demo Usage</h2>
+    <p>
+      In the module, the <code>demo()</code> function runs the complete pipeline: simulate
+      three room configurations (baseline, UVC, UVC+ventilation), classify air-risk, build
+      the graph, run DFS, and then Dijkstra.
+    </p>
+
+    <pre>
+from integrated_virus_model import demo
+
+if __name__ == "__main__":
+    demo()
+    </pre>
+
+    <p class="note">
+      The console output shows: airborne risk metrics, a DFS exploration of the treatment
+      branches, and the optimal path from baseline high-risk to stable low-risk state.
+    </p>
+
+    <div class="footer">
+      Ready to be connected to the existing dashboard HTML and live sensor backends.
+    </div>
+  </div>
+</body>
+</html>

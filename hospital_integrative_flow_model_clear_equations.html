@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מודל אינטגרטיבי – מערכות הגוף ומחלקות בית חולים (משוואות ברורות)</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+<!-- Mermaid -->
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<style>
+:root{
+  --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --head:#0f172a;
+  --shadow:0 8px 22px rgba(0,0,0,.08); --r:14px;
+}
+body{font-family:Arial,sans-serif;background:var(--bg);margin:20px;line-height:1.7;color:var(--text);}
+h1,h2,h3{color:var(--head);margin-top:0}
+.card{background:var(--card);padding:20px;margin-bottom:24px;border-radius:var(--r);box-shadow:var(--shadow);}
+.small{font-size:14px;color:#374151}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}
+button{padding:9px 14px;border-radius:10px;border:1px solid var(--line);cursor:pointer;font-weight:800;background:white}
+button.print{background:#111827;color:white;border-color:#111827}
+
+/* --- EQUATIONS: clearer --- */
+.eq-wrap{
+  background:#ffffff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 14px 10px;
+  margin:12px 0 16px;
+}
+.eq-title{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+.eq-title b{font-size:16px}
+.eq-hint{font-size:13px;color:var(--muted)}
+.eq{
+  overflow-x:auto;
+  padding:12px;
+  border-radius:10px;
+  background:#f8fafc;
+  border:1px dashed #cbd5e1;
+}
+/* Make KaTeX display bigger */
+.katex{font-size:1.15em}
+.katex-display{margin:0.3em 0}
+@media print{
+  body{background:white;margin:0}
+  .toolbar{display:none}
+  .card{box-shadow:none;border:1px solid #ddd}
+}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px;border-bottom:1px solid var(--line);text-align:right}
+th{background:#111827;color:#fff}
+</style>
+</head>
+
+<body>
+<h1>מודל אינטגרטיבי – גוף האדם ↔ מחלקות בית חולים</h1>
+<p class="small">גרסה משופרת: <b>משוואות גדולות, עם רקע בהיר וגלילה אופקית</b> במקרה הצורך.</p>
+
+<div class="toolbar">
+  <button class="print" onclick="window.print()">🖨️ מצב הדפסה / PDF</button>
+  <button onclick="toggleEqSize()">🔍 הגדל/הקטן משוואות</button>
+</div>
+
+<div class="card">
+  <h2>1. מודל זרימה רב־מערכתי</h2>
+  <div class="mermaid">
+flowchart TD
+A[חולה במיון]
+A --> B{מערכת פגועה}
+B -->|עצבים| N[נוירולוגיה]
+B -->|לב| C[קרדיולוגיה]
+B -->|נשימה| R[ריאות / הרדמה]
+B -->|כליות| K[נפרולוגיה]
+B -->|זיהום| I[זיהומיות]
+N --> ICU[טיפול נמרץ]
+C --> ICU
+R --> ICU
+K --> ICU
+I --> ICU
+ICU --> REC[שיקום / המשך טיפול]
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. מיפוי מערכות ↔ מחלקות</h2>
+  <table>
+    <tr><th>מערכת</th><th>מחלקות</th></tr>
+    <tr><td>עצבים</td><td>נוירולוגיה, טיפול נמרץ, שיקום</td></tr>
+    <tr><td>לב וכלי דם</td><td>קרדיולוגיה, כירורגיה, טיפול נמרץ</td></tr>
+    <tr><td>נשימה</td><td>ריאות, הרדמה, טיפול נמרץ</td></tr>
+    <tr><td>כליות</td><td>נפרולוגיה, פנימית</td></tr>
+    <tr><td>חיסון / זיהום</td><td>זיהומיות, המטולוגיה</td></tr>
+  </table>
+</div>
+
+<div class="card" id="eqSection">
+  <h2>3. משוואות קליניות מרכזיות (ברור לקריאה)</h2>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>זרימת דם (אנלוגיית חוק אוהם)</b>
+      <span class="eq-hint">דגש: זרימה = לחץ / התנגדות</span>
+    </div>
+    <div class="eq">\\[ Q = \\frac{\\Delta P}{R} \\]</div>
+    <div class="small">Q – זרימת דם, ΔP – הפרש לחצים, R – התנגדות כלי הדם</div>
+  </div>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>תפוקת לב</b>
+      <span class="eq-hint">דגש: כמה דם בדקה</span>
+    </div>
+    <div class="eq">\\[ CO = HR \\times SV \\]</div>
+    <div class="small">CO – תפוקת לב, HR – דופק, SV – נפח פעימה</div>
+  </div>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>הובלת חמצן לרקמות</b>
+      <span class="eq-hint">אינטגרציה לב + דם</span>
+    </div>
+    <div class="eq">\\[ DO_2 = CO \\times CaO_2 \\]</div>
+    <div class="small">DO₂ – אספקת חמצן, CaO₂ – תכולת חמצן בדם עורקי</div>
+  </div>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>אוורור נאדיות</b>
+      <span class="eq-hint">נשימה אפקטיבית</span>
+    </div>
+    <div class="eq">\\[ V_A = (V_T - V_D) \\times RR \\]</div>
+    <div class="small">Vₐ – אוורור נאדיות, Vₜ – נפח נשימה, Vᴅ – dead space, RR – קצב נשימה</div>
+  </div>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>חומצה־בסיס (Henderson–Hasselbalch)</b>
+      <span class="eq-hint">איזון כליות + נשימה</span>
+    </div>
+    <div class="eq">\\[ pH = 6.1 + \\log \\left( \\frac{HCO_3^-}{0.03 \\times PaCO_2} \\right) \\]</div>
+    <div class="small">בפשטות: HCO₃⁻ (כליות) מול PaCO₂ (ריאות)</div>
+  </div>
+
+  <div class="eq-wrap">
+    <div class="eq-title">
+      <b>פינוי כלייתי (Clearance)</b>
+      <span class="eq-hint">כמה חומר מסולק ליחידת זמן</span>
+    </div>
+    <div class="eq">\\[ C = \\frac{U \\times V}{P} \\]</div>
+    <div class="small">U – ריכוז בשתן, V – קצב זרימת שתן, P – ריכוז בדם</div>
+  </div>
+
+  <p class="small">טיפ: אם משוואה “נחתכת” במסך, אפשר לגלול בתוך המסגרת של המשוואה.</p>
+</div>
+
+<script>
+function safeRenderMath(){
+  if (typeof renderMathInElement === "function") {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "\\\\(", right: "\\\\)", display: false},
+        {left: "\\\\[", right: "\\\\]", display: true}
+      ]
+    });
+  } else {
+    // If KaTeX not ready yet, try again shortly
+    setTimeout(safeRenderMath, 150);
+  }
+}
+function toggleEqSize(){
+  const el = document.getElementById('eqSection');
+  const big = el.dataset.big === "1";
+  document.querySelectorAll('.katex').forEach(k => k.style.fontSize = big ? "1.15em" : "1.35em");
+  el.dataset.big = big ? "0" : "1";
+}
+window.addEventListener("load", () => {
+  if (window.mermaid) {
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  }
+  safeRenderMath();
+});
+</script>
+
+</body>
+</html>

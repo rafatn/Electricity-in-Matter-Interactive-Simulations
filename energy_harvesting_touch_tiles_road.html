@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>קצירת אנרגיה מלחיצה/דריכה/תנועת רכבים — תכנון מסודר שלב־שלב</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --card2:#0f1630;
+      --text:#e9ecff;
+      --muted:#b9c0ffcc;
+      --accent:#7aa2ff;
+      --accent2:#7dffb3;
+      --warn:#ffcf5a;
+      --danger:#ff6b8a;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 16px 40px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    html,body{background:radial-gradient(1200px 600px at 80% 0%, rgba(122,162,255,.22), transparent 60%),
+                         radial-gradient(900px 520px at 10% 20%, rgba(125,255,179,.12), transparent 55%),
+                         var(--bg);
+              color:var(--text); font-family:var(--sans); margin:0;}
+    a{color:var(--accent)}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 70px;}
+    header{
+      background:linear-gradient(180deg, rgba(122,162,255,.18), rgba(18,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:22px 18px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:radial-gradient(900px 220px at 70% 0%, rgba(122,162,255,.26), transparent 55%);
+      pointer-events:none;
+    }
+    h1{margin:0 0 8px; font-size:1.55rem; letter-spacing:.2px;}
+    .subtitle{margin:0; color:var(--muted); line-height:1.6;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr;}
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px 16px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{margin:0 0 10px;font-size:1.15rem}
+    .card h3{margin:14px 0 8px;font-size:1.02rem}
+    .muted{color:var(--muted)}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .pill{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:.92rem;
+      color:var(--muted);
+    }
+    .pill b{color:var(--text)}
+    details{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:rgba(18,26,51,.55);
+      padding:12px 12px;
+      margin:12px 0;
+    }
+    details summary{
+      cursor:pointer;
+      font-weight:650;
+      outline:none;
+      list-style:none;
+    }
+    details summary::-webkit-details-marker{display:none}
+    details summary:after{
+      content:"⟵";
+      float:left;
+      color:var(--muted);
+      transform:rotate(-90deg);
+      transition:transform .18s ease;
+    }
+    details[open] summary:after{transform:rotate(0deg)}
+    .callout{
+      border:1px solid var(--border);
+      border-right:4px solid var(--accent);
+      border-radius:16px;
+      padding:12px 12px;
+      background:rgba(122,162,255,.10);
+      margin:12px 0;
+    }
+    .warn{
+      border-right-color:var(--warn);
+      background:rgba(255,207,90,.10);
+    }
+    .danger{
+      border-right-color:var(--danger);
+      background:rgba(255,107,138,.10);
+    }
+    .ok{
+      border-right-color:var(--accent2);
+      background:rgba(125,255,179,.10);
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 700px){ .kpi{grid-template-columns:1fr;} }
+    .kpi .box{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+    }
+    .box .label{color:var(--muted); font-size:.9rem}
+    .box .value{font-size:1.05rem; font-weight:750; margin-top:4px}
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.02);
+      margin:10px 0;
+    }
+    th,td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--border);
+      text-align:right;
+      vertical-align:top;
+      font-size:.96rem;
+    }
+    th{background:rgba(255,255,255,.04); font-weight:750}
+    tr:last-child td{border-bottom:none}
+    .mono{font-family:var(--mono); font-size:.93rem; direction:ltr; text-align:left;}
+    pre{
+      margin:10px 0;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:.92rem;
+      direction:ltr;
+      text-align:left;
+      line-height:1.35;
+    }
+    .steps{
+      counter-reset: step;
+      margin:8px 0 0;
+      padding:0;
+      list-style:none;
+    }
+    .steps li{
+      counter-increment: step;
+      margin:8px 0;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.02);
+      border-radius:16px;
+    }
+    .steps li:before{
+      content: counter(step);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:28px; height:28px;
+      border-radius:10px;
+      margin-left:10px;
+      background:rgba(122,162,255,.16);
+      border:1px solid rgba(122,162,255,.35);
+      color:var(--text);
+      font-weight:800;
+    }
+    footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.7;
+    }
+    .small{font-size:.92rem}
+    .tag{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      margin:0 6px 6px 0;
+      color:var(--muted);
+      font-size:.86rem;
+      white-space:nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>קצירת אנרגיה מלחיצה/דריכה/תנועת רכבים — מסמך תכנון מסודר (שלב־שלב)</h1>
+      <p class="subtitle">
+        מסמך אחד שמרכז: משטח אצבע (כפתור ללא סוללה), בלטת דריכה להולכי רגל, ומפר/כביש למכוניות.
+        בכל המקרים אנו ממירים <b>אנרגיה מכנית</b> לחשמל — לא “מייצרים יש מאין”.
+      </p>
+      <div class="pillrow">
+        <span class="pill"><b>נוסחה בסיסית:</b> E = F · d</span>
+        <span class="pill"><b>בלוק קבוע:</b> ממיר → יישור → אגירה → סף → עומס</span>
+        <span class="pill"><b>מתחים:</b> אצבע 3.3V, בלטה 12V/24V, כביש 12V/24V</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>הבסיס המשותף לכל הרעיונות</h2>
+
+        <div class="callout ok">
+          <b>רעיון מרכזי:</b> אנחנו “קוצרים” חלק מהאנרגיה שממילא עוברת במערכת (לחיצה/צעד/מעבר גלגל),
+          וממירים אותה לחשמל לשימושים מקומיים (LED, חיישנים, תקשורת), לא להפעלת עומסים כבדים לאורך זמן.
+        </div>
+
+        <h3>שלבי התכנון (אותו מתכון לכל מערכת)</h3>
+        <ol class="steps">
+          <li><b>מקור מכני:</b> קבע F (כוח), d (תזוזה מותרת), ותדירות אירועים ביום.</li>
+          <li><b>ממיר:</b> בחר Piezo/Tribo (ללא חלקים נעים) או מכני+גנרטור (יעיל יותר).</li>
+          <li><b>יישור וייצוב:</b> גשר שוטקי/מיישר + קבל החלקה + ממיר DC-DC.</li>
+          <li><b>אגירה:</b> קבל/סופר־קבל לפיקים, או סוללה לזמן פעולה ארוך יותר.</li>
+          <li><b>סף הפעלה (UVLO) והיסטרזיס:</b> מפעיל עומס רק כשיש מספיק אנרגיה.</li>
+          <li><b>עומסים חכמים:</b> עדיפויות (תאורה > נתונים > מצלמה), Duty-cycle לפי צורך.</li>
+          <li><b>מכני/סביבה:</b> עצירות מכניות, איטום, ניקוז, מודולריות לתחזוקה.</li>
+        </ol>
+
+        <h3>נוסחת אנרגיה בסיסית</h3>
+        <pre>E = F · d
+F  = כוח (ניוטון)
+d  = תזוזה אפקטיבית (מטר)
+E  = אנרגיה מכנית לאירוע (ג׳אול)</pre>
+
+        <div class="callout warn">
+          <b>כלל זהב לכביש:</b> אם קוצרים אנרגיה בכביש “רגיל” בלי סיבה תנועתית (בלי האטה) —
+          בפועל זה על חשבון דלק/סוללה של הרכב. לכן הכביש-גנרטור הכי הגיוני הוא <b>במקומות האטה חובה</b>
+          (רמזור/מעבר חציה/כניסה לחניון/שער/אזור בית ספר).
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>הנחות חישוב (ברירת מחדל)</h2>
+        <p class="muted small">
+          אפשר לשנות כל מספר ולהחשב מחדש. כאן בחרנו מספרים שמרניים ומעשיים.
+        </p>
+        <div class="kpi">
+          <div class="box">
+            <div class="label">אצבע</div>
+            <div class="value">F≈10N, d≈0.3mm</div>
+          </div>
+          <div class="box">
+            <div class="label">בלטה</div>
+            <div class="value">1000 צעדים/יום</div>
+          </div>
+          <div class="box">
+            <div class="label">כביש/מפר</div>
+            <div class="value">2000 רכבים/יום</div>
+          </div>
+        </div>
+
+        <details open>
+          <summary>מה מתאים למה?</summary>
+          <p class="small muted">
+            <span class="tag">אצבע</span> “כפתור בלי סוללה”, טריגר, LED רגעי, שידור קצר אחרי צבירה.<br/>
+            <span class="tag">בלטה</span> תאורה לפי תנועה, ספירה, חיישנים, LoRa/BLE במחזוריות.<br/>
+            <span class="tag">כביש/מפר</span> תאורת מעבר חציה, שילוט “Slow Down”, חיישני תנועה/מהירות.
+          </p>
+        </details>
+
+        <details>
+          <summary>למה צריך UVLO/ספים?</summary>
+          <p class="small muted">
+            בלי סף הפעלה, העומס “ישאב” את הקבל ויגרום להבהובים/ריסטים.
+            סף עם היסטרזיס נותן התנהגות יציבה: ON רק כשיש מספיק אנרגיה, OFF מוקדם לפני קריסה.
+          </p>
+        </details>
+      </aside>
+    </div>
+
+    <!-- ===================== 1) Finger ===================== -->
+    <section class="card" style="margin-top:14px;">
+      <h2>1) משטח אצבע — כפתור/משטח מגע שמייצר חשמל (3.3V)</h2>
+
+      <details open>
+        <summary>שלב־שלב (אצבע)</summary>
+        <ol class="steps">
+          <li><b>מטרה:</b> LED קצר + “אירוע” למיקרו־בקר / משדר.</li>
+          <li><b>מקור:</b> F≈5–20N, תנועה מותרת d≈0.2–0.5mm (קליק).</li>
+          <li><b>ממיר:</b> Piezo (מומלץ) מתחת למשטח קשיח (זכוכית/קרמיקה/מתכת דקה).</li>
+          <li><b>יישור:</b> גשר שוטקי (הפסד נמוך).</li>
+          <li><b>אגירה:</b> קבל 470–2200µF (ל-LED קצר) או סופר־קבל 0.1–1F (לצבירה לשידור).</li>
+          <li><b>סף הפעלה:</b> V_ON≈3.0V, V_OFF≈2.6V (עם היסטרזיס).</li>
+          <li><b>עומס:</b> LED+נגד, או טריגר למודול שידור קצר כשהמתח מעל סף.</li>
+        </ol>
+      </details>
+
+      <h3>סכמת בלוקים (אצבע)</h3>
+      <pre>Piezo (AC)
+  │
+  ▼
+Schottky Bridge  ──►  Cstore  ──►  Clamp (Zener/TVS)
+                           │
+                           ├─► UVLO/Comparator ──► Enable DC/DC or MCU
+                           │
+                           └─► DC/DC to 3.3V ──► Load (LED / event / short TX)</pre>
+
+      <h3>רשימת רכיבים (אצבע) + ערכים מוצעים</h3>
+      <table>
+        <thead>
+          <tr><th>רכיב</th><th>ערך/טווח מומלץ</th><th>הערה</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>מיישר</td><td>גשר שוטקי (או 4 דיודות)</td><td>מקטין הפסדי יישור</td></tr>
+          <tr><td>Cstore</td><td>470–2200µF (או 0.1–1F)</td><td>לבחירה לפי LED/שידור</td></tr>
+          <tr><td>Clamp</td><td>Zener/TVS 5.1–12V</td><td>הגנה ממתחים גבוהים של Piezo</td></tr>
+          <tr><td>סף UVLO</td><td>V_ON=3.0V, V_OFF=2.6V</td><td>יציבות, מניעת “רעד”</td></tr>
+          <tr><td>LED</td><td>נגד 330Ω–1kΩ</td><td>הבזק קצר</td></tr>
+        </tbody>
+      </table>
+
+      <details>
+        <summary>חישוב סדר־גודל (אצבע)</summary>
+        <pre>E_mech = F·d
+F=10N, d=0.0003m  →  E_mech≈0.003J
+נניח יעילות 5–20% → E_elec≈0.00015–0.0006J (0.15–0.6mJ ללחיצה)</pre>
+        <p class="muted small">
+          לכן LED יכול להבהב קצר, ושידור לרוב ידרוש <b>צבירה בכמה לחיצות</b> (סופר־קבל).
+        </p>
+      </details>
+    </section>
+
+    <!-- ===================== 2) Pedestrian tile ===================== -->
+    <section class="card" style="margin-top:14px;">
+      <h2>2) בלטת דריכה להולכי רגל — שתי תצורות: 12V / 24V</h2>
+
+      <div class="callout ok">
+        <b>המלצה:</b> בבלטה, הממיר היעיל ביותר הוא <b>מנגנון מכני קצר + גנרטור DC</b> (יותר יעיל מ-Piezo ברוב המקרים),
+        ואז ניהול אנרגיה חכם: תאורה “לפי תנועה” + אגירה.
+      </div>
+
+      <details open>
+        <summary>שלב־שלב (בלטה)</summary>
+        <ol class="steps">
+          <li><b>מטרה:</b> תאורה/חיישנים/תקשורת מקומית.</li>
+          <li><b>מקור:</b> צעד F≈500–1200N; שקיעה נוחה d≈5–10mm.</li>
+          <li><b>ממיר:</b> מנוף/מסילה קצרה + Rack&Pinion + Flywheel קטן + גנרטור.</li>
+          <li><b>יישור והחלקה:</b> מיישר + Cin גדול.</li>
+          <li><b>אגירה:</b> סופר־קבל לפיקים או סוללת LiFePO4 לתאורה בערב.</li>
+          <li><b>ספים:</b> הדלקת LED רק מעל V_ON; כיבוי ב-V_OFF נמוך יותר.</li>
+          <li><b>איטום:</b> IP67, Hard-Stop, מודולריות להחלפה.</li>
+        </ol>
+      </details>
+
+      <h3>בלוקים (בלטה)</h3>
+      <pre>Mechanics (5–10mm)
+  ▼
+DC Generator → Rectifier → Cin → DC/DC Charge & Regulation → Storage
+                                                      │
+                           ┌──────────────────────────┴──────────────────────────┐
+                           ▼                                                     ▼
+                    12V/24V LED Driver                                     5V Sensors/Comms</pre>
+
+      <h3>רשימת רכיבים (בלטה)</h3>
+      <table>
+        <thead><tr><th>רכיב</th><th>ערך/בחירה</th><th>הערה</th></tr></thead>
+        <tbody>
+          <tr><td>Cin</td><td>12V: 2200–6800µF/25V<br/>24V: 2200–6800µF/50V</td><td>החלקת פולסים מהגנרטור</td></tr>
+          <tr><td>אגירה</td><td>סופר־קבל (פולסים) או LiFePO4 (זמן עבודה)</td><td>אפשר היברידי: סופר־קבל + סוללה</td></tr>
+          <tr><td>DC-DC</td><td>12V/24V→5V לחיישנים</td><td>צריכה נמוכה + יציבות</td></tr>
+          <tr><td>בקר ספים</td><td>UVLO + היסטרזיס</td><td>מונע כיבוי/הדלקה מהירים</td></tr>
+        </tbody>
+      </table>
+
+      <details open>
+        <summary>ספי הפעלה מומלצים — בלטה 12V</summary>
+        <table>
+          <thead><tr><th>עומס</th><th>V_ON</th><th>V_OFF</th><th>הערה</th></tr></thead>
+          <tbody>
+            <tr><td>LED עיקרי (עדיפות 1)</td><td class="mono">12.2V</td><td class="mono">11.6V</td><td>תאורה לפי תנועה</td></tr>
+            <tr><td>LED/שילוט משני (עדיפות 2)</td><td class="mono">12.6V</td><td class="mono">12.0V</td><td>רק כשיש עודף</td></tr>
+            <tr><td>5V חיישנים/תקשורת (עדיפות 3)</td><td class="mono">11.8V</td><td class="mono">11.2V</td><td>מפעיל DC/DC ל-5V</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>ספי הפעלה מומלצים — בלטה 24V</summary>
+        <table>
+          <thead><tr><th>עומס</th><th>V_ON</th><th>V_OFF</th><th>הערה</th></tr></thead>
+          <tbody>
+            <tr><td>LED עיקרי (עדיפות 1)</td><td class="mono">24.4V</td><td class="mono">23.2V</td><td>זרמים נמוכים יותר</td></tr>
+            <tr><td>שילוט/LED משני (עדיפות 2)</td><td class="mono">25.2V</td><td class="mono">24.0V</td><td>עודף אנרגיה</td></tr>
+            <tr><td>5V חיישנים/תקשורת (עדיפות 3)</td><td class="mono">23.6V</td><td class="mono">22.8V</td><td>מפעיל DC/DC ל-5V</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>חישוב סדר־גודל (בלטה, 1000 צעדים/יום)</summary>
+        <pre>נניח חשמל נקי לצעד: 0.3–1.0J
+יום: 1000 צעדים → 300–1000J
+המרה ל-Wh: 300/3600≈0.083Wh, 1000/3600≈0.278Wh</pre>
+        <p class="muted small">
+          זה מתאים מאוד לתאורה “לפי תנועה”, חיישנים, וספירה — פחות לתאורה רציפה כל הלילה.
+        </p>
+      </details>
+    </section>
+
+    <!-- ===================== 3) Road/vehicles ===================== -->
+    <section class="card" style="margin-top:14px;">
+      <h2>3) כביש ומכוניות — תכנון במתח 12V או 24V (מומלץ 24V)</h2>
+
+      <div class="callout warn">
+        <b>עיקרון נכון:</b> התקנה במקומות האטה חובה (רמזור/מעבר חציה/כניסה לחניון/שער/בית ספר).
+        כך האנרגיה שנקצרת מגיעה מאירוע שכבר קיים, ולא “מוסיפים התנגדות” לשווא.
+      </div>
+
+      <details open>
+        <summary>שלב־שלב (כביש/מפר)</summary>
+        <ol class="steps">
+          <li><b>מטרה:</b> תאורת מעבר חציה, שילוט, חיישני תנועה/מהירות, תקשורת. מצלמה רק בדוטי-סייקל.</li>
+          <li><b>מקור:</b> מעבר גלגל/ציר, תזוזה מותרת 10–30mm במנגנון המפר.</li>
+          <li><b>ממיר:</b> מכסה/רמפה שיורדת → תמסורת → גנרטור, עם בולם/קפיץ והגבלת מכה.</li>
+          <li><b>יישור+Cin:</b> רכיבים תעשייתיים, קבל החלקה גדול.</li>
+          <li><b>אגירה:</b> היברידי: סופר־קבל (זרם רגעי) + סוללה (זמן פעולה).</li>
+          <li><b>בקר עדיפויות:</b> תאורה (1) > שילוט (2) > תקשורת/מצלמה (3).</li>
+          <li><b>תחזוקה:</b> מודול נשלף, איטום וניקוז, ניטור טמפ׳/זרם/מתח.</li>
+        </ol>
+      </details>
+
+      <h3>בלוקים (כביש)</h3>
+      <pre>Speed-bump mechanism → Gear/lever + damper → Generator
+                                      ▼
+                                Industrial Rectifier
+                                      ▼
+                               DC/DC charge & regulation
+                                      ▼
+                    Hybrid Storage (Supercap bank + Battery)
+                                      ▼
+         Priority Load Controller → [Crosswalk LED] / [Sign] / [Sensors+Comms] / [Camera (optional)]</pre>
+
+      <h3>רכיבים (כביש)</h3>
+      <table>
+        <thead><tr><th>רכיב</th><th>12V</th><th>24V</th><th>הערה</th></tr></thead>
+        <tbody>
+          <tr><td>Cin</td><td>6800–22000µF / 25V</td><td>6800–22000µF / 50V</td><td>החלקה ויציבות</td></tr>
+          <tr><td>אגירה</td><td>LiFePO4 12.8V + סופר־קבל</td><td>LiFePO4 25.6V + סופר־קבל</td><td>עמיד למחזוריות וחום</td></tr>
+          <tr><td>ממירים</td><td>12→5V</td><td>24→12V (אם צריך) + 24→5V</td><td>הפרדת רשת עומסים</td></tr>
+          <tr><td>בקר עדיפויות</td><td colspan="2">3 יציאות Enable/Relay עם UVLO והיסטרזיס</td><td>בטיחות קודם</td></tr>
+        </tbody>
+      </table>
+
+      <details open>
+        <summary>ספי הפעלה — כביש 12V</summary>
+        <table>
+          <thead><tr><th>עומס</th><th>V_ON</th><th>V_OFF</th><th>הערה</th></tr></thead>
+          <tbody>
+            <tr><td>תאורת מעבר חציה (עדיפות 1)</td><td class="mono">12.4V</td><td class="mono">11.8V</td><td>הכי חשוב</td></tr>
+            <tr><td>שילוט (עדיפות 2)</td><td class="mono">12.8V</td><td class="mono">12.2V</td><td>רק כשיש עודף</td></tr>
+            <tr><td>תקשורת/מצלמה (עדיפות 3)</td><td class="mono">13.0V</td><td class="mono">12.4V</td><td>עדיף דוטי-סייקל</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>ספי הפעלה — כביש 24V (מומלץ)</summary>
+        <table>
+          <thead><tr><th>עומס</th><th>V_ON</th><th>V_OFF</th><th>הערה</th></tr></thead>
+          <tbody>
+            <tr><td>תאורת מעבר חציה (עדיפות 1)</td><td class="mono">24.8V</td><td class="mono">23.6V</td><td>יציב ויעיל</td></tr>
+            <tr><td>שילוט (עדיפות 2)</td><td class="mono">25.6V</td><td class="mono">24.4V</td><td>עודף אנרגיה</td></tr>
+            <tr><td>תקשורת/מצלמה (עדיפות 3)</td><td class="mono">26.0V</td><td class="mono">25.0V</td><td>רק כשמתאפשר</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>חישוב סדר־גודל (כביש, 2000 רכבים/יום)</summary>
+        <pre>נניח חשמל נקי לרכב: 10J (שמרני)
+יום: 2000 רכבים → 20000J
+ל-Wh: 20000/3600≈5.56Wh</pre>
+        <p class="muted small">
+          לכן תאורה “לפי תנועה” ושילוט חסכוני הם היישומים הטבעיים. מצלמה רציפה 24/7 לרוב תדרוש מקור משלים.
+        </p>
+      </details>
+    </section>
+
+    <!-- ===================== Summary ===================== -->
+    <section class="card" style="margin-top:14px;">
+      <h2>סיכום קצר וברור</h2>
+      <div class="callout ok">
+        <b>הכי ישים מהר:</b> בלטות דריכה ומפרי האטה עם גנרטור + אגירה + ספי הפעלה.<br/>
+        <b>אצבע:</b> פתרון מצוין ל"כפתור בלי סוללה" — עובד בפולסים, ושידור דורש צבירה.<br/>
+        <b>12V מול 24V:</b> 12V טוב לפתרונות קטנים וקצרים; 24V עדיף לזרמים נמוכים והפסדים קטנים (בעיקר בכביש).
+      </div>
+
+      <details>
+        <summary>מה לעשות “מחר בבוקר” (תוכנית עבודה קצרה)</summary>
+        <ol class="steps">
+          <li>בחר תרחיש: אצבע / בלטה / מפר (או כולם).</li>
+          <li>קבע עומס יעד: כמה W לתאורה, וכמה זמן פעולה/יום.</li>
+          <li>בחר מתח מערכת: בלטה 12V/24V; כביש מומלץ 24V.</li>
+          <li>קבע ספי V_ON/V_OFF לפי הטבלאות כאן.</li>
+          <li>בנה אב-טיפוס קטן: ממיר → יישור → קבל → סף → LED.</li>
+          <li>מדוד: מתח אחרי אירוע, אנרגיה ליום, ושפר אגירה/ספים.</li>
+        </ol>
+      </details>
+
+      <footer>
+        <div class="danger callout" style="margin-top:12px;">
+          <b>הערת בטיחות:</b> כביש/מפר דורשים תכנון תעשייתי (עומסים, איטום, תקני בטיחות).
+          המסמך הזה הוא תכנון עקרוני־הנדסי ברמת מערכת, לא תחליף לתכנון אזרחי/מכני סופי.
+        </div>
+        <p class="muted">
+          אם תרצה, אפשר להוסיף בהמשך: תרשימי זרימה גרפיים, חישובי סוללה לשעות גיבוי, והגדרת עומסים אמיתיים (W) לפי יעד תאורה/שילוט.
+        </p>
+      </footer>
+    </section>
+  </div>
+</body>
+</html>

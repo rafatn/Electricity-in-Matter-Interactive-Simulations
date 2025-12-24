@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מודל ספקטרלי–וקטורי לדם מלאכותי מותאם אישית</title>
+    <style>
+        body {
+            font-family: Arial, "Helvetica Neue", sans-serif;
+            background: #f4f7fb;
+            color: #222;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #3b5998, #00a0b0);
+            color: #fff;
+            padding: 20px 30px;
+            text-align: center;
+        }
+        main {
+            max-width: 1100px;
+            margin: 20px auto 40px auto;
+            background: #fff;
+            padding: 20px 25px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            border-radius: 8px;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 1.2em;
+            margin-bottom: 0.4em;
+        }
+        h2 {
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            margin-left: 5px;
+            color: #fff;
+        }
+        .badge-patent {
+            background: #c0392b;
+        }
+        .badge-article {
+            background: #27ae60;
+        }
+        .section-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px 18px;
+            margin: 15px 0;
+            background: #fafafa;
+        }
+        .subtle {
+            color: #666;
+            font-size: 0.9em;
+        }
+        code {
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            background: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        ul, ol {
+            padding-right: 20px;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 800px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        .math-block {
+            background: #f9fbff;
+            border-right: 3px solid #3b5998;
+            padding: 10px 12px;
+            margin: 10px 0;
+            font-family: "Courier New", monospace;
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            overflow-x: auto;
+        }
+        .tagline {
+            font-size: 0.95em;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        .divider {
+            margin: 30px 0 20px 0;
+            border-top: 3px dashed #d0d6e2;
+        }
+        .figure-box {
+            border: 1px dashed #bbb;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin: 10px 0;
+            background: #fcfcff;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>מודל ספקטרלי–וקטורי לדם מלאכותי מותאם אישית</h1>
+    <div class="tagline">
+        מרחב וקטורי, קבוצות אורתוגונליות, איזוטופיות ווקטור צבעוני לחומרים בדם
+    </div>
+</header>
+<main>
+
+    <h2>
+        חלק א׳ – הצעת פטנט
+        <span class="badge badge-patent">Patent Draft</span>
+    </h2>
+
+    <div class="section-box">
+        <h3>1. כותרת ההמצאה</h3>
+        <p>
+            מערכת ספקטרלית–וקטורית ליצירה והתאמה אישית של דם מלאכותי, המבוססת על מרחב וקטורי רב־ממדי
+            הכולל וקטור ספקטרלי, וקטור צבעוני–כימי, וקבוצות אורתוגונליות ואיזוטופיות לשחזור מצבי דם בריאים.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>2. תקציר (Abstract פטנטי)</h3>
+        <p>
+            ההמצאה מתארת שיטה ומערכת למדידת תכונות הדם של פרט באמצעות קרינות מרובות (UV, IR, Raman,
+            פלואורסצנציה ועוד), והמרת התוצאות למודל מרחב וקטורי רב־ממדי. כל פרט מיוצג כוקטור ספקטרלי
+            <code>v ∈ ℝⁿ</code>, ווקטור צבעוני–כימי <code>c ∈ ℝ³ᵏ</code> המקודד ריכוזים של חומרים שונים בדם
+            כווקטורי צבע (RGB) לפי רמתם. שני הווקטורים משולבים לוקטור־על <code>w ∈ ℝⁿ⁺³ᵏ</code>, המשמש בסיס להשוואת
+            פרטים, יצירת קבוצות אורתוגונליות של מצבי דם, והגדרת איזוטופיות במרחב זה לצורך העתקה הדרגתית
+            של מצב דם חולה למצב דם בריא. מתוך המרחב הוקטורי ניתן לגזור מתכונים כימיים–ביולוגיים לדם מלאכותי
+            מותאם אישית, ולבנות אמצעי אבחון, מעקב וטיפול.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>3. מהות ההמצאה – סיכום מתמטי</h3>
+        <h4>3.1 וקטור ספקטרלי</h4>
+        <div class="math-block">
+            Sᵢ = [ Iᵢ(λ₁), Iᵢ(λ₂), ..., Iᵢ(λₙᵢ) ]<br>
+            v = concat(S₁, S₂, ..., Sₚ) ∈ ℝⁿ
+        </div>
+
+        <h4>3.2 וקטור צבעוני–כימי</h4>
+        <div class="math-block">
+            Colorᵢ : ℝ → [0,1]³ ,  cᵢ = Colorᵢ(xᵢ)<br>
+            c_flat = (R₁,G₁,B₁, ..., R_k,G_k,B_k) ∈ ℝ³ᵏ
+        </div>
+
+        <h4>3.3 וקטור־על</h4>
+        <div class="math-block">
+            w = [ v ; α · c_flat ] ∈ ℝⁿ⁺³ᵏ
+        </div>
+
+        <h4>3.4 מכפלה פנימית</h4>
+        <div class="math-block">
+            ⟨w₁, w₂⟩ = ⟨v₁, v₂⟩ + α² ⟨c₁_flat, c₂_flat⟩
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h3>4. יישומים עיקריים להמצאה</h3>
+        <ul>
+            <li>הגדרת מרחב וקטורי של מצבי דם בריאים ופתולוגיים.</li>
+            <li>חישוב מרחקים וקורלציות בין פרטים על בסיס ספקטרום + וקטור צבעוני.</li>
+            <li>בניית איזוטופיות מתמטיות – מסלולי מעבר ממצב דם חולה לבריא.</li>
+            <li>גזירת מתכונים לדם מלאכותי מותאם אישית מתוך וקטור־היעד.</li>
+            <li>אבחון גרפי–צבעוני באמצעות הוקטור הצבעוני–כימי.</li>
+        </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>
+        חלק ב׳ – טיוטת מאמר מדעי
+        <span class="badge badge-article">Article Draft</span>
+    </h2>
+
+    <div class="section-box">
+        <h3>Abstract</h3>
+        <p class="subtle">(באנגלית, ניתן לעריכה והרחבה)</p>
+        <p>
+            We propose a spectral–vectorial framework for personalized artificial blood design. Blood samples
+            are exposed to multiple types of radiation (e.g., UV, IR, Raman, fluorescence), and the resulting
+            spectral responses are combined into a high-dimensional spectral vector
+            <code>v ∈ ℝⁿ</code>. In parallel, a set of chemically relevant blood constituents (e.g., iron, acids, salts)
+            is mapped into a color-coded chemical vector <code>c ∈ ℝ³ᵏ</code>, using continuous RGB mappings that reflect
+            concentration levels. The concatenated vector <code>w = [v ; α·c_flat] ∈ ℝⁿ⁺³ᵏ</code> defines an inner-product
+            space of blood states, enabling the construction of orthogonal sets of healthy and pathological
+            states, as well as isotopies between them. This formalism provides a mathematical foundation for
+            deriving personalized artificial blood profiles and for developing visualization-based diagnostic
+            tools.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>1. Introduction</h3>
+        <p>
+            Traditional approaches to blood substitution focus either on oxygen carriers or on stem-cell–based
+            production of red blood cells. These approaches, while clinically important, do not provide a
+            unified mathematical representation of blood as a point in a high-dimensional state space.
+            Here, we introduce a spectral–vectorial model in which each blood sample is represented by a
+            combined spectral and color-chemical vector. This representation allows us to define inner products,
+            distances, orthogonality and isotopies between blood states, and forms the basis for personalized
+            artificial blood design.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>2. Methods – Mathematical Model</h3>
+        <h4>2.1 Spectral Vector Space</h4>
+        <p>
+            Let <code>{K₁, ..., Kₚ}</code> denote a set of radiation types used for blood spectroscopy. For each
+            radiation <code>Kᵢ</code>, we measure an intensity response over wavelengths <code>{λ₁, ..., λₙᵢ}</code>:
+        </p>
+        <div class="math-block">
+            Sᵢ = [ Iᵢ(λ₁), Iᵢ(λ₂), ..., Iᵢ(λₙᵢ) ]<br>
+            v = concat(S₁, S₂, ..., Sₚ) ∈ ℝⁿ
+        </div>
+
+        <h4>2.2 Color-Chemical Vector</h4>
+        <p>
+            We select <code>k</code> chemically relevant constituents <code>{x₁, ..., x_k}</code> (iron, acids, salts, etc.).
+            Each concentration <code>xᵢ</code> is mapped to an RGB color:
+        </p>
+        <div class="math-block">
+            Colorᵢ : ℝ → [0,1]³,  cᵢ = Colorᵢ(xᵢ)
+        </div>
+        <p>
+            The flattened color-chemical vector is given by:
+        </p>
+        <div class="math-block">
+            c_flat = (R₁,G₁,B₁, ..., R_k,G_k,B_k) ∈ ℝ³ᵏ
+        </div>
+
+        <h4>2.3 Combined State Vector</h4>
+        <p>
+            The combined blood state vector is:
+        </p>
+        <div class="math-block">
+            w = [ v ; α · c_flat ] ∈ ℝⁿ⁺³ᵏ
+        </div>
+
+        <h4>2.4 Inner Product and Orthogonal Sets</h4>
+        <p>
+            We define an inner product on the space of blood states:
+        </p>
+        <div class="math-block">
+            ⟨w₁, w₂⟩ = ⟨v₁, v₂⟩ + α² ⟨c₁_flat, c₂_flat⟩
+        </div>
+        <p>
+            This allows us to construct orthogonal sets of blood states (e.g., via PCA or SVD), separating
+            healthy, pathological, and treatment-related profiles in a principled way.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>3. Isotopies Between Blood States</h3>
+        <p>
+            Let <code>W = ℝⁿ⁺³ᵏ</code> denote the combined state space. Given a pathological state
+            <code>w_sick</code> and a target healthy state <code>w_healthy</code>, we define an isotopy
+            <code>{T_t}₀≤t≤1</code> of transformations
+            <code>T_t : W → W</code> satisfying <code>T₀ = I</code> and <code>T₁(w_sick) = w_healthy</code>.
+            Such an isotopy may be implemented via linear interpolation, geodesic paths, or learned
+            non-linear flows (e.g., neural ODEs). The resulting path describes a continuous transformation
+            in spectral and chemical–color space, which can be interpreted as a conceptual “treatment
+            trajectory” from disease to health.
+        </p>
+    </div>
+
+    <div class="section-box">
+        <h3>4. Applications</h3>
+        <ul>
+            <li>Classification and clustering of blood states in high-dimensional feature space.</li>
+            <li>Design of personalized artificial blood compositions based on target vectors.</li>
+            <li>Visualization of chemical imbalances using the color-chemical representation.</li>
+            <li>Monitoring of therapeutic progress as trajectories in state space.</li>
+        </ul>
+    </div>
+
+    <div class="section-box">
+        <h3>5. Conclusion</h3>
+        <p>
+            The proposed spectral–vectorial model provides a unified mathematical language for representing,
+            comparing and transforming blood states. By combining spectral measurements with a color-chemical
+            encoding of key constituents, and embedding them in an inner-product space with orthogonal sets
+            and isotopies, we obtain a powerful framework for both theoretical analysis and practical design
+            of personalized artificial blood.
+        </p>
+    </div>
+
+</main>
+</body>
+</html>
