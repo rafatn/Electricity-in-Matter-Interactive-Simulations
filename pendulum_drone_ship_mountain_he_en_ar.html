@@ -1,0 +1,747 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מערכת מטוטלת-רחפן בין ספינה למערת הר</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg: #f3f8ff;
+            --bg-alt: #e0ecff;
+            --primary: #2f6fe4;
+            --primary-soft: #c7d8ff;
+            --accent: #00bcd4;
+            --text-main: #0f172a;
+            --text-soft: #4b5563;
+            --card-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top left, #e0edff 0, #f3f8ff 40%, #ffffff 100%);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-shell {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 24px 12px 40px;
+        }
+
+        .layout {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 32px;
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        @media (min-width: 768px) {
+            .layout {
+                padding: 28px 32px 36px;
+            }
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        @media (min-width: 768px) {
+            header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .title-block {
+            max-width: 640px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, rgba(129, 212, 250, 0.2), rgba(129, 212, 250, 0));
+            border: 1px solid rgba(129, 212, 250, 0.6);
+            color: #0369a1;
+        }
+
+        .eyebrow span.icon {
+            font-size: 14px;
+        }
+
+        h1 {
+            margin: 6px 0 8px;
+            font-size: 1.7rem;
+            line-height: 1.25;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--text-soft);
+            font-size: 0.95rem;
+        }
+
+        .lang-switcher {
+            display: inline-flex;
+            gap: 6px;
+            padding: 4px;
+            border-radius: var(--radius-pill);
+            background: var(--bg-alt);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+        }
+
+        .lang-btn {
+            border: none;
+            outline: none;
+            padding: 6px 13px;
+            border-radius: var(--radius-pill);
+            font-size: 0.8rem;
+            background: transparent;
+            color: var(--text-soft);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease-out;
+        }
+
+        .lang-btn span.flag {
+            font-size: 14px;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .hero-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 16px;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            background: radial-gradient(circle at top right, rgba(191, 219, 254, 0.8), rgba(191, 219, 254, 0.05));
+            border: 1px solid rgba(148, 163, 184, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .hero-card {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .hero-text h2 {
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+        }
+
+        .hero-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-soft);
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            font-size: 0.75rem;
+        }
+
+        .hero-visual {
+            position: relative;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+            padding: 10px;
+            overflow: hidden;
+            color: #e0f2fe;
+        }
+
+        .hero-visual::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 0, rgba(248, 250, 252, 0.3), transparent 55%);
+            opacity: 0.9;
+        }
+
+        .hero-visual-inner {
+            position: relative;
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
+
+        .ship {
+            justify-self: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+        }
+
+        .sea-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(191, 219, 254, 0.8), transparent);
+        }
+
+        .tether {
+            justify-self: center;
+            font-size: 0.7rem;
+        }
+
+        .mountain {
+            justify-self: center;
+            padding: 5px 10px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            max-width: 220px;
+            text-align: center;
+        }
+
+        .mountain small {
+            display: block;
+            font-size: 0.65rem;
+            color: #9ca3af;
+        }
+
+        .sections-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        @media (min-width: 900px) {
+            .sections-grid {
+                grid-template-columns: 1.1fr 1fr;
+            }
+        }
+
+        .section-card {
+            background: rgba(248, 250, 252, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 14px 14px 16px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .section-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-size: 15px;
+        }
+
+        .section-title h3 {
+            margin: 0;
+            font-size: 0.98rem;
+        }
+
+        .section-body {
+            font-size: 0.86rem;
+            color: var(--text-soft);
+        }
+
+        .section-body ul {
+            margin: 6px 0 0;
+            padding-left: 1.2em;
+        }
+
+        .section-body li {
+            margin-bottom: 4px;
+        }
+
+        /* Flow diagram */
+        .flow-card {
+            background: radial-gradient(circle at top, #e0edff, #eff6ff);
+            border-radius: var(--radius-lg);
+            padding: 14px 12px 16px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .flow-step {
+            display: grid;
+            grid-template-columns: 24px minmax(0, 1fr);
+            gap: 8px;
+            align-items: start;
+            font-size: 0.85rem;
+        }
+
+        .flow-index {
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid rgba(59, 130, 246, 0.6);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1d4ed8;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.16);
+            border: 1px solid rgba(148, 163, 184, 0.45);
+        }
+
+        /* Language sections */
+        .lang-section {
+            display: none;
+        }
+        .lang-section.active {
+            display: block;
+        }
+
+        /* Direction helpers */
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="lang-he">
+<div class="page-shell">
+    <div class="layout">
+        <header>
+            <div class="title-block">
+                <div class="eyebrow">
+                    <span class="icon">🌊</span>
+                    <span>קונספט תחבורה אווירית-ימית</span>
+                </div>
+                <h1 data-lang-block="title-he">מטוטלת-רחפן המחברת ספינה באוויר למערת הר בין מדינות</h1>
+                <h1 class="ltr" data-lang-block="title-en" style="display:none;">Pendulum-Drone Linking a Ship in the Air to a Mountain Cave Between Nations</h1>
+                <h1 class="rtl" data-lang-block="title-ar" style="display:none;">منظومة طائرة-بندول تربط سفينة في الهواء بكهف جبلي بين دول</h1>
+                <p class="subtitle rtl lang-section active" data-lang="he">
+                    רעיון חזוני: ספינה היכולה להתרומם מעל הים בעזרת רחפן-מטוטלת, ולהתחבר דרך כבל אווירי למערה הגבוהה ביותר באזור – כגשר חילוץ וביטחון בין מדינות.
+                </p>
+                <p class="subtitle ltr lang-section" data-lang="en">
+                    A visionary concept: a ship that can rise above the sea using a pendulum-drone system, connecting through an aerial tether to the highest cave in the region – forming a rescue and safety bridge between nations.
+                </p>
+                <p class="subtitle rtl lang-section" data-lang="ar">
+                    فكرة مستقبلية: سفينة يمكنها الارتفاع فوق البحر بواسطة منظومة طائرة على شكل بندول، متصلة عبر كابل جوي ب‍أعلى كهف في المنطقة – لتشكيل جسر إنقاذ وأمان بين الدول.
+                </p>
+            </div>
+
+            <div>
+                <div class="lang-switcher" aria-label="Language switcher">
+                    <button class="lang-btn active" data-lang-target="he">
+                        <span class="flag">🇮🇱</span><span>עברית</span>
+                    </button>
+                    <button class="lang-btn" data-lang-target="en">
+                        <span class="flag">🌍</span><span>English</span>
+                    </button>
+                    <button class="lang-btn" data-lang-target="ar">
+                        <span class="flag">🇵🇸</span><span>العربية</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero-card">
+                <div class="hero-text">
+                    <div class="lang-section active rtl" data-lang="he">
+                        <h2>תמונת־על של המערכת</h2>
+                        <p>
+                            מערכת המטוטלת־רחפן מחברת בין שלושה עולמות: ים, אוויר והרים. הספינה יכולה לעבור ממצב שיט רגיל למצב ריחוף,
+                            להתקדם באוויר במסלול בטוח, ולהיקלט במערה גבוהה שתשמש כמרכז חילוץ, טעינה ואירוח בין-מדינתי.
+                        </p>
+                        <div class="hero-badges">
+                            <span class="badge">חילוץ מהיר בעת סכנה</span>
+                            <span class="badge">גשר בין מדינות</span>
+                            <span class="badge">שילוב אנרגיה מתחדשת</span>
+                        </div>
+                    </div>
+
+                    <div class="lang-section ltr" data-lang="en">
+                        <h2>System Overview</h2>
+                        <p>
+                            The pendulum-drone system connects three worlds: sea, air, and mountains. The ship can switch from normal sailing
+                            to hovering, travel along a safe aerial corridor, and dock inside a high mountain cave that serves as an
+                            international hub for rescue, charging, and shelter.
+                        </p>
+                        <div class="hero-badges">
+                            <span class="badge">Fast emergency evacuation</span>
+                            <span class="badge">Bridge between nations</span>
+                            <span class="badge">Powered by renewable energy</span>
+                        </div>
+                    </div>
+
+                    <div class="lang-section rtl" data-lang="ar">
+                        <h2>صورة شاملة للمنظومة</h2>
+                        <p>
+                            تربط منظومة الطائرة-البندول بين ثلاثة عوالم: البحر، الهواء والجبال. يمكن للسفينة الانتقال من إبحار عادي إلى
+                            وضع التحليق، ثم التحرك في مسار جوي آمن، حتى تصل إلى كهف جبلي عالٍ يعمل كمركز دولي للإنقاذ، والشحن،
+                            والاستضافة.
+                        </p>
+                        <div class="hero-badges">
+                            <span class="badge">إخلاء سريع في الطوارئ</span>
+                            <span class="badge">جسر بين الدول</span>
+                            <span class="badge">طاقة متجددة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="hero-visual-inner">
+                        <div class="ship">
+                            🚢 ספינה מעל הים / Ship Above Sea
+                        </div>
+                        <div class="sea-line"></div>
+                        <div class="tether">
+                            ⛓ כבל אווירי ו"רחפן-מטוטלת" שמייצב את התנועה בין הים להר
+                        </div>
+                        <div class="mountain">
+                            🏔 מערה גבוהה בהר
+                            <small>מרכז חילוץ, אנרגיה ותקשורת בין מדינות</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="sections-grid">
+                <article class="section-card">
+                    <div class="section-title">
+                        <div class="section-icon">🛠</div>
+                        <h3 class="rtl lang-section active" data-lang="he">רכיבי המערכת</h3>
+                        <h3 class="ltr lang-section" data-lang="en">System Components</h3>
+                        <h3 class="rtl lang-section" data-lang="ar">مكوّنات المنظومة</h3>
+                    </div>
+                    <div class="section-body rtl lang-section active" data-lang="he">
+                        <ul>
+                            <li><strong>רחפן-מטוטלת ראשי</strong> – יחידת ריחוף גדולה עם מספר מנועים סימטריים ליציבות מלאה.</li>
+                            <li><strong>כבל אווירי חכם</strong> – מעביר כוח, תקשורת, נתוני חיישנים ונתוני בטיחות בזמן אמת.</li>
+                            <li><strong>תחנת מערה בהר</strong> – נקודת עגינה גבוהה המשמשת כמקלט בינלאומי בזמן סכנה.</li>
+                            <li><strong>מערכת בקרה</strong> – בינה מלאכותית לניתוח רוחות, עומסים ותנועת כלי שיט בסביבה.</li>
+                        </ul>
+                    </div>
+                    <div class="section-body ltr lang-section" data-lang="en">
+                        <ul>
+                            <li><strong>Main pendulum-drone</strong> – a large hovering unit with multiple symmetric engines for full stability.</li>
+                            <li><strong>Smart aerial tether</strong> – carries power, communication, sensor data and safety telemetry.</li>
+                            <li><strong>Mountain cave station</strong> – a high docking point that acts as an international safe hub.</li>
+                            <li><strong>Control & AI</strong> – analyses winds, loads and nearby vessels to keep all motions safe.</li>
+                        </ul>
+                    </div>
+                    <div class="section-body rtl lang-section" data-lang="ar">
+                        <ul>
+                            <li><strong>الطائرة-البندول الرئيسية</strong> – وحدة تحليق كبيرة مع عدّة محرّكات متوازنة للاستقرار الكامل.</li>
+                            <li><strong>كابل جوي ذكي</strong> – ينقل الطاقة، والاتصال، وبيانات الحساسات، ومعلومات الأمان.</li>
+                            <li><strong>محطّة كهف جبلي</strong> – نقطة رسو عالية تعمل كمأوى دولي في أوقات الخطر.</li>
+                            <li><strong>منظومة تحكم وذكاء اصطناعي</strong> – تحلل الرياح، والأحمال، وحركة السفن المحيطة لضمان الأمان.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="flow-card">
+                    <div class="section-title">
+                        <div class="section-icon">🔁</div>
+                        <h3 class="rtl lang-section active" data-lang="he">תרשים זרימה – מסע מלא של הספינה</h3>
+                        <h3 class="ltr lang-section" data-lang="en">Flow – Full Journey of the Ship</h3>
+                        <h3 class="rtl lang-section" data-lang="ar">مخطط تدفّق – رحلة السفينة الكاملة</h3>
+                    </div>
+
+                    <div class="lang-section rtl active" data-lang="he">
+                        <div class="flow-steps">
+                            <div class="flow-step">
+                                <div class="flow-index">1</div>
+                                <div>הספינה מפליגה בים במסלול רגיל ומגיעה לאזור החיבור.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">2</div>
+                                <div>רחפן-העל יורד מן ההר, מתחבר לספינה ומרים אותה לגובה בטוח.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">3</div>
+                                <div>המטוטלת מייצבת את התנועה – כמו גל חלק באוויר – ומובילה אל המערה בהרים.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">4</div>
+                                <div>הספינה ננעלת במערה הגבוהה: טעינה, טיפול, חילוץ וניהול מעבר בין מדינות.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lang-section ltr" data-lang="en">
+                        <div class="flow-steps">
+                            <div class="flow-step">
+                                <div class="flow-index">1</div>
+                                <div>The ship sails normally and enters the designated connection zone.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">2</div>
+                                <div>The mega-drone descends from the mountain, attaches to the ship and lifts it to a safe altitude.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">3</div>
+                                <div>The pendulum motion stabilizes the system and guides the ship smoothly through the air corridor.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">4</div>
+                                <div>The ship docks inside the high cave: charging, rescue operations and cross-border coordination.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lang-section rtl" data-lang="ar">
+                        <div class="flow-steps">
+                            <div class="flow-step">
+                                <div class="flow-index">1</div>
+                                <div>تُبحر السفينة في البحر بشكل عادي حتى تصل إلى منطقة الارتباط المحدّدة.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">2</div>
+                                <div>تهبط الطائرة-البندول من الجبل، ترتبط بالسفينة وترفعها إلى ارتفاع آمن.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">3</div>
+                                <div>تثبّت حركة البندول المنظومة، وتوجّه السفينة بسلاسة داخل الممر الجوي نحو الجبل.</div>
+                            </div>
+                            <p class="flow-arrow">⬇</p>
+                            <div class="flow-step">
+                                <div class="flow-index">4</div>
+                                <div>ترسو السفينة داخل الكهف العالي: شحن، وإنقاذ، وإدارة عبور بين الدول.</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="section-card">
+                <div class="section-title">
+                    <div class="section-icon">🌐</div>
+                    <h3 class="rtl lang-section active" data-lang="he">שימושים בין-לאומיים ואנרגיה</h3>
+                    <h3 class="ltr lang-section" data-lang="en">International Use & Energy</h3>
+                    <h3 class="rtl lang-section" data-lang="ar">استخدام دولي وطاقة</h3>
+                </div>
+                <div class="section-body rtl lang-section active" data-lang="he">
+                    <p>
+                        על פסגות ההרים ובסביבת המערה ניתן לשלב טורבינות רוח, פאנלים סולאריים ומערכות אגירת אנרגיה בשלג ובמים.
+                        כך, המערכת לא רק מחברת בין מדינות, אלא גם מייצרת חשמל נקי לשימוש אזורי ובין-מדינתי.
+                    </p>
+                    <div class="tag-row">
+                        <span class="tag">טורבינות רוח בגובה רב</span>
+                        <span class="tag">פאנלים סולאריים על המדרונות</span>
+                        <span class="tag">מרכז חילוץ בינלאומי</span>
+                    </div>
+                </div>
+                <div class="section-body ltr lang-section" data-lang="en">
+                    <p>
+                        Around the mountain cave, high-altitude wind turbines, solar panels and snow/water storage systems can be installed.
+                        The result is not only a physical bridge between nations, but also a clean energy hub that supports the wider region.
+                    </p>
+                    <div class="tag-row">
+                        <span class="tag">High-altitude wind farms</span>
+                        <span class="tag">Solar slopes</span>
+                        <span class="tag">International rescue hub</span>
+                    </div>
+                </div>
+                <div class="section-body rtl lang-section" data-lang="ar">
+                    <p>
+                        يمكن تركيب توربينات رياح عالية الارتفاع، وألواح شمسية، وأنظمة تخزين للثلج والمياه حول الكهف الجبلي.
+                        بذلك تصبح المنظومة ليس فقط جسراً بين الدول، بل أيضاً مركزاً للطاقة النظيفة يخدم المنطقة بأكملها.
+                    </p>
+                    <div class="tag-row">
+                        <span class="tag">حقول رياح على القمم</span>
+                        <span class="tag">ألواح شمسية على المنحدرات</span>
+                        <span class="tag">مركز إنقاذ دولي</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card">
+                <div class="section-title">
+                    <div class="section-icon">✍️</div>
+                    <h3 class="rtl lang-section active" data-lang="he">קרדיט ורעיון</h3>
+                    <h3 class="ltr lang-section" data-lang="en">Concept & Credit</h3>
+                    <h3 class="rtl lang-section" data-lang="ar">فكرة وحقوق</h3>
+                </div>
+                <div class="section-body rtl lang-section active" data-lang="he">
+                    <p>
+                        דף זה נועד להצגת רעיון קונספטואלי בלבד, כחזון לפיתוח עתידי של מערכת מטוטלת-רחפן המחברת
+                        ספינה באוויר למערה גבוהה בין מדינות, לצורכי חילוץ, שיתוף פעולה ואנרגיה נקייה.
+                    </p>
+                    <p>
+                        <strong>מפתח הרעיון:</strong> ראפת נאטור (Rafat Natour) – לשימוש כהצעת פיתוח, שיתוף פעולה או תרומה לעמותה ללא מטרות רווח.
+                    </p>
+                </div>
+                <div class="section-body ltr lang-section" data-lang="en">
+                    <p>
+                        This page presents a conceptual vision for a future pendulum-drone system connecting a ship in the air
+                        to a high mountain cave between nations, for rescue operations, cooperation and clean energy.
+                    </p>
+                    <p>
+                        <strong>Concept originator:</strong> Rafat Natour – may be used as a proposal for development, collaboration
+                        or as a non-profit contribution.
+                    </p>
+                </div>
+                <div class="section-body rtl lang-section" data-lang="ar">
+                    <p>
+                        يقدّم هذا الملف رؤية مفهومية لمنظومة طائرة-بندول مستقبلية تربط سفينة محلّقة ب‍كهف جبلي عالٍ بين دول،
+                        بهدف الإنقاذ، والتعاون، والطاقة النظيفة.
+                    </p>
+                    <p>
+                        <strong>صاحب الفكرة:</strong> رأفت ناطور (Rafat Natour) – يمكن استخدام الفكرة كمقترح تطوير، أو شراكة،
+                        أو مساهمة لجمعية غير ربحية.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const langSections = document.querySelectorAll('.lang-section');
+        const titleBlocks = document.querySelectorAll('[data-lang-block]');
+        const body = document.body;
+
+        function setLanguage(lang) {
+            // Activate body class for direction handling
+            body.classList.remove('lang-he', 'lang-en', 'lang-ar');
+            body.classList.add('lang-' + lang);
+
+            // Update language buttons
+            langButtons.forEach(btn => {
+                const target = btn.getAttribute('data-lang-target');
+                btn.classList.toggle('active', target === lang);
+            });
+
+            // Toggle sections
+            langSections.forEach(section => {
+                const sLang = section.getAttribute('data-lang');
+                section.classList.toggle('active', sLang === lang);
+            });
+
+            // Toggle titles
+            titleBlocks.forEach(block => {
+                const key = block.getAttribute('data-lang-block');
+                const blockLang = key.split('-').pop(); // title-he / title-en / title-ar
+                if (blockLang === lang) {
+                    block.style.display = '';
+                } else {
+                    block.style.display = 'none';
+                }
+            });
+
+            // Direction for the whole document
+            if (lang === 'en') {
+                document.documentElement.setAttribute('dir', 'ltr');
+            } else {
+                document.documentElement.setAttribute('dir', 'rtl');
+            }
+        }
+
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetLang = btn.getAttribute('data-lang-target');
+                setLanguage(targetLang);
+            });
+        });
+
+        // Ensure default is Hebrew
+        setLanguage('he');
+    })();
+</script>
+</body>
+</html>

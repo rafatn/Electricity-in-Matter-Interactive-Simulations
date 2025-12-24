@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>QFM & שקע חזותי פלוטוס – מסמך משולב עם יישומים מעשיים</title>
+<style>
+body { font-family: Arial, sans-serif; direction: rtl; padding:20px; background:#eef3ff; color:#111; }
+section { background:white; padding:15px; margin-bottom:18px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+h1 { color:#1f3c88; margin-top:0; }
+h2 { color:#294a9a; margin-top:0; }
+h3 { color:#3e4c9a; }
+p, ul, ol { line-height:1.6; }
+.example-box { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
+.example-text { flex:1 1 260px; }
+.example-svg { flex:0 0 220px; background:#f5f7ff; border-radius:8px; padding:10px; text-align:center; }
+.example-svg svg { background:white; border-radius:6px; }
+.code-block { background:#f7f7f7; padding:8px 10px; border-radius:6px; font-family:Consolas, monospace; font-size:13px; direction:ltr; text-align:left; }
+.diagram { border-radius:8px; border:1px dashed #9fb3ff; padding:10px; background:#eef3ff; white-space:pre-line; }
+.small-note { font-size:13px; opacity:0.8; }
+.lang-en { direction:ltr; text-align:left; font-family:Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<h1>QFM &amp; שקע חזותי פלוטוס – מסמך משולב</h1>
+
+<section>
+<h2>0. תקציר באנגלית (Abstract)</h2>
+<div class="lang-en">
+<p><strong>QFM (Quadrature Frequency Modulation)</strong> is a proposed modulation scheme in which each symbol is represented not as a single IQ point, but as a geometric polygon in the frequency domain, around a carrier frequency f₀. The polygon’s frequency position (Δf), number of edges, edge thickness and color depth all carry digital information and meta-data.</p>
+<p><strong>Plutos Visual Socket</strong> is a home communication architecture that distributes visual data (Visual-IP packets) from a central gateway (combining 5G / Wi-Fi / Bluetooth / phone links) to visual sockets installed in the walls. QFM can serve as the physical-layer modulation inside this visual communication system.</p>
+</div>
+</section>
+
+<section>
+<h2>1. רעיון QFM – מבוא</h2>
+<p>
+QFM היא שיטת אפנון חדשה שבה כל סימבול אינו נקודה בודדת במישור IQ (כמו ב-QAM),
+אלא <strong>מצולע גיאומטרי במרחב התדר</strong>, סביב תדר מרכזי f₀. לפרמטרים הגיאומטריים יש משמעות קידודית:
+</p>
+<ul>
+<li>מיקום תדרי (Δf) – הטבעת סביב f₀.</li>
+<li>צורת המצולע (Polygon Type) – מספר צלעות/קודקודים.</li>
+<li>עובי הצלעות (Edge Thickness) – מטא-דאטה כגון עדיפות/רוחב פס.</li>
+<li>עומק הצבע (Color Depth) – גודל חבילה, איכות או עומק מידע.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. מבנה סימבול QFM ומיפוי ביטים</h2>
+<p>לדוגמה, N ביטים לכל סימבול מחולקים לשדות:</p>
+<ul>
+<li><strong>Δf Bits</strong> – בחירת טבעת תדר סביב f₀.</li>
+<li><strong>Polygon Bits</strong> – בחירת מצולע: 3, 4, 5, 6 צלעות וכו'.</li>
+<li><strong>Thickness Bits</strong> – עובי צלעות: דק / בינוני / עבה.</li>
+<li><strong>Color Bits</strong> – עומק/דרגת צבע: נמוך / בינוני / גבוה.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. דוגמאות סימבולים בשיטת QFM</h2>
+
+<h3>3.1 דוגמה 1 – משולש לחבילת בקרה קטנה</h3>
+<div class="example-box">
+    <div class="example-text">
+        <p>
+        חבילת בקרה קטנה (סטטוס מערכת):
+        </p>
+        <ul>
+            <li>Δf = 01 – תזוזה קטנה מתדר f₀.</li>
+            <li>Polygon Type = 3 – משולש.</li>
+            <li>Thickness = דק – רוחב פס נמוך.</li>
+            <li>Color Depth = נמוך – כמות נתונים קטנה.</li>
+        </ul>
+        <div class="code-block">
+Bits:  01  00  00  00
+Field: Δf  Poly  Thick  Color
+        </div>
+    </div>
+    <div class="example-svg">
+        <div>מחוון חזותי (משולש):</div>
+        <svg width="180" height="160" viewBox="0 0 180 160">
+            <line x1="10" y1="80" x2="170" y2="80" stroke="#ccd2ff" stroke-width="1" />
+            <line x1="90" y1="20" x2="90" y2="140" stroke="#e0e0ff" stroke-width="1" stroke-dasharray="3,3" />
+            <polygon points="90,40 60,110 120,110"
+                     fill="#8fb3ff55"
+                     stroke="#2f4fb8"
+                     stroke-width="2" />
+            <text x="92" y="32" font-size="10" fill="#1f3c88">f₀</text>
+        </svg>
+    </div>
+</div>
+
+<h3>3.2 דוגמה 2 – מחומש לחבילת וידאו</h3>
+<div class="example-box">
+    <div class="example-text">
+        <p>
+        חבילת וידאו בינונית:
+        </p>
+        <ul>
+            <li>Δf = 10 – טבעת תדר רחוקה יותר.</li>
+            <li>Polygon Type = 5 – מחומש.</li>
+            <li>Thickness = בינוני – רוחב פס בינוני.</li>
+            <li>Color Depth = בינוני-גבוה – יותר נתונים.</li>
+        </ul>
+        <div class="code-block">
+Bits:  10  01  01  10
+Field: Δf  Poly  Thick  Color
+        </div>
+    </div>
+    <div class="example-svg">
+        <div>מחוון חזותי (מחומש):</div>
+        <svg width="180" height="160" viewBox="0 0 180 160">
+            <line x1="10" y1="80" x2="170" y2="80" stroke="#ccd2ff" stroke-width="1" />
+            <line x1="90" y1="20" x2="90" y2="140" stroke="#e0e0ff" stroke-width="1" stroke-dasharray="3,3" />
+            <polygon points="90,35 60,65 70,110 110,110 120,65"
+                     fill="#5fa3ff66"
+                     stroke="#143f8f"
+                     stroke-width="3" />
+        </svg>
+    </div>
+</div>
+
+<h3>3.3 דוגמה 3 – משושה לחבילה בעדיפות גבוהה</h3>
+<div class="example-box">
+    <div class="example-text">
+        <p>
+        חבילה קריטית (בקרה/חישה בזמן אמת):
+        </p>
+        <ul>
+            <li>Δf = 11 – טבעת תדר בעדיפות גבוהה.</li>
+            <li>Polygon Type = 6 – משושה.</li>
+            <li>Thickness = עבה – הקצאת הספק גבוהה.</li>
+            <li>Color Depth = גבוה – מקסימום מידע.</li>
+        </ul>
+        <div class="code-block">
+Bits:  11  10  11  11
+Field: Δf  Poly  Thick  Color
+        </div>
+    </div>
+    <div class="example-svg">
+        <div>מחוון חזותי (משושה):</div>
+        <svg width="180" height="160" viewBox="0 0 180 160">
+            <line x1="10" y1="80" x2="170" y2="80" stroke="#ccd2ff" stroke-width="1" />
+            <line x1="90" y1="20" x2="90" y2="140" stroke="#e0e0ff" stroke-width="1" stroke-dasharray="3,3" />
+            <polygon points="90,30 65,50 65,90 90,110 115,90 115,50"
+                     fill="#2b7cff77"
+                     stroke="#0b2f70"
+                     stroke-width="4" />
+        </svg>
+    </div>
+</div>
+
+</section>
+
+<section>
+<h2>4. טיוטת פטנט – QFM (תמצית Claims)</h2>
+<ol>
+<li>שיטת אפנון בה כל סימבול משודר כאובייקט מצולע במרחב התדר סביב תדר מרכזי, כאשר הפרמטרים של המצולע נושאים מידע דיגיטלי.</li>
+<li>לפי תביעה 1, המצולע מוגדר על ידי מיקום תדרי, מספר צלעות, עובי צלעות ועומק צבע.</li>
+<li>לפי אחת התביעות הקודמות, מיקום תדרי (Δf) מייצג טבעת תדר או סאב-נשא ייחודי.</li>
+<li>לפי אחת התביעות הקודמות, מספר הצלעות (Polygon Type) מייצג סוג חבילה או רמת מודולציה.</li>
+<li>לפי אחת התביעות הקודמות, עובי הצלעות (Edge Thickness) מייצג נתוני עדיפות, רוחב פס או הספק.</li>
+<li>לפי אחת התביעות הקודמות, עומק הצבע (Color Depth) מייצג גודל חבילה או מידע מטא-דאטה נוסף.</li>
+<li>מערכת משדר-מקלט המממשת את שיטת ה-QFM, לרבות אנטנה, מודול אפנון ומודול פענוח.</li>
+<li>שילוב השיטה במערכת שקע חזותי פלוטוס, בה תשתית בית חכם מקבלת סימבולי QFM ומפענחת אותם לתכנים חזותיים.</li>
+</ol>
+</section>
+
+<section>
+<h2>5. מערכת שקע חזותי פלוטוס – תקציר</h2>
+<p>
+מערכת "שקע חזותי פלוטוס" מתארת ארכיטקטורה ביתית/בניינית שבה:
+</p>
+<ul>
+<li>אנטנת Gateway מאחדת 5G, Wi-Fi, Bluetooth ושידורים מטלפונים ניידים.</li>
+<li>המידע מומר לזרם חבילות Visual-IP – חבילות נתונים חזותיות.</li>
+<li>שקעים חזותיים בקירות מקבלים את החבילות ומספקים יציאות HDMI/USB-C/DisplayPort למסכים, VR ועוד.</li>
+</ul>
+<div class="diagram">
+אינטרנט / סיב / 5G / טלפונים
+        ↓
+Visual Gateway (אנטנת שידור ראשית)
+        ↓
+חבילות Visual-IP
+        ↓           ↓           ↓
+שקע חזותי 1   שקע חזותי 2   שקע חזותי 3
+        ↓           ↓           ↓
+מסך        מקרן        שרת / הקלטה
+</div>
+</section>
+
+<section>
+<h2>6. שילוב QFM בתוך פלוטוס</h2>
+<p>
+QFM יכול לשמש כשכבת האפנון הפיזית (Physical Layer) של Visual-IP:
+</p>
+<ul>
+<li>המשדר בבית/ב-Gateway מקודד את חבילות Visual-IP לסימבולי QFM.</li>
+<li>השקע החזותי מכיל מקלט QFM שמפענח את המצולעים התדריים.</li>
+<li>ניתן להפיק לא רק את תוכן החבילה, אלא גם מטא-דאטה בדבר עדיפות, סוג תוכן וגודל.</li>
+</ul>
+<p>
+כך מתקבלת <strong>שפת תקשורת חזותית-גיאומטרית</strong> מלאה בין אנטנה, מערכת בית חכם ושקעים חזותיים.
+</p>
+</section>
+
+<section>
+<h2>7. יתרונות מרכזיים של הרעיון המשולב</h2>
+<ul>
+<li>קונסטלציה עשירה – סימבול = צורה גיאומטרית, לא רק נקודה.</li>
+<li>התאמה למערכות AI – אפשר להאכיל את המערכת "תמונות" של קונסטלציות QFM.</li>
+<li>אינטגרציה טבעית עם תשתית חזותית (Plutos Visual Socket).</li>
+<li>תמיכה בנתונים, מטא-דאטה, עדיפויות ורמות שירות בתוך האפנון עצמו.</li>
+<li>פוטנציאל פטנטי – גישה חדשה לאפנון במרחב התדר עם משמעות חזותית-גיאומטרית.</li>
+</ul>
+</section>
+
+<section>
+<h2>8. יישומים מעשיים של QFM + שקע חזותי פלוטוס</h2>
+
+<h3>8.1 תחבורה חכמה ו-V2X</h3>
+<ul>
+<li>שידור נתוני חישה בין רכבים (V2V) בתצורה גיאומטרית-חזותית להבחנה מהירה בין חבילות קריטיות לשגרתיות.</li>
+<li>טעינת מטא-דאטה ישירות בצורה (משושה = עדיפות גבוהה) עבור מערכות בלימה אוטומטיות.</li>
+<li>הפצה דרך "שקעים חזותיים" בתחנות טעינה חכמות, מרכזי בקרה של תחבורה ציבורית וכו'.</li>
+</ul>
+
+<h3>8.2 בתים חכמים ומבנים חכמים</h3>
+<ul>
+<li>שידור וידאו, מציאות רבודה ונתוני חיישנים דרך תשתית פלוטוס לכל חדר.</li>
+<li>סימון מצבי חירום (אש, הצפה, פריצה) באמצעות סימבולי QFM בעדיפות גבוהה.</li>
+<li>ניהול עומסים ואנרגיה בבית לפי עובי/צבע הצלעות של הסימבולים (עדיפויות שירות).</li>
+</ul>
+
+<h3>8.3 חדרי בקרה, מרכזי נתונים ורשתות 5G</h3>
+<ul>
+<li>שימוש ב-QFM כאפנון עשיר להבאת מידע רב-שכבתי בקישורי Backhaul.</li>
+<li>ייצוג חזותי של עומסי רשת בתור קונסטלציה גיאומטרית – לקראת החלטות אוטומטיות.</li>
+<li>הפצת וידאו/טלקומוניקציה לשקעים חזותיים בחדרי בקרה ו-NOC.</li>
+</ul>
+
+<h3>8.4 לוויינים ותקשורת חלל</h3>
+<ul>
+<li>שימוש במצולעים תדריים לייצוג סוגי נתונים שונים (טלה-מטריה, וידאו, בקרה) באותו ערוץ.</li>
+<li>אפשרות לפענוח גיאומטרי במקלטים קרקעיים, כולל ניתוח AI של דפוסי שידור.</li>
+<li>חיבור לתשתיות פלוטוס על פני כדור הארץ דרך Gateways קרקעיים.</li>
+</ul>
+
+<h3>8.5 רפואה, הדמיה וניטור</h3>
+<ul>
+<li>שידור נתוני הדמיה רפואית (MRI/CT/Ultrasound) כסימבולי QFM עתירי מידע.</li>
+<li>גישה חזותית-גיאומטרית לרופא או למערכת AI לצורך ניתוח מהיר.</li>
+<li>שילוב שקעים חזותיים בחדרי ניתוח/בקרה להצגת מידע בזמן אמת.</li>
+</ul>
+
+<h3>8.6 ביטחון, צבא ומערכות קריטיות</h3>
+<ul>
+<li>שידור מוצפן שבו הצורה/עובי/צבע עצמם מהווים "מפתח" נוסף ברמת הפיזיקה.</li>
+<li>קידוד מצבים טקטיים שונים (אזור מאוים, נדרש סיוע, תקלה טכנית) לתבניות גיאומטריות ייחודיות.</li>
+<li>שימוש בשקעים חזותיים בתאי פיקוד להצגת מידע רב-ממדי.</li>
+</ul>
+
+<h3>8.7 IoT ותשתיות קצה</h3>
+<ul>
+<li>שילוב QFM בשערי IoT (Gateways) לקבלת/שידור מידע עשיר בסימבול בודד.</li>
+<li>שקעים חזותיים כנקודות תצוגה/בקרה לנתוני חיישנים ברחבי מפעל/חווה/מבנה.</li>
+<li>הבחנה חזותית בין חיישנים/שירותים שונים לפי צורת המצולע וצבעו.</li>
+</ul>
+
+<p class="small-note">
+היישומים המעשיים מדגישים את הפוטנציאל של QFM ושל מערכת שקע חזותי פלוטוס לא רק כרעיון תיאורטי,
+אלא כתשתית אפשרית לדורות הבאים של רשתות תקשורת חזותיות, תחבורה חכמה, בתים חכמים ומערכות קריטיות.
+</p>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מערכת איסוף גזים מעציצים והמרתם לשמן אצות – דף תכנון + מחשבון</title>
+
+  <!-- KaTeX (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --r:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:linear-gradient(180deg, #f6f7fb 0%, #ffffff 50%, #f6f7fb 100%);
+      color:var(--text);
+    }
+    header{
+      padding:28px 18px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(22px, 2.6vw, 34px);
+      letter-spacing:-.3px;
+    }
+    .subtitle{
+      color:var(--muted);
+      margin:0 0 14px;
+      line-height:1.5;
+    }
+    .bar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:8px;
+    }
+    .chip{
+      background:#eef2ff;
+      color:#1e3a8a;
+      border:1px solid #c7d2fe;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:13px;
+    }
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px 18px 42px;
+      display:grid;
+      gap:14px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px 16px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:18px;
+    }
+    .card h3{
+      margin:14px 0 8px;
+      font-size:15px;
+      color:#111827;
+    }
+    .muted{color:var(--muted)}
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .two{grid-template-columns:1fr}
+    }
+    ul{margin:8px 0 0; padding:0 18px 0 0; line-height:1.7}
+    .note{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed #cbd5e1;
+      background:#f8fafc;
+      color:#334155;
+      line-height:1.6;
+    }
+    .warn{
+      border:1px solid #fde68a;
+      background:#fffbeb;
+    }
+    .danger{
+      border:1px solid #fecaca;
+      background:#fff1f2;
+    }
+    .kbd{
+      font-family:var(--mono);
+      background:#0b1220;
+      color:#e2e8f0;
+      padding:2px 6px;
+      border-radius:8px;
+      font-size:12px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:#334155;
+      margin-bottom:6px;
+      font-weight:600;
+    }
+    input, select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.15);
+    }
+    .field{
+      flex:1 1 160px;
+      min-width:160px;
+    }
+    .btns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    button{
+      border:0;
+      background:var(--accent);
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+    }
+    button.secondary{
+      background:#0f172a;
+    }
+    button.light{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+    .out{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 720px){
+      .out{grid-template-columns:1fr}
+    }
+    .metric{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#ffffff;
+    }
+    .metric .k{
+      font-size:12px;
+      color:#475569;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+    .metric .v{
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.2px;
+    }
+    .metric .s{
+      font-size:12px;
+      color:#64748b;
+      margin-top:4px;
+      line-height:1.4;
+    }
+    .ok{color:var(--good)}
+    .w{color:var(--warn)}
+    .b{color:var(--bad)}
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+      margin-top:10px;
+    }
+    details summary{
+      cursor:pointer;
+      font-weight:800;
+      color:#0f172a;
+    }
+    code{
+      font-family:var(--mono);
+      background:#f1f5f9;
+      padding:2px 6px;
+      border-radius:8px;
+    }
+    .footer{
+      text-align:center;
+      color:#64748b;
+      font-size:12px;
+      padding:18px 10px 30px;
+    }
+    /* Simple SVG responsiveness */
+    .svgwrap{
+      width:100%;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:10px;
+    }
+    .svgwrap svg{max-width:100%; height:auto; display:block; margin:auto}
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>מערכת איסוף גזים מעציצים בבניין והמרתם ל״שמן אצות״ (Bio‑Oil) – תכנון + מחשבון</h1>
+  <p class="subtitle">
+    דף עבודה להנדסת MVP: איסוף אוויר מקומי, הפרדת לחות, ספיחה/דה‑ספיחה של CO₂ (ואופציונלית VOC),
+    הזנת CO₂ מרוכז לפוטוביוריאקטור מיקרואצות, קציר ביומסה ומיצוי שמן.
+  </p>
+  <div class="bar">
+    <span class="chip">RTL</span>
+    <span class="chip">KaTeX</span>
+    <span class="chip">מחשבון תפוקה (CO₂ → ביומסה → שמן)</span>
+    <span class="chip">MVP לבניין/קומה</span>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <h2>1) תרשים זרימה (Flow) של המערכת</h2>
+      <p class="muted">התרשים מתאר את הבלוקים ההנדסיים. אפשר להתחיל מ־CO₂ בלבד; VOC הוא מודול אופציונלי.</p>
+
+      <div class="svgwrap" aria-label="Flow diagram">
+        <svg viewBox="0 0 1200 520" role="img" aria-label="System flow diagram">
+          <defs>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".12"/>
+            </filter>
+          </defs>
+
+          <!-- Boxes -->
+          <g font-family="Arial, sans-serif" font-size="18">
+            <rect x="980" y="60" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="1075" y="103" text-anchor="middle">אשכול עציצים</text>
+
+            <rect x="760" y="60" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="855" y="103" text-anchor="middle">Plant Hood + מאוורר</text>
+
+            <rect x="540" y="60" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="635" y="93" text-anchor="middle">קדם סינון</text>
+            <text x="635" y="115" text-anchor="middle" font-size="14" fill="#64748b">אבק/סיבים</text>
+
+            <rect x="320" y="60" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="415" y="93" text-anchor="middle">הפרדת לחות</text>
+            <text x="415" y="115" text-anchor="middle" font-size="14" fill="#64748b">קונדנסר + מלכודת מים</text>
+
+            <rect x="100" y="60" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="195" y="93" text-anchor="middle">מודול CO₂</text>
+            <text x="195" y="115" text-anchor="middle" font-size="14" fill="#64748b">ספיחה/דה-ספיחה</text>
+
+            <!-- Branch VOC -->
+            <rect x="100" y="170" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="195" y="203" text-anchor="middle">מודול VOC (אופציונלי)</text>
+            <text x="195" y="225" text-anchor="middle" font-size="14" fill="#64748b">פחם פעיל/זאוליט</text>
+
+            <!-- CO2 storage -->
+            <rect x="320" y="290" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="415" y="323" text-anchor="middle">מאגר CO₂ מרוכז</text>
+            <text x="415" y="345" text-anchor="middle" font-size="14" fill="#64748b">לחץ נמוך (בטיחות)</text>
+
+            <!-- PBR -->
+            <rect x="540" y="290" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="635" y="323" text-anchor="middle">פוטוביוריאקטור אצות</text>
+            <text x="635" y="345" text-anchor="middle" font-size="14" fill="#64748b">אור + נוטריינטים + ערבול</text>
+
+            <!-- Harvest -->
+            <rect x="760" y="290" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="855" y="323" text-anchor="middle">קציר ביומסה</text>
+            <text x="855" y="345" text-anchor="middle" font-size="14" fill="#64748b">פילטר/צנטריפוגה</text>
+
+            <!-- Oil -->
+            <rect x="980" y="290" width="190" height="70" rx="16" fill="#ffffff" stroke="#e5e7eb" filter="url(#shadow)"/>
+            <text x="1075" y="323" text-anchor="middle">מיצוי שמן</text>
+            <text x="1075" y="345" text-anchor="middle" font-size="14" fill="#64748b">שמן אצות → דלק/חומר גלם</text>
+          </g>
+
+          <!-- Arrows -->
+          <g stroke="#2563eb" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- top line: right to left arrows -->
+            <path d="M 980 95 L 950 95" />
+            <path d="M 950 95 L 955 88 M 950 95 L 955 102" />
+
+            <path d="M 760 95 L 730 95" />
+            <path d="M 730 95 L 735 88 M 730 95 L 735 102" />
+
+            <path d="M 540 95 L 510 95" />
+            <path d="M 510 95 L 515 88 M 510 95 L 515 102" />
+
+            <path d="M 320 95 L 290 95" />
+            <path d="M 290 95 L 295 88 M 290 95 L 295 102" />
+
+            <path d="M 100 95 L 70 95" />
+            <path d="M 70 95 L 75 88 M 70 95 L 75 102" />
+          </g>
+
+          <!-- down arrow from CO2 module to storage -->
+          <g stroke="#2563eb" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 195 130 L 195 270" />
+            <path d="M 195 270 L 188 265 M 195 270 L 202 265" />
+          </g>
+
+          <!-- branch line to VOC -->
+          <g stroke="#94a3b8" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 195 130 L 195 165" />
+            <path d="M 195 165 L 188 160 M 195 165 L 202 160" />
+          </g>
+
+          <!-- storage to PBR to harvest to oil (left-to-right for visual) -->
+          <g stroke="#16a34a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 510 325 L 540 325" />
+            <path d="M 540 325 L 535 318 M 540 325 L 535 332" />
+            <path d="M 730 325 L 760 325" />
+            <path d="M 760 325 L 755 318 M 760 325 L 755 332" />
+            <path d="M 950 325 L 980 325" />
+            <path d="M 980 325 L 975 318 M 980 325 L 975 332" />
+          </g>
+
+          <!-- connector from CO2 module to storage (horizontal cue) -->
+          <g stroke="#16a34a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 195 270 L 320 325" opacity=".0"/>
+          </g>
+
+          <!-- Labels -->
+          <g font-family="Arial, sans-serif" font-size="14" fill="#64748b">
+            <text x="640" y="32" text-anchor="middle">אוויר דליל (CO₂ + לחות + VOC)</text>
+            <text x="415" y="400" text-anchor="middle">CO₂ מרוכז → הזנה מבוקרת</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="two" style="margin-top:12px">
+        <div class="note">
+          <b>מה “מפרקים” כאן?</b><br>
+          בפועל הגזים דלילים, ולכן המפתח הוא <b>ריכוז</b> (ספיחה/דה‑ספיחה) ולא “זיקוק גזים” קלאסי.
+          הפרדת לחות לפני הסופח קריטית כדי לשמור יעילות.
+        </div>
+        <div class="note warn">
+          <b>הערת בטיחות:</b><br>
+          אם אתה משתמש בממסים למיצוי שמן (כמו הקסאן), צריך עבודה לפי נהלי בטיחות (אוורור, מניעת ניצוצות, PPE).
+          במבנה ציבורי מומלץ להתחיל בניסוי מעבדתי/מוגבל.
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>2) מחשבון תפוקה (CO₂ → ביומסה → שמן)</h2>
+      <p class="muted">הכנס ספיקת אוויר והפרש ppm ש”נלכד”, וקבל סדרי גודל ל‑CO₂/ביומסה/שמן.</p>
+
+      <div class="row">
+        <div class="field">
+          <label>ספיקת אוויר Q (מ״ק/שעה)</label>
+          <input id="Q" type="number" min="0" step="0.1" value="50">
+        </div>
+        <div class="field">
+          <label>ΔCO₂ (ppm) בין כניסה ליציאה</label>
+          <input id="dppm" type="number" min="0" step="1" value="200">
+        </div>
+        <div class="field">
+          <label>מקדם CO₂→ביומסה (ק״ג CO₂ לכל 1 ק״ג ביומסה)</label>
+          <input id="kco2" type="number" min="0.1" step="0.1" value="1.8">
+        </div>
+        <div class="field">
+          <label>שיעור ליפידים באצות f<sub>lipid</sub> (0–1)</label>
+          <input id="flip" type="number" min="0" max="1" step="0.01" value="0.30">
+        </div>
+      </div>
+
+      <div class="btns">
+        <button onclick="calc()">חשב</button>
+        <button class="light" onclick="preset('plants')">ברירת מחדל “עציצים”</button>
+        <button class="light" onclick="preset('hvac')">ברירת מחדל “HVAC/קומה”</button>
+        <button class="secondary" onclick="copySummary()">העתק סיכום</button>
+      </div>
+
+      <div class="out" id="out">
+        <div class="metric">
+          <div class="k">CO₂ שנלכד (גרם/שעה)</div>
+          <div class="v" id="co2_h">—</div>
+          <div class="s muted">בקירוב צפיפות CO₂ ≈ 1.84 ק״ג/מ״ק</div>
+        </div>
+        <div class="metric">
+          <div class="k">CO₂ שנלכד (ק״ג/יום)</div>
+          <div class="v" id="co2_d">—</div>
+          <div class="s muted">24 שעות רציפות (סדר גודל)</div>
+        </div>
+        <div class="metric">
+          <div class="k">ביומסה יבשה (ק״ג/יום)</div>
+          <div class="v" id="bio_d">—</div>
+          <div class="s muted">בקירוב: \(m_{biomass} \approx m_{CO2}/k\)</div>
+        </div>
+        <div class="metric">
+          <div class="k">שמן אצות (גרם/יום)</div>
+          <div class="v" id="oil_d">—</div>
+          <div class="s muted">\(m_{oil} = m_{biomass} \cdot f_{lipid}\)</div>
+        </div>
+      </div>
+
+      <details>
+        <summary>נוסחאות שמחשבנו כאן</summary>
+        <div style="margin-top:10px; line-height:1.9">
+          <div>1) המרת ppm לשבר נפחי: \(\Delta x=\Delta ppm \cdot 10^{-6}\)</div>
+          <div>2) נפח CO₂ לשעה: \(\dot V_{CO2}=Q\cdot \Delta x\)  (ב־מ״ק/שעה)</div>
+          <div>3) מסה (בקירוב): \(\dot m_{CO2}\approx \dot V_{CO2}\cdot 1.84\)  (ק״ג/שעה)</div>
+          <div>4) ביומסה יומית: \(m_{biomass} \approx m_{CO2,day}/k\)</div>
+          <div>5) שמן: \(m_{oil} = m_{biomass}\cdot f_{lipid}\)</div>
+        </div>
+      </details>
+
+      <div class="note danger" style="margin-top:10px">
+        <b>אזהרה חשוב:</b> המספרים כאן הם <u>אומדן סדר גודל</u>. בפועל מגבלות אור, נוטריינטים, pH, טמפ׳,
+        וזמני מחזור ספיחה/רגנרציה יכולים להוריד תפוקה משמעותית.
+      </div>
+    </aside>
+  </div>
+
+  <section class="card">
+    <h2>3) מפרט MVP קצר (מה להתחיל לבנות)</h2>
+    <div class="two">
+      <div>
+        <h3>שלב 1 — מדידה וריכוז CO₂</h3>
+        <ul>
+          <li>חיישן CO₂ (NDIR) למדידת <b>Δppm</b> בתוך כיפת עציצים מול החדר.</li>
+          <li>כיפת איסוף + מאוורר שקט (ספיקה ידועה).</li>
+          <li>קונדנסר/מלכודת מים לפני הסופח.</li>
+          <li>מחסנית סופח CO₂ + רגנרציה (חימום/ואקום קל).</li>
+        </ul>
+        <div class="note" style="margin-top:10px">
+          יעד MVP: להראות שברגנרציה אתה מקבל <b>זרם CO₂ “מרוכז”</b> (קריאת חיישן גבוהה בהרבה).
+        </div>
+      </div>
+
+      <div>
+        <h3>שלב 2 — פוטוביוריאקטור אצות</h3>
+        <ul>
+          <li>PBR קטן: 10–50 ליטר (צינורות/פאנל שקוף).</li>
+          <li>אור: שמש ליד חלון או LED (לפי זמינות).</li>
+          <li>ערבול: משאבת אוויר/מערבל.</li>
+          <li>חיישנים: pH וטמפ׳ (מומלץ).</li>
+          <li>קציר: פילטר/ממברנה (או צנטריפוגה קטנה).</li>
+        </ul>
+        <div class="note warn" style="margin-top:10px">
+          בלי אור מתאים — לא תהיה גדילה יציבה, ואז “הנפט האורגני” נשאר רעיון בלבד.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4) איך עושים את זה “שווה” בבניין</h2>
+    <ul>
+      <li><b>עציצים בלבד</b> בדרך כלל נותנים זרם קטן. כדי לעלות סדרי גודל: חבר גם <b>אוויר חוזר של HVAC</b> (אנשים = הרבה CO₂).</li>
+      <li>בנה מערכת מודולרית: <code>אשכול עציצים</code> → <code>ריכוז CO₂ מרכזי</code> → <code>PBR</code>.</li>
+      <li>חפש ערך משלים: שיפור איכות אוויר, מים מעובים להשקיה, חינוך סביבתי/ESG.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>5) הערות שימוש</h2>
+    <div class="note">
+      <b>שימוש לא מקוון:</b> הדף עובד גם ללא אינטרנט, אבל אז KaTeX לא ייטען ולכן נוסחאות יוצגו כטקסט רגיל.
+      אם תרצה, אכין לך גרסה “Offline” עם קבצי KaTeX בתוך תיקייה.
+    </div>
+    <div class="note" style="margin-top:10px">
+      <b>התאמה אישית:</b> תגיד לי כמה עציצים יש, מה הספיקה שאתה מתכנן, ומה Δppm שמדדת — ואני אכוון לך ערכי MVP (נפח סופח, מחזורי רגנרציה, נפח PBR).
+    </div>
+  </section>
+
+  <div class="footer">
+    נבנה כקובץ יחיד: <span class="kbd">.html</span>  |  ניתן להעלות ל‑GitHub Pages / Render  |  RTL + מחשבון
+  </div>
+</main>
+
+<script>
+  function fmt(n, digits=2){
+    if (!isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    if (abs >= 100) return n.toFixed(1);
+    if (abs >= 10) return n.toFixed(2);
+    return n.toFixed(digits);
+  }
+
+  function calc(){
+    const Q = parseFloat(document.getElementById('Q').value || "0");           // m3/h
+    const dppm = parseFloat(document.getElementById('dppm').value || "0");     // ppm
+    const k = parseFloat(document.getElementById('kco2').value || "1.8");      // kgCO2 per kg biomass
+    const f = parseFloat(document.getElementById('flip').value || "0.3");      // lipid fraction
+
+    const dx = dppm * 1e-6;
+    const Vco2_h = Q * dx;               // m3/h
+    const mco2_h = Vco2_h * 1.84;        // kg/h (approx at room temp)
+    const mco2_h_g = mco2_h * 1000;      // g/h
+    const mco2_d = mco2_h * 24;          // kg/day
+
+    const biomass_d = (k > 0) ? (mco2_d / k) : NaN;     // kg/day
+    const oil_d = biomass_d * Math.max(0, Math.min(1, f)) * 1000; // g/day
+
+    document.getElementById('co2_h').innerHTML = `<span class="${mco2_h_g>50?'ok':(mco2_h_g>10?'w':'b')}">${fmt(mco2_h_g,2)}</span>`;
+    document.getElementById('co2_d').innerHTML = `<span class="${mco2_d>1?'ok':(mco2_d>0.3?'w':'b')}">${fmt(mco2_d,3)}</span>`;
+    document.getElementById('bio_d').innerHTML = `<span class="${biomass_d>0.5?'ok':(biomass_d>0.1?'w':'b')}">${fmt(biomass_d,3)}</span>`;
+    document.getElementById('oil_d').innerHTML = `<span class="${oil_d>200?'ok':(oil_d>50?'w':'b')}">${fmt(oil_d,1)}</span>`;
+
+    // Trigger KaTeX re-render inside dynamic areas (optional)
+    // (Auto-render runs once on load; formulas in details are static.)
+  }
+
+  function preset(kind){
+    if (kind === 'plants'){
+      document.getElementById('Q').value = 50;
+      document.getElementById('dppm').value = 200;
+      document.getElementById('kco2').value = 1.8;
+      document.getElementById('flip').value = 0.30;
+    } else if (kind === 'hvac'){
+      document.getElementById('Q').value = 500;
+      document.getElementById('dppm').value = 400;
+      document.getElementById('kco2').value = 1.8;
+      document.getElementById('flip').value = 0.30;
+    }
+    calc();
+  }
+
+  async function copySummary(){
+    const Q = document.getElementById('Q').value;
+    const dppm = document.getElementById('dppm').value;
+    const k = document.getElementById('kco2').value;
+    const f = document.getElementById('flip').value;
+
+    const co2h = document.getElementById('co2_h').innerText;
+    const co2d = document.getElementById('co2_d').innerText;
+    const biod = document.getElementById('bio_d').innerText;
+    const oild = document.getElementById('oil_d').innerText;
+
+    const text =
+`סיכום חישוב:
+Q=${Q} מ״ק/שעה, ΔCO₂=${dppm} ppm, k=${k}, f_lipid=${f}
+CO₂ נלכד: ${co2h} גרם/שעה | ${co2d} ק״ג/יום
+ביומסה: ${biod} ק״ג/יום
+שמן אצות: ${oild} גרם/יום`;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("הסיכום הועתק ללוח.");
+    }catch(e){
+      prompt("העתק ידנית:", text);
+    }
+  }
+
+  // KaTeX auto-render
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false
+      });
+    }
+    calc();
+  });
+</script>
+</body>
+</html>

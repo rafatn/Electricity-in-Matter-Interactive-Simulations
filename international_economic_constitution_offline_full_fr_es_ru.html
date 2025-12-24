@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>International Economic Constitution — Graph Sandwich Model (Offline)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.09);
+      --text:rgba(255,255,255,.88);
+      --muted:rgba(255,255,255,.62);
+      --gold:#d6b25e;
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --border:rgba(255,255,255,.12);
+      --shadow:0 12px 40px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    [data-theme="light"]{
+      --bg:#f7fafc;
+      --panel:rgba(2,6,23,.05);
+      --panel2:rgba(2,6,23,.08);
+      --text:rgba(2,6,23,.92);
+      --muted:rgba(2,6,23,.62);
+      --border:rgba(2,6,23,.12);
+      --shadow:0 14px 40px rgba(2,6,23,.12);
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.25), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, rgba(167,139,250,.22), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(52,211,153,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.55;
+      letter-spacing:.1px;
+    }
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 60px;}
+    header{
+      display:flex;gap:16px;align-items:center;justify-content:space-between;
+      padding:18px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 220deg, var(--accent), var(--accent2), var(--ok), var(--accent));
+      box-shadow:0 10px 28px rgba(0,0,0,.25);
+      position:relative;overflow:hidden;
+    }
+    .logo:after{
+      content:"";position:absolute;inset:-18px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 35%);
+      transform: rotate(18deg);
+      opacity:.7;
+    }
+    h1{margin:0;font-size:18px;font-weight:800}
+    .subtitle{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+    .btn, select, input{
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+    }
+    input::placeholder{color:var(--muted)}
+    .btn{cursor:pointer;user-select:none}
+    .btn:hover{background:var(--panel2)}
+    .btn.primary{
+      border-color: rgba(214,178,94,.45);
+      box-shadow: 0 10px 26px rgba(214,178,94,.18);
+    }
+    .chip{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--muted);
+      font-size:12px
+    }
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-top:16px}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:stretch}
+      .controls{justify-content:flex-start}
+    }
+    .card{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+    .card h2{margin:0 0 10px;font-size:16px}
+    .card p{margin:8px 0}
+    .muted{color:var(--muted)}
+    .eq{
+      display:block;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(214,178,94,.28);
+      background:rgba(214,178,94,.08);
+      color:var(--gold);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      overflow-x:auto;
+    }
+    details{border-top:1px dashed var(--border);margin-top:10px;padding-top:10px}
+    summary{cursor:pointer;color:var(--muted);font-weight:700}
+    .steps{display:flex;flex-direction:column;gap:12px}
+    .step{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:14px}
+    .step-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+    .step-title{display:flex;gap:10px;align-items:flex-start}
+    .num{
+      width:30px;height:30px;border-radius:10px;
+      background:rgba(214,178,94,.12);
+      border:1px solid rgba(214,178,94,.32);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;color:var(--gold)
+    }
+    .kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    .kpi .box{padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
+    .kpi .box b{display:block}
+    .kpi .box span{color:var(--muted);font-size:12px}
+    .svgwrap{border:1px solid var(--border);background:rgba(255,255,255,.03);border-radius:18px;padding:10px;overflow:hidden}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .note{
+      margin-top:10px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(125,211,252,.35);
+      background:rgba(125,211,252,.10);
+    }
+    .danger{border:1px solid rgba(251,113,133,.45);background:rgba(251,113,133,.12);}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .small{font-size:12px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    #langSelect{max-width:360px}
+    #langSearch{min-width:220px}
+    .toast{
+      position:fixed;left:16px;bottom:16px;z-index:99;
+      padding:12px 14px;border-radius:14px;border:1px solid var(--border);
+      background:rgba(0,0,0,.55);backdrop-filter: blur(10px);
+      color:rgba(255,255,255,.92);box-shadow:var(--shadow);
+      max-width:min(560px, calc(100vw - 32px));
+      display:none;
+    }
+    [data-theme="light"] .toast{background:rgba(2,6,23,.75);color:rgba(255,255,255,.92);}
+    .fileRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    input[type="file"]{padding:9px 10px}
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media (max-width: 980px){ .twoCol{grid-template-columns:1fr} }
+    .pill{border:1px solid var(--border);background:rgba(255,255,255,.05);border-radius:999px;padding:8px 10px;display:inline-flex;gap:8px;align-items:center}
+    .mapHint{margin-top:10px}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1 data-i18n="title">International Economic Constitution — “Graph Sandwich” Model</h1>
+        <p class="subtitle" data-i18n="subtitle">Fully offline. Built-in languages: EN/HE/AR/FR/ES/RU + unlimited offline packs.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <span class="chip"><span class="dot" style="background:var(--gold)"></span><span data-i18n="equationsGold">Equations are gold</span></span>
+      <button class="btn" id="themeBtn" data-i18n="toggleTheme">Toggle theme</button>
+
+      <input id="langSearch" placeholder="Search language…" data-i18n-placeholder="searchLanguage" />
+      <select id="langSelect" title="Language"></select>
+
+      <button class="btn primary" id="applyBtn" data-i18n="applyLanguage">Apply language</button>
+      <button class="btn" id="resetBtn" data-i18n="reset">Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2 data-i18n="overviewTitle">Overview (what you described)</h2>
+      <p data-i18n="overviewP1">
+        Each country has its own economic-legal “constitution” (rules, treaties, constraints). For any dispute, we integrate rules across countries,
+        build a graph of legal reasoning paths, and for each scenario define a “sandwich” of two concentric bounds:
+        lower bound (minimum permitted decision) and upper bound (maximum permitted decision).
+      </p>
+      <p data-i18n="overviewP2">
+        We then choose an optimal path among the best “sandwiches” (fair, stable, explainable). Optionally, we can sample a path by a transparent weighted lottery
+        to reduce bias and manipulation.
+      </p>
+
+      <div class="kpi">
+        <div class="box"><b data-i18n="kpi1t">Lower bound</b><span data-i18n="kpi1d">Minimum permitted remedy/sanction.</span></div>
+        <div class="box"><b data-i18n="kpi2t">Upper bound</b><span data-i18n="kpi2d">Maximum permitted remedy/sanction.</span></div>
+        <div class="box"><b data-i18n="kpi3t">Graph paths</b><span data-i18n="kpi3d">Legal reasoning as nodes and edges.</span></div>
+        <div class="box"><b data-i18n="kpi4t">Transparent record</b><span data-i18n="kpi4d">Every decision becomes an auditable event.</span></div>
+      </div>
+
+      <div class="note">
+        <b data-i18n="offlineTitle">Offline “all languages” (important)</b>
+        <span data-i18n="offlineBody">
+          Real offline translation for every language in the world is not realistic inside one HTML without a huge embedded model/data.
+          This file includes built-in translations for key languages and supports importing unlimited additional languages as local JSON “language packs” — still fully offline.
+        </span>
+      </div>
+
+      <details class="note">
+        <summary data-i18n="packSummary">How to add ANY language offline (language pack)</summary>
+        <p class="small" data-i18n="packBody">
+          Create a JSON file that maps each text key to the translated HTML string. Then click “Import pack” and choose the file.
+          The equations are universal and remain unchanged.
+        </p>
+
+        <div class="fileRow">
+          <button class="btn" id="exportBtn" data-i18n="exportEnglish">Export English keys (JSON)</button>
+          <label class="btn" for="importFile" data-i18n="importPack">Import pack (JSON)</label>
+          <input id="importFile" type="file" accept=".json,application/json" style="display:none"/>
+          <span class="chip mono" id="packStatus">packs: 0</span>
+        </div>
+
+        <details class="note danger" style="margin-top:10px">
+          <summary data-i18n="packFormatSummary">Pack format example</summary>
+          <p class="small muted mono">
+            {<br/>
+            &nbsp;"__meta__": {"lang":"xx","name":"My Language"},<br/>
+            &nbsp;"title":"…",<br/>
+            &nbsp;"overviewTitle":"…",<br/>
+            &nbsp;"overviewP1":"…"<br/>
+            }
+          </p>
+        </details>
+      </details>
+    </section>
+
+    <aside class="card">
+      <h2 data-i18n="visualTitle">Visual intuition</h2>
+      <p class="muted" data-i18n="visualSubtitle">A scenario bounded by two concentric circles + a graph of decision paths.</p>
+
+      <div class="svgwrap">
+        <svg viewBox="0 0 520 320" width="100%" height="auto" role="img" aria-label="Sandwich bounds and graph paths">
+          <defs>
+            <radialGradient id="glow" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="rgba(255,255,255,.55)"/>
+              <stop offset="45%" stop-color="rgba(255,255,255,.10)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+
+          <g transform="translate(165,165)">
+            <circle r="120" fill="rgba(214,178,94,.06)" stroke="rgba(214,178,94,.55)" stroke-width="2"/>
+            <circle r="70"  fill="rgba(125,211,252,.07)" stroke="rgba(125,211,252,.60)" stroke-width="2"/>
+            <circle r="20" fill="url(#glow)" opacity=".8"/>
+            <circle r="8" fill="rgba(255,255,255,.85)"/>
+            <text x="0" y="-132" text-anchor="middle" fill="rgba(214,178,94,.95)" font-size="12" font-weight="800" data-i18n-svg="upperBound">UPPER BOUND</text>
+            <text x="0" y="-82" text-anchor="middle" fill="rgba(125,211,252,.95)" font-size="12" font-weight="800" data-i18n-svg="lowerBound">LOWER BOUND</text>
+            <text x="0" y="40" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="12" font-weight="800" data-i18n-svg="scenario">Scenario</text>
+          </g>
+
+          <g transform="translate(315,40)">
+            <path d="M20,30 C90,20 110,60 160,55" stroke="rgba(167,139,250,.7)" stroke-width="2" fill="none"/>
+            <path d="M20,30 C95,80 110,105 160,120" stroke="rgba(125,211,252,.7)" stroke-width="2" fill="none"/>
+            <path d="M160,55 C220,55 230,95 260,95" stroke="rgba(52,211,153,.7)" stroke-width="2" fill="none"/>
+            <path d="M160,120 C220,120 230,95 260,95" stroke="rgba(52,211,153,.7)" stroke-width="2" fill="none"/>
+
+            <g><circle cx="20" cy="30" r="10" fill="rgba(255,255,255,.85)"/><text x="20" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(2,6,23,.9)">S</text></g>
+            <g><circle cx="160" cy="55" r="10" fill="rgba(255,255,255,.85)"/><text x="160" y="59" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(2,6,23,.9)">A</text></g>
+            <g><circle cx="160" cy="120" r="10" fill="rgba(255,255,255,.85)"/><text x="160" y="124" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(2,6,23,.9)">B</text></g>
+            <g><circle cx="260" cy="95" r="10" fill="rgba(255,255,255,.85)"/><text x="260" y="99" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(2,6,23,.9)">D</text></g>
+
+            <text x="15" y="160" fill="rgba(255,255,255,.65)" font-size="12" data-i18n-svg="graphPaths">Graph paths = legal reasoning options</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <span class="chip"><span class="dot" style="background:rgba(125,211,252,.9)"></span><span data-i18n="leg1">Lower bound ring</span></span>
+        <span class="chip"><span class="dot" style="background:rgba(214,178,94,.9)"></span><span data-i18n="leg2">Upper bound ring</span></span>
+        <span class="chip"><span class="dot" style="background:rgba(52,211,153,.9)"></span><span data-i18n="leg3">Converging decision</span></span>
+      </div>
+
+      <div class="note mapHint">
+        <b data-i18n="mapTitle">Country layer (visual add-on)</b>
+        <p class="muted small" data-i18n="mapBody">
+          You can treat countries as nodes too: Country A → Treaty Layer → Country B. In a real system you would load the country rule-sets from a database.
+          Here is a symbolic “world layer” illustration (not geographic).
+        </p>
+        <div class="svgwrap">
+          <svg viewBox="0 0 520 220" width="100%" height="auto" role="img" aria-label="Country layer illustration">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="rgba(125,211,252,.65)"/>
+                <stop offset="1" stop-color="rgba(167,139,250,.65)"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(30,30)">
+              <circle cx="60" cy="60" r="40" fill="rgba(125,211,252,.12)" stroke="rgba(125,211,252,.75)" stroke-width="2"/>
+              <text x="60" y="65" text-anchor="middle" fill="rgba(255,255,255,.9)" font-weight="800">A</text>
+
+              <circle cx="240" cy="40" r="34" fill="rgba(167,139,250,.12)" stroke="rgba(167,139,250,.75)" stroke-width="2"/>
+              <text x="240" y="45" text-anchor="middle" fill="rgba(255,255,255,.9)" font-weight="800">T</text>
+
+              <circle cx="380" cy="120" r="40" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.75)" stroke-width="2"/>
+              <text x="380" y="125" text-anchor="middle" fill="rgba(255,255,255,.9)" font-weight="800">B</text>
+
+              <path d="M98,54 C150,20 190,20 208,34" stroke="url(#g1)" stroke-width="3" fill="none" opacity=".9"/>
+              <path d="M270,58 C320,90 335,102 345,108" stroke="url(#g1)" stroke-width="3" fill="none" opacity=".9"/>
+              <text x="10" y="160" fill="rgba(255,255,255,.65)" font-size="12" data-i18n-svg="countryLegend">A,B = countries • T = treaty/standard layer</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2 data-i18n="stepsTitle">Step-by-step model (with equations)</h2>
+    <p class="muted" data-i18n="stepsSubtitle">Each step is short. Expand details to see the math and how it connects to the “sandwich” idea.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">1</div>
+            <div>
+              <h3 data-i18n="s1t">Represent each country’s economic-legal rule space</h3>
+              <div class="muted small" data-i18n="s1d">Build the set of relevant laws, treaties, constraints, precedents.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--accent)"></span><span data-i18n="tagModel">Model</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s1p1">
+            Let countries be c ∈ C. For each country define a set of laws L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. Each law is mapped into a decision-range operator for a scenario s:
+          </p>
+          <span class="eq">R_ℓ(s) = [ r̲_ℓ(s), r̄_ℓ(s) ]</span>
+          <p class="muted small" data-i18n="s1p2">
+            Think of r as a vector: fines, compensation, restrictions, trade limits, interest, etc.
+          </p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">2</div>
+            <div>
+              <h3 data-i18n="s2t">Turn a dispute into scenarios (nodes) and reasoning moves (edges)</h3>
+              <div class="muted small" data-i18n="s2d">Graph theory: every legal “if-then” becomes a transition.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--accent2)"></span><span data-i18n="tagGraph">Graph</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s2p1">
+            Build a directed graph G=(V,E). Each node s ∈ V is a scenario/state (facts + classification), and edges E are allowed reasoning steps.
+          </p>
+          <span class="eq">p: s_start → s₂ → … → s_end</span>
+          <p class="muted small" data-i18n="s2p2">
+            Each path p is one coherent legal storyline from start to decision.
+          </p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">3</div>
+            <div>
+              <h3 data-i18n="s3t">Build the “sandwich” bounds for each scenario</h3>
+              <div class="muted small" data-i18n="s3d">Two concentric circles: lower bound and upper bound.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--gold)"></span><span data-i18n="tagBounds">Bounds</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s3p1">After selecting relevant laws for the scenario, aggregate them into a single lower and upper bound:</p>
+          <span class="eq">R̲(s) = A({ r̲_ℓ(s) }ℓ) ,  R̄(s) = A({ r̄_ℓ(s) }ℓ)</span>
+          <p data-i18n="s3p2">The final decision r(s) must satisfy:</p>
+          <span class="eq">R̲(s) ≤ r(s) ≤ R̄(s)</span>
+          <p class="muted small" data-i18n="s3p3">This is the “sandwich”: the decision is always trapped between two legal slices.</p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">4</div>
+            <div>
+              <h3 data-i18n="s4t">Integrate laws across countries (international layer)</h3>
+              <div class="muted small" data-i18n="s4d">Find what is jointly permitted, or use weighted blending.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--ok)"></span><span data-i18n="tagIntegrate">Integrate</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s4p1">For a dispute involving countries C_s ⊆ C, the joint law-space is:</p>
+          <span class="eq">L_joint = ⋃_{c∈C_s} L_c</span>
+          <p data-i18n="s4p2">Conservative integration uses intersection:</p>
+          <span class="eq">R_joint(s) = ⋂_{ℓ∈L_joint} R_ℓ(s)</span>
+          <p data-i18n="s4p3">Alternatively, a weighted blend:</p>
+          <span class="eq">R_joint(s) = [ Σ w_ℓ r̲_ℓ(s) ,  Σ w_ℓ r̄_ℓ(s) ] ,  Σ w_ℓ = 1</span>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">5</div>
+            <div>
+              <h3 data-i18n="s5t">Score paths and choose the “tastiest sandwich”</h3>
+              <div class="muted small" data-i18n="s5d">Optimization over paths: fairness, stability, clarity, time, risk.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--warn)"></span><span data-i18n="tagOptimize">Optimize</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s5p1">Define a utility function for a path p:</p>
+          <span class="eq">U(p) = α·Fairness(p) − β·Contradictions(p) − γ·Time(p) − δ·Risk(p)</span>
+          <p data-i18n="s5p2">Choose the best path:</p>
+          <span class="eq">p* = argmax_{p∈P} U(p)</span>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">6</div>
+            <div>
+              <h3 data-i18n="s6t">Optional: transparent weighted lottery over legal space</h3>
+              <div class="muted small" data-i18n="s6d">Reduces capture and manipulation while favoring quality paths.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--bad)"></span><span data-i18n="tagLottery">Lottery</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s6p1">Instead of always picking p*, sample p with:</p>
+          <span class="eq">Pr(p) ∝ exp( −λ · Cost(p) )</span>
+          <p class="muted small" data-i18n="s6p2">Because the rule is public, everyone can verify randomness and weights.</p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">7</div>
+            <div>
+              <h3 data-i18n="s7t">Record the decision as an auditable event (precedent memory)</h3>
+              <div class="muted small" data-i18n="s7d">A public log: which laws, which bounds, which path, and why.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--ok)"></span><span data-i18n="tagAudit">Audit</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showStructure">Show structure</summary>
+          <span class="eq">Event = {scenario_id, countries, laws_used, R̲(s), R̄(s), chosen_path, chosen_decision, explanation, timestamp}</span>
+          <p class="muted small" data-i18n="s7p1">This creates transparency, reproducibility, and learning.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2 data-i18n="demoTitle">Tiny demo (conceptual)</h2>
+    <div class="twoCol">
+      <div>
+        <p class="muted" data-i18n="demoSubtitle">A toy example showing how bounds appear and how paths compete.</p>
+        <p class="small muted" data-i18n="demoNote">
+          In real systems, nodes represent legal classifications and factual findings; edges represent allowed reasoning transitions.
+          Each node (and each path) carries bounds — then we optimize or lottery-sample within those bounds.
+        </p>
+        <details>
+          <summary data-i18n="demoShow">Show a toy “sandwich” table</summary>
+          <span class="eq">Scenario s₁:  R̲=10  ≤  r  ≤  R̄=50</span>
+          <span class="eq">Scenario s₂:  R̲=15  ≤  r  ≤  R̄=40</span>
+          <span class="eq">Path pA = (s₁→s₂): choose r that stays inside both bounds and maximizes U(p)</span>
+        </details>
+      </div>
+
+      <div class="note">
+        <b data-i18n="randTitle">Transparent “lottery” demo (offline)</b>
+        <p class="muted small" data-i18n="randBody">Enter a seed. The same seed always produces the same sampled path — verifiable by everyone.</p>
+        <div class="row">
+          <input id="seed" class="mono" placeholder="seed (e.g., 2025-12-13)" style="flex:1" data-i18n-placeholder="seedPh">
+          <button class="btn primary" id="drawBtn" data-i18n="drawBtn">Draw</button>
+        </div>
+        <p class="small mono" id="drawOut" style="margin-top:10px"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="card" style="margin-top:16px">
+    <div class="row" style="justify-content:space-between">
+      <span class="muted small" data-i18n="footerLeft">Single-file HTML • Fully offline • Built-in languages + unlimited offline packs</span>
+      <span class="muted small">© Concept model</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========= Offline multilingual system (no internet) ========= */
+const toastEl = document.getElementById("toast");
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(toastEl._t);
+  toastEl._t = setTimeout(()=>toastEl.style.display="none", 4200);
+}
+function isRTL(lang){ return ["ar","he","fa","ur","ps","sd","ckb"].includes(lang); }
+function setDir(lang){
+  document.documentElement.setAttribute("dir", isRTL(lang) ? "rtl" : "ltr");
+  document.documentElement.setAttribute("lang", lang);
+}
+
+/* Collect EN source as fallback */
+const SOURCE = {};
+document.querySelectorAll("[data-i18n]").forEach(el=> SOURCE[el.getAttribute("data-i18n")] = el.innerHTML.trim() );
+document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+  SOURCE["__ph__"+el.getAttribute("data-i18n-placeholder")] = el.getAttribute("placeholder") || "";
+});
+const SVG_SOURCE = {};
+document.querySelectorAll("[data-i18n-svg]").forEach(el=> SVG_SOURCE[el.getAttribute("data-i18n-svg")] = el.textContent.trim() );
+
+/* Built-in languages requested: FR/ES/RU + HE/AR/EN */
+const BUILTIN = {
+  "en": { "__meta__": { name:"English", dir:"ltr" }, ...SOURCE,
+          ...Object.fromEntries(Object.entries(SVG_SOURCE).map(([k,v])=>["__svg__"+k,v])) },
+
+  "he": { "__meta__": { name:"עברית (Hebrew)", dir:"rtl" },
+    "title":"חוקה כלכלית בינלאומית — מודל \"סנדוויץ׳ גרפי\"",
+    "subtitle":"אופליין מלא. שפות מובנות: EN/HE/AR/FR/ES/RU + חבילות שפה אופליין ללא הגבלה.",
+    "equationsGold":"המשוואות בצבע זהב",
+    "toggleTheme":"החלף ערכת נושא",
+    "__ph__searchLanguage":"חפש שפה…",
+    "applyLanguage":"החל שפה",
+    "reset":"איפוס",
+    "overviewTitle":"סקירה (מה שתיארת)",
+    "overviewP1":"לכל מדינה יש \"חוקה\" כלכלית־משפטית משלה (חוקים/אמנות/מגבלות). לכל סכסוך משלבים חוקים בין מדינות, בונים גרף מסלולי הנמקה משפטית, ולכל תרחיש מגדירים \"סנדוויץ׳\" של שני גבולות קונצנטריים: גבול תחתון (החלטה מינימלית מותרת) וגבול עליון (החלטה מקסימלית מותרת).",
+    "overviewP2":"אחר כך בוחרים מסלול אופטימלי מבין ה\"סנדוויצ׳ים\" הטובים (הוגן, יציב, ניתן להסבר). אופציונלית אפשר לבחור מסלול בהגרלה שקופה ומשוקללת כדי לצמצם הטיות ומניפולציה.",
+    "kpi1t":"גבול תחתון","kpi1d":"סעד/סנקציה מינימליים שמותר להטיל.",
+    "kpi2t":"גבול עליון","kpi2d":"סעד/סנקציה מקסימליים שמותר להטיל.",
+    "kpi3t":"מסלולי גרף","kpi3d":"הנמקה משפטית כצמתים וקשתות.",
+    "kpi4t":"רישום שקוף","kpi4d":"כל החלטה נשמרת כאירוע בר־ביקורת.",
+    "offlineTitle":"\"כל השפות\" אופליין (חשוב)",
+    "offlineBody":"תרגום אופליין אמיתי לכל שפות העולם בקובץ יחיד אינו מעשי בלי מאגר/מודל ענק. הקובץ הזה כולל שפות מרכזיות מובנות, ומאפשר לייבא חבילות JSON מקומיות לכל שפה נוספת — עדיין אופליין לחלוטין.",
+    "packSummary":"איך להוסיף כל שפה אופליין (חבילת שפה)",
+    "packBody":"יוצרים קובץ JSON שממפה מפתחות טקסט לטקסט מתורגם (יכול לכלול HTML). אחר כך לוחצים \"ייבוא חבילה\" ובוחרים את הקובץ. המשוואות אוניברסליות ולא משתנות.",
+    "exportEnglish":"ייצוא מפתחות באנגלית (JSON)",
+    "importPack":"ייבוא חבילה (JSON)",
+    "packFormatSummary":"דוגמה לפורמט חבילה",
+    "visualTitle":"אינטואיציה חזותית",
+    "visualSubtitle":"תרחיש תחום בין שני עיגולים + גרף מסלולי החלטה.",
+    "leg1":"טבעת גבול תחתון","leg2":"טבעת גבול עליון","leg3":"התכנסות להחלטה",
+    "mapTitle":"שכבת מדינות (תוספת חזותית)",
+    "mapBody":"אפשר להתייחס גם למדינות כצמתים: מדינה א׳ → שכבת אמנות/תקנים → מדינה ב׳. במערכת אמיתית נטען את סט החוקים לפי מדינה ממסד נתונים. כאן זו המחשה סימבולית (לא מפה גיאוגרפית).",
+    "stepsTitle":"מודל שלב־אחר־שלב (עם משוואות)",
+    "stepsSubtitle":"כל שלב קצר. פתח פירוט כדי לראות את המתמטיקה והחיבור ל\"סנדוויץ׳\".",
+    "s1t":"ייצוג מרחב חוקים לכל מדינה","s1d":"בונים סט חוקים/אמנות/מגבלות/תקדימים רלוונטיים.","tagModel":"מודל","showMath":"הצג משוואות והסבר",
+    "s1p1":"נסמן מדינות c ∈ C. לכל מדינה סט חוקים L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. כל חוק ממופה לטווח החלטה לתרחיש s:",
+    "s1p2":"חשוב על r כווקטור: קנסות, פיצוי, מגבלות, מגבלות סחר, ריבית וכו׳.",
+    "s2t":"המרת סכסוך לתרחישים (צמתים) ומעברים (קשתות)","s2d":"כל \"אם–אז\" משפטי הופך למעבר בגרף.","tagGraph":"גרף",
+    "s2p1":"נבנה גרף מכוון G=(V,E). צומת s ∈ V הוא מצב (עובדות + סיווג), וקשתות E הן צעדי הנמקה מותרים.",
+    "s2p2":"כל מסלול p הוא \"סיפור\" משפטי עקבי מהתחלה עד החלטה.",
+    "s3t":"בניית גבולות ה\"סנדוויץ׳\" לתרחיש","s3d":"שני עיגולים קונצנטריים: גבול תחתון וגבול עליון.","tagBounds":"גבולות",
+    "s3p1":"אחרי בחירת החוקים הרלוונטיים, מאגדים לגבול תחתון ועליון:",
+    "s3p2":"ההחלטה r(s) חייבת לקיים:",
+    "s3p3":"זהו ה\"סנדוויץ׳\": ההחלטה תמיד כלואה בין שתי פרוסות חוק.",
+    "s4t":"אינטגרציה בין מדינות (שכבה בינלאומית)","s4d":"מוצאים מה מותר במשותף או מיזוג משוקלל.","tagIntegrate":"אינטגרציה",
+    "s4p1":"לסכסוך שמעורבות בו מדינות C_s ⊆ C, מרחב החוקים המשותף:",
+    "s4p2":"אינטגרציה שמרנית: חיתוך:",
+    "s4p3":"או מיזוג משוקלל:",
+    "s5t":"דירוג מסלולים ובחירת ה\"סנדוויץ׳\" הטעים ביותר","s5d":"אופטימיזציה: הוגנות, יציבות, בהירות, זמן, סיכון.","tagOptimize":"אופטימיזציה",
+    "s5p1":"פונקציית תועלת למסלול p:","s5p2":"בוחרים את המסלול הטוב ביותר:",
+    "s6t":"אופציונלי: הגרלה שקופה ומשוקללת","s6d":"מצמצמת מניפולציה תוך העדפת מסלולים איכותיים.","tagLottery":"הגרלה",
+    "s6p1":"במקום לבחור תמיד p*, מדגמים p כך ש:","s6p2":"כיוון שהכלל ציבורי — כולם יכולים לאמת אקראיות ומשקולות.",
+    "s7t":"רישום ההחלטה כאירוע בר־ביקורת","s7d":"יומן ציבורי: אילו חוקים, אילו גבולות, איזה מסלול, ולמה.","tagAudit":"ביקורת","showStructure":"הצג מבנה",
+    "s7p1":"כך מתקבלים שקיפות, שחזור ולמידה.",
+    "demoTitle":"דמו קטן (קונספטואלי)",
+    "demoSubtitle":"דוגמה צעצוע שמראה איך מופיעים גבולות ואיך מסלולים מתחרים.",
+    "demoNote":"במערכות אמיתיות הצמתים מייצגים סיווגים משפטיים וממצאים עובדתיים; הקשתות מייצגות צעדי הנמקה מותרים. לכל צומת ולכל מסלול יש גבולות — ואז מבצעים אופטימיזציה או דגימה בהגרלה בתוך הגבולות.",
+    "demoShow":"הצג טבלת \"סנדוויץ׳\" צעצוע",
+    "randTitle":"דמו \"הגרלה\" שקופה (אופליין)",
+    "randBody":"הכנס seed. אותו seed תמיד יבחר אותו מסלול — ניתן לאימות ע\"י כולם.",
+    "__ph__seedPh":"seed (למשל 2025-12-13)",
+    "drawBtn":"הגרל",
+    "footerLeft":"קובץ HTML יחיד • אופליין מלא • שפות מובנות + חבילות שפה אופליין ללא הגבלה",
+    "__svg__upperBound":"גבול עליון","__svg__lowerBound":"גבול תחתון","__svg__scenario":"תרחיש","__svg__graphPaths":"מסלולי גרף = אפשרויות הנמקה משפטית",
+    "__svg__countryLegend":"A,B = מדינות • T = שכבת אמנות/תקנים"
+  },
+
+  "ar": { "__meta__": { name:"العربية (Arabic)", dir:"rtl" },
+    "title":"الدستور الاقتصادي الدولي — نموذج «ساندويتش الرسم البياني»",
+    "subtitle":"بدون إنترنت بالكامل. لغات مدمجة: EN/HE/AR/FR/ES/RU + حزم لغات محلية بلا حد.",
+    "equationsGold":"المعادلات باللون الذهبي",
+    "toggleTheme":"تبديل المظهر",
+    "__ph__searchLanguage":"ابحث عن لغة…",
+    "applyLanguage":"تطبيق اللغة",
+    "reset":"إعادة ضبط",
+    "overviewTitle":"نظرة عامة (كما وصفت)",
+    "overviewP1":"لكل دولة «دستور» اقتصادي-قانوني (قوانين/معاهدات/قيود). لأي نزاع ندمج القواعد بين الدول، نبني رسماً بيانياً لمسارات الاستدلال، ولكل سيناريو نحدد «ساندويتش» بحدّين متحدي المركز: حد أدنى (أقل قرار مسموح) وحد أعلى (أقصى قرار مسموح).",
+    "overviewP2":"ثم نختار مساراً أمثل بين أفضل «الساندويتشات» (عادل، مستقر، قابل للشرح). ويمكن أيضاً اختيار مسار عبر قرعة مُوزونة شفافة لتقليل التحيّز والتلاعب.",
+    "kpi1t":"الحد الأدنى","kpi1d":"أقل تعويض/عقوبة مسموح بها.",
+    "kpi2t":"الحد الأعلى","kpi2d":"أكبر تعويض/عقوبة مسموح بها.",
+    "kpi3t":"مسارات الرسم","kpi3d":"الاستدلال كنقاط وحواف.",
+    "kpi4t":"سجل شفاف","kpi4d":"كل قرار حدث قابل للتدقيق.",
+    "offlineTitle":"«كل اللغات» دون إنترنت (مهم)",
+    "offlineBody":"الترجمة دون إنترنت لكل لغات العالم داخل ملف واحد غير واقعية دون نموذج/بيانات ضخمة. هذا الملف يتضمن لغات رئيسية مدمجة ويدعم استيراد حزم JSON محلية لأي لغة إضافية — كل شيء دون إنترنت.",
+    "packSummary":"كيفية إضافة أي لغة دون إنترنت (حزمة لغة)",
+    "packBody":"أنشئ JSON يربط كل مفتاح بالنص المترجم (يمكن أن يحتوي HTML)، ثم استورد الملف. المعادلات عالمية ولا تتغير.",
+    "exportEnglish":"تصدير مفاتيح الإنجليزية (JSON)",
+    "importPack":"استيراد حزمة (JSON)",
+    "packFormatSummary":"مثال لصيغة الحزمة",
+    "visualTitle":"حدس بصري",
+    "visualSubtitle":"سيناريو محصور بين دائرتين + رسم لمسارات القرار.",
+    "leg1":"حلقة الحد الأدنى","leg2":"حلقة الحد الأعلى","leg3":"تقارب إلى قرار",
+    "mapTitle":"طبقة الدول (إضافة بصرية)",
+    "mapBody":"يمكن اعتبار الدول عقداً أيضاً: دولة A → طبقة المعاهدات/المعايير → دولة B. في نظام فعلي تُحمّل القواعد من قاعدة بيانات. هنا توضيح رمزي فقط (ليس خريطة جغرافية).",
+    "stepsTitle":"نموذج خطوة بخطوة (مع معادلات)",
+    "stepsSubtitle":"كل خطوة قصيرة. افتح التفاصيل لرؤية الرياضيات وربطها بفكرة «الساندويتش».",
+    "s1t":"تمثيل مساحة قواعد كل دولة","s1d":"بناء مجموعة القوانين/المعاهدات/القيود/السوابق.","tagModel":"نموذج","showMath":"عرض المعادلات والشرح",
+    "s1p1":"لتكن الدول c ∈ C. لكل دولة L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. كل قانون يُحوّل إلى نطاق قرار للسيناريو s:",
+    "s1p2":"اعتبر r متجهاً: غرامات، تعويضات، قيود، حدود تجارة، فوائد…",
+    "s2t":"تحويل النزاع إلى سيناريوهات وحواف","s2d":"كل «إذا-فإن» قانوني يصبح انتقالاً في الرسم.","tagGraph":"رسم",
+    "s2p1":"نبني رسماً موجهاً G=(V,E). العقدة s حالة (وقائع + تصنيف)، والحواف E خطوات مسموحة.",
+    "s2p2":"كل مسار p قصة قانونية متماسكة.",
+    "s3t":"بناء حدود «الساندويتش»","s3d":"دائرتان: حد أدنى وحد أعلى.","tagBounds":"حدود",
+    "s3p1":"بعد اختيار القوانين نُجمّع إلى حد أدنى وحد أعلى:",
+    "s3p2":"يجب أن يحقق القرار r(s):",
+    "s3p3":"هذا هو «الساندويتش»: القرار بين شريحتين من القانون.",
+    "s4t":"دمج القوانين بين الدول","s4d":"إيجاد المسموح المشترك أو مزج مُوزون.","tagIntegrate":"دمج",
+    "s4p1":"لنزاع يشمل C_s ⊆ C، مساحة القوانين المشتركة:",
+    "s4p2":"دمج محافظ: التقاطع:",
+    "s4p3":"أو مزج بالأوزان:",
+    "s5t":"تقييم المسارات واختيار الأفضل","s5d":"تحسين: عدالة، استقرار، وضوح، زمن، مخاطر.","tagOptimize":"تحسين",
+    "s5p1":"دالة المنفعة للمسار p:","s5p2":"اختر أفضل مسار:",
+    "s6t":"اختياري: قرعة مُوزونة شفافة","s6d":"تقلل التلاعب وتفضل المسارات الجيدة.","tagLottery":"قرعة",
+    "s6p1":"بدلاً من اختيار p* دائماً، نختار p حسب:","s6p2":"القاعدة عامة ويمكن للجميع التحقق.",
+    "s7t":"تسجيل القرار كحدث قابل للتدقيق","s7d":"سجل عام: القوانين والحدود والمسار ولماذا.","tagAudit":"تدقيق","showStructure":"عرض البنية",
+    "s7p1":"هذا يصنع شفافية وقابلية إعادة إنتاج وتعلم.",
+    "demoTitle":"عرض صغير (مفاهيمي)",
+    "demoSubtitle":"مثال بسيط يوضح الحدود وتنافس المسارات.",
+    "demoNote":"في الأنظمة الحقيقية: العقد = تصنيفات ونتائج واقعية؛ الحواف = انتقالات مسموحة. لكل عقدة/مسار حدود — ثم نحسن أو نختار بالقرعة داخلها.",
+    "demoShow":"عرض جدول «ساندويتش» بسيط",
+    "randTitle":"عرض «قرعة» شفافة (بدون إنترنت)",
+    "randBody":"أدخل seed. نفس seed يعطي نفس النتيجة دائماً — قابل للتحقق.",
+    "__ph__seedPh":"seed (مثال 2025-12-13)",
+    "drawBtn":"اسحب",
+    "footerLeft":"ملف HTML واحد • بدون إنترنت • لغات مدمجة + حزم محلية بلا حد",
+    "__svg__upperBound":"الحد الأعلى","__svg__lowerBound":"الحد الأدنى","__svg__scenario":"سيناريو","__svg__graphPaths":"مسارات الرسم = خيارات الاستدلال",
+    "__svg__countryLegend":"A,B = دول • T = طبقة معاهدات/معايير"
+  },
+
+  "fr": { "__meta__": { name:"Français (French)", dir:"ltr" },
+    "title":"Constitution économique internationale — Modèle « Sandwich de graphe »",
+    "subtitle":"Entièrement hors ligne. Langues intégrées : EN/HE/AR/FR/ES/RU + packs JSON illimités.",
+    "equationsGold":"Les équations sont en or",
+    "toggleTheme":"Changer le thème",
+    "__ph__searchLanguage":"Rechercher une langue…",
+    "applyLanguage":"Appliquer la langue",
+    "reset":"Réinitialiser",
+    "overviewTitle":"Vue d’ensemble (ce que tu as décrit)",
+    "overviewP1":"Chaque pays possède sa propre « constitution » économico‑juridique (lois/traités/contraintes). Pour un litige, on intègre les règles entre pays, on construit un graphe de chemins de raisonnement, et pour chaque scénario on définit un « sandwich » de deux bornes concentriques : borne inférieure (décision minimale autorisée) et borne supérieure (décision maximale autorisée).",
+    "overviewP2":"Ensuite, on choisit un chemin optimal parmi les meilleurs « sandwiches » (juste, stable, explicable). Optionnellement, on peut tirer un chemin via une loterie pondérée transparente pour réduire biais et manipulation.",
+    "kpi1t":"Borne inférieure","kpi1d":"Réparation/sanction minimale autorisée.",
+    "kpi2t":"Borne supérieure","kpi2d":"Réparation/sanction maximale autorisée.",
+    "kpi3t":"Chemins de graphe","kpi3d":"Raisonnement juridique en nœuds et arêtes.",
+    "kpi4t":"Trace transparente","kpi4d":"Chaque décision devient un événement auditable.",
+    "offlineTitle":"« Toutes les langues » hors ligne (important)",
+    "offlineBody":"Traduire hors ligne dans toutes les langues du monde dans un seul HTML n’est pas réaliste sans données/modèle énormes. Ce fichier inclut des langues clés et permet d’importer un nombre illimité de packs JSON locaux — toujours hors ligne.",
+    "packSummary":"Ajouter n’importe quelle langue hors ligne (pack)",
+    "packBody":"Créez un JSON qui associe chaque clé au texte HTML traduit, puis importez le fichier. Les équations sont universelles et ne changent pas.",
+    "exportEnglish":"Exporter les clés anglaises (JSON)",
+    "importPack":"Importer un pack (JSON)",
+    "packFormatSummary":"Exemple de format",
+    "visualTitle":"Intuition visuelle",
+    "visualSubtitle":"Un scénario borné par deux cercles concentriques + un graphe de chemins.",
+    "leg1":"Anneau borne inférieure","leg2":"Anneau borne supérieure","leg3":"Décision convergente",
+    "mapTitle":"Couche pays (ajout visuel)",
+    "mapBody":"On peut aussi modéliser les pays comme nœuds : Pays A → couche traités/standards → Pays B. En production, les règles viendraient d’une base. Ici c’est une illustration symbolique (non géographique).",
+    "stepsTitle":"Modèle pas à pas (avec équations)",
+    "stepsSubtitle":"Chaque étape est courte. Dépliez pour voir les maths et le lien au « sandwich ».",
+    "s1t":"Représenter l’espace de règles de chaque pays","s1d":"Construire l’ensemble des lois/traités/contraintes/précédents.","tagModel":"Modèle","showMath":"Voir maths & explication",
+    "s1p1":"Pays c ∈ C. Pour chaque pays L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. Chaque loi devient un intervalle de décision pour le scénario s :",
+    "s1p2":"Voir r comme un vecteur : amendes, compensation, restrictions, limites commerciales, intérêts, etc.",
+    "s2t":"Transformer le litige en scénarios (nœuds) et transitions (arêtes)","s2d":"Chaque « si‑alors » juridique devient une transition.","tagGraph":"Graphe",
+    "s2p1":"Graphe orienté G=(V,E). Chaque nœud s est un état (faits + qualification), et E des pas permis.",
+    "s2p2":"Chaque chemin p est une histoire juridique cohérente.",
+    "s3t":"Construire les bornes du « sandwich »","s3d":"Deux cercles : borne basse et borne haute.","tagBounds":"Bornes",
+    "s3p1":"Après sélection, on agrège en borne basse et borne haute :",
+    "s3p2":"La décision r(s) doit vérifier :",
+    "s3p3":"C’est le « sandwich » : la décision est coincée entre deux tranches de droit.",
+    "s4t":"Intégrer les lois entre pays","s4d":"Trouver le permis commun ou mélanger avec des poids.","tagIntegrate":"Intégrer",
+    "s4p1":"Pour C_s ⊆ C, espace conjoint :",
+    "s4p2":"Conservateur : intersection :",
+    "s4p3":"Ou mélange pondéré :",
+    "s5t":"Noter les chemins et choisir le meilleur « sandwich »","s5d":"Optimisation : justice, stabilité, clarté, temps, risque.","tagOptimize":"Optimiser",
+    "s5p1":"Utilité du chemin p :","s5p2":"Choisir le meilleur chemin :",
+    "s6t":"Optionnel : loterie pondérée transparente","s6d":"Réduit capture/manipulation tout en favorisant les bons chemins.","tagLottery":"Loterie",
+    "s6p1":"Au lieu de toujours p*, tirer p selon :","s6p2":"Règle publique : hasard et poids vérifiables.",
+    "s7t":"Enregistrer la décision comme événement auditable","s7d":"Journal public : lois, bornes, chemin, pourquoi.","tagAudit":"Audit","showStructure":"Voir la structure",
+    "s7p1":"Cela crée transparence, reproductibilité et apprentissage.",
+    "demoTitle":"Mini démo (conceptuelle)",
+    "demoSubtitle":"Exemple jouet : bornes et concurrence de chemins.",
+    "demoNote":"En réel : nœuds = qualifications et constats; arêtes = transitions permises. Chaque nœud/chemin a des bornes — puis on optimise ou on tire au sort dedans.",
+    "demoShow":"Afficher une table « sandwich »",
+    "randTitle":"Démo de « loterie » transparente (hors ligne)",
+    "randBody":"Entrez un seed. Le même seed donne toujours le même résultat — vérifiable.",
+    "__ph__seedPh":"seed (ex. 2025-12-13)",
+    "drawBtn":"Tirer",
+    "footerLeft":"HTML en un fichier • Totalement hors ligne • Langues intégrées + packs JSON",
+    "__svg__upperBound":"BORNE SUPÉRIEURE","__svg__lowerBound":"BORNE INFÉRIEURE","__svg__scenario":"Scénario","__svg__graphPaths":"Chemins du graphe = options juridiques",
+    "__svg__countryLegend":"A,B = pays • T = couche traités/standards"
+  },
+
+  "es": { "__meta__": { name:"Español (Spanish)", dir:"ltr" },
+    "title":"Constitución económica internacional — Modelo «Sándwich de grafo»",
+    "subtitle":"Totalmente offline. Idiomas integrados: EN/HE/AR/FR/ES/RU + packs JSON ilimitados.",
+    "equationsGold":"Las ecuaciones son doradas",
+    "toggleTheme":"Cambiar tema",
+    "__ph__searchLanguage":"Buscar idioma…",
+    "applyLanguage":"Aplicar idioma",
+    "reset":"Restablecer",
+    "overviewTitle":"Resumen (lo que describiste)",
+    "overviewP1":"Cada país tiene su “constitución” económico‑legal (leyes/tratados/limitaciones). Para una disputa, integramos reglas entre países, construimos un grafo de caminos de razonamiento y para cada escenario definimos un “sándwich” con dos límites concéntricos: límite inferior (mínimo permitido) y límite superior (máximo permitido).",
+    "overviewP2":"Luego elegimos una ruta óptima entre los mejores “sándwiches” (justa, estable, explicable). Opcionalmente, podemos muestrear una ruta con una lotería ponderada transparente para reducir sesgo y manipulación.",
+    "kpi1t":"Límite inferior","kpi1d":"Remedio/sanción mínima permitida.",
+    "kpi2t":"Límite superior","kpi2d":"Remedio/sanción máxima permitida.",
+    "kpi3t":"Rutas del grafo","kpi3d":"Razonamiento legal como nodos y aristas.",
+    "kpi4t":"Registro transparente","kpi4d":"Cada decisión queda auditable.",
+    "offlineTitle":"“Todos los idiomas” offline (importante)",
+    "offlineBody":"Traducir offline a todos los idiomas del mundo en un solo HTML no es realista sin un modelo/datos enormes. Este archivo incluye idiomas clave y permite importar packs JSON locales ilimitados — siempre offline.",
+    "packSummary":"Cómo añadir CUALQUIER idioma offline (pack)",
+    "packBody":"Crea un JSON que mapee cada clave a su texto HTML traducido y luego importa el archivo. Las ecuaciones son universales.",
+    "exportEnglish":"Exportar claves en inglés (JSON)",
+    "importPack":"Importar pack (JSON)",
+    "packFormatSummary":"Ejemplo de formato",
+    "visualTitle":"Intuición visual",
+    "visualSubtitle":"Un escenario acotado por dos círculos concéntricos + un grafo de rutas.",
+    "leg1":"Anillo límite inferior","leg2":"Anillo límite superior","leg3":"Decisión convergente",
+    "mapTitle":"Capa de países (extra visual)",
+    "mapBody":"También puedes modelar países como nodos: País A → capa de tratados/estándares → País B. En producción, las reglas vendrían de una base de datos. Aquí es ilustración simbólica (no geográfica).",
+    "stepsTitle":"Modelo paso a paso (con ecuaciones)",
+    "stepsSubtitle":"Cada paso es corto. Abre detalles para ver matemáticas y relación con el “sándwich”.",
+    "s1t":"Representar el espacio de reglas de cada país","s1d":"Construir leyes/tratados/limitaciones/precedentes relevantes.","tagModel":"Modelo","showMath":"Ver matemáticas y explicación",
+    "s1p1":"Países c ∈ C. Para cada país L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. Cada ley se convierte en un intervalo para el escenario s:",
+    "s1p2":"Piensa r como vector: multas, compensación, restricciones, límites comerciales, interés, etc.",
+    "s2t":"Convertir el litigio en escenarios (nodos) y transiciones (aristas)","s2d":"Cada “si‑entonces” legal es una transición.","tagGraph":"Grafo",
+    "s2p1":"Grafo dirigido G=(V,E). Nodo s = estado (hechos + clasificación), E = pasos permitidos.",
+    "s2p2":"Cada ruta p es una historia legal coherente.",
+    "s3t":"Construir límites del “sándwich”","s3d":"Dos círculos: límite inferior y superior.","tagBounds":"Límites",
+    "s3p1":"Tras seleccionar leyes, agregamos a límite inferior y superior:",
+    "s3p2":"La decisión r(s) debe cumplir:",
+    "s3p3":"Este es el “sándwich”: la decisión queda entre dos capas legales.",
+    "s4t":"Integrar leyes entre países","s4d":"Encontrar lo permitido en común o mezclar con pesos.","tagIntegrate":"Integrar",
+    "s4p1":"Para C_s ⊆ C, espacio conjunto:",
+    "s4p2":"Conservador: intersección:",
+    "s4p3":"O mezcla ponderada:",
+    "s5t":"Puntuar rutas y elegir el mejor “sándwich”","s5d":"Optimizar: justicia, estabilidad, claridad, tiempo, riesgo.","tagOptimize":"Optimizar",
+    "s5p1":"Utilidad para la ruta p:","s5p2":"Elegir la mejor ruta:",
+    "s6t":"Opcional: lotería ponderada transparente","s6d":"Reduce captura/manipulación favoreciendo rutas buenas.","tagLottery":"Lotería",
+    "s6p1":"En vez de siempre p*, muestrear p según:",
+    "s6p2":"Regla pública: aleatoriedad y pesos verificables.",
+    "s7t":"Registrar la decisión como evento auditable","s7d":"Log público: leyes, límites, ruta, por qué.","tagAudit":"Auditoría","showStructure":"Ver estructura",
+    "s7p1":"Esto crea transparencia, reproducibilidad y aprendizaje.",
+    "demoTitle":"Mini demo (conceptual)",
+    "demoSubtitle":"Ejemplo juguete: límites y competencia de rutas.",
+    "demoNote":"En sistemas reales: nodos = clasificaciones y hallazgos; aristas = transiciones. Cada nodo/ruta tiene límites — luego optimizamos o sorteamos dentro.",
+    "demoShow":"Mostrar una tabla “sándwich”",
+    "randTitle":"Demo de “lotería” transparente (offline)",
+    "randBody":"Introduce un seed. El mismo seed siempre da el mismo resultado — verificable.",
+    "__ph__seedPh":"seed (ej. 2025-12-13)",
+    "drawBtn":"Sortear",
+    "footerLeft":"HTML en un archivo • Totalmente offline • Idiomas integrados + packs JSON",
+    "__svg__upperBound":"LÍMITE SUPERIOR","__svg__lowerBound":"LÍMITE INFERIOR","__svg__scenario":"Escenario","__svg__graphPaths":"Rutas del grafo = opciones legales",
+    "__svg__countryLegend":"A,B = países • T = tratados/estándares"
+  },
+
+  "ru": { "__meta__": { name:"Русский (Russian)", dir:"ltr" },
+    "title":"Международная экономическая конституция — модель «Граф‑сэндвич»",
+    "subtitle":"Полностью офлайн. Встроенные языки: EN/HE/AR/FR/ES/RU + неограниченные JSON‑пакеты.",
+    "equationsGold":"Уравнения — золотые",
+    "toggleTheme":"Сменить тему",
+    "__ph__searchLanguage":"Поиск языка…",
+    "applyLanguage":"Применить язык",
+    "reset":"Сброс",
+    "overviewTitle":"Обзор (как вы описали)",
+    "overviewP1":"У каждой страны есть экономико‑правовая «конституция» (законы/договоры/ограничения). Для спора мы интегрируем правила между странами, строим граф путей рассуждения и для каждого сценария задаём «сэндвич» из двух концентрических границ: нижняя (минимально допустимое решение) и верхняя (максимально допустимое решение).",
+    "overviewP2":"Затем выбираем оптимальный путь среди лучших «сэндвичей» (справедливый, стабильный, объяснимый). Опционально можно выбирать путь по прозрачной взвешенной лотерее, уменьшая предвзятость и манипуляции.",
+    "kpi1t":"Нижняя граница","kpi1d":"Минимально допустимая мера/санкция.",
+    "kpi2t":"Верхняя граница","kpi2d":"Максимально допустимая мера/санкция.",
+    "kpi3t":"Пути графа","kpi3d":"Рассуждение как узлы и рёбра.",
+    "kpi4t":"Прозрачная запись","kpi4d":"Каждое решение — аудитируемое событие.",
+    "offlineTitle":"«Все языки» офлайн (важно)",
+    "offlineBody":"Полный офлайн‑перевод на все языки мира в одном HTML нереалистичен без огромных данных/модели. Этот файл включает ключевые языки и поддерживает импорт неограниченных локальных JSON‑паков — всё равно офлайн.",
+    "packSummary":"Как добавить ЛЮБОЙ язык офлайн (пакет)",
+    "packBody":"Создайте JSON, сопоставляющий каждый ключ переведённому HTML‑тексту, затем импортируйте файл. Уравнения универсальны.",
+    "exportEnglish":"Экспорт ключей (англ.) JSON",
+    "importPack":"Импорт пакета (JSON)",
+    "packFormatSummary":"Пример формата",
+    "visualTitle":"Визуальная интуиция",
+    "visualSubtitle":"Сценарий между двумя концентрическими кругами + граф путей.",
+    "leg1":"Кольцо нижней границы","leg2":"Кольцо верхней границы","leg3":"Схождение к решению",
+    "mapTitle":"Слой стран (визуальное дополнение)",
+    "mapBody":"Страны можно тоже считать узлами: Страна A → слой договоров/стандартов → Страна B. В реальной системе правила загружались бы из БД. Здесь — символическая схема (не географическая).",
+    "stepsTitle":"Пошаговая модель (с уравнениями)",
+    "stepsSubtitle":"Шаги короткие. Раскройте детали, чтобы увидеть математику и связь с «сэндвичем».",
+    "s1t":"Представить пространство правил каждой страны","s1d":"Собрать законы/договоры/ограничения/прецеденты.","tagModel":"Модель","showMath":"Показать математику и объяснение",
+    "s1p1":"Страны c ∈ C. Для каждой страны L_c = {ℓ_{c,1}, ℓ_{c,2}, …}. Каждый закон превращается в интервал решения для сценария s:",
+    "s1p2":"Считайте r вектором: штрафы, компенсации, ограничения, торговые лимиты, проценты и т.д.",
+    "s2t":"Преобразовать спор в сценарии (узлы) и переходы (рёбра)","s2d":"Каждое «если‑то» — переход в графе.","tagGraph":"Граф",
+    "s2p1":"Ориентированный граф G=(V,E). Узел s — состояние (факты + классификация), E — допустимые шаги.",
+    "s2p2":"Каждый путь p — связная правовая история.",
+    "s3t":"Построить границы «сэндвича»","s3d":"Два круга: нижняя и верхняя границы.","tagBounds":"Границы",
+    "s3p1":"После выбора законов агрегируем в нижнюю и верхнюю границы:",
+    "s3p2":"Итоговое решение r(s) должно удовлетворять:",
+    "s3p3":"Это «сэндвич»: решение всегда между двумя слоями права.",
+    "s4t":"Интегрировать законы между странами","s4d":"Найти совместно допустимое или смешать по весам.","tagIntegrate":"Интеграция",
+    "s4p1":"Для C_s ⊆ C совместное пространство:",
+    "s4p2":"Консервативно: пересечение:",
+    "s4p3":"Или взвешенное смешивание:",
+    "s5t":"Оценить пути и выбрать лучший «сэндвич»","s5d":"Оптимизация: справедливость, стабильность, ясность, время, риск.","tagOptimize":"Оптимизация",
+    "s5p1":"Полезность пути p:","s5p2":"Выбрать лучший путь:",
+    "s6t":"Опционально: прозрачная взвешенная лотерея","s6d":"Снижает манипуляции, предпочитая хорошие пути.","tagLottery":"Лотерея",
+    "s6p1":"Вместо всегда p*, выбирать p по:","s6p2":"Правило публично — веса и случайность проверяемы.",
+    "s7t":"Записать решение как аудитируемое событие","s7d":"Публичный лог: законы, границы, путь, почему.","tagAudit":"Аудит","showStructure":"Показать структуру",
+    "s7p1":"Это даёт прозрачность, воспроизводимость и обучение.",
+    "demoTitle":"Мини‑демо (концептуально)",
+    "demoSubtitle":"Игрушечный пример: границы и конкуренция путей.",
+    "demoNote":"В реальности: узлы = правовые классификации и факты; рёбра = допустимые переходы. У каждого узла/пути есть границы — затем оптимизация или жеребьёвка внутри них.",
+    "demoShow":"Показать «сэндвич»-таблицу",
+    "randTitle":"Демо «лотереи» (офлайн)",
+    "randBody":"Введите seed. Один и тот же seed всегда даёт тот же результат — проверяемо.",
+    "__ph__seedPh":"seed (напр. 2025-12-13)",
+    "drawBtn":"Жеребьёвка",
+    "footerLeft":"Один HTML • Полностью офлайн • Встроенные языки + JSON‑пакеты",
+    "__svg__upperBound":"ВЕРХНЯЯ ГРАНИЦА","__svg__lowerBound":"НИЖНЯЯ ГРАНИЦА","__svg__scenario":"Сценарий","__svg__graphPaths":"Пути графа = варианты рассуждения",
+    "__svg__countryLegend":"A,B = страны • T = договоры/стандарты"
+  }
+};
+
+/* runtime packs */
+const RUNTIME_PACKS = {};
+
+/* UI */
+const langSelect = document.getElementById("langSelect");
+const langSearch = document.getElementById("langSearch");
+
+function listAllLangs(){
+  const base = Object.keys(BUILTIN).map(code => ({code, name:(BUILTIN[code].__meta__||{}).name || code}));
+  const imported = Object.keys(RUNTIME_PACKS).map(code=>{
+    const meta = RUNTIME_PACKS[code].__meta__ || {};
+    return {code, name: meta.name || `Pack: ${code}`};
+  });
+  return [...base, ...imported].sort((a,b)=>a.name.localeCompare(b.name));
+}
+function renderLangOptions(filter=""){
+  langSelect.innerHTML = "";
+  const f = filter.trim().toLowerCase();
+  listAllLangs()
+    .filter(x => !f || x.name.toLowerCase().includes(f) || x.code.toLowerCase().includes(f))
+    .forEach(x=>{
+      const opt = document.createElement("option");
+      opt.value = x.code;
+      opt.textContent = `${x.name} — [${x.code}]`;
+      langSelect.appendChild(opt);
+    });
+  const saved = localStorage.getItem("lang_offline_full") || "en";
+  if([...langSelect.options].some(o=>o.value===saved)) langSelect.value = saved;
+}
+renderLangOptions();
+langSearch.addEventListener("input", ()=>renderLangOptions(langSearch.value));
+
+function getPack(lang){
+  return BUILTIN[lang] || RUNTIME_PACKS[lang] || BUILTIN["en"];
+}
+
+function applyLang(lang){
+  const pack = getPack(lang);
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    el.innerHTML = (pack[k] ?? SOURCE[k] ?? el.innerHTML);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const k = "__ph__"+el.getAttribute("data-i18n-placeholder");
+    el.setAttribute("placeholder", pack[k] ?? SOURCE[k] ?? "");
+  });
+  document.querySelectorAll("[data-i18n-svg]").forEach(el=>{
+    const k = "__svg__"+el.getAttribute("data-i18n-svg");
+    el.textContent = pack[k] ?? SVG_SOURCE[el.getAttribute("data-i18n-svg")] ?? el.textContent;
+  });
+
+  setDir(lang);
+}
+
+/* theme */
+const themeBtn = document.getElementById("themeBtn");
+function applyTheme(t){ document.documentElement.setAttribute("data-theme", t); localStorage.setItem("theme_offline_full", t); }
+applyTheme(localStorage.getItem("theme_offline_full") || "dark");
+themeBtn.addEventListener("click", ()=>{
+  applyTheme(document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark");
+});
+
+/* buttons */
+document.getElementById("applyBtn").addEventListener("click", ()=>{
+  const lang = langSelect.value;
+  localStorage.setItem("lang_offline_full", lang);
+  applyLang(lang);
+  toast("Language applied (offline).");
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  localStorage.setItem("lang_offline_full","en");
+  langSelect.value = "en";
+  applyLang("en");
+  toast("Reset.");
+});
+
+/* export template */
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const payload = {
+    "__meta__": { lang:"xx", name:"Your Language Name" },
+    ...SOURCE,
+    ...Object.fromEntries(Object.entries(SVG_SOURCE).map(([k,v])=>["__svg__"+k, v])),
+    ...Object.fromEntries(Object.entries(SOURCE).filter(([k])=>k.startsWith("__ph__"))),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "language_pack_template.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Exported template JSON.");
+});
+
+/* import pack */
+const importFile = document.getElementById("importFile");
+const packStatus = document.getElementById("packStatus");
+function updatePackStatus(){ packStatus.textContent = "packs: " + Object.keys(RUNTIME_PACKS).length; }
+updatePackStatus();
+
+importFile.addEventListener("change", async (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  try{
+    const json = JSON.parse(await file.text());
+    const meta = json.__meta__ || {};
+    const lang = meta.lang || meta.code || "xx";
+    RUNTIME_PACKS[lang] = json;
+    updatePackStatus();
+    renderLangOptions(langSearch.value);
+    toast(`Imported pack: ${meta.name || lang} [${lang}]`);
+  }catch(err){
+    console.error(err);
+    toast("Failed to import pack. Ensure valid JSON with __meta__.lang.");
+  }finally{
+    importFile.value = "";
+  }
+});
+
+/* deterministic lottery demo */
+function xmur3(str){
+  for(var i=0,h=1779033703^str.length;i<str.length;i++){
+    h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;
+  }
+  return function(){
+    h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);
+    return (h^h>>>16)>>>0;
+  }
+}
+function mulberry32(a){
+  return function(){
+    var t=a+=0x6D2B79F5;
+    t=Math.imul(t^t>>>15, t|1);
+    t^=t+Math.imul(t^t>>>7, t|61);
+    return ((t^t>>>14)>>>0)/4294967296;
+  }
+}
+document.getElementById("drawBtn").addEventListener("click", ()=>{
+  const seed = (document.getElementById("seed").value || "seed").trim();
+  const h = xmur3(seed)();
+  const rand = mulberry32(h);
+
+  // toy paths with toy weights
+  const paths = [
+    {name:"pA (S→A→D)", w: 0.55},
+    {name:"pB (S→B→D)", w: 0.35},
+    {name:"pC (S→A→B→D)", w: 0.10},
+  ];
+  const r = rand();
+  let acc = 0, chosen = paths[0].name;
+  for(const p of paths){
+    acc += p.w;
+    if(r <= acc){ chosen = p.name; break; }
+  }
+  document.getElementById("drawOut").textContent =
+    `seed="${seed}"  hash=${h}  r=${r.toFixed(6)}  →  chosen: ${chosen}`;
+});
+
+/* apply saved lang on load */
+applyLang(localStorage.getItem("lang_offline_full") || "en");
+</script>
+</body>
+</html>

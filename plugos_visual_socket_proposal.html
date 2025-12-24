@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>שקע חזותי פלוטוס – הצעת מודל תקשורת חזותית לבית חכם</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            direction: rtl;
+            text-align: right;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #eef4ff, #f9ffff);
+            color: #222;
+        }
+        header {
+            background: #1f3c88;
+            color: #fff;
+            padding: 24px 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        header p {
+            margin: 6px 0 0;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        main {
+            padding: 24px 40px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        section {
+            background: #ffffffdd;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        h2 {
+            margin-top: 0;
+            color: #1f3c88;
+            font-size: 20px;
+            border-right: 4px solid #1f3c88;
+            padding-right: 8px;
+        }
+        h3 {
+            margin-top: 10px;
+            color: #294a9a;
+            font-size: 17px;
+        }
+        p {
+            line-height: 1.55;
+            font-size: 15px;
+            margin: 6px 0 10px;
+        }
+        ul {
+            margin: 4px 0 10px 0;
+            padding-right: 20px;
+            font-size: 15px;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .tagline {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        .chips {
+            margin-top: 6px;
+        }
+        .chip {
+            display: inline-block;
+            border-radius: 999px;
+            border: 1px solid #c6d3ff;
+            padding: 3px 9px;
+            font-size: 11px;
+            margin-left: 4px;
+            margin-bottom: 4px;
+            background: #f8f9ff;
+        }
+        .diagram {
+            border-radius: 10px;
+            border: 1px dashed #9fb3ff;
+            padding: 12px 14px;
+            background: #f4f7ff;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 6px;
+            white-space: pre-line;
+        }
+        .footer-note {
+            margin-top: 16px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>שקע חזותי פלוטוס</h1>
+    <p class="tagline">
+        הצעה למודל אנטנה, שער תקשורת ושקעים חזותיים סטנדרטיים לבית חכם – שידור חזותי על גבי חבילות IP, Wi-Fi ותקשורת בין טלפונים ניידים.
+    </p>
+</header>
+
+<main>
+    <section>
+        <h2>1. רעיון כללי</h2>
+        <p>
+            המסמך מציג הצעה לפיתוח <strong>אנטנת שידור ראשונית</strong> המאגדת מספר שיטות שידור (5G, Wi-Fi, Bluetooth ועוד),
+            ומפיצה את המידע באמצעות <strong>חבילות תקשורת חזותיות</strong> אל רכיבי קצה ביתיים הנקראים
+            <strong>שקעים חזותיים פלוטוס</strong>. השקע החזותי פועל בדומה לשקע חשמל רגיל, אך במקום אספקת אנרגיה הוא מספק
+            למשתמש הקצה חיבור נוח ומובנה לתכנים חזותיים (וידאו, תמונות, AR/VR, דשבורדים וכדומה).
+        </p>
+        <div class="chips">
+            <span class="chip">Plug &amp; View</span>
+            <span class="chip">Visual-IP</span>
+            <span class="chip">House-Scale Visual Network</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. אנטנת שידור ראשונית (Gateway)</h2>
+        <p>
+            האנטנה הראשונית משמשת כ<strong>שער תקשורת חזותי</strong> (Visual Gateway) והיא מרוכזת לרוב בארון התקשורת
+            המרכזי, על גג הבניין או בנקודת תקשורת שכונתית.
+        </p>
+        <h3>תפקידי האנטנה הראשית:</h3>
+        <ul>
+            <li>קבלת נתונים מרשתות שונות: סיב אופטי, 5G/LTE, רשת קווית, לוויין.</li>
+            <li>קליטת שידורי Wi-Fi / Bluetooth / תקשורת בין טלפונים ניידים.</li>
+            <li>איחוד המידע והמרתו לתצורת <strong>חבילות חזותיות סטנדרטיות (Visual-IP)</strong>.</li>
+            <li>ניהול הפצה פנימית של התכנים החזותיים אל כל שקעי הבית/הבניין.</li>
+        </ul>
+        <h3>רכיבים אפשריים:</h3>
+        <ul>
+            <li>מודולי RF ו-5G מרובי תדרים.</li>
+            <li>מודול Wi-Fi (Access Point) ו-Bluetooth (למשל Bluetooth Mesh).</li>
+            <li>בקר מרכזי לעיבוד, הצפנה וניהול חבילות Visual-IP.</li>
+        </ul>
+        <div class="diagram">
+אינטרנט / סיב אופטי / 5G / טלפון נייד
+            ↓
+אנטנת שידור ראשית (Visual Gateway)
+            ↓
+חבילות Visual-IP מאוחדות
+        </div>
+    </section>
+
+    <section>
+        <h2>3. מודל חבילות Visual-IP ("פלוטוס")</h2>
+        <p>
+            <strong>פלוטוס</strong> מוגדר כשכבת פרוטוקול לוגי מעל IP/Wi-Fi, המיועדת במיוחד ל<strong>תכנים חזותיים</strong>.
+            במקום רק "זרם נתונים גנרי", כל חבילה נושאת משמעות חזותית ברורה:
+        </p>
+        <ul>
+            <li>Frame – פריים וידאו או תמונה בודדת.</li>
+            <li>Layer – שכבה חזותית (טקסט, אייקונים, שכבת AR).</li>
+            <li>Scene – סצנה או מסך מלא (Dashboard / חדר VR).</li>
+            <li>Metadata – נתוני עזר: רזולוציה, זמן, סדר חבילות, זכויות, הצפנה.</li>
+        </ul>
+        <p>
+            פרוטוקול פלוטוס רוכב על גבי:
+        </p>
+        <ul>
+            <li>רשת קווית (Ethernet / סיב) בין ה-Gateway לשקעים החזותיים.</li>
+            <li>Wi-Fi לשקעים אלחוטיים ולמכשירים ניידים.</li>
+            <li>תקשורת בין טלפונים ניידים (Hotspot / Wi-Fi Direct / Bluetooth) כמסלול משלים.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>4. שקע חזותי פלוטוס – Visual Socket</h2>
+        <p>
+            השקע החזותי הוא <strong>רכיב קצה אלקטרוני</strong> בעל צורה וגודל הדומים לשקע חשמל או שקע רשת. הוא מותקן בקיר
+            או בארון התקשורת ומאפשר חיבור פשוט למסך, מקרן, משקפי AR, או רכיבי תצוגה אחרים.
+        </p>
+        <h3>תפקידי השקע החזותי:</h3>
+        <ul>
+            <li>קבלת חבילות Visual-IP מה-Gateway (בחיבור קווי או אלחוטי).</li>
+            <li>פענוח החבילות והמרה לאות וידאו/תמונה סטנדרטי (HDMI / USB-C / DisplayPort).</li>
+            <li>ניהול איכות שירות (QoS) כדי לשמור על תמונה חלקה ללא קפיצות.</li>
+            <li>אבטחה והצפנה מקומית של התכנים (הגנה על פרטיות המשתמש).</li>
+        </ul>
+        <h3>אופני חיבור אפשריים:</h3>
+        <ul>
+            <li>קווי – כבל רשת (RJ45), כבל אופטי, או פס תקשורת ייעודי.</li>
+            <li>אלחוטי – Wi-Fi / Bluetooth, כאשר השקע משמש כיחידת קצה אלחוטית ("שקע חזותי נייד").</li>
+        </ul>
+        <div class="diagram">
+Visual Gateway (אנטנה ראשית)
+        ↓     ↓     ↓
+שקע חזותי בחדר 1   שקע חזותי בחדר 2   שקע חזותי בארון תקשורת
+        ↓                 ↓                 ↓
+מסך / מקרן / VR      מסך / לוח חכם      שרת ביתי / הקלטה
+        </div>
+    </section>
+
+    <section>
+        <h2>5. שילוב טלפונים ניידים</h2>
+        <p>
+            טלפונים ניידים יכולים לשמש כ<strong>תחנות קצה</strong> או אפילו כ<strong>גשרים</strong> במערכת:
+        </p>
+        <ul>
+            <li>קבלת חבילות Visual-IP מה-Gateway (דרך Wi-Fi / 5G).</li>
+            <li>הצגת התוכן ישירות על מסך הטלפון.</li>
+            <li>העברת חלק מהתוכן לשקעים חזותיים סמוכים באמצעות Wi-Fi Direct / Bluetooth.</li>
+        </ul>
+        <p>
+            אפשרות זו מאפשרת מודל היברידי – חלק מהמערכת מבוסס על תשתית קבועה (שקעים בקיר),
+            וחלק מבוסס על משתמשים ניידים הנושאים "שקע חזותי אישי" בכיס.
+        </p>
+    </section>
+
+    <section>
+        <h2>6. יתרונות עיקריים</h2>
+        <ul>
+            <li><strong>חוויית Plug &amp; View</strong> – חיבור פשוט למסך מכל שקע חזותי בבית.</li>
+            <li><strong>אחידות תשתית</strong> – סטנדרט אחיד להעברת תכנים חזותיים בכל הבית.</li>
+            <li><strong>גמישות</strong> – תמיכה בשידורי Wi-Fi, בלוטות', 5G וטלפונים ניידים.</li>
+            <li><strong>סקיילביליות</strong> – הוספת שקעים חזותיים חדשים לפי צורך, ללא שינוי יסודי במערכת.</li>
+            <li><strong>התאמה לכל כיס</strong> – תכנון רכיבי קצה זולים על בסיס שבבי תקשורת ותצוגה סטנדרטיים.</li>
+            <li><strong>הכשרה לבית חכם חזותי</strong> – פלטפורמה אחידה לשילוב וידאו, AR, לוחות בקרה ומערכות ניטור.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>7. כיווני פיתוח עתידיים</h2>
+        <ul>
+            <li>הגדרת תקן פתוח ל-Visual-IP / פלוטוס.</li>
+            <li>שילוב ב-Smart Home Hubs קיימים (Matter, Home Assistant וכו').</li>
+            <li>הרחבה למבני ציבור, כיתות לימוד ובנייני משרדים.</li>
+            <li>ממשקי API למפתחים לפיתוח אפליקציות חזותיות על גבי תשתית פלוטוס.</li>
+        </ul>
+        <p class="footer-note">
+            מסמך זה מהווה הצעה רעיונית/טכנולוגית ראשונית למודל אנטנה, שער תקשורת ושקע חזותי פלוטוס, ואינו מפרט עדיין
+            את כל רמת התכנון ההנדסי, אלא משמש בסיס לשיח, לפיתוח ולשיתוף פעולה בין מהנדסים, יזמים וגופי רגולציה.
+        </p>
+    </section>
+</main>
+</body>
+</html>

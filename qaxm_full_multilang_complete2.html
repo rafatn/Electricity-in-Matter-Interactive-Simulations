@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QAXM – Quantum Axis Modulation | Multilingual Full Document</title>
+<style>
+body { font-family: Arial, sans-serif; padding:20px; background:#eef3ff; color:#111; }
+section { background:white; padding:15px; margin-bottom:18px; border-radius:10px;
+         box-shadow:0 1px 6px rgba(0,0,0,0.1); }
+h1 { color:#1f3c88; }
+h2 { color:#294a9a; }
+h3 { color:#3e4c9a; }
+.svgbox { background:#f7f9ff; padding:10px; border-radius:10px; text-align:center; border:1px dashed #c5cffb; }
+svg { max-width:100%; height:auto; }
+.lang-title { background:#2b7cff; color:white; padding:8px 12px; margin-top:25px; border-radius:6px; font-size:18px; }
+.note { font-size:12px; opacity:0.8; }
+</style>
+</head>
+<body>
+
+<h1>QAXM – Quantum Axis Modulation</h1>
+<p><strong>Full multilingual document with explanation, shapes, graphs and examples (no scripts, pure HTML).</strong></p>
+
+<!-- ======================== ENGLISH ========================= -->
+<div class="lang-title">English Version</div>
+
+<section>
+<h2>1. Abstract</h2>
+<p>
+QAXM (Quantum Axis Modulation) is a new modulation concept in which each symbol is represented as a
+<strong>4D geometric container</strong> in axes X, Y, Z and T:
+</p>
+<ul>
+  <li><strong>X</strong> – Amplitude Modulation (AM)</li>
+  <li><strong>Y</strong> – Phase Modulation (PM)</li>
+  <li><strong>Z</strong> – Frequency Modulation (FM)</li>
+  <li><strong>T</strong> – Time / temporal depth</li>
+</ul>
+<p>
+In addition, <strong>color and volume</strong> of the 3D object describe how the symbol propagates through real environments on Earth,
+including buildings, obstacles and natural noise.
+</p>
+</section>
+
+<section>
+<h2>2. Concept & Axis Mapping</h2>
+<h3>2.1 Symbol as 4D Container</h3>
+<p>
+A QAXM symbol is treated as a 3D object evolving along a time axis:
+</p>
+<ul>
+  <li>Spatial / spectral geometry in X–Y–Z.</li>
+  <li>Temporal evolution and depth along T.</li>
+  <li>Color &amp; opacity describe volumetric transmission properties.</li>
+</ul>
+
+<h3>2.2 Axis roles</h3>
+<ul>
+  <li><strong>X (AM)</strong> – controls energy and brightness of the symbol.</li>
+  <li><strong>Y (PM)</strong> – controls phase-like rotations and orientation.</li>
+  <li><strong>Z (FM)</strong> – controls spectral height and bandwidth expansion.</li>
+  <li><strong>T (Time)</strong> – controls persistence, priority and temporal pattern.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. Shape Example – QAXM Symbol</h2>
+<p>
+The SVG below gives a simple projection of a QAXM symbol as a 3D-like container. This is a 2D drawing to help understand the geometry.
+</p>
+<div class="svgbox">
+<svg width="320" height="260" viewBox="0 0 320 260">
+  <!-- Axes -->
+  <line x1="160" y1="130" x2="280" y2="130" stroke="black" stroke-width="2"/>
+  <text x="285" y="134" font-size="12">X (AM)</text>
+
+  <line x1="160" y1="130" x2="90" y2="40" stroke="black" stroke-width="2"/>
+  <text x="70" y="38" font-size="12">Y (PM)</text>
+
+  <line x1="160" y1="130" x2="160" y2="240" stroke="black" stroke-width="2"/>
+  <text x="165" y="252" font-size="12">Z (FM)</text>
+
+  <!-- Core container -->
+  <polygon points="160,90 210,130 160,170 110,130"
+           fill="#8ec1ff88"
+           stroke="#0d47a1"
+           stroke-width="3"/>
+  <!-- Time extrusion (ghost layer) -->
+  <polygon points="110,130 160,90 160,60 110,100"
+           fill="#8ec1ff44"
+           stroke="#0d47a1"
+           stroke-width="2"/>
+  <!-- Inner core -->
+  <circle cx="160" cy="130" r="14"
+          fill="#2b7cffaa"/>
+</svg>
+<p class="note"><em>Projected QAXM container – X/Y/Z axes and a time-extruded “ghost” layer.</em></p>
+</div>
+</section>
+
+<section>
+<h2>4. Graph Example – AM / PM / FM vs Time</h2>
+<p>
+This graph illustrates how X (AM), Y (PM) and Z (FM) can evolve along the time axis T for one symbol.
+</p>
+<div class="svgbox">
+<svg width="360" height="230" viewBox="0 0 360 230">
+  <!-- Axes -->
+  <line x1="40" y1="190" x2="330" y2="190" stroke="black" stroke-width="2"/>
+  <text x="332" y="194" font-size="12">T</text>
+  <line x1="40" y1="190" x2="40" y2="40" stroke="black" stroke-width="2"/>
+  <text x="10" y="38" font-size="12">Value</text>
+
+  <!-- X-AM curve -->
+  <path d="M40 180 Q 100 100, 160 150 T 330 120"
+        stroke="#ff1744" stroke-width="3" fill="none"/>
+  <text x="250" y="130" font-size="12" fill="#ff1744">X (AM)</text>
+
+  <!-- Y-PM curve -->
+  <path d="M40 160 Q 120 60, 200 180 T 330 80"
+        stroke="#00bfa5" stroke-width="3" fill="none"/>
+  <text x="250" y="95" font-size="12" fill="#00bfa5">Y (PM)</text>
+
+  <!-- Z-FM curve -->
+  <path d="M40 140 Q 80 180, 160 80 T 330 160"
+        stroke="#2979ff" stroke-width="3" fill="none"/>
+  <text x="250" y="155" font-size="12" fill="#2979ff">Z (FM)</text>
+</svg>
+<p class="note"><em>Symbol behavior along Time (T) across AM/PM/FM dimensions.</em></p>
+</div>
+</section>
+
+<section>
+<h2>5. Color, Volume & Environment</h2>
+<p>
+Color and volume indicate how the symbol travels through Earth environments such as buildings, vehicles and terrain.
+</p>
+<div class="svgbox">
+<svg width="340" height="230" viewBox="0 0 340 230">
+  <!-- Environment block -->
+  <rect x="210" y="60" width="90" height="130" fill="#cccccc" stroke="#555" stroke-width="2"/>
+  <text x="214" y="55" font-size="12">Building / Obstacle</text>
+
+  <!-- Original signal -->
+  <circle cx="80" cy="140" r="30"
+          fill="#42a5f588" stroke="#1e88e5" stroke-width="3"/>
+  <text x="54" y="140" font-size="12" fill="#0d47a1">QAXM</text>
+
+  <!-- Distorted signal -->
+  <ellipse cx="265" cy="140" rx="20" ry="35"
+           fill="#ff704355" stroke="#ff5722" stroke-width="3"/>
+  <text x="240" y="135" font-size="12" fill="#bf360c">Distorted</text>
+
+  <!-- Arrow -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+    </marker>
+  </defs>
+  <line x1="110" y1="140" x2="210" y2="140" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>
+<p class="note">
+<em>As the QAXM symbol passes through an obstacle, its shape, color and volume are distorted – the receiver reconstructs the original 4D object.</em>
+</p>
+</div>
+</section>
+
+<section>
+<h2>6. Bit Mapping & Advantages</h2>
+<p>One possible mapping of bits into a QAXM symbol:</p>
+<pre>
+Bits:   AAAA  PPPP  FFFF  TTTT  CC
+Field:  X     Y     Z     T     Color
+</pre>
+<ul>
+  <li><strong>AAAA</strong> – amplitude profile (X extent).</li>
+  <li><strong>PPPP</strong> – phase geometry (Y pattern).</li>
+  <li><strong>FFFF</strong> – frequency geometry (Z height/shape).</li>
+  <li><strong>TTTT</strong> – temporal profile (T depth &amp; timing).</li>
+  <li><strong>CC</strong> – color code (environmental mode).</li>
+</ul>
+<h3>Advantages</h3>
+<ul>
+  <li>4D symbol representation – beyond classic 2D QAM/QFM.</li>
+  <li>Environment-aware, suitable for dense urban and complex media.</li>
+  <li>Friendly to AI/ML receivers using geometric &amp; visual features.</li>
+  <li>Fits future 6G/7G, V2X, satellite and critical infrastructure links.</li>
+</ul>
+</section>
+
+<!-- ======================== HEBREW ========================= -->
+<div class="lang-title">גרסה בעברית</div>
+
+<section dir="rtl">
+<h2>1. תקציר</h2>
+<p>
+QAXM (תַּבְנִית אפנון Quantum Axis Modulation) היא שיטת אפנון חדשה שבה כל סימבול מיוצג
+כ<strong>מכל גיאומטרי מרובע־ממדים</strong> על צירי X, Y, Z ו־T:
+</p>
+<ul>
+  <li><strong>X</strong> – אפנון משרעת (AM)</li>
+  <li><strong>Y</strong> – אפנון מופע (PM)</li>
+  <li><strong>Z</strong> – אפנון תדר (FM)</li>
+  <li><strong>T</strong> – ציר זמן / עומק בזמן</li>
+</ul>
+<p>
+בנוסף, <strong>הצבע והנפח</strong> של הגוף מייצגים כיצד הסימבול מתפשט בסביבה אמיתית על פני כדור הארץ –
+דרך מבנים, מכשולים ורעש טבעי.
+</p>
+</section>
+
+<section dir="rtl">
+<h2>2. רעיון כללי</h2>
+<p>
+סימבול QAXM נתפס כאובייקט תלת־ממדי המתפתח על ציר זמן:
+</p>
+<ul>
+  <li>גאומטריה מרחבית/ספקטרלית על צירי X–Y–Z.</li>
+  <li>התפתחות בזמן ובעומק על T.</li>
+  <li>צבע ושקיפות המתארים תכונות מעבר בנפח.</li>
+</ul>
+<p>
+לכל ציר יש תפקיד:
+</p>
+<ul>
+  <li><strong>X (AM)</strong> – עוצמה ואנרגיה של הסימבול.</li>
+  <li><strong>Y (PM)</strong> – מופע, זווית וסיבוב.</li>
+  <li><strong>Z (FM)</strong> – גובה ספקטרלי ורוחב פס.</li>
+  <li><strong>T (זמן)</strong> – משך, עדיפות ודפוס בזמן.</li>
+</ul>
+</section>
+
+<section dir="rtl">
+<h2>3. דוגמת צורה</h2>
+<p>התרשים הבא מציג הקרנה גאומטרית של מכל QAXM (אותו SVG כמו באנגלית):</p>
+<div class="svgbox">
+<!-- reuse English SVG -->
+<svg width="320" height="260" viewBox="0 0 320 260">
+  <line x1="160" y1="130" x2="280" y2="130" stroke="black" stroke-width="2"/>
+  <line x1="160" y1="130" x2="90" y2="40" stroke="black" stroke-width="2"/>
+  <line x1="160" y1="130" x2="160" y2="240" stroke="black" stroke-width="2"/>
+  <polygon points="160,90 210,130 160,170 110,130"
+           fill="#8ec1ff88"
+           stroke="#0d47a1"
+           stroke-width="3"/>
+  <polygon points="110,130 160,90 160,60 110,100"
+           fill="#8ec1ff44"
+           stroke="#0d47a1"
+           stroke-width="2"/>
+  <circle cx="160" cy="130" r="14"
+          fill="#2b7cffaa"/>
+</svg>
+<p class="note"><em>מכל QAXM עם שכבת עומק בזמן.</em></p>
+</div>
+</section>
+
+<!-- ======================== ARABIC ========================= -->
+<div class="lang-title">النسخة العربية</div>
+
+<section dir="rtl">
+<h2>1. الملخّص</h2>
+<p>
+QAXM (تضمين المحاور الكميّة) هو مفهوم جديد في التضمين حيث يمثَّل كل رمز
+كـ<strong>حاوية هندسية رباعية الأبعاد</strong> على المحاور:
+</p>
+<ul>
+  <li><strong>X</strong> – تضمين السعة (AM)</li>
+  <li><strong>Y</strong> – تضمين الطور (PM)</li>
+  <li><strong>Z</strong> – تضمين التردد (FM)</li>
+  <li><strong>T</strong> – الزمن / عمق الزمن</li>
+</ul>
+<p>
+كما يعبّر <strong>اللون والحجم</strong> عن كيفية انتشار الرمز داخل البيئة الحقيقية على الأرض،
+بما في ذلك المباني، العوائق والضجيج الطبيعي.
+</p>
+</section>
+
+<section dir="rtl">
+<h2>2. الفكرة العامة</h2>
+<p>
+يُعامَل رمز QAXM كجسم ثلاثي الأبعاد يتطوّر على محور الزمن:
+</p>
+<ul>
+  <li>هندسة مكانية/طيفية على المحاور X–Y–Z.</li>
+  <li>تغيّر مع الزمن على المحور T.</li>
+  <li>اللون والشفافية يصفان سلوك الانتشار في الوسط.</li>
+</ul>
+</section>
+
+<section dir="rtl">
+<h2>3. مثال على الشكل</h2>
+<p>
+الرسم نفسه المستخدم في النسخة الإنجليزية يمكن فهمه هنا كتمثيل مبسّط للحاوية:
+</p>
+<div class="svgbox">
+<svg width="320" height="260" viewBox="0 0 320 260">
+  <line x1="160" y1="130" x2="280" y2="130" stroke="black" stroke-width="2"/>
+  <line x1="160" y1="130" x2="90" y2="40" stroke="black" stroke-width="2"/>
+  <line x1="160" y1="130" x2="160" y2="240" stroke="black" stroke-width="2"/>
+  <polygon points="160,90 210,130 160,170 110,130"
+           fill="#8ec1ff88"
+           stroke="#0d47a1"
+           stroke-width="3"/>
+  <polygon points="110,130 160,90 160,60 110,100"
+           fill="#8ec1ff44"
+           stroke="#0d47a1"
+           stroke-width="2"/>
+  <circle cx="160" cy="130" r="14"
+          fill="#2b7cffaa"/>
+</svg>
+<p class="note"><em>شكل تقريبي لحاوية QAXM في الفضاء ثلاثي الأبعاد مع بعد زمني.</em></p>
+</div>
+</section>
+
+</body>
+</html>
