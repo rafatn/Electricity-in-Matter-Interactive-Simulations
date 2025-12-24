@@ -2600,17 +2600,20 @@
   renderActiveTags();
   setLang("he");
   apply();
-  (function(){
-  const counterId = "index-main-page-visits"; // מזהה ייחודי לדף
-  fetch("https://api.countapi.xyz/hit/" + counterId)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("visitCounter").textContent = data.value;
-    })
-    .catch(() => {
-      document.getElementById("visitCounter").textContent = "—";
-    });
 </script>
 
 </body>
+   <script>
+  (function(){
+    const counterId = "index-main-page-visits";
+    fetch("https://api.countapi.xyz/hit/" + counterId)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("visitCounter").textContent = data.value;
+      })
+      .catch(() => {
+        document.getElementById("visitCounter").textContent = "—";
+      });
+  })();
+  </script>
 </html>
