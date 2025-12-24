@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>International Constitution — Law→Penalty Matching & Safe Optimal Path (Offline)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.09);
+      --text:rgba(255,255,255,.88);
+      --muted:rgba(255,255,255,.62);
+      --gold:#d6b25e;
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --border:rgba(255,255,255,.12);
+      --shadow:0 12px 40px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    [data-theme="light"]{
+      --bg:#f7fafc;
+      --panel:rgba(2,6,23,.05);
+      --panel2:rgba(2,6,23,.08);
+      --text:rgba(2,6,23,.92);
+      --muted:rgba(2,6,23,.62);
+      --border:rgba(2,6,23,.12);
+      --shadow:0 14px 40px rgba(2,6,23,.12);
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.25), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, rgba(167,139,250,.22), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(52,211,153,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.55;
+      letter-spacing:.1px;
+    }
+    .wrap{max-width:1160px;margin:0 auto;padding:28px 18px 60px;}
+    header{
+      display:flex;gap:16px;align-items:center;justify-content:space-between;
+      padding:18px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 220deg, var(--accent), var(--accent2), var(--ok), var(--accent));
+      box-shadow:0 10px 28px rgba(0,0,0,.25);
+      position:relative;overflow:hidden;
+    }
+    .logo:after{
+      content:"";position:absolute;inset:-18px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 35%);
+      transform: rotate(18deg);
+      opacity:.7;
+    }
+    h1{margin:0;font-size:18px;font-weight:800}
+    .subtitle{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+    .btn, select, input{
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+    }
+    input::placeholder{color:var(--muted)}
+    .btn{cursor:pointer;user-select:none}
+    .btn:hover{background:var(--panel2)}
+    .btn.primary{
+      border-color: rgba(214,178,94,.45);
+      box-shadow: 0 10px 26px rgba(214,178,94,.18);
+    }
+    .chip{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--muted);
+      font-size:12px
+    }
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-top:16px}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:stretch}
+      .controls{justify-content:flex-start}
+    }
+    .card{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+    .card h2{margin:0 0 10px;font-size:16px}
+    .card p{margin:8px 0}
+    .muted{color:var(--muted)}
+    .eq{
+      display:block;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(214,178,94,.28);
+      background:rgba(214,178,94,.08);
+      color:var(--gold);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      overflow-x:auto;
+      white-space:pre;
+    }
+    details{border-top:1px dashed var(--border);margin-top:10px;padding-top:10px}
+    summary{cursor:pointer;color:var(--muted);font-weight:700}
+    .steps{display:flex;flex-direction:column;gap:12px}
+    .step{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:14px}
+    .step-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+    .step-title{display:flex;gap:10px;align-items:flex-start}
+    .num{
+      width:34px;height:34px;border-radius:11px;
+      background:rgba(214,178,94,.12);
+      border:1px solid rgba(214,178,94,.32);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;color:var(--gold)
+    }
+    .kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    .kpi .box{padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
+    .kpi .box b{display:block}
+    .kpi .box span{color:var(--muted);font-size:12px}
+    .svgwrap{border:1px solid var(--border);background:rgba(255,255,255,.03);border-radius:18px;padding:10px;overflow:hidden}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .note{
+      margin-top:10px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(125,211,252,.35);
+      background:rgba(125,211,252,.10);
+    }
+    .danger{border:1px solid rgba(251,113,133,.45);background:rgba(251,113,133,.12);}
+    .ok{border:1px solid rgba(52,211,153,.45);background:rgba(52,211,153,.10);}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .small{font-size:12px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    #langSelect{max-width:360px}
+    #langSearch{min-width:220px}
+    .toast{
+      position:fixed;left:16px;bottom:16px;z-index:99;
+      padding:12px 14px;border-radius:14px;border:1px solid var(--border);
+      background:rgba(0,0,0,.55);backdrop-filter: blur(10px);
+      color:rgba(255,255,255,.92);box-shadow:var(--shadow);
+      max-width:min(560px, calc(100vw - 32px));
+      display:none;
+    }
+    [data-theme="light"] .toast{background:rgba(2,6,23,.75);color:rgba(255,255,255,.92);}
+    .fileRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    input[type="file"]{padding:9px 10px}
+    .pill{border:1px solid var(--border);background:rgba(255,255,255,.05);border-radius:999px;padding:8px 10px;display:inline-flex;gap:8px;align-items:center}
+    .list{margin:10px 0 0;padding:0 0 0 18px}
+    .list li{margin:6px 0}
+    .badge{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12px;
+      margin-inline-start:6px;
+    }
+  
+    .activeNode{filter: drop-shadow(0 0 10px rgba(214,178,94,.55)); stroke-width:4 !important;}
+    .activeEdge{stroke-width:4 !important; opacity:1 !important;}
+    .disabledEdge{opacity:.25 !important;}
+
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1 data-i18n="title">International Constitution — Law→Penalty Matching (“Invisible Thread”) + Safe Optimal Path</h1>
+        <p class="subtitle" data-i18n="subtitle">Fully offline. Built-in languages: EN/HE/AR/FR/ES/RU + unlimited offline packs.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <span class="chip"><span class="dot" style="background:var(--gold)"></span><span data-i18n="equationsGold">Equations are gold</span></span>
+      <button class="btn" id="themeBtn" data-i18n="toggleTheme">Toggle theme</button>
+
+      <input id="langSearch" placeholder="Search language…" data-i18n-placeholder="searchLanguage" />
+      <select id="langSelect" title="Language"></select>
+
+      <button class="btn primary" id="applyBtn" data-i18n="applyLanguage">Apply language</button>
+      <button class="btn" id="resetBtn" data-i18n="reset">Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2 data-i18n="overviewTitle">What you added now (mapping law ↔ act ↔ sanction)</h2>
+      <p data-i18n="overviewP1">
+        From the constitution split into legal sentences/clauses, we create a precise matching between an act (the violation) and the law clauses that apply.
+        Imagine an “invisible thread” stretched from each clause to the allowed sanction range (and remedy range) when that clause is violated.
+      </p>
+      <p data-i18n="overviewP2">
+        Then we search for the best optimal path in the legal graph, but with a strict safety goal:
+        the judged person should not go to prison by mistake. So the algorithm must refuse incarceration unless the evidence & matching are strong and consistent.
+      </p>
+
+      <details class="note">
+        <summary data-i18n="countriesSummary">Countries layer (who is involved, and how integration works)</summary>
+        <p data-i18n="countriesP1">
+          Every case specifies the participating countries C_s ⊆ C (e.g., where the act happened, nationality/residency of parties,
+          place of contract, place of damage, where assets are located). Each clause also contains a list of countries it belongs to (or a treaty scope).
+        </p>
+        <span class="eq">C_s ⊆ C  (countries involved in the case)</span>
+        <span class="eq">L_joint(x)= ⋃_{c∈C_s} L_c   (all relevant clauses/laws from those countries)</span>
+        <p data-i18n="countriesP2">
+          Integration is done conservatively by intersection (only what is jointly permitted), or by a transparent weighted blend when needed.
+          This prevents “forum shopping” and keeps the decision inside a lawful range for all relevant jurisdictions.
+        </p>
+        <span class="eq">R_joint(x) = ⋂_{ℓ∈L_joint(x)} R_ℓ(x)   (conservative)</span>
+        <span class="eq">R_joint(x) = [ Σ w_ℓ r̲_ℓ(x) ,  Σ w_ℓ r̄_ℓ(x) ] ,  Σ w_ℓ=1   (weighted)</span>
+      </details>
+
+      <details class="note">
+        <summary data-i18n="clauseCatalogSummary">Clause Catalog (“article page”): explain each clause clearly</summary>
+        <p data-i18n="clauseCatalogP1">
+          Below is an offline “article page” template for documenting every clause. For each clause, we show:
+          (1) text, (2) countries/scope, (3) law type & materiality band, (4) conditions Φ(x), (5) evidence requirements,
+          (6) allowed remedies/sanctions, (7) whether prison is allowed, and (8) examples + edge cases.
+        </p>
+        <p class="muted small" data-i18n="clauseCatalogP2">
+          This is what makes the system explainable and reduces accidental incarceration: the “thread” from clause → bounds is visible and auditable.
+        </p>
+      </details>
+
+      <div class="note ok">
+        <b data-i18n="safetyTitle">Key safety idea</b>
+        <p class="muted small" data-i18n="safetyBody">
+          “Prison” is treated as a high-risk decision. It is allowed only if (a) the scenario sandwich, (b) the severity sandwich, and (c) an evidence threshold
+          all agree. Otherwise the path is forced to choose non-custodial options.
+        </p>
+      </div>
+
+      <details class="note">
+        <summary data-i18n="lawClauseSummary">How we represent legal clauses (sentences)</summary>
+        <p data-i18n="lawClauseP1">Each clause is stored with:</p>
+        <span class="eq">Clause ℓ = { text, law_type τ, countries, conditions Φ(x), sanction_range [r̲_ℓ, r̄_ℓ], remedy_range [d̲_ℓ, d̄_ℓ], prison_allowed ∈ {0,1} }</span>
+        <p class="muted small" data-i18n="lawClauseP2">
+          Φ(x) is a logical condition over facts x (who/what/when/intent/harm). If Φ(x)=true, the clause “fires”.
+        </p>
+      </details>
+
+      <details class="note">
+        <summary data-i18n="threadSummary">The “invisible thread” mapping</summary>
+        <p data-i18n="threadP1">For each clause ℓ we define a matching score to the case facts x:</p>
+        <span class="eq">m(ℓ, x) ∈ [0,1]   (1 = perfect match)</span>
+        <p data-i18n="threadP2">Only clauses above a threshold are allowed to influence the decision:</p>
+        <span class="eq">S(x) = { ℓ : m(ℓ,x) ≥ θ_match }</span>
+        <p data-i18n="threadP3">Then the sanction bounds are “pulled” from the selected clauses (the thread):</p>
+        <span class="eq">R̲^{thread}(x) = A({ r̲_ℓ }_{ℓ∈S(x)}) ,  R̄^{thread}(x) = A({ r̄_ℓ }_{ℓ∈S(x)})</span>
+      </details>
+
+      <div class="kpi">
+        <div class="box"><b data-i18n="k1">Match threshold</b><span data-i18n="k1d">Do not use weak clauses.</span></div>
+        <div class="box"><b data-i18n="k2">Evidence gate</b><span data-i18n="k2d">Prison requires stronger proof.</span></div>
+        <div class="box"><b data-i18n="k3">Conservative fallback</b><span data-i18n="k3d">If uncertainty is high → choose safer sanctions.</span></div>
+        <div class="box"><b data-i18n="k4">Explainability log</b><span data-i18n="k4d">Every step shows which clause pulled which bound.</span></div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2 data-i18n="visualTitle">Visual: clause threads + safe gate</h2>
+      <p class="muted" data-i18n="visualSubtitle">Clauses connect to sanctions; “prison” is behind a high threshold gate.</p>
+
+      <div class="svgwrap">
+        <svg viewBox="0 0 520 340" width="100%" height="auto" role="img" aria-label="Threads from clauses to sanction ranges with prison gate">
+          <!-- Left: clauses -->
+          <g transform="translate(40,40)">
+            <rect x="0" y="0" width="180" height="45" rx="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
+            <text x="14" y="28" fill="rgba(255,255,255,.86)" font-size="12" font-weight="800" data-i18n-svg="clauseA">Clause A</text>
+
+            <rect x="0" y="62" width="180" height="45" rx="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
+            <text x="14" y="90" fill="rgba(255,255,255,.86)" font-size="12" font-weight="800" data-i18n-svg="clauseB">Clause B</text>
+
+            <rect x="0" y="124" width="180" height="45" rx="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
+            <text x="14" y="152" fill="rgba(255,255,255,.86)" font-size="12" font-weight="800" data-i18n-svg="clauseC">Clause C</text>
+
+            <text x="0" y="208" fill="rgba(214,178,94,.95)" font-size="12" font-weight="900" data-i18n-svg="threads">Invisible threads</text>
+          </g>
+
+          <!-- Threads -->
+          <path d="M220,62 C290,50 320,62 370,52" stroke="rgba(125,211,252,.8)" stroke-width="2" fill="none"/>
+          <path d="M220,124 C290,115 320,120 370,120" stroke="rgba(167,139,250,.8)" stroke-width="2" fill="none"/>
+          <path d="M220,186 C290,190 320,175 370,188" stroke="rgba(52,211,153,.8)" stroke-width="2" fill="none"/>
+
+          <!-- Right: sanction ranges -->
+          <g transform="translate(370,38)">
+            <rect x="0" y="0" width="120" height="170" rx="16" fill="rgba(214,178,94,.08)" stroke="rgba(214,178,94,.45)"/>
+            <text x="60" y="22" text-anchor="middle" fill="rgba(214,178,94,.95)" font-size="12" font-weight="900" data-i18n-svg="sanctions">Sanctions</text>
+            <rect x="16" y="38" width="88" height="35" rx="10" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.18)"/>
+            <text x="60" y="60" text-anchor="middle" fill="rgba(255,255,255,.86)" font-size="11" font-weight="800" data-i18n-svg="fine">Fine</text>
+
+            <rect x="16" y="80" width="88" height="35" rx="10" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.18)"/>
+            <text x="60" y="102" text-anchor="middle" fill="rgba(255,255,255,.86)" font-size="11" font-weight="800" data-i18n-svg="remedy">Remedy</text>
+
+            <rect x="16" y="122" width="88" height="35" rx="10" fill="rgba(251,113,133,.14)" stroke="rgba(251,113,133,.55)"/>
+            <text x="60" y="144" text-anchor="middle" fill="rgba(255,255,255,.90)" font-size="11" font-weight="900" data-i18n-svg="prison">Prison</text>
+          </g>
+
+          <!-- Gate -->
+          <g transform="translate(290,240)">
+            <rect x="0" y="0" width="210" height="72" rx="16" fill="rgba(251,113,133,.10)" stroke="rgba(251,113,133,.55)"/>
+            <text x="105" y="26" text-anchor="middle" fill="rgba(255,255,255,.92)" font-size="12" font-weight="900" data-i18n-svg="gateTitle">Evidence Gate</text>
+            <text x="105" y="48" text-anchor="middle" fill="rgba(255,255,255,.70)" font-size="11" font-weight="800" data-i18n-svg="gateRule">Allow prison only if confidence ≥ θ_prison</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <span class="chip"><span class="dot" style="background:rgba(125,211,252,.9)"></span><span data-i18n="leg1">Match thread</span></span>
+        <span class="chip"><span class="dot" style="background:rgba(214,178,94,.9)"></span><span data-i18n="leg2">Bounded range</span></span>
+        <span class="chip"><span class="dot" style="background:rgba(251,113,133,.9)"></span><span data-i18n="leg3">High-risk (prison)</span></span>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2 data-i18n="stepsTitle">Step-by-step (now with safe matching)</h2>
+    <p class="muted" data-i18n="stepsSubtitle">Expand each step to see equations. (All equations are gold.)</p>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">1</div>
+            <div>
+              <h3 data-i18n="s1t">Split constitution into clauses (sentences)</h3>
+              <div class="muted small" data-i18n="s1d">Each clause carries conditions and allowed ranges.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--accent2)"></span><span data-i18n="tagText">Text→Data</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <span class="eq">L = {ℓ_1,ℓ_2,…} ,  ℓ = (Φ(x), [r̲_ℓ,r̄_ℓ], prison_allowed, τ, countries)</span>
+          <p class="muted small" data-i18n="s1p1">
+            Φ(x) is a condition over facts x. If Φ(x) fails, clause cannot be used.
+          </p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">2</div>
+            <div>
+              <h3 data-i18n="s2t">Match clauses to the act (violation) = “invisible threads”</h3>
+              <div class="muted small" data-i18n="s2d">Only strong matches may influence bounds.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--accent)"></span><span data-i18n="tagMatch">Match</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s2p1">Compute match and evidence confidence:</p>
+          <span class="eq">m(ℓ,x) ∈ [0,1] ,  conf(ℓ,x) ∈ [0,1]</span>
+          <p data-i18n="s2p2">Select clauses:</p>
+          <span class="eq">S(x)= {ℓ : m(ℓ,x)≥θ_match ∧ Φ_ℓ(x)=true}</span>
+          <p data-i18n="s2p3">Thread-bounds:</p>
+          <span class="eq">R̲^{thread}(x)=A({r̲_ℓ}_{ℓ∈S(x)}) ,  R̄^{thread}(x)=A({r̄_ℓ}_{ℓ∈S(x)})</span>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">3</div>
+            <div>
+              <h3 data-i18n="s3t">Apply double sandwich (scenario + severity)</h3>
+              <div class="muted small" data-i18n="s3d">Decision must be inside both, plus thread-bounds.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--gold)"></span><span data-i18n="tagBounds">Bounds</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s3p1">Final allowed range combines all three bounds conservatively:</p>
+          <span class="eq">R̲(x)=max(R̲^{sc}(x), R̲^{sev}(x), R̲^{thread}(x))
+R̄(x)=min(R̄^{sc}(x), R̄^{sev}(x), R̄^{thread}(x))</span>
+          <p data-i18n="s3p2">Feasible decision:</p>
+          <span class="eq">R̲(x) ≤ r(x) ≤ R̄(x)</span>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">4</div>
+            <div>
+              <h3 data-i18n="s4t">Build a decision graph and search an optimal path</h3>
+              <div class="muted small" data-i18n="s4d">Optimize while penalizing “wrong imprisonment” strongly.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--ok)"></span><span data-i18n="tagOptimize">Optimize</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s4p1">Let path p be a sequence of states. Score includes a huge penalty if prison is chosen under uncertainty:</p>
+          <span class="eq">Cost(p)= α·Contradictions(p)+β·Time(p)+γ·Risk(p)+Ω·I{prison chosen}·I{confidence&lt;θ_prison}</span>
+          <p data-i18n="s4p2">Choose:</p>
+          <span class="eq">p* = argmin_{p∈P} Cost(p)</span>
+          <p class="muted small" data-i18n="s4p3">
+            Ω is extremely large, so the solver avoids prison unless confidence is high.
+          </p>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">5</div>
+            <div>
+              <h3 data-i18n="s5t">Safety gate: prison only with strong evidence + strong match</h3>
+              <div class="muted small" data-i18n="s5d">If the gate fails, prison edges are removed from the graph.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--bad)"></span><span data-i18n="tagGate">Gate</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showMath">Show math & explanation</summary>
+          <p data-i18n="s5p1">Define global incarceration confidence from selected clauses:</p>
+          <span class="eq">Conf_prison(x)=max_{ℓ∈S(x), prison_allowed=1} conf(ℓ,x)</span>
+          <p data-i18n="s5p2">Allow prison only if:</p>
+          <span class="eq">Conf_prison(x) ≥ θ_prison  ∧  |S(x)| ≥ k_min  ∧  R̄(x) includes custodial option</span>
+          <p data-i18n="s5p3">Otherwise:</p>
+          <span class="eq">Remove all prison actions from feasible set  ⇒  choose non-custodial sanctions inside [R̲(x),R̄(x)]</span>
+        </details>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <div class="step-title">
+            <div class="num">6</div>
+            <div>
+              <h3 data-i18n="s6t">Audit log: show the threads</h3>
+              <div class="muted small" data-i18n="s6d">For each chosen decision, list clauses and their match scores.</div>
+            </div>
+          </div>
+          <span class="chip"><span class="dot" style="background:var(--accent)"></span><span data-i18n="tagAudit">Audit</span></span>
+        </div>
+        <details>
+          <summary data-i18n="showStructure">Show structure</summary>
+          <span class="eq">Event={case_id, facts_hash, τ, materiality m, S(x)=[(ℓ, m(ℓ,x), conf(ℓ,x))], bounds: (R̲^{sc},R̄^{sc}),(R̲^{sev},R̄^{sev}),(R̲^{thread},R̄^{thread}),(R̲,R̄), chosen_path, chosen_r, prison_gate, explanation}</span>
+          <p class="muted small" data-i18n="s6p1">
+            This makes it hard to “send someone to prison by accident”, because every step is checked and explainable.
+          </p>
+        </details>
+      </div>
+
+    </div>
+
+    <div class="note danger" style="margin-top:14px">
+      <b data-i18n="humanNoteTitle">Important note</b>
+      <p class="muted small" data-i18n="humanNoteBody">
+        This is a conceptual decision-support model (not legal advice). Real-world criminal sentencing must follow due process,
+        human judgment, and the law of the relevant jurisdiction.
+      </p>
+    </div>
+  </section>
+
+  
+  
+  <section class="card" style="margin-top:16px" id="graph-theory">
+    <h2 data-i18n="graphTitle">Graph Theory Layer (the backbone of decisions)</h2>
+    <p class="muted" data-i18n="graphSubtitle">
+      Nothing here works without graph theory. Every legal decision is a path in a graph.
+    </p>
+
+    <div class="note">
+      <b data-i18n="graphIdeaTitle">Core idea</b>
+      <p class="muted" data-i18n="graphIdeaP">
+        We model the legal process as a directed graph G=(V,E).
+        Nodes are legal states (scenario evaluations), edges are lawful transitions
+        (apply clause, escalate, de‑escalate, choose a sanction).
+      </p>
+      <span class="eq">G = (V, E)</span>
+    </div>
+
+    <div class="kpi">
+      <div class="box"><b data-i18n="graphNodes">Nodes (V)</b><span data-i18n="graphNodesD">Scenario + country set + law type + materiality.</span></div>
+      <div class="box"><b data-i18n="graphEdges">Edges (E)</b><span data-i18n="graphEdgesD">Allowed legal moves bounded by sandwiches.</span></div>
+      <div class="box"><b data-i18n="graphPaths">Paths (P)</b><span data-i18n="graphPathsD">Complete judicial reasoning from start to decision.</span></div>
+      <div class="box"><b data-i18n="graphSafety">Safety</b><span data-i18n="graphSafetyD">Prison edges removed unless evidence gate passes.</span></div>
+    </div>
+
+    <div class="svgwrap" style="margin-top:12px">
+      <svg viewBox="0 0 620 300" width="100%" height="auto" role="img">
+        <!-- nodes -->
+        <g>
+          <circle id="nodeStart" cx="90" cy="150" r="32" fill="rgba(125,211,252,.25)" stroke="rgba(125,211,252,.8)"/>
+          <text x="90" y="155" text-anchor="middle" font-size="12" fill="#fff" data-i18n-svg="gStart">Start</text>
+
+          <circle id="nodeScenario" cx="240" cy="80" r="32" fill="rgba(214,178,94,.25)" stroke="rgba(214,178,94,.9)"/>
+          <text x="240" y="85" text-anchor="middle" font-size="12" fill="#fff" data-i18n-svg="gScenario">Scenario</text>
+
+          <circle id="nodeSeverity" cx="240" cy="220" r="32" fill="rgba(214,178,94,.25)" stroke="rgba(214,178,94,.9)"/>
+          <text x="240" y="225" text-anchor="middle" font-size="12" fill="#fff" data-i18n-svg="gSeverity">Severity</text>
+
+          <circle id="nodeDecision" cx="410" cy="150" r="36" fill="rgba(52,211,153,.25)" stroke="rgba(52,211,153,.9)"/>
+          <text x="410" y="145" text-anchor="middle" font-size="12" fill="#fff" data-i18n-svg="gDecision">Decision</text>
+          <text x="410" y="160" text-anchor="middle" font-size="10" fill="#fff" data-i18n-svg="gSandwich">Double sandwich</text>
+
+          <circle id="nodePrison" cx="560" cy="150" r="32" fill="rgba(251,113,133,.25)" stroke="rgba(251,113,133,.9)"/>
+          <text x="560" y="155" text-anchor="middle" font-size="12" fill="#fff" data-i18n-svg="gPrison">Prison</text>
+        </g>
+
+        <!-- edges -->
+        <g stroke-width="2" fill="none">
+          <path id="edgeStartScenario" d="M122,150 C170,150 180,95 208,90" stroke="rgba(125,211,252,.8)"/>
+          <path id="edgeStartSeverity" d="M122,150 C170,150 180,205 208,210" stroke="rgba(125,211,252,.8)"/>
+
+          <path id="edgeScenarioDecision" d="M272,80 C330,80 350,120 374,135" stroke="rgba(214,178,94,.9)"/>
+          <path id="edgeSeverityDecision" d="M272,220 C330,220 350,180 374,165" stroke="rgba(214,178,94,.9)"/>
+
+          <!-- prison edge with gate -->
+          <path id="edgeDecisionPrison" d="M446,150 C490,150 500,150 528,150" stroke="rgba(251,113,133,.6)" stroke-dasharray="6 6"/>
+        </g>
+
+        <!-- gate label -->
+        <g>
+          <rect x="470" y="110" width="130" height="26" rx="8" fill="rgba(251,113,133,.15)" stroke="rgba(251,113,133,.6)"/>
+          <text x="535" y="128" text-anchor="middle" font-size="10" fill="#fff" data-i18n-svg="gGate">Evidence gate</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="animPlay" data-i18n="animPlay">Play path animation</button>
+      <button class="btn" id="animPause" data-i18n="animPause">Pause</button>
+      <button class="btn" id="animStep" data-i18n="animStep">Step</button>
+      <button class="btn" id="animReset" data-i18n="animReset">Reset</button>
+      <span class="chip mono" id="animStatus">step: 0</span>
+    </div>
+    <p class="muted small" data-i18n="animHint" style="margin-top:8px">
+      The animation highlights the chosen legal path: Start → Scenario → Severity → Decision.
+      The prison edge will only turn “active” if the evidence gate is open; otherwise it stays disabled.
+    </p>
+
+
+    <details class="note" style="margin-top:12px">
+      <summary data-i18n="graphMathSummary">Graph optimization math</summary>
+      <p class="muted" data-i18n="graphMathP1">
+        Each edge e has a cost. Prison edges carry a massive penalty unless the evidence gate is open.
+      </p>
+      <span class="eq">Cost(p)=∑_{e∈p} cost(e) + Ω·I{prison chosen}·I{gate closed}</span>
+      <span class="eq">p* = argmin_{p∈Paths(G)} Cost(p)</span>
+    </details>
+
+    <div class="note ok">
+      <b data-i18n="graphGuaranteeTitle">Guarantee</b>
+      <p class="muted small" data-i18n="graphGuaranteeP">
+        Because prison edges are removed (or made infinitely expensive) when confidence is low,
+        the optimal path cannot accidentally lead to incarceration.
+      </p>
+    </div>
+  </section>
+
+
+
+  <section class="card" style="margin-top:16px" id="proof">
+    <h2 data-i18n="proofTitle">Why the model prevents wrongful imprisonment (proof sketch)</h2>
+    <p class="muted" data-i18n="proofSubtitle">
+      This is the key safety property: if evidence confidence is below the prison threshold, the graph contains no permissible prison path.
+    </p>
+
+    <div class="note ok">
+      <b data-i18n="thmTitle">Theorem (No accidental prison when the gate is closed)</b>
+      <p class="muted" data-i18n="thmBody">
+        Let G be the decision graph built for a case x after applying: (1) clause matching, (2) double sandwich bounds,
+        and (3) the prison evidence gate. If Conf_prison(x) &lt; θ_prison, then every feasible optimal path p* chosen by the system
+        has no prison action (no custodial sanction).
+      </p>
+    </div>
+
+    <details class="note" open>
+      <summary data-i18n="proofSteps">Proof steps (verbal)</summary>
+      <ol class="list">
+        <li data-i18n="ps1">
+          Build the feasible action set A(x) from the three bounds: scenario sandwich, severity sandwich, and thread-bounds.
+          This already restricts sanctions to a lawful interval [R̲(x), R̄(x)].
+        </li>
+        <li data-i18n="ps2">
+          Compute the prison confidence Conf_prison(x). If it is below θ_prison, the gate is “closed”.
+        </li>
+        <li data-i18n="ps3">
+          Gate rule: when closed, remove all prison edges from the graph (or set their cost to +∞).
+          Therefore, in the resulting graph G_closed, no path can contain a prison action.
+        </li>
+        <li data-i18n="ps4">
+          The optimizer chooses p* from Paths(G_closed). Since prison actions are not present in any path,
+          p* cannot contain prison. QED.
+        </li>
+      </ol>
+    </details>
+
+    <details class="note">
+      <summary data-i18n="proofMath">Proof steps (mathematical)</summary>
+      <p class="muted small" data-i18n="pm1">
+        Define G(x)=(V(x),E(x)) and let E_prison(x) ⊂ E(x) be custodial edges. The gate defines:
+      </p>
+      <span class="eq">If Conf_prison(x) &lt; θ_prison:  E'(x) = E(x) \\ E_prison(x)</span>
+      <span class="eq">Else:  E'(x) = E(x)</span>
+      <p class="muted small" data-i18n="pm2">
+        Let Paths(G') be all paths in G'=(V,E'). If Conf_prison(x) &lt; θ_prison then E_prison ⊄ E' and thus:
+      </p>
+      <span class="eq">∀p ∈ Paths(G') : p ∩ E_prison = ∅</span>
+      <p class="muted small" data-i18n="pm3">
+        The optimizer picks p* = argmin_{p∈Paths(G')} Cost(p). Since no p contains prison edges, p* contains none.
+      </p>
+      <span class="eq">⇒ I{prison chosen in p*} = 0</span>
+    </details>
+
+    <div class="note">
+      <b data-i18n="extraSafetyTitle">Extra safety (optional)</b>
+      <p class="muted small" data-i18n="extraSafetyBody">
+        You can add a “robustness layer”: require agreement of multiple independent clause matches (k_min),
+        enforce contradiction checks, and prefer reversible sanctions under uncertainty.
+      </p>
+    </div>
+  </section>
+
+
+<section class="card" style="margin-top:16px" id="catalog">
+    <h2 data-i18n="catalogTitle">Clause Catalog (offline “article pages” for every clause)</h2>
+    <p class="muted" data-i18n="catalogSubtitle">
+      Use this to document each clause in your world-constitution database. It is a readable explanation layer for humans.
+    </p>
+
+    <div class="row">
+      <span class="pill"><span class="dot" style="background:var(--accent)"></span><span data-i18n="catalogTip1">Tip: one clause = one card</span></span>
+      <span class="pill"><span class="dot" style="background:var(--gold)"></span><span data-i18n="catalogTip2">All bounds shown in gold</span></span>
+      <span class="pill"><span class="dot" style="background:var(--bad)"></span><span data-i18n="catalogTip3">Prison requires evidence gate</span></span>
+    </div>
+
+    <div class="note">
+      <b data-i18n="catalogHowTitle">How to use</b>
+      <ol class="list">
+        <li data-i18n="catalogHow1">Write your clause ID (e.g., “FAM-IL-001”).</li>
+        <li data-i18n="catalogHow2">Set countries/scope: one country, multiple countries, or a treaty.</li>
+        <li data-i18n="catalogHow3">Describe Φ(x) in plain language + structured fields.</li>
+        <li data-i18n="catalogHow4">Define sanction/remedy ranges, and whether custody is allowed.</li>
+        <li data-i18n="catalogHow5">Add example scenarios + what the system must NOT do (safety).</li>
+      </ol>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <input id="clauseSearch" placeholder="Search clause ID / country / law type…" style="flex:1;min-width:240px" data-i18n-placeholder="catalogSearchPh"/>
+      <select id="countryFilter" style="min-width:220px">
+        <option value="" data-i18n="countryAll">All countries</option>
+      </select>
+      <select id="typeFilter" style="min-width:220px">
+        <option value="" data-i18n="typeAll">All law types</option>
+        <option value="family" data-i18n="ltFamily">Family law</option>
+        <option value="criminal" data-i18n="ltCriminal">Criminal law</option>
+        <option value="civil" data-i18n="ltCivil">Civil/commercial</option>
+        <option value="administrative" data-i18n="ltAdministrative">Administrative/public</option>
+        <option value="tax" data-i18n="ltTax">Tax & customs</option>
+        <option value="labor" data-i18n="ltLabor">Labor law</option>
+        <option value="trade" data-i18n="ltTrade">Trade & investment</option>
+        <option value="environment" data-i18n="ltEnvironment">Environmental</option>
+        <option value="humanrights" data-i18n="ltHumanRights">Human rights</option>
+        <option value="cyber" data-i18n="ltCyber">Cyber/data</option>
+      </select>
+    </div>
+
+    <div id="clauseList" class="steps" style="margin-top:12px"></div>
+
+    <details class="note" style="margin-top:12px">
+      <summary data-i18n="catalogAddSummary">Add your own clauses (offline JSON)</summary>
+      <p class="muted small" data-i18n="catalogAddP1">
+        You can paste a JSON array of clauses below (offline). The page will render an article card for each clause.
+      </p>
+      <textarea id="clauseJson" class="btn" style="width:100%;min-height:160px;resize:vertical;white-space:pre" spellcheck="false"
+        placeholder='[{"id":"FAM-IL-001","countries":["IL"],"type":"family","materiality":"2/5","text":"…","plain":"…","phi":"…","evidence":"…","ranges":{"sanction":"[min,max]","remedy":"[min,max]"}, "prison_allowed":false,"examples":["…"],"edges":["…"]}]'></textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="loadClausesBtn" data-i18n="catalogLoadBtn">Load clauses</button>
+        <button class="btn" id="loadSampleBtn" data-i18n="catalogSampleBtn">Load sample clauses</button>
+        <span class="chip mono" id="clauseCount">clauses: 0</span>
+      </div>
+      <p class="muted small" data-i18n="catalogAddP2">
+        Note: this is just a documentation layer. Your real system would store these clauses in a database and compute m(ℓ,x) and conf(ℓ,x).
+      </p>
+    </details>
+  </section>
+
+
+<section class="card" style="margin-top:16px">
+    <h2 data-i18n="packSummary">Offline languages</h2>
+    <p class="muted small" data-i18n="packBody">Export a JSON template and translate it fully, then import. No internet is used.</p>
+
+    <div class="fileRow">
+      <button class="btn" id="exportBtn" data-i18n="exportEnglish">Export English keys (JSON)</button>
+      <label class="btn" for="importFile" data-i18n="importPack">Import pack (JSON)</label>
+      <input id="importFile" type="file" accept=".json,application/json" style="display:none"/>
+      <span class="chip mono" id="packStatus">packs: 0</span>
+    </div>
+  </section>
+
+  <footer class="card" style="margin-top:16px">
+    <div class="row" style="justify-content:space-between">
+      <span class="muted small" data-i18n="footerLeft">Single-file HTML • Fully offline • Built-in languages + unlimited offline packs</span>
+      <span class="muted small">© Concept model</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========= Offline multilingual system (no internet) ========= */
+const toastEl = document.getElementById("toast");
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(toastEl._t);
+  toastEl._t = setTimeout(()=>toastEl.style.display="none", 4200);
+}
+function isRTL(lang){ return ["ar","he","fa","ur","ps","sd","ckb"].includes(lang); }
+function setDir(lang){
+  document.documentElement.setAttribute("dir", isRTL(lang) ? "rtl" : "ltr");
+  document.documentElement.setAttribute("lang", lang);
+}
+
+/* Collect EN source as fallback */
+const SOURCE = {};
+document.querySelectorAll("[data-i18n]").forEach(el=> SOURCE[el.getAttribute("data-i18n")] = el.innerHTML.trim() );
+document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+  SOURCE["__ph__"+el.getAttribute("data-i18n-placeholder")] = el.getAttribute("placeholder") || "";
+});
+const SVG_SOURCE = {};
+document.querySelectorAll("[data-i18n-svg]").forEach(el=> SVG_SOURCE[el.getAttribute("data-i18n-svg")] = el.textContent.trim() );
+
+/* Built-in languages: EN/HE/AR/FR/ES/RU (compact translations to keep file size reasonable offline) */
+const BUILTIN = {
+  "en": { "__meta__": { name:"English", dir:"ltr" }, ...SOURCE,
+          ...Object.fromEntries(Object.entries(SVG_SOURCE).map(([k,v])=>["__svg__"+k,v])) },
+
+  "he": { "__meta__": { name:"עברית (Hebrew)", dir:"rtl" },
+    "title":"חוקה בינלאומית — התאמת חוק↔מעשה↔ענישה (\"חוט בלתי נראה\") + מסלול אופטימלי בטוח",
+    "subtitle":"אופליין מלא. שפות מובנות: EN/HE/AR/FR/ES/RU + חבילות שפה אופליין ללא הגבלה.",
+    "equationsGold":"המשוואות בצבע זהב","toggleTheme":"החלף ערכת נושא","__ph__searchLanguage":"חפש שפה…","applyLanguage":"החל שפה","reset":"איפוס",
+    "overviewTitle":"מה הוספת עכשיו (מיפוי חוק ↔ מעשה ↔ ענישה)",
+    "overviewP1":"מחבורת החוקה המחולקת למשפטים/סעיפים, יוצרים התאמה מדויקת בין המעשה (ההפרה) לבין סעיפי החוק שחלים. אפשר לדמיין \"חוט בלתי נראה\" שנמתח מכל סעיף אל טווח הענישה/הסעד המותר כאשר הסעיף מופר.",
+    "overviewP2":"אחר כך מחפשים מסלול אופטימלי בגרף המשפטי, עם יעד בטיחות קשיח: מי שנשפט לא יכנס לכלא בטעות. לכן המודל מסרב לכלא אלא אם הראיות והתאמת הסעיפים חזקות ועקביות.",
+    "safetyTitle":"רעיון בטיחות מרכזי",
+    "safetyBody":"\"כלא\" נחשב החלטה בסיכון גבוה. הוא מותר רק אם (א) סנדוויץ׳ התרחיש, (ב) סנדוויץ׳ החומריות, ו-(ג) סף ראיות — כולם מסכימים. אחרת, המסלול חייב לבחור חלופות ללא מאסר.",
+    "lawClauseSummary":"איך מייצגים סעיפי חוק (משפטים)",
+    "lawClauseP1":"כל סעיף נשמר עם:","lawClauseP2":"Φ(x) הוא תנאי לוגי על העובדות x. אם Φ(x)=אמת — הסעיף \"נדלק\".",
+    "threadSummary":"מיפוי \"החוט הבלתי נראה\"",
+    "threadP1":"לכל סעיף ℓ מגדירים ציון התאמה לעובדות x:","threadP2":"רק סעיפים מעל סף משפיעים:",
+    "threadP3":"ואז מושכים גבולות ענישה מהסעיפים שנבחרו (החוט):",
+    "k1":"סף התאמה","k1d":"לא משתמשים בסעיפים חלשים.","k2":"שער ראיות","k2d":"כלא דורש הוכחה חזקה יותר.",
+    "k3":"ברירת מחדל שמרנית","k3d":"כשיש אי־ודאות → בוחרים ענישה בטוחה יותר.",
+    "k4":"יומן הסבר","k4d":"כל צעד מציג איזה סעיף משך איזה גבול.",
+    "visualTitle":"ויזואליזציה: חוטים + שער בטיחות","visualSubtitle":"סעיפים מחוברים לענישה; כלא מאחורי שער סף גבוה.",
+    "leg1":"חוט התאמה","leg2":"טווח תחום","leg3":"סיכון גבוה (כלא)",
+    "stepsTitle":"שלב־אחר־שלב (עם התאמה בטוחה)","stepsSubtitle":"פתח כל שלב כדי לראות משוואות. (זהב.)",
+    "s1t":"פירוק החוקה לסעיפים (משפטים)","s1d":"כל סעיף כולל תנאים וטווחים מותרים.","tagText":"טקסט→נתונים",
+    "showMath":"הצג משוואות והסבר",
+    "s1p1":"Φ(x) תנאי על עובדות. אם נכשל — הסעיף לא רלוונטי.",
+    "s2t":"התאמת סעיפים למעשה = \"חוטים בלתי נראים\"","s2d":"רק התאמות חזקות משפיעות על גבולות.","tagMatch":"התאמה",
+    "s2p1":"מחשבים התאמה וביטחון ראיות:","s2p2":"בוחרים סעיפים:","s2p3":"גבולות-חוט:",
+    "s3t":"סנדוויץ׳ כפול (תרחיש + חומריות)","s3d":"החלטה בתוך שניהם + גבולות-חוט.","tagBounds":"גבולות",
+    "s3p1":"טווח מותר סופי — שמרני:","s3p2":"החלטה אפשרית:",
+    "s4t":"בניית גרף החלטות וחיפוש מסלול אופטימלי","s4d":"אופטימיזציה עם קנס ענק על \"כלא בטעות\".","tagOptimize":"אופטימיזציה",
+    "s4p1":"עלות כוללת עם קנס אם נבחר כלא בלי ביטחון מספיק:","s4p2":"בחירה:","s4p3":"Ω ענק, לכן המודל נמנע מכלא בלי ביטחון גבוה.",
+    "s5t":"שער בטיחות: כלא רק עם ראיות חזקות + התאמה חזקה","s5d":"אם השער נכשל — מסירים פעולות מאסר מהגרף.","tagGate":"שער",
+    "s5p1":"ביטחון מאסר גלובלי מסעיפים שנבחרו:","s5p2":"כלא מותר רק אם:","s5p3":"אחרת: מסירים מאסר ובוחרים חלופות בתוך הטווח.",
+    "s6t":"יומן ביקורת: להראות את החוטים","s6d":"לכל החלטה מציגים סעיפים וציון התאמה.","tagAudit":"ביקורת",
+    "showStructure":"הצג מבנה",
+    "s6p1":"כך קשה לשלוח לכלא בטעות, כי הכל נבדק ומוסבר.",
+    "humanNoteTitle":"הערה חשובה",
+    "humanNoteBody":"זה מודל קונספטואלי לתמיכת החלטה (לא ייעוץ משפטי). בפועל — דין פלילי דורש הליך הוגן ושיקול דעת אנושי לפי הדין המקומי.",
+    "packSummary":"שפות אופליין","packBody":"ייצא תבנית JSON, תרגם במלואה, וייבא. אין שימוש באינטרנט.",
+    "exportEnglish":"ייצוא מפתחות באנגלית (JSON)","importPack":"ייבוא חבילה (JSON)",
+    "footerLeft":"קובץ HTML יחיד • אופליין מלא • שפות מובנות + חבילות שפה אופליין ללא הגבלה",
+    "__svg__clauseA":"סעיף A","__svg__clauseB":"סעיף B","__svg__clauseC":"סעיף C",
+    "__svg__threads":"חוטים בלתי נראים","__svg__sanctions":"ענישה/סעדים",
+    "__svg__fine":"קנס","__svg__remedy":"סעד","__svg__prison":"כלא",
+    "__svg__gateTitle":"שער ראיות","__svg__gateRule":"כלא רק אם ביטחון ≥ θ_prison",
+    "countriesSummary":"שכבת המדינות (מי מעורב ואיך משלבים חוקים)",
+    "countriesP1":"בכל תיק מגדירים את קבוצת המדינות המשתתפות C_s (למשל מקום המעשה, אזרחות/מגורים, מקום החוזה, מקום הנזק, מקום נכסים). לכל סעיף יש גם שדה מדינות/תחולה (או אמנה).",
+    "countriesP2":"האינטגרציה נעשית באופן שמרני בחיתוך (רק מה שמותר לכולן), או במיזוג משוקלל ושקוף כשצריך. כך נמנעים מבחירת פורום ומבטיחים טווח חוקי לכל סמכות רלוונטית.",
+    "catalogTitle":"קטלוג סעיפים (דפי “מאמר” אופליין לכל סעיף)",
+    "catalogSubtitle":"זהו שכבת הסבר לאנשים: כל סעיף מתועד ככרטיס קריא וברור.",
+    "catalogTip1":"טיפ: סעיף אחד = כרטיס אחד",
+    "catalogTip2":"כל הגבולות בזהב",
+    "catalogTip3":"כלא דורש שער ראיות",
+    "__ph__catalogSearchPh":"חפש מזהה סעיף / מדינה / סוג חוק…",
+    "countryAll":"כל המדינות",
+    "typeAll":"כל סוגי החוק",
+    "catalogHowTitle":"איך להשתמש",
+    "catalogHow1":"כתוב מזהה סעיף (לדוגמה “FAM-IL-001”).",
+    "catalogHow2":"הגדר מדינות/תחולה: מדינה אחת, כמה מדינות, או אמנה.",
+    "catalogHow3":"תאר את Φ(x) במילים פשוטות + שדות מובנים.",
+    "catalogHow4":"הגדר טווחי ענישה/סעד, והאם מאסר מותר.",
+    "catalogHow5":"הוסף דוגמאות + מה המערכת אסור לה לעשות (בטיחות).",
+    "catalogAddSummary":"הוסף סעיפים משלך (JSON אופליין)",
+    "catalogAddP1":"אפשר להדביק מערך JSON של סעיפים — והדף ייצור כרטיס לכל סעיף.",
+    "catalogLoadBtn":"טען סעיפים",
+    "catalogSampleBtn":"טען דוגמה",
+    "catalogAddP2":"הערה: זו שכבת תיעוד/הסבר. במערכת אמיתית מחשבים m(ℓ,x) ו-conf(ℓ,x) ממסד נתונים וראיות.",
+    "catalogCountries":"מדינות / תחולה",
+    "catalogType":"סוג חוק וחומריות",
+    "catalogExplain":"הסבר הסעיף (קריא לאדם)",
+    "catalogPhi":"תנאי Φ(x)",
+    "catalogEvidence":"דרישות ראיות",
+    "catalogRanges":"טווחים מותרים",
+    "catalogExamples":"דוגמאות",
+    "catalogEdges":"מקרי קצה / 'אסור לעשות' לבטיחות"
+  },
+
+  "ar": { "__meta__": { name:"العربية (Arabic)", dir:"rtl" },
+    "title":"الدستور الدولي — مطابقة قانون↔فعل↔عقوبة («خيط غير مرئي») + مسار أمثل آمن",
+    "subtitle":"بدون إنترنت بالكامل. لغات: EN/HE/AR/FR/ES/RU + حزم JSON.",
+    "equationsGold":"المعادلات ذهبية","toggleTheme":"تبديل المظهر","__ph__searchLanguage":"ابحث عن لغة…","applyLanguage":"تطبيق اللغة","reset":"إعادة ضبط",
+    "overviewTitle":"ما أضفته الآن (مطابقة القانون مع الفعل والعقوبة)",
+    "overviewP1":"من تقسيم الدستور إلى بنود/جُمل، نبني مطابقة دقيقة بين الفعل المخالف والبنود التي تنطبق. «الخيط غير المرئي» يربط كل بند بنطاق العقوبة/التعويض المسموح.",
+    "overviewP2":"ثم نبحث عن أفضل مسار في الرسم البياني مع هدف أمان صارم: لا سجن بالخطأ. لذلك يُمنع السجن إلا إذا كانت المطابقة والأدلة قوية ومتسقة.",
+    "safetyTitle":"فكرة الأمان",
+    "safetyBody":"السجن قرار عالي المخاطر. لا يُسمح به إلا إذا اتفقت حدود السيناريو وحدود الشدة وعتبة الأدلة. وإلا تُختار بدائل غير احتجازية.",
+    "lawClauseSummary":"تمثيل البنود",
+    "lawClauseP1":"كل بند يُخزن مع:","lawClauseP2":"Φ(x) شرط منطقي على الوقائع. إذا تحقق، يعمل البند.",
+    "threadSummary":"«الخيط غير المرئي»",
+    "threadP1":"لكل بند نحسب درجة مطابقة:","threadP2":"نستعمل البنود فوق عتبة:",
+    "threadP3":"ثم نشتق حدود العقوبة من البنود المختارة:",
+    "k1":"عتبة المطابقة","k1d":"لا نعتمد بنوداً ضعيفة.","k2":"بوابة الأدلة","k2d":"السجن يتطلب إثباتاً أعلى.",
+    "k3":"بديل محافظ","k3d":"عند عدم اليقين → عقوبات أكثر أماناً.",
+    "k4":"سجل تفسير","k4d":"كل قرار يوضح أي بند سحب أي حد.",
+    "visualTitle":"مرئي: خيوط + بوابة أمان","visualSubtitle":"البنود متصلة بالعقوبات؛ السجن خلف بوابة عالية.",
+    "leg1":"خيط مطابقة","leg2":"نطاق محدود","leg3":"عالي المخاطر (سجن)",
+    "stepsTitle":"خطوة بخطوة (مطابقة آمنة)","stepsSubtitle":"افتح كل خطوة لرؤية المعادلات.",
+    "s1t":"تقسيم الدستور إلى بنود","s1d":"كل بند شروط ونطاقات.","tagText":"نص→بيانات",
+    "showMath":"عرض المعادلات والشرح",
+    "s1p1":"إذا فشل Φ(x) لا يُستخدم البند.",
+    "s2t":"مطابقة البنود مع الفعل = خيوط","s2d":"فقط المطابقات القوية تؤثر.","tagMatch":"مطابقة",
+    "s2p1":"نحسب المطابقة والثقة:","s2p2":"نختار البنود:","s2p3":"حدود الخيط:",
+    "s3t":"ساندويتش مزدوج + حدود الخيط","s3d":"القرار داخل الجميع.","tagBounds":"حدود",
+    "s3p1":"نطاق نهائي محافظ:","s3p2":"قرار ممكن:",
+    "s4t":"بناء الرسم والبحث عن مسار أمثل","s4d":"عقوبة كبيرة على «سجن مع ثقة منخفضة».","tagOptimize":"تحسين",
+    "s4p1":"دالة كلفة مع عقوبة:","s4p2":"اختيار:","s4p3":"Ω كبير جداً لتجنب السجن بلا ثقة.",
+    "s5t":"بوابة الأمان: سجن فقط بثقة عالية","s5d":"إذا فشلت البوابة تُزال خيارات السجن.","tagGate":"بوابة",
+    "s5p1":"ثقة السجن:","s5p2":"السجن فقط إذا:","s5p3":"وإلا نختار بدائل ضمن النطاق.",
+    "s6t":"سجل التدقيق: إظهار الخيوط","s6d":"نُظهر البنود ودرجاتها.","tagAudit":"تدقيق",
+    "showStructure":"عرض البنية",
+    "s6p1":"هذا يمنع السجن بالخطأ قدر الإمكان.",
+    "humanNoteTitle":"ملاحظة مهمة",
+    "humanNoteBody":"نموذج تصوري لدعم القرار (ليس استشارة قانونية). القضايا الجنائية تتطلب إجراءات عادلة وحكمًا بشريًا.",
+    "packSummary":"لغات دون إنترنت","packBody":"صدّر JSON وترجمه ثم استورد. بلا إنترنت.",
+    "exportEnglish":"تصدير مفاتيح (EN) JSON","importPack":"استيراد حزمة (JSON)",
+    "footerLeft":"ملف HTML واحد • دون إنترنت • لغات + حزم JSON",
+    "__svg__clauseA":"بند A","__svg__clauseB":"بند B","__svg__clauseC":"بند C",
+    "__svg__threads":"خيوط غير مرئية","__svg__sanctions":"عقوبات/تعويضات",
+    "__svg__fine":"غرامة","__svg__remedy":"تعويض","__svg__prison":"سجن",
+    "__svg__gateTitle":"بوابة الأدلة","__svg__gateRule":"السجن فقط إذا الثقة ≥ θ_prison"
+  },
+
+  "fr": { "__meta__": { name:"Français (French)", dir:"ltr" },
+    "title":"Constitution internationale — Correspondance loi↔acte↔sanction (« fil invisible ») + chemin optimal sûr",
+    "subtitle":"Entièrement hors ligne. Langues : EN/HE/AR/FR/ES/RU + packs JSON.",
+    "equationsGold":"Équations en or","toggleTheme":"Changer le thème","__ph__searchLanguage":"Rechercher une langue…","applyLanguage":"Appliquer","reset":"Réinitialiser",
+    "overviewTitle":"Ajout (apparier loi, acte, sanction)",
+    "overviewP1":"À partir des clauses, on calcule une correspondance précise entre l’acte et les clauses applicables. Le « fil invisible » relie chaque clause au диапазon de sanction/remède autorisé.",
+    "overviewP2":"On cherche ensuite le meilleur chemin dans le graphe avec un objectif sécurité: éviter l’emprisonnement par erreur. Donc la prison est interdite si la preuve/compatibilité est faible.",
+    "safetyTitle":"Sécurité",
+    "safetyBody":"La prison = décision à haut risque. Autorisée seulement si bornes scénario + bornes sévérité + seuil de preuve sont satisfaits. Sinon, alternatives non-carcérales.",
+    "lawClauseSummary":"Représentation d’une clause",
+    "lawClauseP1":"Chaque clause contient:","lawClauseP2":"Φ(x) est une condition sur les faits.",
+    "threadSummary":"Le « fil »",
+    "threadP1":"Score d’appariement:","threadP2":"Seules les clauses au-dessus du seuil comptent:","threadP3":"Bornes tirées des clauses sélectionnées:",
+    "k1":"Seuil match","k1d":"Ignorer clauses faibles.","k2":"Seuil preuve","k2d":"Prison exige plus.","k3":"Repli conservateur","k3d":"Incertitude → sanction plus sûre.","k4":"Journal explicatif","k4d":"Quelle clause → quelle borne.",
+    "visualTitle":"Visuel: fils + porte","visualSubtitle":"La prison est derrière une porte de preuve.",
+    "leg1":"Fil","leg2":"Plage bornée","leg3":"Risque élevé (prison)",
+    "stepsTitle":"Étapes (appariement sûr)","stepsSubtitle":"Dépliez pour les équations.",
+    "s1t":"Découper en clauses","s1d":"Conditions + plages.","tagText":"Texte→Données",
+    "showMath":"Voir maths",
+    "s1p1":"Si Φ(x) échoue, pas de clause.",
+    "s2t":"Apparier clauses à l’acte","s2d":"Seules les fortes correspondances.","tagMatch":"Match",
+    "s2p1":"Calculer match + confiance:","s2p2":"Sélection:","s2p3":"Bornes du fil:",
+    "s3t":"Double sandwich + bornes du fil","s3d":"Décision dans tous les bornages.","tagBounds":"Bornes",
+    "s3p1":"Plage finale conservative:","s3p2":"Décision faisable:",
+    "s4t":"Graphe + chemin optimal","s4d":"Pénalité massive pour prison sous faible confiance.","tagOptimize":"Optimiser",
+    "s4p1":"Coût avec pénalité:","s4p2":"Choix:","s4p3":"Ω énorme évite prison.",
+    "s5t":"Porte: prison seulement si confiance élevée","s5d":"Sinon on supprime les actions prison.","tagGate":"Porte",
+    "s5p1":"Confiance prison:","s5p2":"Prison seulement si:","s5p3":"Sinon alternatives.",
+    "s6t":"Audit: montrer les fils","s6d":"Liste des clauses + scores.","tagAudit":"Audit",
+    "showStructure":"Structure",
+    "s6p1":"Réduit le risque d’erreur.",
+    "humanNoteTitle":"Note importante",
+    "humanNoteBody":"Modèle conceptuel (pas un avis juridique). La justice pénale exige procédure régulière et jugement humain.",
+    "packSummary":"Langues hors ligne","packBody":"Exporter JSON, traduire, importer. Sans internet.",
+    "exportEnglish":"Exporter clés (EN) JSON","importPack":"Importer pack (JSON)",
+    "footerLeft":"Un HTML • Hors ligne • Langues + packs JSON",
+    "__svg__clauseA":"Clause A","__svg__clauseB":"Clause B","__svg__clauseC":"Clause C",
+    "__svg__threads":"Fils invisibles","__svg__sanctions":"Sanctions","__svg__fine":"Amende","__svg__remedy":"Remède","__svg__prison":"Prison",
+    "__svg__gateTitle":"Porte de preuve","__svg__gateRule":"Prison si confiance ≥ θ_prison"
+  },
+
+  "es": { "__meta__": { name:"Español (Spanish)", dir:"ltr" },
+    "title":"Constitución internacional — Emparejar ley↔acto↔sanción («hilo invisible») + ruta óptima segura",
+    "subtitle":"Totalmente offline. Idiomas: EN/HE/AR/FR/ES/RU + packs JSON.",
+    "equationsGold":"Ecuaciones doradas","toggleTheme":"Cambiar tema","__ph__searchLanguage":"Buscar idioma…","applyLanguage":"Aplicar","reset":"Restablecer",
+    "overviewTitle":"Lo nuevo (mapear ley, acto y sanción)",
+    "overviewP1":"Desde cláusulas, construimos una correspondencia precisa entre el acto y las cláusulas aplicables. El «hilo invisible» conecta cada cláusula con el rango permitido de sanción/remedio.",
+    "overviewP2":"Buscamos la mejor ruta en el grafo con un objetivo de seguridad: evitar cárcel por error. La cárcel se prohíbe si la evidencia/match es débil.",
+    "safetyTitle":"Seguridad",
+    "safetyBody":"La cárcel es de alto riesgo. Solo si límites de escenario + límites de severidad + umbral de evidencia coinciden. Si no, alternativas no custodiales.",
+    "lawClauseSummary":"Representación de cláusulas",
+    "lawClauseP1":"Cada cláusula incluye:","lawClauseP2":"Φ(x) es condición sobre hechos.",
+    "threadSummary":"El «hilo»",
+    "threadP1":"Puntaje de match:","threadP2":"Solo cláusulas ≥ umbral:","threadP3":"Límites tirados de cláusulas seleccionadas:",
+    "k1":"Umbral match","k1d":"No usar cláusulas débiles.","k2":"Umbral evidencia","k2d":"Cárcel exige más.",
+    "k3":"Fallback conservador","k3d":"Incertidumbre → sanción más segura.","k4":"Log explicable","k4d":"Qué cláusula → qué límite.",
+    "visualTitle":"Visual: hilos + puerta","visualSubtitle":"La cárcel está detrás de una puerta de evidencia.",
+    "leg1":"Hilo","leg2":"Rango acotado","leg3":"Alto riesgo (cárcel)",
+    "stepsTitle":"Pasos (match seguro)","stepsSubtitle":"Abre para ecuaciones.",
+    "s1t":"Dividir en cláusulas","s1d":"Condiciones + rangos.","tagText":"Texto→Datos",
+    "showMath":"Ver matemáticas",
+    "s1p1":"Si Φ(x) falla, no se usa.",
+    "s2t":"Emparejar cláusulas con el acto","s2d":"Solo matches fuertes.","tagMatch":"Match",
+    "s2p1":"Calcular match + confianza:","s2p2":"Seleccionar:","s2p3":"Límites del hilo:",
+    "s3t":"Doble sándwich + límites del hilo","s3d":"Decisión dentro de todos.","tagBounds":"Límites",
+    "s3p1":"Rango final conservador:","s3p2":"Decisión factible:",
+    "s4t":"Grafo + ruta óptima","s4d":"Penalización enorme si cárcel con baja confianza.","tagOptimize":"Optimizar",
+    "s4p1":"Costo con penalización:","s4p2":"Elegir:","s4p3":"Ω enorme evita cárcel.",
+    "s5t":"Puerta: cárcel solo con alta confianza","s5d":"Si falla, se eliminan acciones cárcel.","tagGate":"Puerta",
+    "s5p1":"Confianza cárcel:","s5p2":"Cárcel solo si:","s5p3":"Si no, alternativas.",
+    "s6t":"Auditoría: mostrar hilos","s6d":"Cláusulas + puntajes.","tagAudit":"Auditoría",
+    "showStructure":"Estructura",
+    "s6p1":"Reduce riesgo de error.",
+    "humanNoteTitle":"Nota importante",
+    "humanNoteBody":"Modelo conceptual (no asesoría legal). Derecho penal requiere debido proceso y juicio humano.",
+    "packSummary":"Idiomas offline","packBody":"Exporta JSON, traduce, importa. Sin internet.",
+    "exportEnglish":"Exportar claves (EN) JSON","importPack":"Importar pack (JSON)",
+    "footerLeft":"Un HTML • Offline • Idiomas + packs JSON",
+    "__svg__clauseA":"Cláusula A","__svg__clauseB":"Cláusula B","__svg__clauseC":"Cláusula C",
+    "__svg__threads":"Hilos invisibles","__svg__sanctions":"Sanciones","__svg__fine":"Multa","__svg__remedy":"Remedio","__svg__prison":"Cárcel",
+    "__svg__gateTitle":"Puerta de evidencia","__svg__gateRule":"Cárcel si confianza ≥ θ_prison"
+  },
+
+  "ru": { "__meta__": { name:"Русский (Russian)", dir:"ltr" },
+    "title":"Международная конституция — сопоставление закон↔деяние↔санкция («невидимая нить») + безопасный оптимальный путь",
+    "subtitle":"Полностью офлайн. Языки: EN/HE/AR/FR/ES/RU + JSON-пакеты.",
+    "equationsGold":"Уравнения золотые","toggleTheme":"Сменить тему","__ph__searchLanguage":"Поиск языка…","applyLanguage":"Применить","reset":"Сброс",
+    "overviewTitle":"Новое (сопоставление закона, деяния и санкции)",
+    "overviewP1":"Из клаузул строим точное сопоставление между деянием и применимыми нормами. «Невидимая нить» связывает норму с допустимым диапазоном санкций/мер.",
+    "overviewP2":"Далее ищем лучший путь в графе с жёсткой целью безопасности: не отправить в тюрьму по ошибке. Тюрьма запрещена при слабой уверенности.",
+    "safetyTitle":"Безопасность",
+    "safetyBody":"Тюрьма — высокорисковое решение. Разрешается только если границы сценария + границы тяжести + порог доказательств совпадают. Иначе — некарательные альтернативы.",
+    "lawClauseSummary":"Представление нормы",
+    "lawClauseP1":"Каждая норма хранит:","lawClauseP2":"Φ(x) — условие по фактам.",
+    "threadSummary":"«Нить»",
+    "threadP1":"Оценка совпадения:","threadP2":"Берём нормы ≥ порога:","threadP3":"Границы из выбранных норм:",
+    "k1":"Порог совпадения","k1d":"Не брать слабые нормы.","k2":"Порог доказательств","k2d":"Тюрьма требует больше.",
+    "k3":"Консервативный откат","k3d":"Неопределённость → более безопасно.","k4":"Журнал объяснений","k4d":"Какая норма → какая граница.",
+    "visualTitle":"Визуально: нити + шлюз","visualSubtitle":"Тюрьма за шлюзом доказательств.",
+    "leg1":"Нить","leg2":"Ограниченный диапазон","leg3":"Высокий риск (тюрьма)",
+    "stepsTitle":"Шаги (безопасное сопоставление)","stepsSubtitle":"Откройте для уравнений.",
+    "s1t":"Разбить на нормы","s1d":"Условия + диапазоны.","tagText":"Текст→Данные",
+    "showMath":"Показать математику",
+    "s1p1":"Если Φ(x) не выполняется — не используем.",
+    "s2t":"Сопоставить нормы с деянием","s2d":"Только сильные совпадения.","tagMatch":"Сопоставление",
+    "s2p1":"Считаем совпадение + уверенность:","s2p2":"Выбор:","s2p3":"Границы нити:",
+    "s3t":"Двойной сэндвич + границы нити","s3d":"Решение внутри всех границ.","tagBounds":"Границы",
+    "s3p1":"Итоговый консервативный диапазон:","s3p2":"Допустимое решение:",
+    "s4t":"Граф + оптимальный путь","s4d":"Огромный штраф за тюрьму при низкой уверенности.","tagOptimize":"Оптимизация",
+    "s4p1":"Стоимость с штрафом:","s4p2":"Выбор:","s4p3":"Ω огромна — избегаем тюрьмы.",
+    "s5t":"Шлюз: тюрьма только при высокой уверенности","s5d":"Если шлюз не пройден — удаляем тюремные действия.","tagGate":"Шлюз",
+    "s5p1":"Уверенность тюрьмы:","s5p2":"Тюрьма только если:","s5p3":"Иначе альтернативы.",
+    "s6t":"Аудит: показать нити","s6d":"Нормы + оценки.","tagAudit":"Аудит",
+    "showStructure":"Структура",
+    "s6p1":"Снижает риск ошибки.",
+    "humanNoteTitle":"Важная заметка",
+    "humanNoteBody":"Концептуальная модель (не юр. консультация). Уголовные решения требуют процесса и человека.",
+    "packSummary":"Офлайн-языки","packBody":"Экспорт JSON, перевод, импорт. Без интернета.",
+    "exportEnglish":"Экспорт ключей (EN) JSON","importPack":"Импорт пакета (JSON)",
+    "footerLeft":"Один HTML • Офлайн • Языки + JSON-пакеты",
+    "__svg__clauseA":"Норма A","__svg__clauseB":"Норма B","__svg__clauseC":"Норма C",
+    "__svg__threads":"Невидимые нити","__svg__sanctions":"Санкции",
+    "__svg__fine":"Штраф","__svg__remedy":"Мера","__svg__prison":"Тюрьма",
+    "__svg__gateTitle":"Шлюз доказательств","__svg__gateRule":"Тюрьма если уверенность ≥ θ_prison"
+  }
+};
+
+/* runtime packs */
+const RUNTIME_PACKS = {};
+
+/* UI */
+const langSelect = document.getElementById("langSelect");
+const langSearch = document.getElementById("langSearch");
+
+function listAllLangs(){
+  const base = Object.keys(BUILTIN).map(code => ({code, name:(BUILTIN[code].__meta__||{}).name || code}));
+  const imported = Object.keys(RUNTIME_PACKS).map(code=>{
+    const meta = RUNTIME_PACKS[code].__meta__ || {};
+    return {code, name: meta.name || `Pack: ${code}`};
+  });
+  return [...base, ...imported].sort((a,b)=>a.name.localeCompare(b.name));
+}
+function renderLangOptions(filter=""){
+  langSelect.innerHTML = "";
+  const f = filter.trim().toLowerCase();
+  listAllLangs()
+    .filter(x => !f || x.name.toLowerCase().includes(f) || x.code.toLowerCase().includes(f))
+    .forEach(x=>{
+      const opt = document.createElement("option");
+      opt.value = x.code;
+      opt.textContent = `${x.name} — [${x.code}]`;
+      langSelect.appendChild(opt);
+    });
+  const saved = localStorage.getItem("lang_offline_match") || "en";
+  if([...langSelect.options].some(o=>o.value===saved)) langSelect.value = saved;
+}
+renderLangOptions();
+langSearch.addEventListener("input", ()=>renderLangOptions(langSearch.value));
+
+function getPack(lang){
+  return BUILTIN[lang] || RUNTIME_PACKS[lang] || BUILTIN["en"];
+}
+
+function applyLang(lang){
+  const pack = getPack(lang);
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    el.innerHTML = (pack[k] ?? SOURCE[k] ?? el.innerHTML);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const k = "__ph__"+el.getAttribute("data-i18n-placeholder");
+    el.setAttribute("placeholder", pack[k] ?? SOURCE[k] ?? "");
+  });
+  document.querySelectorAll("[data-i18n-svg]").forEach(el=>{
+    const key = "__svg__"+el.getAttribute("data-i18n-svg");
+    el.textContent = pack[key] ?? SVG_SOURCE[el.getAttribute("data-i18n-svg")] ?? el.textContent;
+  });
+
+  setDir(lang);
+}
+
+/* theme */
+const themeBtn = document.getElementById("themeBtn");
+function applyTheme(t){ document.documentElement.setAttribute("data-theme", t); localStorage.setItem("theme_offline_match_theme", t); }
+applyTheme(localStorage.getItem("theme_offline_match_theme") || "dark");
+themeBtn.addEventListener("click", ()=>{
+  const t = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem("theme_offline_match_theme", t);
+});
+
+/* buttons */
+document.getElementById("applyBtn").addEventListener("click", ()=>{
+  const lang = langSelect.value;
+  localStorage.setItem("lang_offline_match", lang);
+  applyLang(lang);
+  toast("Language applied (offline).");
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  localStorage.setItem("lang_offline_match","en");
+  langSelect.value = "en";
+  applyLang("en");
+  toast("Reset.");
+});
+
+/* export template */
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const payload = {
+    "__meta__": { lang:"xx", name:"Your Language Name" },
+    ...SOURCE,
+    ...Object.fromEntries(Object.entries(SVG_SOURCE).map(([k,v])=>["__svg__"+k, v])),
+    ...Object.fromEntries(Object.entries(SOURCE).filter(([k])=>k.startsWith("__ph__"))),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "language_pack_template.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Exported template JSON.");
+});
+
+/* import pack */
+const importFile = document.getElementById("importFile");
+const packStatus = document.getElementById("packStatus");
+function updatePackStatus(){ packStatus.textContent = "packs: " + Object.keys(RUNTIME_PACKS).length; }
+updatePackStatus();
+
+importFile.addEventListener("change", async (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  try{
+    const json = JSON.parse(await file.text());
+    const meta = json.__meta__ || {};
+    const lang = meta.lang || meta.code || "xx";
+    RUNTIME_PACKS[lang] = json;
+    updatePackStatus();
+    renderLangOptions(langSearch.value);
+    toast(`Imported pack: ${meta.name || lang} [${lang}]`);
+  }catch(err){
+    console.error(err);
+    toast("Failed to import pack. Ensure valid JSON with __meta__.lang.");
+  }finally{
+    importFile.value = "";
+  }
+});
+
+
+/* ========= Clause Catalog (offline article pages) ========= */
+const clauseSearch = document.getElementById("clauseSearch");
+const countryFilter = document.getElementById("countryFilter");
+const typeFilter = document.getElementById("typeFilter");
+const clauseList = document.getElementById("clauseList");
+const clauseCount = document.getElementById("clauseCount");
+const clauseJson = document.getElementById("clauseJson");
+const loadClausesBtn = document.getElementById("loadClausesBtn");
+const loadSampleBtn = document.getElementById("loadSampleBtn");
+
+let CLAUSES = [];
+
+const SAMPLE_CLAUSES = [
+  {
+    id:"FAM-IL-001",
+    countries:["IL"],
+    type:"family",
+    materiality:"2/5",
+    text:"(Template) Duty of care / child welfare clause",
+    plain:"Applies when a guardian’s actions create a measurable risk to a child’s safety or wellbeing.",
+    phi:"Facts show caregiver responsibility + risk indicator(s) + causation link.",
+    evidence:"Documents + witness + objective indicators. Custody changes require high confidence.",
+    ranges:{ sanction:"Non-custodial measures: supervision, training, fines (no prison).", remedy:"Protection orders, custody adjustments, therapy/support."},
+    prison_allowed:false,
+    examples:["Neglect risk with documented pattern; order supervision and support."],
+    edges:["Single ambiguous incident without corroboration → do NOT escalate to removal or custody change."]
+  },
+  {
+    id:"CRM-US-101",
+    countries:["US"],
+    type:"criminal",
+    materiality:"4/5",
+    text:"(Template) Serious harm with intent clause",
+    plain:"Applies when intent + serious harm are both established under criminal standards.",
+    phi:"Intent indicators + unlawful act + serious harm + identity established.",
+    evidence:"High: corroborated evidence. Prison only if confidence ≥ θ_prison and lawful range allows custody.",
+    ranges:{ sanction:"Custodial range allowed only when evidence gate passes.", remedy:"Restitution and protective orders may apply."},
+    prison_allowed:true,
+    examples:["Multiple independent evidence sources + clear intent → custody allowed within bounds."],
+    edges:["Conflicting evidence or weak identity → remove prison edges; use non-custodial bounds."]
+  },
+  {
+    id:"TRD-EU-220",
+    countries:["EU"],
+    type:"trade",
+    materiality:"3/5",
+    text:"(Template) Trade remedy proportionality clause",
+    plain:"Trade measures must be proportional to harm and consistent with treaty obligations.",
+    phi:"Treaty scope applies + measurable harm + proportional response within allowed remedies.",
+    evidence:"Economic data + causation analysis; prefer reversible measures.",
+    ranges:{ sanction:"Tariff/measure limits within treaty bounds.", remedy:"Consultation, phased measures, compensation."},
+    prison_allowed:false,
+    examples:["Apply phased remedy first; escalation only if repeated breach."],
+    edges:["Unclear treaty scope → choose conservative intersection across countries."]
+  }
+];
+
+function uniq(arr){ return [...new Set(arr)]; }
+
+function buildFilters(){
+  if(!countryFilter) return;
+  const countries = uniq(CLAUSES.flatMap(c => (c.countries||[])));
+  // preserve first option
+  const first = countryFilter.options[0];
+  countryFilter.innerHTML = "";
+  countryFilter.appendChild(first);
+  countries.sort().forEach(code=>{
+    const opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = code;
+    countryFilter.appendChild(opt);
+  });
+}
+
+function clauseCard(c){
+  const countries = (c.countries||[]).join(", ");
+  const prison = c.prison_allowed ? "YES (gate required)" : "NO";
+  return `
+    <div class="step" data-clause="1" data-country="${(c.countries||[]).join(' ')}" data-type="${c.type||''}">
+      <div class="step-head">
+        <div class="step-title">
+          <div class="num">§</div>
+          <div>
+            <h3 class="mono">${escapeHtml(c.id||"")}</h3>
+            <div class="muted small">${escapeHtml(c.text||"")}</div>
+          </div>
+        </div>
+        <span class="chip"><span class="dot" style="background:${c.prison_allowed ? 'var(--bad)' : 'var(--ok)'}"></span><span class="mono">${prison}</span></span>
+      </div>
+
+      <div class="kpi" style="margin-top:10px">
+        <div class="box"><b data-i18n="catalogCountries">Countries / scope</b><span class="mono">${escapeHtml(countries || "-")}</span></div>
+        <div class="box"><b data-i18n="catalogType">Law type & materiality</b><span class="mono">${escapeHtml((c.type||"-") + " • " + (c.materiality||"-"))}</span></div>
+      </div>
+
+      <details open>
+        <summary data-i18n="catalogExplain">Explain this clause (human-readable)</summary>
+        <p class="muted">${escapeHtml(c.plain||"")}</p>
+
+        <p class="muted" style="margin-top:10px"><b data-i18n="catalogPhi">Condition Φ(x)</b></p>
+        <span class="eq">${escapeHtml(c.phi||"")}</span>
+
+        <p class="muted" style="margin-top:10px"><b data-i18n="catalogEvidence">Evidence requirements</b></p>
+        <span class="eq">${escapeHtml(c.evidence||"")}</span>
+
+        <p class="muted" style="margin-top:10px"><b data-i18n="catalogRanges">Allowed ranges</b></p>
+        <span class="eq">Sanction: ${escapeHtml((c.ranges||{}).sanction||"")}</span>
+        <span class="eq">Remedy:  ${escapeHtml((c.ranges||{}).remedy||"")}</span>
+
+        <p class="muted" style="margin-top:10px"><b data-i18n="catalogExamples">Examples</b></p>
+        <ul class="list">${(c.examples||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("") || "<li>-</li>"}</ul>
+
+        <p class="muted" style="margin-top:10px"><b data-i18n="catalogEdges">Edge cases / safety “must not”</b></p>
+        <ul class="list">${(c.edges||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("") || "<li>-</li>"}</ul>
+      </details>
+    </div>
+  `;
+}
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function renderClauses(){
+  if(!clauseList) return;
+  const q = (clauseSearch?.value || "").trim().toLowerCase();
+  const ctry = (countryFilter?.value || "").trim();
+  const typ = (typeFilter?.value || "").trim();
+
+  const filtered = CLAUSES.filter(c=>{
+    const hay = `${c.id||""} ${(c.countries||[]).join(" ")} ${c.type||""} ${c.text||""} ${c.plain||""}`.toLowerCase();
+    const okQ = !q || hay.includes(q);
+    const okC = !ctry || (c.countries||[]).includes(ctry);
+    const okT = !typ || (c.type||"")===typ;
+    return okQ && okC && okT;
+  });
+
+  clauseList.innerHTML = filtered.map(clauseCard).join("") || `<div class="note danger"><b>No clauses loaded.</b><p class="muted small">Load sample clauses or paste JSON.</p></div>`;
+  if(clauseCount) clauseCount.textContent = "clauses: " + CLAUSES.length;
+}
+
+function loadClauses(arr){
+  CLAUSES = Array.isArray(arr) ? arr : [];
+  buildFilters();
+  renderClauses();
+  toast("Clause catalog updated (offline).");
+}
+
+if(loadSampleBtn){
+  loadSampleBtn.addEventListener("click", ()=> loadClauses(SAMPLE_CLAUSES));
+}
+if(loadClausesBtn){
+  loadClausesBtn.addEventListener("click", ()=>{
+    try{
+      const txt = clauseJson?.value?.trim();
+      if(!txt){ toast("Paste clause JSON first."); return; }
+      const data = JSON.parse(txt);
+      loadClauses(data);
+    }catch(e){
+      console.error(e);
+      toast("Invalid JSON for clauses.");
+    }
+  });
+}
+
+clauseSearch?.addEventListener("input", renderClauses);
+countryFilter?.addEventListener("change", renderClauses);
+typeFilter?.addEventListener("change", renderClauses);
+
+// Load sample by default for visibility
+loadClauses(SAMPLE_CLAUSES);
+
+
+
+/* ========= Graph path animation (offline) ========= */
+const animPlay = document.getElementById("animPlay");
+const animPause = document.getElementById("animPause");
+const animStep = document.getElementById("animStep");
+const animReset = document.getElementById("animReset");
+const animStatus = document.getElementById("animStatus");
+
+const nodeStart = document.getElementById("nodeStart");
+const nodeScenario = document.getElementById("nodeScenario");
+const nodeSeverity = document.getElementById("nodeSeverity");
+const nodeDecision = document.getElementById("nodeDecision");
+const nodePrison = document.getElementById("nodePrison");
+
+const edgeStartScenario = document.getElementById("edgeStartScenario");
+const edgeStartSeverity = document.getElementById("edgeStartSeverity");
+const edgeScenarioDecision = document.getElementById("edgeScenarioDecision");
+const edgeSeverityDecision = document.getElementById("edgeSeverityDecision");
+const edgeDecisionPrison = document.getElementById("edgeDecisionPrison");
+
+let animTimer = null;
+let stepIdx = 0;
+
+/* simple demo gate flag (offline): by default closed */
+let demoGateOpen = false;
+
+function clearActive(){
+  [nodeStart,nodeScenario,nodeSeverity,nodeDecision,nodePrison].forEach(n=>{
+    if(n) n.classList.remove("activeNode");
+  });
+  [edgeStartScenario,edgeStartSeverity,edgeScenarioDecision,edgeSeverityDecision,edgeDecisionPrison].forEach(e=>{
+    if(e) e.classList.remove("activeEdge");
+  });
+}
+
+function setPrisonEdgeState(){
+  if(!edgeDecisionPrison) return;
+  if(demoGateOpen){
+    edgeDecisionPrison.classList.remove("disabledEdge");
+    edgeDecisionPrison.style.strokeDasharray = "0";
+    edgeDecisionPrison.style.stroke = "rgba(251,113,133,.85)";
+  }else{
+    edgeDecisionPrison.classList.add("disabledEdge");
+    edgeDecisionPrison.style.strokeDasharray = "6 6";
+    edgeDecisionPrison.style.stroke = "rgba(251,113,133,.6)";
+  }
+}
+setPrisonEdgeState();
+
+/* demo path: Start -> Scenario + Severity -> Decision (two sandwiches meet) -> (optional) Prison */
+const STEPS = [
+  {nodes:[nodeStart], edges:[]},
+  {nodes:[nodeStart,nodeScenario], edges:[edgeStartScenario]},
+  {nodes:[nodeStart,nodeSeverity], edges:[edgeStartSeverity]},
+  {nodes:[nodeScenario,nodeDecision], edges:[edgeScenarioDecision]},
+  {nodes:[nodeSeverity,nodeDecision], edges:[edgeSeverityDecision]},
+  {nodes:[nodeDecision], edges:[]},
+  {nodes:[nodeDecision,nodePrison], edges:[edgeDecisionPrison], prison:true}
+];
+
+function renderStep(i){
+  clearActive();
+  setPrisonEdgeState();
+  const s = STEPS[i] || STEPS[0];
+  (s.nodes||[]).forEach(n=>n && n.classList.add("activeNode"));
+  (s.edges||[]).forEach(e=>e && e.classList.add("activeEdge"));
+  if(animStatus) animStatus.textContent = "step: " + i + (demoGateOpen ? " (gate open)" : " (gate closed)");
+}
+
+function nextStep(){
+  // if gate closed, do not allow the prison step: skip it
+  const lastIdx = demoGateOpen ? (STEPS.length-1) : (STEPS.length-2);
+  stepIdx = stepIdx + 1;
+  if(stepIdx > lastIdx) stepIdx = 0;
+  renderStep(stepIdx);
+}
+
+function play(){
+  if(animTimer) return;
+  animTimer = setInterval(nextStep, 900);
+}
+function pause(){
+  if(animTimer){ clearInterval(animTimer); animTimer = null; }
+}
+function reset(){
+  pause();
+  stepIdx = 0;
+  renderStep(stepIdx);
+}
+
+animPlay && animPlay.addEventListener("click", play);
+animPause && animPause.addEventListener("click", pause);
+animStep && animStep.addEventListener("click", ()=>{ pause(); nextStep(); });
+animReset && animReset.addEventListener("click", reset);
+
+/* Extra: double-click the graph area toggles demo gate open/closed */
+const graphSection = document.getElementById("graph-theory");
+graphSection && graphSection.addEventListener("dblclick", ()=>{
+  demoGateOpen = !demoGateOpen;
+  renderStep(stepIdx);
+  toast(demoGateOpen ? "Demo gate OPEN (prison edge can activate)." : "Demo gate CLOSED (prison edge disabled).");
+});
+
+reset();
+
+
+/* load saved language */
+applyLang(localStorage.getItem("lang_offline_match") || "en");
+</script>
+</body>
+</html>
