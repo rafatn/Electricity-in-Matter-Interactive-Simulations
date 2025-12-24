@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הערך המוחלט של איבר – Absolute Organ Value (AOV)</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+        header {
+            background: linear-gradient(135deg, #264653, #2a9d8f);
+            color: #fff;
+            padding: 24px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+        }
+        header p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        main {
+            max-width: 980px;
+            margin: 24px auto 40px auto;
+            background: #fff;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-radius: 12px;
+        }
+        .lang-switcher {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .lang-switcher button {
+            border: none;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: #e0e0e0;
+        }
+        .lang-switcher button.active {
+            background: #2a9d8f;
+            color: #fff;
+        }
+        nav {
+            background: #f0f4f8;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        nav a {
+            color: #264653;
+            text-decoration: none;
+            margin-left: 12px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        h2 {
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 4px;
+            margin-top: 28px;
+        }
+        h3 {
+            margin-top: 20px;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            margin-left: 4px;
+            color: #fff;
+        }
+        .tag-article { background: #2a9d8f; }
+        .tag-patent { background: #e76f51; }
+        .box {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .pros, .cons {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+        .pros h4, .cons h4 {
+            margin-top: 0;
+            font-size: 0.9rem;
+        }
+        .pros ul, .cons ul {
+            margin: 0;
+            padding-right: 18px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        table th, table td {
+            border: 1px solid #e0e0e0;
+            padding: 6px 8px;
+            text-align: right;
+        }
+        table th {
+            background: #f0f4f8;
+        }
+        code {
+            background: #f0f4f8;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            direction: ltr;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777;
+            padding-bottom: 24px;
+        }
+        @media (max-width: 700px) {
+            main {
+                margin: 12px;
+                padding: 16px;
+            }
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Language sections */
+        .lang-section {
+            display: none;
+        }
+        .lang-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>הערך המוחלט של איבר – Absolute Organ Value (AOV)</h1>
+    <p>מודל ביולוגי־גיאומטרי + בסיס לפטנט, בשלוש שפות באותו דף</p>
+</header>
+
+<main>
+    <div class="lang-switcher">
+        <button class="active" data-lang="he">עברית 🇮🇱</button>
+        <button data-lang="en">English 🇬🇧</button>
+        <button data-lang="ar">العربية 🇸🇦</button>
+    </div>
+
+    <!-- ==========================
+         עברית – מלא (מאמר + פטנט)
+    =========================== -->
+    <section id="lang-he" class="lang-section active" lang="he" dir="rtl">
+
+        <nav>
+            <strong>תוכן (עברית):</strong>
+            <a href="#he-article">חלק א – מאמר מדעי</a> |
+            <a href="#he-patent">חלק ב – הצעת פטנט</a>
+        </nav>
+
+        <!-- חלק א – מאמר -->
+        <section id="he-article">
+            <h2>חלק א – מאמר מדעי <span class="tag tag-article">מאמר</span></h2>
+
+            <h3>1. מבוא</h3>
+            <p>
+                נקודת המוצא:
+            </p>
+            <div class="box">
+                <strong>“ערך מוחלט של איבר הומצאתו בצבי היעיל היותר בזמן חיים צעיר היותר”</strong><br><br>
+                פירוש: לכל איבר בגוף ניתן להגדיר <em>ערך מוחלט</em> – מדד מספרי טהור,
+                המייצג את היעילות המקסימלית של אותו איבר, כפי שהיא מופיעה בטבע (למשל אצל הצבי עבור רגליים),
+                ובמיוחד בגיל הצעיר שבו האיבר בשיא הביצועים.
+            </div>
+
+            <p>
+                במאמר זה נבנה מסגרת תאורטית המשלבת:
+            </p>
+            <ul>
+                <li>מודל ביולוגי: בעלי חיים “אופטימליים” בטבע (צבי, קנגורו, ינשוף, לווייתן ועוד).</li>
+                <li>מודל תלוי־זמן המתאר את התפתחות האיבר לאורך החיים.</li>
+                <li>מודל וקטורי־גיאומטרי המייצג את האיבר כווקטור תכונות.</li>
+                <li>שילוב כל המודלים למדד יחיד – AOV.</li>
+            </ul>
+
+            <h3>2. מודל א' – האיבר האופטימלי בטבע</h3>
+            <p>
+                עבור כל <strong>תפקיד פונקציונלי</strong> יש “אלוף טבעי”:
+            </p>
+            <ul>
+                <li>ריצה מהירה – רגל צבי או צ'יטה.</li>
+                <li>קפיצה לגובה – רגל קנגורו.</li>
+                <li>ראיית לילה – עין ינשוף.</li>
+                <li>צלילה עמוקה – מערכת הדם והריאות של לווייתן.</li>
+            </ul>
+
+            <p>
+                נסמן:
+            </p>
+            <p>
+                <code>|O_max| = E(best_species, young_age)</code><br>
+                <strong>הערך המוחלט של האיבר</strong> = היעילות המקסימלית
+                כפי שהיא מופיעה ביצור הטבע האופטימלי ובגיל הצעיר.
+            </p>
+
+            <p>
+                עבור איבר אנושי:
+            </p>
+            <p>
+                <code>Score_organ = E(organ_human) / |O_max|</code>
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>יתרונות מודל א'</h4>
+                    <ul>
+                        <li>יוצר <strong>סטנדרט טבעי</strong> – "0 עד 1".</li>
+                        <li>מאפשר השוואה בין מינים שונים לאותו תפקיד.</li>
+                        <li>מתאים לפיתוח פרוטזות ורובוטיקה ביומימטית.</li>
+                        <li>מעודד חקר “העיצוב המושלם” בטבע.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>חסרונות מודל א'</h4>
+                    <ul>
+                        <li>קשה להגדיר מה היא "יעילות": מהירות? יציבות? אנרגיה?</li>
+                        <li>אין אלוף מוחלט – כל מין טוב במשהו אחר.</li>
+                        <li>התעלמות חלקית מהקשר סביבתי.</li>
+                        <li>דורש נתונים ניסויים מפורטים.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3. מודל ב' – תלות בזמן חיים (גיל צעיר)</h3>
+            <p>
+                נגדיר פונקציה של יעילות האיבר בזמן:
+            </p>
+            <p>
+                <code>E(t)</code> – יעילות האיבר כפונקציה של גיל <code>t</code>.
+            </p>
+
+            <p>
+                הערך המוחלט:
+            </p>
+            <p>
+                <code>|O| = max{ E(t) | t ∈ [t_young_min, t_young_max] }</code>
+            </p>
+
+            <p>
+                כלומר, אנו מסתכלים על טווח הגילאים הצעיר שבו האיבר “בריא” וללא שחיקה משמעותית,
+                ומגדירים את הערך המוחלט על פי השיא בטווח זה.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>יתרונות מודל ב'</h4>
+                    <ul>
+                        <li>מתאים לרפואה ולמחקר הזדקנות.</li>
+                        <li>מאפשר לזהות סטיות מהתפקוד המצופה לגיל.</li>
+                        <li>נותן שפה מתמטית לעקומת חיים של איבר.</li>
+                        <li>שימושי למדדי שיקום.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>חסרונות מודל ב'</h4>
+                    <ul>
+                        <li>הגדרת "צעיר" שונה לכל איבר.</li>
+                        <li>המדידה לאורך זמן מורכבת.</li>
+                        <li>מודל אידיאלי – לא מכסה טראומות חריגות.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>4. מודל ג' – ייצוג וקטורי־גיאומטרי</h3>
+            <p>
+                לכל איבר נגדיר וקטור תכונות:
+            </p>
+            <p>
+                <code>O⃗ = (g1, g2, ..., gn)</code><br>
+                לדוגמה:
+            </p>
+            <ul>
+                <li>g1 – חוזק מכני.</li>
+                <li>g2 – מהירות תגובה.</li>
+                <li>g3 – צריכת אנרגיה.</li>
+                <li>g4 – גמישות.</li>
+                <li>g5 – עמידות בעומס כרוני.</li>
+            </ul>
+
+            <p>
+                הערך המוחלט:
+            </p>
+            <p>
+                <code>|O| = ||O⃗|| = sqrt(g1² + g2² + ... + gn²)</code>
+            </p>
+
+            <p>
+                עבור צבי ואדם:
+            </p>
+            <p>
+                <code>O⃗_deer, O⃗_human</code><br>
+                <code>d = ||O⃗_deer - O⃗_human||</code> – מרחק בין וקטורי האיברים.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>יתרונות מודל ג'</h4>
+                    <ul>
+                        <li>מתמטי – מרחקים, זוויות, נורמות, קלאסטרים.</li>
+                        <li>מתאים ל-AI ואופטימיזציה.</li>
+                        <li>אפשר להגדיר משקלים שונים לתכונות שונות.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>חסרונות מודל ג'</h4>
+                    <ul>
+                        <li>בחירת התכונות סובייקטיבית.</li>
+                        <li>מדידה מלאה של כל תכונה מורכבת.</li>
+                        <li>הנורמה לבדה לא תמיד מספרת הכול.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>5. שילוב המודלים – המסגרת המאוחדת</h3>
+            <ol>
+                <li>
+                    <strong>גיאומטריה:</strong>
+                    <br><code>O⃗(t) = (g1(t), g2(t), ..., gn(t))</code>
+                </li>
+                <li>
+                    <strong>זמן חיים:</strong>
+                    <br><code>|O(t)| = ||O⃗(t)||</code><br>
+                    <code>|O|_young = max{ |O(t)| | t ∈ [t_young_min, t_young_max] }</code>
+                </li>
+                <li>
+                    <strong>ייחוס לטבע:</strong>
+                    <br><code>O⃗_ref(t)</code>, <code>|O_ref|_young</code><br>
+                    <code>Index = |O|_young / |O_ref|_young</code>
+                </li>
+            </ol>
+
+            <h3>6. טבלת סיכום</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>מודל</th>
+                        <th>רעיון</th>
+                        <th>יתרונות</th>
+                        <th>חסרונות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>א' – אלוף טבעי</td>
+                        <td>השוואה לאיבר הטוב בטבע</td>
+                        <td>סטנדרט טבעי, השוואת מינים</td>
+                        <td>הגדרת יעילות, נתונים חסרים</td>
+                    </tr>
+                    <tr>
+                        <td>ב' – תלוי גיל</td>
+                        <td>שיא היעילות בגיל צעיר</td>
+                        <td>רפואה, שיקום, הזדקנות</td>
+                        <td>קשה למדוד לאורך זמן</td>
+                    </tr>
+                    <tr>
+                        <td>ג' – וקטורי</td>
+                        <td>איבר כוקטור תכונות</td>
+                        <td>מתמטי, מתאים ל-AI</td>
+                        <td>סובייקטיביות בבחירת רכיבים</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>7. יישומים פוטנציאליים</h3>
+            <ul>
+                <li>מדד ליעילות איברים לצורך מעקב רפואי.</li>
+                <li>תכנון פרוטזות ורובוטים לפי איברי ייחוס מהטבע.</li>
+                <li>מעקב שיקומי לפני/אחרי ניתוחים וטיפולים.</li>
+                <li>מחקר אבולוציוני והשוואת מינים.</li>
+            </ul>
+        </section>
+
+        <!-- חלק ב – פטנט -->
+        <section id="he-patent">
+            <h2>חלק ב – הצעת פטנט <span class="tag tag-patent">פטנט</span></h2>
+
+            <h3>1. כותרת ההמצאה</h3>
+            <p>
+                <strong>מערכת וחישוב מדד “הערך המוחלט של איבר” (AOV – Absolute Organ Value)</strong>
+            </p>
+
+            <h3>2. תחום ההמצאה</h3>
+            <ul>
+                <li>ביופיזיקה כמותית.</li>
+                <li>רפואה שיקומית והערכת תפקוד איברים.</li>
+                <li>בינה מלאכותית לניתוח נתונים ביולוגיים.</li>
+                <li>ביומימטיקה ופרוטזות.</li>
+            </ul>
+
+            <h3>3. בעיה קיימת</h3>
+            <p>
+                אין מדד אחיד שמשלב:
+            </p>
+            <ul>
+                <li>השוואה ליצורי טבע אופטימליים.</li>
+                <li>תלות בזמן וגיל.</li>
+                <li>וקטור רב־ממדי של תכונות איבר.</li>
+            </ul>
+
+            <h3>4. סיכום ההמצאה</h3>
+            <div class="box">
+                המערכת מחשבת מדד AOV באמצעות:
+                <ol>
+                    <li>מדידת תכונות איבר נבדק לאורך זמן.</li>
+                    <li>שימוש בוקטור ייחוס של איבר טבעי אופטימלי.</li>
+                    <li>חישוב נורמות בטווח גילאים צעירים.</li>
+                    <li>חישוב יחס <code>Index = |O_test|_young / |O_ref|_young</code>.</li>
+                </ol>
+            </div>
+
+            <h3>5. רכיבי המערכת</h3>
+            <ol>
+                <li>מודול איסוף נתונים (בדיקות פיזיולוגיות, דימות ועוד).</li>
+                <li>מאגר ייחוס של איברים טבעיים אופטימליים.</li>
+                <li>מודול חישוב וקטורי ונורמות.</li>
+                <li>מודול חישוב מדד AOV.</li>
+                <li>ממשק תצוגה (גרפים, מדד מספרי, השוואות).</li>
+            </ol>
+
+            <h3>6. יישומים</h3>
+            <ul>
+                <li>מעקב שיקום: כמה המטופל מתקרב לערכו הצעיר ולערך הייחוס.</li>
+                <li>תכנון פרוטזות ורובוטיקה ביומימטית.</li>
+                <li>מחקר אבולוציוני והשוואת מינים.</li>
+                <li>אלגוריתמים לזיהוי סטיות פתולוגיות מוקדמות.</li>
+            </ul>
+
+            <h3>7. טענות עיקריות (לא נוסח משפטי מלא)</h3>
+            <ol>
+                <li>
+                    שיטה לחישוב AOV הכוללת:
+                    <ol type="a">
+                        <li>מדידת תכונות איבר נבדק לאורך זמן והמרתן לוקטור <code>O⃗_test(t)</code>.</li>
+                        <li>שימוש בוקטור ייחוס <code>O⃗_ref(t)</code> של איבר טבעי אופטימלי.</li>
+                        <li>חישוב נורמות בטווח גילאים צעיר.</li>
+                        <li>חישוב יחס <code>Index = |O_test|_young / |O_ref|_young</code>.</li>
+                    </ol>
+                </li>
+                <li>
+                    מערכת מחשובית עם מאגר ייחוס טבעי לחישוב מדדי AOV.
+                </li>
+                <li>
+                    שימוש ב-AOV להערכת תפקוד, שיקום ופרוטזות ביומימטיות.
+                </li>
+            </ol>
+        </section>
+    </section>
+
+    <!-- ==========================
+         English – Full (Article + Patent)
+    =========================== -->
+    <section id="lang-en" class="lang-section" lang="en" dir="ltr">
+        <nav>
+            <strong>Contents (English):</strong>
+            <a href="#en-article">Part A – Scientific Article</a> |
+            <a href="#en-patent">Part B – Patent Proposal</a>
+        </nav>
+
+        <!-- Part A – Article -->
+        <section id="en-article">
+            <h2>Part A – Scientific Article <span class="tag tag-article">Article</span></h2>
+
+            <h3>1. Introduction</h3>
+            <p>
+                We start from the conceptual sentence:
+            </p>
+            <div class="box">
+                “The absolute value of an organ is defined by the most efficient version of that organ,
+                as found in nature (for example, the deer for running legs), at the youngest age
+                where it reaches its peak performance.”
+            </div>
+            <p>
+                In this work we formalize this idea and propose a framework that combines:
+            </p>
+            <ul>
+                <li>Biological models: identifying <strong>optimal organs in nature</strong>
+                    (deer, cheetah, kangaroo, owl, whale, etc.).</li>
+                <li>Time dependence: describing <strong>organ efficiency as a function of age</strong>.</li>
+                <li>Vector geometry: representing each organ as a
+                    <strong>feature vector</strong> in a multi-dimensional space.</li>
+                <li>Combining all models into a single scalar index – the
+                    <strong>Absolute Organ Value (AOV)</strong>.</li>
+            </ul>
+
+            <h3>2. Model A – The optimal organ in nature</h3>
+            <p>
+                For each <strong>functional role</strong> there exists a “natural champion”:
+            </p>
+            <ul>
+                <li>Fast running – the leg of a deer or cheetah.</li>
+                <li>High jumping – the leg of a kangaroo.</li>
+                <li>Night vision – the eye of an owl.</li>
+                <li>Deep diving – the blood and lung system of whales.</li>
+            </ul>
+            <p>
+                We denote:
+            </p>
+            <p>
+                <code>|O_max| = E(best_species, young_age)</code><br>
+                where <code>E</code> is an efficiency function, and
+                <strong>|O_max|</strong> is the maximal efficiency value
+                observed in nature for that specific function, at a young and healthy age.
+            </p>
+
+            <p>
+                For a human organ performing the same role we define a relative score:
+            </p>
+            <p>
+                <code>Score_organ = E(organ_human) / |O_max|</code>
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Advantages of Model A</h4>
+                    <ul>
+                        <li>Provides a <strong>natural reference standard</strong> between 0 and 1.</li>
+                        <li>Enables comparison of different species for the same function.</li>
+                        <li>Useful for <strong>prosthetics and biomimetic robotics</strong>.</li>
+                        <li>Encourages systematic search for “optimal designs” in nature.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Limitations of Model A</h4>
+                    <ul>
+                        <li>“Efficiency” is not trivial to define (speed, energy, stability, etc.).</li>
+                        <li>No species is globally best in all aspects.</li>
+                        <li>Only partially accounts for the environment (desert, city, water, etc.).</li>
+                        <li>Requires detailed experimental and field data that may not exist.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3. Model B – Dependence on age (young-life peak)</h3>
+            <p>
+                Now we focus on a single species or individual and describe
+                <strong>how organ efficiency changes over time</strong>.
+            </p>
+            <p>
+                Let:
+            </p>
+            <p>
+                <code>E(t)</code> – efficiency of the organ as a function of age <code>t</code>.
+            </p>
+            <p>
+                We define the absolute value in the age domain:
+            </p>
+            <p>
+                <code>|O| = max{ E(t) | t ∈ [t_young_min, t_young_max] }</code>
+            </p>
+            <p>
+                That is, we look at the young-age interval where the organ is healthy
+                and not yet degraded, and we take the peak value in that interval.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Advantages of Model B</h4>
+                    <ul>
+                        <li>Directly applicable to medicine and aging research.</li>
+                        <li>Allows identification of deviations from expected performance for a given age.</li>
+                        <li>Provides a mathematical language for an organ's life-curve.</li>
+                        <li>Useful as a basis for rehabilitation indices.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Limitations of Model B</h4>
+                    <ul>
+                        <li>“Young age” is organ-specific and not universal.</li>
+                        <li>Requires longitudinal measurements which are complex and costly.</li>
+                        <li>Idealized model – does not fully cover rare traumas and extreme conditions.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>4. Model C – Vector and geometric representation</h3>
+            <p>
+                Each organ is represented as a feature vector:
+            </p>
+            <p>
+                <code>O⃗ = (g1, g2, ..., gn)</code>
+            </p>
+            <p>
+                where each component <code>gi</code> is a measurable property, for example:
+            </p>
+            <ul>
+                <li>g1 – mechanical strength.</li>
+                <li>g2 – reaction speed.</li>
+                <li>g3 – energy consumption.</li>
+                <li>g4 – flexibility.</li>
+                <li>g5 – resilience under chronic load.</li>
+            </ul>
+            <p>
+                The absolute value is defined as the norm:
+            </p>
+            <p>
+                <code>|O| = ||O⃗|| = sqrt(g1² + g2² + ... + gn²)</code>
+            </p>
+
+            <p>
+                For a reference organ (e.g. deer) and a human organ:
+            </p>
+            <p>
+                <code>O⃗_deer, O⃗_human</code><br>
+                <code>d = ||O⃗_deer - O⃗_human||</code> – the distance between both vectors.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Advantages of Model C</h4>
+                    <ul>
+                        <li>Fully mathematical – distances, angles, clusters in feature space.</li>
+                        <li>Compatible with AI and optimization algorithms.</li>
+                        <li>Allows assigning different weights to different features if desired.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Limitations of Model C</h4>
+                    <ul>
+                        <li>The choice of features is partly subjective and domain-dependent.</li>
+                        <li>Accurate measurement of all components is technically demanding.</li>
+                        <li>The norm alone may hide important structure in the vector.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>5. Unified framework – combining all models</h3>
+            <p>
+                We unify the three models into a single framework:
+            </p>
+            <ol>
+                <li>
+                    <strong>Geometric stage:</strong><br>
+                    For each organ, define a time-dependent feature vector:
+                    <br>
+                    <code>O⃗(t) = (g1(t), g2(t), ..., gn(t))</code>
+                </li>
+                <li>
+                    <strong>Age stage:</strong><br>
+                    Compute the norm:
+                    <br>
+                    <code>|O(t)| = ||O⃗(t)||</code><br>
+                    and define:
+                    <br>
+                    <code>|O|_young = max{ |O(t)| | t ∈ [t_young_min, t_young_max] }</code>
+                </li>
+                <li>
+                    <strong>Nature reference stage:</strong><br>
+                    Use a reference organ:
+                    <br>
+                    <code>O⃗_ref(t)</code>,<br>
+                    <code>|O_ref|_young = max{ ||O⃗_ref(t)|| }</code><br>
+                    and compute:
+                    <br>
+                    <code>Index = |O|_young / |O_ref|_young</code>
+                </li>
+            </ol>
+
+            <h3>6. Summary table</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Idea</th>
+                        <th>Advantages</th>
+                        <th>Limitations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A – Natural champion</td>
+                        <td>Compare to the best organ in nature</td>
+                        <td>Natural standard, cross-species comparison</td>
+                        <td>Efficiency definition, missing data</td>
+                    </tr>
+                    <tr>
+                        <td>B – Age dependence</td>
+                        <td>Peak efficiency at young age</td>
+                        <td>Medicine, rehabilitation, aging</td>
+                        <td>Hard to measure over time</td>
+                    </tr>
+                    <tr>
+                        <td>C – Vector model</td>
+                        <td>Organ as a feature vector</td>
+                        <td>Mathematical, AI-friendly</td>
+                        <td>Subjective feature selection</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>7. Potential applications</h3>
+            <ul>
+                <li>A unified index for organ efficiency in medical records.</li>
+                <li>Design of biomimetic prostheses and robots.</li>
+                <li>Tracking recovery before and after surgery or therapy.</li>
+                <li>Evolutionary studies comparing organs across species.</li>
+            </ul>
+        </section>
+
+        <!-- Part B – Patent -->
+        <section id="en-patent">
+            <h2>Part B – Patent Proposal <span class="tag tag-patent">Patent</span></h2>
+
+            <h3>1. Title of the invention</h3>
+            <p>
+                <strong>System and method for computing an “Absolute Organ Value” (AOV)
+                for biological organs using natural reference models, time dependence,
+                and vector geometry.</strong>
+            </p>
+
+            <h3>2. Field of the invention</h3>
+            <ul>
+                <li>Quantitative biophysics and organ function assessment.</li>
+                <li>Medical rehabilitation and functional outcome tracking.</li>
+                <li>Artificial intelligence for biological data analysis.</li>
+                <li>Biomimetic prosthetics and robotic design.</li>
+            </ul>
+
+            <h3>3. Background and problem</h3>
+            <p>
+                Current clinical practice uses many separate measures for organs
+                (force, blood flow, imaging markers, etc.), but lacks
+                a <strong>single unified index</strong> that:
+            </p>
+            <ul>
+                <li>Relates organ performance to <strong>optimal natural structures</strong>.</li>
+                <li>Accounts for <strong>age and life-stage effects</strong>.</li>
+                <li>Uses a <strong>multi-dimensional vector model</strong>.</li>
+            </ul>
+            <p>
+                There is therefore a need for a method and system that compute a
+                standardized scalar value – AOV – capturing how close an organ is
+                to the best-known natural configuration for its function.
+            </p>
+
+            <h3>4. Summary of the invention</h3>
+            <div class="box">
+                The invention proposes a method and system to compute an Absolute Organ Value (AOV)
+                based on:
+                <ol>
+                    <li>
+                        Measuring multiple physiological and biomechanical properties
+                        of a test organ over time and representing them
+                        as a feature vector <code>O⃗_test(t)</code>.
+                    </li>
+                    <li>
+                        Using a database of natural reference organs to obtain
+                        a reference vector <code>O⃗_ref(t)</code> for the same function.
+                    </li>
+                    <li>
+                        Computing the young-age peak norms
+                        <code>|O_test|_young</code> and <code>|O_ref|_young</code>.
+                    </li>
+                    <li>
+                        Computing the ratio
+                        <code>Index = |O_test|_young / |O_ref|_young</code>,
+                        which defines the AOV.
+                    </li>
+                </ol>
+            </div>
+
+            <h3>5. System components</h3>
+            <ol>
+                <li>
+                    <strong>Data acquisition module</strong> –
+                    collects measurements from the test organ (strength tests,
+                    imaging, blood tests, etc.).
+                </li>
+                <li>
+                    <strong>Reference database</strong> –
+                    stores feature vectors and time profiles of optimal organs in nature.
+                </li>
+                <li>
+                    <strong>Vector processing module</strong> –
+                    converts raw data into vectors and computes norms.
+                </li>
+                <li>
+                    <strong>AOV computation module</strong> –
+                    extracts young-age peaks and computes the index.
+                </li>
+                <li>
+                    <strong>Visualization interface</strong> –
+                    displays AOV values, trends over time and comparison graphs.
+                </li>
+            </ol>
+
+            <h3>6. Use cases</h3>
+            <ul>
+                <li>
+                    <strong>Rehabilitation monitoring:</strong>
+                    tracking how closely an injured organ returns to its
+                    young-age value and to its natural reference.
+                </li>
+                <li>
+                    <strong>Prosthetics and robotics:</strong>
+                    designing artificial limbs and robots to approximate
+                    the reference vectors from nature.
+                </li>
+                <li>
+                    <strong>Evolutionary research:</strong>
+                    comparing organ performance across species using a unified metric.
+                </li>
+                <li>
+                    <strong>AI-based diagnostics:</strong>
+                    early detection of deviations from healthy organ patterns.
+                </li>
+            </ul>
+
+            <h3>7. Main claims (high-level, non-legal)</h3>
+            <ol>
+                <li>
+                    A method for computing an Absolute Organ Value (AOV), comprising:
+                    <ol type="a">
+                        <li>
+                            Measuring multiple features of a test organ over time and
+                            representing them as a time-dependent feature vector
+                            <code>O⃗_test(t)</code>.
+                        </li>
+                        <li>
+                            Accessing a natural reference organ model represented as a vector
+                            <code>O⃗_ref(t)</code>.
+                        </li>
+                        <li>
+                            Computing young-age peak norms for both
+                            <code>O⃗_test(t)</code> and <code>O⃗_ref(t)</code>.
+                        </li>
+                        <li>
+                            Computing a ratio
+                            <code>Index = |O_test|_young / |O_ref|_young</code>
+                            and defining it as the AOV.
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    A computerized system with a reference database and processing modules
+                    configured to implement the method above.
+                </li>
+                <li>
+                    Use of the AOV index for organ assessment, rehabilitation planning,
+                    prosthetics design and evolutionary comparison.
+                </li>
+            </ol>
+        </section>
+    </section>
+
+    <!-- ==========================
+         العربية – مقال كامل + براءة
+    =========================== -->
+    <section id="lang-ar" class="lang-section" lang="ar" dir="rtl">
+        <nav>
+            <strong>المحتوى (العربية):</strong>
+            <a href="#ar-article">القسم أ – مقال علمي</a> |
+            <a href="#ar-patent">القسم ب – مقترح براءة اختراع</a>
+        </nav>
+
+        <!-- القسم أ – مقال علمي -->
+        <section id="ar-article">
+            <h2>القسم أ – مقال علمي <span class="tag tag-article">مقال</span></h2>
+
+            <h3>1. مقدّمة</h3>
+            <p>
+                ننطلق من الجملة المفهومية الآتية:
+            </p>
+            <div class="box">
+                “القيمة المطلقة لعضو معيّن تُعرَّف بحسب أنجع صورة لهذا العضو في الطبيعة
+                (مثل الغزال للساقين في الجري)، في أصغر عمر يصل فيه العضو إلى أقصى أداء.”
+            </div>
+            <p>
+                في هذا العمل نقوم بصياغة إطار نظري يجمع بين:
+            </p>
+            <ul>
+                <li>نماذج بيولوجية: تحديد أعضاء <strong>مرجعية مثالية</strong> في الطبيعة
+                    (غزال، فهد، كنغر، بومة، حوت... إلخ).</li>
+                <li>الاعتماد على الزمن: وصف <strong>كفاءة العضو بوصفها دالة في العمر</strong>.</li>
+                <li>التمثيل المتجهي: اعتبار كل عضو <strong>متجه خصائص</strong> في فضاء أبعاد متعددة.</li>
+                <li>دمج جميع النماذج في مؤشر عددي واحد هو
+                    <strong>القيمة المطلقة للعضو AOV</strong>.</li>
+            </ul>
+
+            <h3>2. النموذج أ – العضو الأمثل في الطبيعة</h3>
+            <p>
+                لكل <strong>وظيفة فيزيولوجية</strong> يمكن أن نجد “بطلًا في الطبيعة”، مثلاً:
+            </p>
+            <ul>
+                <li>الجري السريع – ساق الغزال أو الفهد.</li>
+                <li>القفز العالي – ساق الكنغر.</li>
+                <li>الرؤية الليلية – عين البومة.</li>
+                <li>الغوص العميق – جهاز التنفّس والدّم لدى الحيتان.</li>
+            </ul>
+            <p>
+                نرمز إلى ذلك بـ:
+            </p>
+            <p>
+                <code>|O_max| = E(best_species, young_age)</code><br>
+                حيث <code>E</code> دالة الكفاءة،
+                و <strong>|O_max|</strong> هي أعلى قيمة كفاءة مرصودة في الطبيعة
+                لتلك الوظيفة، في عمر شاب وسليم.
+            </p>
+
+            <p>
+                بالنسبة لعضو بشري يقوم بالدور نفسه نعرّف:
+            </p>
+            <p>
+                <code>Score_organ = E(organ_human) / |O_max|</code>
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>مميزات النموذج أ</h4>
+                    <ul>
+                        <li>يوفّر <strong>مرجعًا طبيعيًّا</strong> بين 0 و 1.</li>
+                        <li>يتيح المقارنة بين الأنواع الحية لنفس الوظيفة.</li>
+                        <li>مفيد لتطوير <strong>أطراف صناعية وروبوتات مستوحاة من الطبيعة</strong>.</li>
+                        <li>يشجّع البحث عن “التصميم الأمثل” في الكائنات الحية.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>محدوديّات النموذج أ</h4>
+                    <ul>
+                        <li>تعريف “الكفاءة” ليس بسيطًا (سرعة، طاقة، ثبات... إلخ).</li>
+                        <li>لا يوجد نوع حيّ هو الأفضل في كل الجوانب.</li>
+                        <li>لا يأخذ البيئة بالحسبان بشكل كامل (صحراء، مدينة، بحر...).</li>
+                        <li>يتطلّب بيانات تجريبية وميدانية مفصّلة قد لا تكون متاحة.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3. النموذج ب – الاعتماد على العمر (ذروة فترة الشباب)</h3>
+            <p>
+                نركّز الآن على نوع واحد أو فرد واحد، ونصف
+                <strong>كيف تتغيّر كفاءة العضو مع الزمن</strong>.
+            </p>
+            <p>
+                ليكن:
+            </p>
+            <p>
+                <code>E(t)</code> – كفاءة العضو بوصفها دالة في العمر <code>t</code>.
+            </p>
+            <p>
+                نعرّف القيمة المطلقة في حيّز الزمن:
+            </p>
+            <p>
+                <code>|O| = max{ E(t) | t ∈ [t_young_min, t_young_max] }</code>
+            </p>
+            <p>
+                أي إننا ننظر إلى الفترة العمرية الشابّة التي يكون فيها العضو سليمًا
+                وغير متآكل، ونأخذ أعلى قيمة ضمن هذه الفترة.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>مميزات النموذج ب</h4>
+                    <ul>
+                        <li>ينطبق مباشرة على أبحاث الطب والشيخوخة.</li>
+                        <li>يسمح بالكشف عن الانحراف عن الأداء المتوقّع لعمر معيّن.</li>
+                        <li>يوفّر لغة رياضية لوصف منحنى حياة العضو.</li>
+                        <li>مفيد كأساس لمؤشرات إعادة التأهيل.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>محدوديّات النموذج ب</h4>
+                    <ul>
+                        <li>مفهوم “الشباب” يختلف من عضو إلى آخر.</li>
+                        <li>القياسات الطولية معقّدة ومكلفة.</li>
+                        <li>نموذج مثالي لا يغطي كلّ الحالات النادرة والظروف القصوى.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>4. النموذج ج – التمثيل المتجهي والهندسي</h3>
+            <p>
+                نعتبر أن كل عضو عبارة عن متجه خصائص:
+            </p>
+            <p>
+                <code>O⃗ = (g1, g2, ..., gn)</code>
+            </p>
+            <p>
+                حيث يمثّل كل عنصر <code>gi</code> خاصية قابلة للقياس، مثل:
+            </p>
+            <ul>
+                <li>g1 – قوة ميكانيكية.</li>
+                <li>g2 – سرعة الاستجابة.</li>
+                <li>g3 – استهلاك الطاقة.</li>
+                <li>g4 – المرونة.</li>
+                <li>g5 – التحمّل تحت حمل مزمن.</li>
+            </ul>
+            <p>
+                تُعرَّف القيمة المطلقة على أنها النورم:
+            </p>
+            <p>
+                <code>|O| = ||O⃗|| = sqrt(g1² + g2² + ... + gn²)</code>
+            </p>
+
+            <p>
+                بالنسبة لعضو مرجعي (مثل الغزال) وعضو إنساني:
+            </p>
+            <p>
+                <code>O⃗_deer, O⃗_human</code><br>
+                <code>d = ||O⃗_deer - O⃗_human||</code> – المسافة بين المتجهين.
+            </p>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>مميزات النموذج ج</h4>
+                    <ul>
+                        <li>رياضي بالكامل – مسافات، زوايا، تجميع في فضاء الخصائص.</li>
+                        <li>متوافق مع خوارزميّات الذكاء الاصطناعي والتحسين.</li>
+                        <li>يمكن إعطاء أوزان مختلفة للخصائص عند الحاجة.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>محدوديّات النموذج ج</h4>
+                    <ul>
+                        <li>اختيار الخصائص يعتمد جزئيًّا على رأي الخبير والمجال.</li>
+                        <li>قياس جميع العناصر بدقة يتطلّب تجهيزات متقدّمة.</li>
+                        <li>النورم وحده قد يخفي معلومات عن بنية المتجه.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>5. الإطار الموحّد – دمج النماذج الثلاثة</h3>
+            <p>
+                ندمج النماذج الثلاثة في إطار واحد:
+            </p>
+            <ol>
+                <li>
+                    <strong>المرحلة الهندسية:</strong><br>
+                    لكل عضو نعرّف متجه خصائص يعتمد على الزمن:
+                    <br>
+                    <code>O⃗(t) = (g1(t), g2(t), ..., gn(t))</code>
+                </li>
+                <li>
+                    <strong>مرحلة العمر:</strong><br>
+                    نحسب النورم:
+                    <br>
+                    <code>|O(t)| = ||O⃗(t)||</code><br>
+                    ثم نعرّف:
+                    <br>
+                    <code>|O|_young = max{ |O(t)| | t ∈ [t_young_min, t_young_max] }</code>
+                </li>
+                <li>
+                    <strong>مرحلة المرجع الطبيعي:</strong><br>
+                    نستخدم عضوًا مرجعيًا:
+                    <br>
+                    <code>O⃗_ref(t)</code>,<br>
+                    <code>|O_ref|_young = max{ ||O⃗_ref(t)|| }</code><br>
+                    ونحسب:
+                    <br>
+                    <code>Index = |O|_young / |O_ref|_young</code>
+                </li>
+            </ol>
+
+            <h3>6. جدول ملخّص</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>النموذج</th>
+                        <th>الفكرة</th>
+                        <th>المميزات</th>
+                        <th>المحدوديّات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>أ – بطل الطبيعة</td>
+                        <td>المقارنة مع أفضل عضو في الطبيعة</td>
+                        <td>مرجع طبيعي، مقارنة بين الأنواع</td>
+                        <td>تعريف الكفاءة، نقص البيانات</td>
+                    </tr>
+                    <tr>
+                        <td>ب – الاعتماد على العمر</td>
+                        <td>ذروة الكفاءة في عمر الشباب</td>
+                        <td>الطب، إعادة التأهيل، الشيخوخة</td>
+                        <td>صعوبة القياس على مدى الزمن</td>
+                    </tr>
+                    <tr>
+                        <td>ج – نموذج المتجه</td>
+                        <td>اعتبار العضو متجه خصائص</td>
+                        <td>رياضي، مناسب للذكاء الاصطناعي</td>
+                        <td>اختيار الخصائص ذاتي جزئيًّا</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>7. تطبيقات محتملة</h3>
+            <ul>
+                <li>مؤشّر موحّد لكفاءة الأعضاء في السجلات الطبية.</li>
+                <li>تصميم أطراف صناعية وروبوتات تحاكي الأعضاء الطبيعية المثالية.</li>
+                <li>متابعة التعافي قبل وبعد العمليات والعلاجات.</li>
+                <li>أبحاث تطورية لمقارنة الأعضاء بين الأنواع الحيّة.</li>
+            </ul>
+        </section>
+
+        <!-- القسم ب – مقترح براءة اختراع -->
+        <section id="ar-patent">
+            <h2>القسم ب – مقترح براءة اختراع <span class="tag tag-patent">براءة</span></h2>
+
+            <h3>1. عنوان الاختراع</h3>
+            <p>
+                <strong>نظام وطريقة لحساب “القيمة المطلقة للعضو” (AOV)
+                اعتمادًا على نماذج مرجعية طبيعية، والاعتماد على الزمن،
+                والتمثيل المتجهي للخصائص.</strong>
+            </p>
+
+            <h3>2. مجال الاختراع</h3>
+            <ul>
+                <li>الفيزياء الحيوية الكمية وتقييم وظيفة الأعضاء.</li>
+                <li>الطب التأهيلي ومتابعة نتائج العلاج.</li>
+                <li>الذكاء الاصطناعي لتحليل البيانات البيولوجية.</li>
+                <li>الأطراف الصناعية والروبوتات المستوحاة من الطبيعة.</li>
+            </ul>
+
+            <h3>3. الخلفية والمشكلة</h3>
+            <p>
+                تُستخدم حاليًّا مؤشرات متعدّدة لتقييم الأعضاء (قوة، تدفّق دم، صور أشعة...),
+                ولكن لا يوجد <strong>مؤشّر موحّد</strong>:
+            </p>
+            <ul>
+                <li>يربط أداء العضو بـ <strong>بنى طبيعية مثالية</strong>.</li>
+                <li>يأخذ <strong>العمر ومرحلة الحياة</strong> بالحسبان.</li>
+                <li>يعتمد على <strong>نموذج متجه متعدد الأبعاد</strong>.</li>
+            </ul>
+            <p>
+                لذلك هناك حاجة إلى نظام وطريقة تحسب قيمة عددية قياسية – AOV –
+                تعبّر عن مدى اقتراب عضو معيّن من أفضل تكوين معروف في الطبيعة
+                لتلك الوظيفة.
+            </p>
+
+            <h3>4. ملخّص الاختراع</h3>
+            <div class="box">
+                يقترح الاختراع نظامًا وطريقة لحساب القيمة المطلقة للعضو (AOV) عبر:
+                <ol>
+                    <li>
+                        قياس خصائص فيزيولوجية وميكانيكية متعدّدة لعضو مختبَر مع الزمن،
+                        وتمثيلها كمتجه خصائص يعتمد على الزمن <code>O⃗_test(t)</code>.
+                    </li>
+                    <li>
+                        استخدام قاعدة بيانات لأعضاء مرجعية في الطبيعة للحصول على
+                        متجه مرجعي <code>O⃗_ref(t)</code> لنفس الوظيفة.
+                    </li>
+                    <li>
+                        حساب نورم الذروة في عمر الشباب لكل من
+                        <code>|O_test|_young</code> و <code>|O_ref|_young</code>.
+                    </li>
+                    <li>
+                        حساب النسبة
+                        <code>Index = |O_test|_young / |O_ref|_young</code>
+                        والتي تُعرَّف بوصفها قيمة AOV.
+                    </li>
+                </ol>
+            </div>
+
+            <h3>5. مكوّنات النظام</h3>
+            <ol>
+                <li>
+                    <strong>وحدة جمع البيانات:</strong>
+                    تجمع قياسات من العضو المختبَر (اختبارات قوة، صور طبّية، تحاليل دم...).
+                </li>
+                <li>
+                    <strong>قاعدة بيانات مرجعية:</strong>
+                    تخزّن متجهات خصائص ومسارات زمنية لأعضاء مثالية في الطبيعة.
+                </li>
+                <li>
+                    <strong>وحدة المعالجة المتجهية:</strong>
+                    تحوّل البيانات الخام إلى متجهات وتحسب النورم.
+                </li>
+                <li>
+                    <strong>وحدة حساب AOV:</strong>
+                    تستخرج قيم الذروة لعمر الشباب وتحسب المؤشّر العددي.
+                </li>
+                <li>
+                    <strong>واجهة العرض:</strong>
+                    تعرض قيم AOV، واتجاهات التغيّر مع الزمن، والمقارنات مع المرجع.
+                </li>
+            </ol>
+
+            <h3>6. حالات استخدام</h3>
+            <ul>
+                <li>
+                    <strong>متابعة إعادة التأهيل:</strong>
+                    قياس مدى عودة العضو المصاب إلى قيمته في سن الشباب
+                    وإلى العضو المرجعي في الطبيعة.
+                </li>
+                <li>
+                    <strong>الأطراف الصناعية والروبوتات:</strong>
+                    تصميم أعضاء صناعية وروبوتات تقارب المتجه المرجعي الطبيعي.
+                </li>
+                <li>
+                    <strong>الأبحاث التطورية:</strong>
+                    مقارنة أداء الأعضاء بين الأنواع باستخدام مؤشّر واحد موحّد.
+                </li>
+                <li>
+                    <strong>تشخيص مبكّر معتمد على الذكاء الاصطناعي:</strong>
+                    اكتشاف الانحراف عن أنماط الأعضاء السليمة قبل ظهور الأعراض الواضحة.
+                </li>
+            </ul>
+
+            <h3>7. المطالب الرئيسية (بشكل عام وغير قانوني)</h3>
+            <ol>
+                <li>
+                    طريقة لحساب القيمة المطلقة للعضو (AOV)، تشمل:
+                    <ol type="a">
+                        <li>
+                            قياس خصائص متعدّدة لعضو مختبَر مع الزمن
+                            وتمثيلها كمتجه خصائص يعتمد على الزمن
+                            <code>O⃗_test(t)</code>.
+                        </li>
+                        <li>
+                            الوصول إلى نموذج عضو مرجعي طبيعي
+                            مُمثَّل بمتجه <code>O⃗_ref(t)</code>.
+                        </li>
+                        <li>
+                            حساب نورم الذروة في عمر الشباب لكل من
+                            <code>O⃗_test(t)</code> و <code>O⃗_ref(t)</code>.
+                        </li>
+                        <li>
+                            حساب النسبة
+                            <code>Index = |O_test|_young / |O_ref|_young</code>
+                            وتعريفها بوصفها AOV.
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    نظام حاسوبي يحتوي على قاعدة بيانات مرجعية ووحدات معالجة
+                    مهيّأة لتنفيذ الطريقة المذكورة أعلاه.
+                </li>
+                <li>
+                    استخدام مؤشر AOV لتقييم وظيفة الأعضاء، تخطيط إعادة التأهيل،
+                    تصميم الأطراف الصناعية، والمقارنات التطورية.
+                </li>
+            </ol>
+        </section>
+    </section>
+</main>
+
+<footer>
+    This HTML file combines a full Hebrew version (article + patent), a full English version, and a full Arabic version
+    for the same core idea: Absolute Organ Value (AOV).
+</footer>
+
+<script>
+    // Simple language switcher
+    const buttons = document.querySelectorAll('.lang-switcher button');
+    const sections = document.querySelectorAll('.lang-section');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            sections.forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            document.getElementById('lang-' + lang).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
