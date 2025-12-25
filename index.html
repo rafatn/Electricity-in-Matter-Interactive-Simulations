@@ -1,1 +1,740 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>INDEX • דף הבית</title>
+  <meta name="color-scheme" content="light dark">
+
+  <style>
+    :root{
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --bg2:#ecfeff;
+
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --cardSolid:#ffffff;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+
+      --head:#0b1220;
+      --link:#2563eb;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --chip:#e2e8f0;
+      --chipText:#0f172a;
+    }
+
+    html[data-theme="dark"]{
+      --bg0:#0b1020;
+      --bg1:#0b1226;
+      --bg2:#071626;
+
+      --card:rgba(17,24,39,.62);
+      --card2:rgba(17,24,39,.45);
+      --cardSolid:#0f172a;
+
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --line:rgba(148,163,184,.18);
+
+      --head:#ffffff;
+      --link:#93c5fd;
+
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+
+      --chip:#111827;
+      --chipText:#e5e7eb;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 85% -10%, var(--bg2), transparent 55%),
+        radial-gradient(900px 600px at 10% 0%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.15));
+      border-bottom:1px solid var(--line);
+    }
+    html[data-theme="dark"] header{
+      background: linear-gradient(180deg, rgba(15,23,42,.55), rgba(15,23,42,.15));
+    }
+
+    .wrap{max-width:1200px; margin:0 auto; padding:18px 18px 32px}
+    .top{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      user-select:none;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, #a5b4fc, #4f46e5);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: linear-gradient(45deg, rgba(255,255,255,.65), transparent 60%);
+      transform: rotate(18deg);
+    }
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .controls{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+
+    .pill{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: var(--card);
+      border:1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(2,6,23,.06);
+    }
+
+    .search{
+      min-width:min(520px, 90vw);
+      display:flex; gap:10px; align-items:center;
+    }
+    .search input{
+      width:100%;
+      padding:10px 10px;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+    }
+    .search .k{
+      font-size:12px; color:var(--muted);
+      padding:4px 8px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(148,163,184,.12);
+    }
+
+    button, .btn{
+      cursor:pointer;
+      border:none;
+      background: transparent;
+      color:var(--text);
+      font:inherit;
+    }
+
+    .btnIcon{
+      width:40px; height:40px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background: var(--card);
+      border:1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(2,6,23,.06);
+    }
+    .btnPrimary{
+      padding:10px 14px;
+      border-radius:14px;
+      background: linear-gradient(135deg, rgba(99,102,241,.95), rgba(79,70,229,.95));
+      color:white;
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,.15);
+    }
+    .btnPrimary:hover{filter:brightness(1.02)}
+    .btnGhost{
+      padding:10px 12px;
+      border-radius:14px;
+      background: var(--card);
+      border:1px solid var(--line);
+    }
+
+    .stats{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .stat{
+      padding:10px 12px;
+      border-radius:14px;
+      background: var(--card2);
+      border:1px solid var(--line);
+      display:flex; gap:10px; align-items:center;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px; background:var(--ok);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.15);
+    }
+    .dot.blue{background:#3b82f6; box-shadow:0 0 0 4px rgba(59,130,246,.15)}
+    .dot.amber{background:var(--warn); box-shadow:0 0 0 4px rgba(245,158,11,.15)}
+    .stat b{color:var(--head)}
+    .stat small{color:var(--muted)}
+
+    .filters{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .chips{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    }
+    .chip{
+      padding:7px 10px;
+      border-radius:999px;
+      background: var(--chip);
+      color: var(--chipText);
+      border:1px solid var(--line);
+      font-size:13px;
+      user-select:none;
+    }
+    .chip.active{
+      background: rgba(99,102,241,.16);
+      border-color: rgba(99,102,241,.45);
+    }
+
+    main{padding-top:16px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+
+    .card{
+      grid-column: span 4;
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    @media (max-width: 980px){ .card{grid-column: span 6;} }
+    @media (max-width: 640px){ .card{grid-column: span 12;} .search{min-width:100%} }
+
+    .cardTop{
+      padding:14px 14px 10px;
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+    }
+
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(148,163,184,.16);
+      border:1px solid var(--line);
+      color:var(--muted);
+      user-select:none;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .title{
+      margin:0;
+      font-size:15px;
+      line-height:1.25;
+      color:var(--head);
+    }
+    .desc{
+      margin:8px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.4;
+      min-height: 38px;
+    }
+
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .meta .m{
+      font-size:12px; color:var(--muted);
+      padding:6px 10px; border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(148,163,184,.10);
+    }
+
+    .cardBottom{
+      padding:12px 14px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-top:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), transparent);
+    }
+    html[data-theme="dark"] .cardBottom{
+      background: linear-gradient(180deg, rgba(15,23,42,.15), transparent);
+    }
+
+    .openBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(99,102,241,.14);
+      border:1px solid rgba(99,102,241,.35);
+      color: var(--head);
+      font-weight:600;
+    }
+    .openBtn:hover{filter:brightness(1.02)}
+
+    .favBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: var(--cardSolid);
+      border:1px solid var(--line);
+      color: var(--text);
+      font-weight:600;
+      white-space:nowrap;
+    }
+
+    .favIcon{width:18px; height:18px; display:inline-block; transform: translateY(1px);}
+
+    .empty{
+      padding:20px;
+      border-radius: var(--r);
+      border:1px dashed var(--line);
+      background: rgba(148,163,184,.08);
+      color: var(--muted);
+      grid-column: 1 / -1;
+      text-align:center;
+    }
+
+    footer{
+      margin-top:22px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:12px 0 20px;
+    }
+
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>דף הבית • אינדקס קבצים</h1>
+          <p>חיפוש • מועדפים • קטגוריות • מונה כניסות</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="pill search" title="חיפוש לפי שם/תיאור/תגיות">
+          <span class="mono" style="opacity:.75">🔎</span>
+          <input id="q" type="search" placeholder="חפש רעיון / קובץ / תגית..." autocomplete="off">
+          <span class="k mono">Ctrl+K</span>
+        </div>
+
+        <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
+        <button class="btnGhost" id="showFavBtn" title="הצג מועדפים בלבד">⭐ מועדפים</button>
+        <button class="btnPrimary" id="resetBtn" title="איפוס מועדפים/מונה מקומי">איפוס</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="dot blue"></span><div><b id="totalCount">0</b> <small>קבצים</small></div></div>
+      <div class="stat"><span class="dot"></span><div><b id="favCount">0</b> <small>מועדפים</small></div></div>
+      <div class="stat"><span class="dot amber"></span><div><b id="visitCount">0</b> <small>כניסות למחשב הזה</small></div></div>
+    </div>
+
+    <div class="filters">
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <footer>
+    טיפ: אפשר ללחוץ <span class="mono">Ctrl+K</span> כדי לקפוץ לחיפוש.
+  </footer>
+</main>
+
+<script>
+/**
+ * INDEX.HTML — גרסה עשירה
+ * ✔ חיפוש
+ * ✔ מועדפים (localStorage)
+ * ✔ סינון תגיות
+ * ✔ מצב כהה/בהיר
+ * ✔ מונה כניסות מקומי (למחשב הזה)
+ */
+
+/** 1) קבצים שסיפקת (כולל תיקון סיומות .html אוטומטי) */
+const RAW_FILES = [
+  "water_walking_shoes_sonar_pump.html",
+  "water_gas_train_blue.html",
+  "water_air_shoes_trilingual_flow.html",
+  "usb_network_osi_ipv6_plus_hw_usecase.html",
+  "thermosiphon_flow_calculator_he",
+  "smart_water_powered_door_full_plus_fixed_he",
+  "smart_paver_mesh_thermal_sensing_he",
+  "smart_floor_pressure_to_energy_model_he",
+  "self_charging_headphones_FULL_katex_diagrams_simulation_explained",
+  "qfm_plutos_combined_with_applications",
+  "qfm_plutos_combined",
+  "qfm_full_development_with_examples",
+  "qaxm_full_multilang_complete2",
+  "plutos_visual_socket_patent_style",
+  "plugos_visual_socket_proposal",
+  "plant_gas_to_bio_oil_mvp_he",
+  "pendulum_drone_with_photo",
+  "pendulum_drone_ship_mountain_he_en_ar",
+  "patent_smart_boarding_token_he",
+  "patent_clean_air_square_zone_he",
+  "Nobel_Physics_Submission_AnnaBelPeaks",
+  "new 8",
+  "metabolic_railway_model_he_v3",
+  "metabolic_railway_model_he",
+  "living_tooth_model_full",
+  "international_economic_constitution_offline_full_fr_es_ru",
+  "international_economic_constitution_all_languages",
+  "international_constitution_graph_animation_and_proof_offline",
+  "integrated_model_description",
+  "ideal_wave_supersonic_aircraft",
+  "ideal_wave_aircraft",
+  "ideal_wave_air_road_vehicle",
+  "HybirdDataSecurity",
+  "human_wave_transport_advanced",
+  "hospital_integrative_flow_model_clear_equations",
+  "hospital_flow_equations_all_packages_mega",
+  "hospital_curtain_model_full_offline",
+  "gamma_drawers_full",
+  "fingerprint_gesture_full_v_he",
+  "energy_harvesting_touch_tiles_road",
+  "electricity_models_plus_simulations_bilingual_toggle",
+  "earth_glider_train_multilang",
+  "ceiling_house_theory_step_by_step_GOLD_OFFLINE",
+  "building_stability_system_energy_he",
+  "blood_spectral_vector_model",
+  "bivdn_multilang_full_mobile",
+  "bio_magnet_therapy",
+  "absolute_organ_value_multilang_full_v2",
+  "absolute_organ_value_multilang_full"
+];
+
+/** 2) עיבוד: הוספת .html אם חסר + ניקוי רווחים */
+function ensureHtml(name){
+  const s = String(name || "").trim();
+  if(!s) return "";
+  if(/\.html?$/i.test(s)) return s;
+  return s + ".html";
+}
+
+function niceTitleFromFile(file){
+  let base = file.replace(/\.html?$/i,"");
+  base = base.replace(/[_\-]+/g," ").replace(/\s+/g," ").trim();
+  // כותרת יפה
+  return base
+    .split(" ")
+    .map(w => w.length<=2 ? w.toUpperCase() : (w[0].toUpperCase()+w.slice(1)))
+    .join(" ");
+}
+
+function tagsFromFile(file){
+  const f = file.toLowerCase();
+
+  const tags = new Set();
+
+  // שפות/רב-לשוני
+  if(f.includes("multilang") || f.includes("trilingual") || f.includes("bilingual") || f.includes("all_languages") || f.includes("fr_es_ru") || f.includes("he_en_ar")){
+    tags.add("רב-לשוני");
+  }
+  if(f.includes("_he")) tags.add("עברית");
+
+  // פטנט
+  if(f.includes("patent") || f.includes("submission")) tags.add("פטנט/הגשה");
+
+  // תחומים
+  if(f.includes("water") || f.includes("gas") || f.includes("train")) tags.add("תחבורה/מים");
+  if(f.includes("usb") || f.includes("ipv6") || f.includes("security") || f.includes("hybirddata")) tags.add("רשת/אבטחה");
+  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) tags.add("אותות/מודלים");
+  if(f.includes("hospital") || f.includes("bio") || f.includes("organ") || f.includes("blood") || f.includes("therapy") || f.includes("tooth")) tags.add("בריאות/ביולוגיה");
+  if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting") || f.includes("pressure") || f.includes("thermo") || f.includes("thermal") || f.includes("thermosiphon") || f.includes("floor") || f.includes("paver")) tags.add("אנרגיה/תרמו");
+  if(f.includes("aircraft") || f.includes("supersonic") || f.includes("air_road") || f.includes("glider")) tags.add("תעופה");
+  if(f.includes("pendulum") || f.includes("drone")) tags.add("רחפנים/מכניקה");
+  if(f.includes("house") || f.includes("ceiling") || f.includes("building") || f.includes("stability")) tags.add("בנייה/מבנים");
+  if(f.includes("drawer") || f.includes("gesture") || f.includes("fingerprint") || f.includes("mobile")) tags.add("ממשק/UX");
+
+  // ברירת מחדל
+  if(tags.size === 0) tags.add("כללי");
+
+  return [...tags];
+}
+
+function descFromFile(file){
+  const f = file.toLowerCase();
+  if(f.includes("index")) return "דף הבית המרכזי.";
+  if(f.includes("patent")) return "מסמך בסגנון פטנט עם תיאור/תרשימים.";
+  if(f.includes("calculator")) return "מחשבון/כלי חישוב אינטראקטיבי.";
+  if(f.includes("simulation")) return "מודל עם סימולציה/הדמיות ונוסחאות.";
+  if(f.includes("hospital")) return "מודל/חבילה הקשורה לבית חולים, זרימה או זיהום.";
+  if(f.includes("constitution")) return "מסמך/מודל בתחום חוקתי-כלכלי עם גרפים/אנימציה.";
+  if(f.includes("qfm") || f.includes("qaxm")) return "מודל אותות/פיתוח עם דוגמאות ויישומים.";
+  if(f.includes("water") && f.includes("shoes")) return "דגם/הסבר לנעלי מים/אוויר ורכיבים.";
+  if(f.includes("train")) return "דגם/רעיון תחבורתי (רכבת/מים/גז).";
+  if(f.includes("energy") || f.includes("harvesting")) return "רעיון אגירת/הפקת אנרגיה עם הסברים.";
+  if(f.includes("building") || f.includes("house") || f.includes("stability")) return "מודל/תיאוריה בתחום מבנים/בנייה.";
+  return "מסמך רעיון/מודל מעוצב.";
+}
+
+const FILES = RAW_FILES.map(ensureHtml).filter(Boolean);
+
+/**
+ * 3) PAGES: בונים אובייקטים מוכנים לכרטיסיות
+ */
+const PAGES = FILES.map(file => ({
+  title: niceTitleFromFile(file),
+  file,
+  desc: descFromFile(file),
+  tags: tagsFromFile(file)
+}));
+
+/**
+ * ====== Local Storage Keys ======
+ */
+const LS_FAV = "index.favs.v1";
+const LS_THEME = "index.theme.v1";
+const LS_VISITS = "index.visits.v1";
+
+const $ = (s)=>document.querySelector(s);
+const grid = $("#grid");
+const q = $("#q");
+const chipsEl = $("#chips");
+const totalCountEl = $("#totalCount");
+const favCountEl = $("#favCount");
+const visitCountEl = $("#visitCount");
+const showFavBtn = $("#showFavBtn");
+
+let showFavOnly = false;
+
+function loadFavs(){
+  try{ return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
+  catch{ return new Set(); }
+}
+function saveFavs(set){
+  localStorage.setItem(LS_FAV, JSON.stringify([...set]));
+}
+function incVisits(){
+  const n = Number(localStorage.getItem(LS_VISITS) || "0") + 1;
+  localStorage.setItem(LS_VISITS, String(n));
+  return n;
+}
+function setTheme(next){
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem(LS_THEME, next);
+}
+function getTheme(){
+  return localStorage.getItem(LS_THEME) || "light";
+}
+function norm(s){
+  return (s||"").toString().toLowerCase().trim();
+}
+
+/** Tags */
+function computeTags(){
+  const all = new Map(); // tag -> count
+  for(const p of PAGES){
+    (p.tags||[]).forEach(t=>{
+      const k = String(t||"").trim();
+      if(!k) return;
+      all.set(k, (all.get(k)||0)+1);
+    });
+  }
+  return [...all.entries()].sort((a,b)=>b[1]-a[1]).map(([t])=>t);
+}
+let activeTag = "הכל";
+
+function renderChips(){
+  const tags = computeTags();
+  const all = ["הכל", ...tags];
+  chipsEl.innerHTML = "";
+  for(const t of all){
+    const b = document.createElement("button");
+    b.className = "chip" + (t===activeTag ? " active":"");
+    b.textContent = t;
+    b.onclick = ()=>{
+      activeTag = t;
+      renderChips();
+      render();
+    };
+    chipsEl.appendChild(b);
+  }
+}
+
+/** Rendering */
+function matches(page, query){
+  if(!query) return true;
+  const s = norm(query);
+  const hay = [
+    page.title,
+    page.file,
+    page.desc,
+    (page.tags||[]).join(" ")
+  ].map(norm).join(" | ");
+  return hay.includes(s);
+}
+function tagOK(page){
+  if(activeTag==="הכל") return true;
+  return (page.tags||[]).includes(activeTag);
+}
+function escapeHtml(str){
+  return (str||"").toString().replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+function render(){
+  const favs = loadFavs();
+  const query = q.value;
+
+  const items = PAGES
+    .filter(p=>matches(p, query))
+    .filter(p=>tagOK(p))
+    .filter(p=>!showFavOnly || favs.has(p.file));
+
+  totalCountEl.textContent = String(PAGES.length);
+  favCountEl.textContent = String(favs.size);
+
+  grid.innerHTML = "";
+
+  if(!PAGES.length){
+    grid.innerHTML = `<div class="empty">אין קבצים ברשימה.</div>`;
+    return;
+  }
+
+  if(!items.length){
+    grid.innerHTML = `<div class="empty">לא נמצאו תוצאות לפי הסינון הנוכחי.</div>`;
+    return;
+  }
+
+  for(const page of items){
+    const isFav = favs.has(page.file);
+    const tags = (page.tags||[]).slice(0,4);
+    const more = (page.tags||[]).length - tags.length;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    // encodeURI כדי לעבוד גם עם רווחים כמו "new 8.html"
+    const href = encodeURI(page.file);
+
+    card.innerHTML = `
+      <div class="cardTop">
+        <div style="flex:1; min-width:0">
+          <div class="badge" title="${escapeHtml(page.file)}">${escapeHtml(page.file)}</div>
+          <h3 class="title" title="${escapeHtml(page.title)}">${escapeHtml(page.title || page.file)}</h3>
+          <p class="desc">${escapeHtml(page.desc || "ללא תיאור")}</p>
+          <div class="meta">
+            ${tags.map(t=>`<span class="m">#${escapeHtml(t)}</span>`).join("")}
+            ${more>0 ? `<span class="m">+${more} תגיות</span>` : ""}
+          </div>
+        </div>
+      </div>
+
+      <div class="cardBottom">
+        <a class="openBtn" href="${href}" target="_self" rel="noopener">▶ פתיחה</a>
+
+        <button class="favBtn" data-file="${escapeHtml(page.file)}" title="הוסף/הסר מועדפים">
+          <span class="favIcon" aria-hidden="true">${isFav ? "⭐" : "☆"}</span>
+          <span>${isFav ? "במועדפים" : "הוסף"}</span>
+        </button>
+      </div>
+    `;
+
+    card.querySelector(".favBtn").onclick = ()=>{
+      const favs2 = loadFavs();
+      if(favs2.has(page.file)) favs2.delete(page.file);
+      else favs2.add(page.file);
+      saveFavs(favs2);
+      render();
+    };
+
+    grid.appendChild(card);
+  }
+}
+
+/** Init */
+function init(){
+  visitCountEl.textContent = String(incVisits());
+  setTheme(getTheme());
+
+  $("#themeBtn").onclick = ()=>{
+    const cur = document.documentElement.getAttribute("data-theme") || "light";
+    setTheme(cur==="light" ? "dark" : "light");
+  };
+
+  showFavBtn.onclick = ()=>{
+    showFavOnly = !showFavOnly;
+    showFavBtn.textContent = showFavOnly ? "⭐ כל הקבצים" : "⭐ מועדפים";
+    render();
+  };
+
+  $("#resetBtn").onclick = ()=>{
+    localStorage.removeItem(LS_FAV);
+    localStorage.removeItem(LS_VISITS);
+    visitCountEl.textContent = String(incVisits());
+    showFavOnly = false;
+    showFavBtn.textContent = "⭐ מועדפים";
+    q.value = "";
+    activeTag = "הכל";
+    renderChips();
+    render();
+  };
+
+  q.addEventListener("input", ()=>render());
+
+  window.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
+      e.preventDefault();
+      q.focus();
+      q.select();
+    }
+  });
+
+  renderChips();
+  render();
+}
+init();
+</script>
+</body>
+</html>
 
