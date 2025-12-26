@@ -304,129 +304,6 @@
 
     main{padding-top:16px}
 
-    /* TOP 10 */
-    .top10{
-      margin-top:14px;
-      border:1px solid var(--line);
-      border-radius: calc(var(--r) + 6px);
-      background: var(--card);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .top10Header{
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      border-bottom:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.12), transparent);
-    }
-    html[data-theme="dark"] .top10Header{
-      background: linear-gradient(180deg, rgba(15,23,42,.22), transparent);
-    }
-    .top10Header h2{
-      margin:0;
-      font-size:14px;
-      color:var(--head);
-      letter-spacing:.2px;
-    }
-    .top10Header .note{
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-    .top10List{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:0;
-    }
-    @media (max-width: 820px){
-      .top10List{ grid-template-columns: 1fr; }
-    }
-    .top10Item{
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      border-top:1px solid var(--line);
-    }
-    .top10Item:nth-child(1), .top10Item:nth-child(2){
-      border-top:none;
-    }
-    .top10Left{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-      flex:1;
-    }
-    .rank{
-      width:28px; height:28px;
-      border-radius:10px;
-      background: rgba(99,102,241,.14);
-      border:1px solid rgba(99,102,241,.35);
-      display:grid; place-items:center;
-      font-weight:900;
-      color:var(--head);
-      flex:0 0 auto;
-      user-select:none;
-    }
-    .ticon{
-      width:34px; height:34px;
-      border-radius:12px;
-      display:grid; place-items:center;
-      border:1px solid var(--line);
-      background: rgba(148,163,184,.10);
-      box-shadow: 0 10px 24px rgba(2,6,23,.06);
-      flex:0 0 auto;
-      user-select:none;
-      font-size:18px;
-    }
-    .ttext{
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .tname{
-      font-weight:900;
-      color:var(--head);
-      font-size:13px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width: 520px;
-    }
-    .tfile{
-      font-size:12px;
-      color:var(--muted);
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-    .tviews{
-      font-size:12px;
-      color:var(--muted);
-      flex:0 0 auto;
-      padding:6px 10px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background: rgba(148,163,184,.10);
-      white-space:nowrap;
-    }
-    .topen{
-      padding:8px 10px;
-      border-radius:12px;
-      background: rgba(99,102,241,.14);
-      border:1px solid rgba(99,102,241,.35);
-      font-weight:900;
-      color:var(--head);
-      white-space:nowrap;
-    }
-    .topen:hover{ text-decoration:none; filter:brightness(1.03); }
-
     .grid{
       display:grid;
       grid-template-columns: repeat(12, 1fr);
@@ -485,7 +362,6 @@
       display:flex; gap:12px; align-items:flex-start;
     }
 
-    /* === Emoji Badge for each file === */
     .fileEmoji{
       width:44px;
       height:44px;
@@ -685,15 +561,6 @@
       </div>
     </div>
 
-    <!-- TOP 10 -->
-    <section class="top10" aria-label="Top 10">
-      <div class="top10Header">
-        <h2>Top 10 • הכי נצפים</h2>
-        <div class="note">לחיצה פותחת + סופרת צפייה</div>
-      </div>
-      <div class="top10List" id="top10List"></div>
-    </section>
-
     <div class="filters">
       <div class="chips" id="chips"></div>
       <div class="activeFilter" id="activeInfo">סינון: הכל • חיפוש: — • תצוגה: Grid</div>
@@ -712,7 +579,7 @@
 
 <script>
 /**
- * INDEX.HTML — Manual Emoji per file + Top10 most viewed + Export/Import.
+ * INDEX.HTML — Full list (no Top10) + Manual Emoji per file + Export/Import.
  */
 
 const RAW_FILES = [
@@ -888,15 +755,13 @@ const EMOJI_MAP = {
   "absolute_organ_value_multilang_full.html": "🫁"
 };
 
-/** === Emoji for each file (manual first, fallback after) === */
+/** Emoji per file: manual first, fallback after */
 function emojiForFile(file, tags){
   const key = String(file||"").trim();
   if(EMOJI_MAP[key]) return EMOJI_MAP[key];
 
-  // fallback if not mapped yet
   const f = key.toLowerCase();
   const t = new Set((tags||[]).map(x=>String(x||"").trim()));
-
   if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
   if(f.includes("hospital")) return "🏥";
   if(f.includes("blood")) return "🩸";
@@ -951,7 +816,6 @@ const sortSel = $("#sortSel");
 const viewBtn = $("#viewBtn");
 const activeInfo = $("#activeInfo");
 const toast = $("#toast");
-const top10List = $("#top10List");
 
 let showFavOnly = false;
 let activeTag = "הכל";
@@ -1030,7 +894,6 @@ function renderChips(){
       activeTag = t;
       renderChips();
       render();
-      renderTop10();
     };
     chipsEl.appendChild(b);
   }
@@ -1133,59 +996,11 @@ function renderActiveInfo(){
   activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel}`;
 }
 
-/** open with counting (used everywhere) */
+/** open with counting */
 function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
-  renderTop10();
   window.location.href = encodeURI(file);
-}
-
-/** Top 10 renderer */
-function getTop10(){
-  const views = loadFileViews();
-  const arr = PAGES.map(p=>({
-    ...p,
-    views: Number(views[p.file]||0)
-  }));
-  arr.sort((a,b)=>{
-    if(b.views !== a.views) return b.views - a.views;
-    return compareAZ(a,b);
-  });
-  return arr.slice(0,10);
-}
-
-function renderTop10(){
-  const list = getTop10();
-  top10List.innerHTML = "";
-
-  const allZero = list.every(x=>Number(x.views||0)===0);
-  const show = allZero ? PAGES.slice(0,10).map(p=>({ ...p, views: 0 })) : list;
-
-  show.forEach((p, idx)=>{
-    const row = document.createElement("div");
-    row.className = "top10Item";
-    const icon = emojiForFile(p.file, p.tags);
-    row.innerHTML = `
-      <div class="top10Left">
-        <div class="rank">${idx+1}</div>
-        <div class="ticon" aria-hidden="true">${icon}</div>
-        <div class="ttext">
-          <div class="tname" title="${escapeHtml(p.title)}">${escapeHtml(p.title || p.file)}</div>
-          <div class="tfile" title="${escapeHtml(p.file)}">${escapeHtml(p.file)}</div>
-        </div>
-      </div>
-      <div style="display:flex; gap:10px; align-items:center; flex:0 0 auto;">
-        <div class="tviews" title="מונה צפיות מקומי">👁 ${Number(p.views||0)}</div>
-        <a class="topen" href="${encodeURI(p.file)}" data-open="${escapeHtml(p.file)}">▶ פתיחה</a>
-      </div>
-    `;
-    row.querySelector(".topen").addEventListener("click", (e)=>{
-      e.preventDefault();
-      openWithCount(p.file);
-    });
-    top10List.appendChild(row);
-  });
 }
 
 function render(){
@@ -1228,12 +1043,10 @@ function render(){
       showFavBtn.textContent = "⭐ מועדפים";
       renderChips();
       render();
-      renderTop10();
     };
     $("#clearSearch").onclick = ()=>{
       q.value = "";
       render();
-      renderTop10();
     };
     return;
   }
@@ -1266,7 +1079,7 @@ function render(){
         </div>
 
         <div class="cardBottom">
-          <a class="openBtn" href="${encodeURI(page.file)}" data-open="${escapeHtml(page.file)}" target="_self" rel="noopener">▶ פתיחה</a>
+          <a class="openBtn" href="${encodeURI(page.file)}" target="_self" rel="noopener">▶ פתיחה</a>
 
           <div class="actions">
             <button class="copyBtn" data-file="${escapeHtml(page.file)}" title="העתקת קישור">🔗 העתק</button>
@@ -1286,7 +1099,6 @@ function render(){
       else favs2.add(page.file);
       saveFavs(favs2);
       render();
-      renderTop10();
     };
 
     card.querySelector(".copyBtn").onclick = ()=>{
@@ -1345,7 +1157,6 @@ function importData(obj){
   activeTag = "הכל";
 
   renderChips();
-  renderTop10();
   render();
   showToast("ייבוא בוצע ✅");
 }
@@ -1362,7 +1173,6 @@ function init(){
   sortSel.onchange = ()=>{
     setSort(sortSel.value);
     render();
-    renderTop10();
   };
 
   $("#themeBtn").onclick = ()=>{
@@ -1381,7 +1191,6 @@ function init(){
     showFavOnly = !showFavOnly;
     showFavBtn.textContent = showFavOnly ? "⭐ כל הקבצים" : "⭐ מועדפים";
     render();
-    renderTop10();
   };
 
   $("#resetBtn").onclick = ()=>{
@@ -1404,7 +1213,6 @@ function init(){
     setSort("az");
 
     renderChips();
-    renderTop10();
     render();
     showToast("איפוס בוצע ✅");
   };
@@ -1427,7 +1235,6 @@ function init(){
 
   q.addEventListener("input", ()=>{
     render();
-    renderTop10();
   });
 
   window.addEventListener("keydown", (e)=>{
@@ -1439,7 +1246,6 @@ function init(){
   });
 
   renderChips();
-  renderTop10();
   render();
 }
 init();
