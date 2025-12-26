@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVPAD — Compare + Data Sheet + Multi-Band (KaTeX)</title>
+
+<!-- ===== KaTeX (pretty formulas) =====
+     Online CDN. For full offline bundle, ask "אופליין". -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e5e7eb;
+    --shadow:0 12px 34px rgba(2,6,23,.10); --r:16px; --link:#2563eb;
+    --accent:#6366f1;
+  }
+  body{font-family:system-ui,Arial; background:var(--bg); color:var(--text); margin:22px;}
+  h1{margin:0 0 6px}
+  p{margin:6px 0 14px; color:var(--muted)}
+  .grid{display:grid; gap:14px}
+  @media(min-width:1100px){ .grid{grid-template-columns: 460px 1fr;} }
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:14px}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  label{font-weight:900; font-size:13px}
+  select,input[type=range]{padding:8px 10px; border:1px solid var(--line); border-radius:12px; background:#fff}
+  input[type=range]{width:260px; padding:0; border:none}
+  .kpi{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; margin-top:10px}
+  .k{border:1px solid var(--line); border-radius:14px; padding:10px}
+  .k b{display:block; font-size:12px; color:var(--muted)}
+  .k span{font-size:18px; font-weight:950}
+  canvas{width:100%; height:360px; display:block; border-radius:14px; background:linear-gradient(180deg, #ffffff, #fbfdff)}
+  table{width:100%; border-collapse:collapse; margin-top:8px; overflow:hidden; border-radius:14px; border:1px solid var(--line)}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:right; font-size:13px; vertical-align:top}
+  th{background:#0b1220; color:#fff; font-weight:950}
+  tr:last-child td{border-bottom:none}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid var(--line); font-size:12px; color:var(--muted); background:#fff}
+  .btn{cursor:pointer; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:950}
+  .btn:hover{border-color:#cbd5e1}
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, monospace}
+  details{border:1px solid var(--line); border-radius:14px; padding:10px 12px; background:#fff}
+  details > summary{cursor:pointer; font-weight:950}
+  .two{display:grid; gap:10px}
+  @media(min-width:980px){ .two{grid-template-columns: 1fr 1fr;} }
+
+  /* ===== Pretty math blocks ===== */
+  .mathbox{
+    margin-top:10px;
+    padding:12px 14px;
+    border:1px dashed rgba(99,102,241,.55);
+    border-radius:14px;
+    background:linear-gradient(180deg, rgba(99,102,241,.07), rgba(255,255,255,.85));
+  }
+  .mathbox .title{font-weight:950}
+  .mathbox .hint{margin-top:6px; color:var(--muted); font-size:12.5px; line-height:1.55}
+  .mathbox .eq{
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid rgba(148,163,184,.35);
+    border-radius:14px;
+    background:#fff;
+    overflow:auto;
+  }
+  .mathbox .eq .katex-display{margin:0;} /* tighter */
+  .katex{font-size:1.05em;}              /* overall */
+  .katex-display{font-size:1.15em;}      /* display equations */
+
+  /* small footer note */
+  .note{
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+</style>
+</head>
+
+<body>
+<h1>SVPAD — מתאר בליעה ספקטרלי־נפחי תלוי־עומק ופאזה</h1>
+<p>
+המערכת מדגימה: (1) וקטור בליעה לכל חומר לפי תחום, (2) תלות בעומק \(z\) ובפאזה \(\phi\),
+(3) השוואת חומרים לפי מרחק וקטורי, (4) Data Sheet תקני + ייצוא JSON.
+</p>
+
+<div class="card">
+  <details open>
+    <summary>📌 הסבר כללי + נוסחאות (KaTeX)</summary>
+
+    <div class="two">
+
+      <div class="mathbox">
+        <div class="title">1) וקטור החומר (SVPAD Vector)</div>
+        <div class="hint">כל חומר מיוצג כווקטור של מקדמי בליעה על גריד של ציר התחום (λ / E / f).</div>
+        <div class="eq">
+          $$\mathbf{A}_m(z,\phi)=\big[\alpha_m(x_1,z,\phi),\alpha_m(x_2,z,\phi),\dots,\alpha_m(x_N,z,\phi)\big]$$
+        </div>
+        <div class="hint">
+          כאן \(x\) הוא הציר של התחום:
+          UV–VIS–NIR: \(x=\lambda\,[\mathrm{nm}]\),
+          X-ray: \(x=E\,[\mathrm{keV}]\),
+          Microwave: \(x=f\,[\mathrm{GHz}]\).
+        </div>
+      </div>
+
+      <div class="mathbox">
+        <div class="title">2) מודל תלוי פאזה + עומק (Phase + Depth)</div>
+        <div class="hint">שילוב נוזל/גז + דעיכה עם עומק. זה “דמו-פיזיקלי” וניתן להחליף לנתונים מדודים.</div>
+        <div class="eq">
+          $$\alpha(x,z,\phi)=(1-\phi)\,\alpha_\ell(x)\,e^{-k_\ell z}+\phi\,\alpha_g(x)\,e^{-k_g z}$$
+        </div>
+        <div class="hint">
+          \(\phi\in[0,1]\): 0=נוזל, 1=גז.  
+          \(k_\ell,k_g\): קבועי דעיכה שמייצגים שינוי פנימי עם עומק (פיזור/רוויה/צפיפות).
+        </div>
+      </div>
+
+      <div class="mathbox">
+        <div class="title">3) חוק חדירה (Beer–Lambert כללי)</div>
+        <div class="hint">העוצמה יורדת לפי האינטגרל של הבליעה המקומית לאורך העומק.</div>
+        <div class="eq">
+          $$I(x,z)=I_0(x)\exp\!\left(-\int_{0}^{z}\alpha(x,z')\,dz'\right)$$
+        </div>
+        <div class="hint">
+          בקובץ הזה מציגים את \(\alpha\) (חתימת בליעה). ניתן להוסיף גם \(I/I_0\) אם תרצה.
+        </div>
+      </div>
+
+      <div class="mathbox">
+        <div class="title">4) השוואת חומרים: מרחק/דמיון וקטורי</div>
+        <div class="hint">השוואה מתבצעת בין שני וקטורים באותו תחום ובאותם \(z,\phi\).</div>
+        <div class="eq">
+          $$s_{\cos}=\frac{\mathbf{A}\cdot\mathbf{B}}{\|\mathbf{A}\|\,\|\mathbf{B}\|}$$
+          $$d_2=\sqrt{\sum_i (A_i-B_i)^2}\qquad\qquad d_1=\sum_i |A_i-B_i|$$
+        </div>
+        <div class="hint">
+          קוסינוס מודד דמיון “צורה ספקטרלית” (דפוס). L1/L2 מודדים קרבה מספרית מוחלטת.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mathbox">
+      <div class="title">5) Data Sheet תקני (מה הוא כולל)</div>
+      <div class="hint">
+        מזהים + תחום + גריד + פרמטרים (\(z,\phi\)) + סטטיסטיקת וקטור + אומדן עומק אופייני (1/e) + הערות.
+      </div>
+      <div class="eq">
+        $$\text{DataSheet}=\{\text{id,name,state,density,band,grid,params,stats,depth}_{1/e},\text{notes}\}$$
+      </div>
+      <div class="hint">
+        כפתור “ייצוא JSON” מייצא גם את הציר \(x\) וגם את הווקטור \(\alpha\) במלואו.
+      </div>
+    </div>
+
+    <div class="note">
+      אם תרצה, אפשר להוסיף שכבות (multi-layer), או רכיב החזרה/פיזור (חשוב למתכות) — ועדיין להישאר בקובץ יחיד.
+    </div>
+
+  </details>
+</div>
+
+<div class="grid">
+
+  <!-- LEFT -->
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>תחום קרינה</label><br>
+        <select id="band">
+          <option value="xray">X-ray (keV)</option>
+          <option value="uvvisnir" selected>UV-VIS-NIR (nm)</option>
+          <option value="mw">Microwave (GHz)</option>
+        </select>
+      </div>
+
+      <div>
+        <label>חומר A (ייחוס)</label><br>
+        <select id="matA"></select>
+      </div>
+
+      <div>
+        <label>חומר B (להשוואה)</label><br>
+        <select id="matB"></select>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+
+    <div class="row">
+      <div>
+        <label>עומק z (cm)</label><br>
+        <input id="z" type="range" min="0" max="10" step="0.1" value="1">
+        <div class="muted" id="zv"></div>
+      </div>
+
+      <div>
+        <label>פאזה φ (0=נוזל, 1=גז)</label><br>
+        <input id="phi" type="range" min="0" max="1" step="0.01" value="0">
+        <div class="muted" id="phiv"></div>
+      </div>
+
+      <div>
+        <label>מדד מרחק</label><br>
+        <select id="metric">
+          <option value="cos">Cosine similarity (דמיון)</option>
+          <option value="l2">L2 distance</option>
+          <option value="l1">L1 distance</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="k"><b id="kpiTitle1">דמיון קוסינוס</b><span id="kpi1">—</span></div>
+      <div class="k"><b id="kpiTitle2">מרחק</b><span id="kpi2">—</span></div>
+    </div>
+
+    <div style="height:10px"></div>
+
+    <div class="row">
+      <button class="btn" id="swap">החלף A↔B</button>
+      <button class="btn" id="exportJson">ייצוא Data Sheet (JSON)</button>
+      <span class="pill" id="gridInfo">—</span>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card" style="box-shadow:none; border-style:dashed">
+      <div class="row" style="justify-content:space-between">
+        <b>Data Sheet תקני (דינמי) — חומר A</b>
+        <span class="pill" id="dsBand">—</span>
+      </div>
+
+      <table>
+        <thead><tr><th style="width:34%">שדה</th><th>ערך</th></tr></thead>
+        <tbody id="ds"></tbody>
+      </table>
+
+      <div class="note">
+        המודלים כאן הם דמו-פיזיקליים כדי להדגים את המסגרת SVPAD.  
+        החלפה לנתונים מדודים/ספרותיים תיתן Data Sheet “תקני” מדעי.
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div>
+        <b>גרף וקטורי בליעה</b>
+        <div class="muted">מוצגים \( \alpha(x,z,\phi) \) של A ו-B על אותו ציר.</div>
+      </div>
+      <div class="row">
+        <span class="pill">A: <span id="nameA"></span></span>
+        <span class="pill">B: <span id="nameB"></span></span>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+    <canvas id="plot"></canvas>
+
+    <div style="height:12px"></div>
+
+    <div class="row" style="justify-content:space-between">
+      <b>החומרים הכי דומים ל-A (דירוג)</b>
+      <span class="pill muted">לפי המדד הנבחר</span>
+    </div>
+
+    <table>
+      <thead><tr><th style="width:52%">חומר</th><th>Score</th><th>הערה</th></tr></thead>
+      <tbody id="rank"></tbody>
+    </table>
+
+    <div class="mathbox" style="margin-top:12px">
+      <div class="title">איך לקרוא את הדירוג?</div>
+      <div class="hint">
+        Cosine: score גבוה = דפוס ספקטרלי דומה.  
+        L1/L2: אנחנו מדרגים לפי “קרוב יותר” (בפנים ממיינים לפי שלילי של המרחק).
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================
+   Material DB (demo-physical models)
+   ========================= */
+const MATERIALS = [
+  {
+    id:"water",
+    name:"מים (Water)",
+    state:"liquid/gas",
+    density:{liq:1000, gas:0.6, unit:"kg/m³"},
+    notes:"ייחוס למעבר פאזה; קווי בליעה חזקים ב-NIR, הפסדים במיקרוגל.",
+    bands:{
+      uvvisnir:{ model:{ kind:"phase",
+        a_liq:(nm)=> 0.002 + 0.020*Math.exp(-Math.pow((nm-1450)/280,2)) + 0.010*Math.exp(-Math.pow((nm-1950)/220,2)),
+        a_gas:(nm)=> 0.0005 + 0.003*Math.exp(-Math.pow((nm-1900)/180,2)),
+        k_liq:0.15, k_gas:0.05
+      }},
+      xray:{ model:{ kind:"phase",
+        a_liq:(keV)=> 0.080/Math.pow(keV,3.1) + 0.0006,
+        a_gas:(keV)=> 0.003/Math.pow(keV,3.0) + 0.0001,
+        k_liq:0.05, k_gas:0.02
+      }},
+      mw:{ model:{ kind:"phase",
+        a_liq:(GHz)=> 0.06*Math.exp(-Math.pow((GHz-20)/10,2)) + 0.010,
+        a_gas:(GHz)=> 0.002 + 0.001*Math.exp(-Math.pow((GHz-60)/20,2)),
+        k_liq:0.04, k_gas:0.01
+      }}
+    }
+  },
+  {
+    id:"ethanol",
+    name:"אתנול (Ethanol)",
+    state:"liquid/gas",
+    density:{liq:789, gas:1.6, unit:"kg/m³"},
+    notes:"שונה ממים ב-NIR; הפסדים מיקרוגליים נמוכים יחסית למים.",
+    bands:{
+      uvvisnir:{ model:{ kind:"phase",
+        a_liq:(nm)=> 0.0015 + 0.012*Math.exp(-Math.pow((nm-1200)/300,2)) + 0.006*Math.exp(-Math.pow((nm-1700)/250,2)),
+        a_gas:(nm)=> 0.0004 + 0.0015*Math.exp(-Math.pow((nm-1650)/200,2)),
+        k_liq:0.12, k_gas:0.04
+      }},
+      xray:{ model:{ kind:"phase",
+        a_liq:(keV)=> 0.060/Math.pow(keV,3.0) + 0.0005,
+        a_gas:(keV)=> 0.0025/Math.pow(keV,3.0) + 0.0001,
+        k_liq:0.05, k_gas:0.02
+      }},
+      mw:{ model:{ kind:"phase",
+        a_liq:(GHz)=> 0.025*Math.exp(-Math.pow((GHz-18)/12,2)) + 0.006,
+        a_gas:(GHz)=> 0.0015,
+        k_liq:0.03, k_gas:0.01
+      }}
+    }
+  },
+  {
+    id:"pe",
+    name:"פוליאתילן (PE)",
+    state:"solid",
+    density:{solid:950, unit:"kg/m³"},
+    notes:"בליעה נמוכה יחסית; נפוץ כחומר דיאלקטרי/מבודד.",
+    bands:{
+      uvvisnir:{ model:{ kind:"solid", a:(nm)=> 0.0007 + 0.0010*Math.exp(-Math.pow((nm-1700)/260,2)), k:0.08 }},
+      xray:{ model:{ kind:"solid", a:(keV)=> 0.030/Math.pow(keV,2.8) + 0.0003, k:0.03 }},
+      mw:{ model:{ kind:"solid", a:(GHz)=> 0.002 + 0.001*Math.exp(-Math.pow((GHz-70)/18,2)), k:0.02 }}
+    }
+  },
+  {
+    id:"al",
+    name:"אלומיניום (Al)",
+    state:"solid",
+    density:{solid:2700, unit:"kg/m³"},
+    notes:"בעיקר רפלקטיבי ב-UV/Visible; כאן מוצג proxy של בליעה/הפסד לצורך הדגמה.",
+    bands:{
+      uvvisnir:{ model:{ kind:"solid", a:(nm)=> 0.010 + 0.004*Math.exp(-Math.pow((nm-350)/120,2)), k:0.30 }},
+      xray:{ model:{ kind:"solid", a:(keV)=> 0.220/Math.pow(keV,2.9) + 0.0010, k:0.10 }},
+      mw:{ model:{ kind:"solid", a:(GHz)=> 0.050, k:0.40 }}
+    }
+  },
+  {
+    id:"tissue",
+    name:"רקמה רכה (Soft Tissue)",
+    state:"bio",
+    density:{solid:1050, unit:"kg/m³"},
+    notes:"דומה למים אך לא זהה; רלוונטי למדעי החיים/רפואה.",
+    bands:{
+      uvvisnir:{ model:{ kind:"solid", a:(nm)=> 0.004 + 0.012*Math.exp(-Math.pow((nm-1450)/320,2)) + 0.007*Math.exp(-Math.pow((nm-1950)/260,2)), k:0.10 }},
+      xray:{ model:{ kind:"solid", a:(keV)=> 0.090/Math.pow(keV,3.15) + 0.0007, k:0.05 }},
+      mw:{ model:{ kind:"solid", a:(GHz)=> 0.040*Math.exp(-Math.pow((GHz-18)/11,2)) + 0.008, k:0.03 }}
+    }
+  }
+];
+
+function makeAxis(band){
+  if(band==="uvvisnir"){
+    const xs=[]; for(let nm=200; nm<=2500; nm+=10) xs.push(nm);
+    return {x:xs, unit:"nm", label:"λ (nm)", domain:"UV-VIS-NIR"};
+  }
+  if(band==="xray"){
+    const xs=[]; for(let keV=5; keV<=150; keV+=1) xs.push(keV);
+    return {x:xs, unit:"keV", label:"E (keV)", domain:"X-ray"};
+  }
+  if(band==="mw"){
+    const xs=[]; for(let g=0.5; g<=100; g+=0.5) xs.push(g);
+    return {x:xs, unit:"GHz", label:"f (GHz)", domain:"Microwave"};
+  }
+  return {x:[0], unit:"", label:"x", domain:"—"};
+}
+
+function alphaAt(material, band, x, z_cm, phi){
+  const b = material.bands[band];
+  if(!b) return 0;
+  const z = z_cm;
+  const m = b.model;
+
+  if(m.kind==="phase"){
+    const aL = m.a_liq(x) * Math.exp(-m.k_liq*z);
+    const aG = m.a_gas(x) * Math.exp(-m.k_gas*z);
+    return (1-phi)*aL + phi*aG;
+  }else{
+    const base = m.a(x) * Math.exp(-m.k*z);
+    return base*(1 + 0.05*phi);
+  }
+}
+
+function vectorFor(material, band, z, phi){
+  const axis = makeAxis(band).x;
+  return axis.map(x => alphaAt(material, band, x, z, phi));
+}
+
+function dot(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=a[i]*b[i]; return s; }
+function norm(a){ return Math.sqrt(dot(a,a)); }
+function l2(a,b){ let s=0; for(let i=0;i<a.length;i++){ const d=a[i]-b[i]; s+=d*d; } return Math.sqrt(s); }
+function l1(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=Math.abs(a[i]-b[i]); return s; }
+function cosineSim(a,b){
+  const na=norm(a), nb=norm(b);
+  if(na===0 || nb===0) return 0;
+  return dot(a,b)/(na*nb);
+}
+
+/* ===== Plot ===== */
+const canvas = document.getElementById("plot");
+const ctx = canvas.getContext("2d");
+function resizeCanvas(){
+  canvas.width = canvas.clientWidth * devicePixelRatio;
+  canvas.height = canvas.clientHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+window.addEventListener("resize", ()=>{ resizeCanvas(); computeAll(); });
+
+function drawPlot(axis, yA, yB, labelX){
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  ctx.clearRect(0,0,W,H);
+
+  const padL=56, padR=18, padT=18, padB=44;
+  const w=W-padL-padR, h=H-padT-padB;
+
+  const xmin = axis[0], xmax = axis[axis.length-1];
+  const ymax = Math.max(...yA, ...yB)*1.15 + 1e-12;
+
+  ctx.lineWidth=1;
+  ctx.strokeStyle="#0b1220";
+  ctx.beginPath();
+  ctx.moveTo(padL,padT);
+  ctx.lineTo(padL,padT+h);
+  ctx.lineTo(padL+w,padT+h);
+  ctx.stroke();
+
+  ctx.strokeStyle="rgba(15,23,42,.08)";
+  for(let i=1;i<=5;i++){
+    const y = padT + h*(i/5);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+w,y); ctx.stroke();
+  }
+
+  function X(x){ return padL + (x-xmin)/(xmax-xmin)*w; }
+  function Y(y){ return padT + h - (y/(ymax))*h; }
+
+  ctx.lineWidth=2;
+  ctx.strokeStyle="#2563eb";
+  ctx.beginPath();
+  axis.forEach((x,i)=>{
+    const xx=X(x), yy=Y(yA[i]);
+    if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  });
+  ctx.stroke();
+
+  ctx.strokeStyle="#16a34a";
+  ctx.beginPath();
+  axis.forEach((x,i)=>{
+    const xx=X(x), yy=Y(yB[i]);
+    if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle="#0f172a";
+  ctx.font="12px system-ui, Arial";
+  ctx.fillText(labelX, padL + w/2 - 20, padT+h+32);
+  ctx.save();
+  ctx.translate(18, padT + h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("α(x,z,φ)   [arb. units]", 0, 0);
+  ctx.restore();
+
+  ctx.fillStyle="#2563eb"; ctx.fillRect(padL+8, padT+8, 10, 10);
+  ctx.fillStyle="#0f172a"; ctx.fillText("A", padL+24, padT+17);
+  ctx.fillStyle="#16a34a"; ctx.fillRect(padL+48, padT+8, 10, 10);
+  ctx.fillStyle="#0f172a"; ctx.fillText("B", padL+64, padT+17);
+}
+
+/* ===== Data sheet ===== */
+function datasheet(material, band, z, phi){
+  const axis = makeAxis(band);
+  const vec = vectorFor(material, band, z, phi);
+  const maxA = Math.max(...vec);
+  const meanA = vec.reduce((s,v)=>s+v,0)/vec.length;
+
+  const dens = material.density;
+  const densTxt =
+    dens.liq!==undefined
+      ? `נוזל: ${dens.liq} ${dens.unit}, גז: ${dens.gas} ${dens.unit}`
+      : `מוצק: ${dens.solid} ${dens.unit}`;
+
+  const z2 = z + 1.0;
+  const v2 = vectorFor(material, band, z2, phi);
+  const m2 = v2.reduce((s,v)=>s+v,0)/v2.length;
+  const slope = (m2>0 && meanA>0) ? Math.log(meanA/m2) : 0;
+  const z1e = slope>0 ? (1/slope) : Infinity;
+
+  return [
+    ["Standard", `<span class="pill">SVPAD</span> <span class="muted">(demo)</span>`],
+    ["Material ID", `<span class="mono">${material.id}</span>`],
+    ["שם חומר", material.name],
+    ["תחום", `${axis.domain} <span class="pill">${axis.label}</span>`],
+    ["Grid", `${axis.x.length} נק׳ (${axis.x[0]}–${axis.x[axis.x.length-1]} ${axis.unit})`],
+    ["מצב", material.state],
+    ["צפיפות", densTxt],
+    ["עומק z", `${z.toFixed(2)} cm`],
+    ["פאזה φ", (material.state==="solid" || material.state==="bio") ? `${phi.toFixed(2)} (השפעה קטנה)` : phi.toFixed(2)],
+    ["Stats", `mean: ${meanA.toExponential(3)} | max: ${maxA.toExponential(3)}`],
+    ["אומדן עומק אופייני (1/e)", (z1e===Infinity ? "—" : `${z1e.toFixed(2)} cm (דמו)` )],
+    ["הערות", material.notes]
+  ];
+}
+
+/* ===== UI wiring ===== */
+const bandSel = document.getElementById("band");
+const matA = document.getElementById("matA");
+const matB = document.getElementById("matB");
+const zSlider = document.getElementById("z");
+const phiSlider = document.getElementById("phi");
+const metricSel = document.getElementById("metric");
+
+const zv = document.getElementById("zv");
+const phiv = document.getElementById("phiv");
+const gridInfo = document.getElementById("gridInfo");
+const nameA = document.getElementById("nameA");
+const nameB = document.getElementById("nameB");
+const kpi1 = document.getElementById("kpi1");
+const kpi2 = document.getElementById("kpi2");
+const kpiTitle1 = document.getElementById("kpiTitle1");
+const kpiTitle2 = document.getElementById("kpiTitle2");
+const dsBody = document.getElementById("ds");
+const dsBand = document.getElementById("dsBand");
+const rankBody = document.getElementById("rank");
+
+function populateMaterials(){
+  [matA, matB].forEach(sel=>{
+    sel.innerHTML="";
+    MATERIALS.forEach(m=>{
+      const opt=document.createElement("option");
+      opt.value=m.id; opt.textContent=m.name;
+      sel.appendChild(opt);
+    });
+  });
+  matA.value="water";
+  matB.value="tissue";
+}
+function getMat(id){ return MATERIALS.find(m=>m.id===id); }
+
+function setKpiTitles(metric){
+  if(metric==="cos"){ kpiTitle1.textContent="דמיון קוסינוס"; kpiTitle2.textContent="מרחק נגזר (1−sim)"; }
+  if(metric==="l2"){ kpiTitle1.textContent="מרחק L2"; kpiTitle2.textContent="דמיון נגזר 1/(1+d)"; }
+  if(metric==="l1"){ kpiTitle1.textContent="מרחק L1"; kpiTitle2.textContent="דמיון נגזר 1/(1+d)"; }
+}
+
+function computeAll(){
+  const band = bandSel.value;
+  const A = getMat(matA.value);
+  const B = getMat(matB.value);
+  const z = parseFloat(zSlider.value);
+  const phi = parseFloat(phiSlider.value);
+  const metric = metricSel.value;
+
+  zv.textContent = `z = ${z.toFixed(2)} cm`;
+  phiv.textContent = `φ = ${phi.toFixed(2)}`;
+  nameA.textContent = A.name;
+  nameB.textContent = B.name;
+
+  const axis = makeAxis(band);
+  gridInfo.textContent = `${axis.domain} • ${axis.x.length} נק׳ • ${axis.x[0]}–${axis.x[axis.x.length-1]} ${axis.unit}`;
+  dsBand.textContent = axis.domain;
+
+  const vA = vectorFor(A, band, z, phi);
+  const vB = vectorFor(B, band, z, phi);
+
+  setKpiTitles(metric);
+
+  if(metric==="cos"){
+    const sim = cosineSim(vA,vB);
+    kpi1.textContent = sim.toFixed(4);
+    kpi2.textContent = (1-sim).toFixed(4);
+  }else if(metric==="l2"){
+    const d = l2(vA,vB);
+    kpi1.textContent = d.toExponential(3);
+    kpi2.textContent = (1/(1+d)).toFixed(4);
+  }else{
+    const d = l1(vA,vB);
+    kpi1.textContent = d.toExponential(3);
+    kpi2.textContent = (1/(1+d)).toFixed(4);
+  }
+
+  drawPlot(axis.x, vA, vB, axis.label);
+
+  const rows = datasheet(A, band, z, phi);
+  dsBody.innerHTML = rows.map(([k,v])=>`<tr><td><b>${k}</b></td><td>${v}</td></tr>`).join("");
+
+  const ranked = MATERIALS
+    .filter(m=>m.id!==A.id)
+    .map(m=>{
+      const v = vectorFor(m, band, z, phi);
+      let score;
+      if(metric==="cos") score = cosineSim(vA,v);
+      if(metric==="l2")  score = -l2(vA,v);
+      if(metric==="l1")  score = -l1(vA,v);
+      return {m, score};
+    })
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
+
+  rankBody.innerHTML = ranked.map((r,idx)=>{
+    const note = (idx===0) ? "הדמיון הגבוה ביותר" : "—";
+    const sc = (metric==="cos") ? r.score.toFixed(4) : r.score.toExponential(3);
+    return `<tr>
+      <td>${r.m.name}</td>
+      <td class="mono">${sc}</td>
+      <td class="muted">${note}</td>
+    </tr>`;
+  }).join("");
+}
+
+document.getElementById("swap").onclick = ()=>{
+  const a = matA.value; matA.value = matB.value; matB.value = a;
+  computeAll();
+};
+
+document.getElementById("exportJson").onclick = ()=>{
+  const band = bandSel.value;
+  const A = getMat(matA.value);
+  const z = parseFloat(zSlider.value);
+  const phi = parseFloat(phiSlider.value);
+  const axis = makeAxis(band);
+  const vec = vectorFor(A, band, z, phi);
+
+  const payload = {
+    standard:"SVPAD",
+    version:"1.0-demo",
+    timestamp: new Date().toISOString(),
+    material: { id:A.id, name:A.name, state:A.state, density:A.density, notes:A.notes },
+    band: { key:band, domain:axis.domain, axis_label:axis.label, unit:axis.unit,
+            x_min:axis.x[0], x_max:axis.x[axis.x.length-1], n:axis.x.length },
+    params: { z_cm:z, phi:phi },
+    vector: { x:axis.x, alpha:vec },
+    formulas_latex: {
+      vector:"\\\\mathbf{A}_m(z,\\\\phi)=[\\\\alpha_m(x_i,z,\\\\phi)]_{i=1}^N",
+      phase_depth:"\\\\alpha(x,z,\\\\phi)=(1-\\\\phi)\\\\alpha_\\\\ell(x)e^{-k_\\\\ell z}+\\\\phi\\\\alpha_g(x)e^{-k_g z}",
+      beer_lambert:"I(x,z)=I_0(x)\\\\exp\\\\left(-\\\\int_0^z \\\\alpha(x,z')dz'\\\\right)",
+      cosine:"s_{\\\\cos}=(\\\\mathbf{A}\\\\cdot\\\\mathbf{B})/(\\\\|\\\\mathbf{A}\\\\|\\\\|\\\\mathbf{B}\\\\|)",
+      l2:"d_2=\\\\sqrt{\\\\sum_i (A_i-B_i)^2}",
+      l1:"d_1=\\\\sum_i |A_i-B_i|"
+    }
+  };
+
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `SVPAD_${A.id}_${band}_z${z.toFixed(2)}_phi${phi.toFixed(2)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+bandSel.onchange = ()=>{ resizeCanvas(); computeAll(); };
+[matA,matB,zSlider,phiSlider,metricSel].forEach(el=> el.oninput = computeAll);
+
+/* ===== Boot ===== */
+populateMaterials();
+resizeCanvas();
+computeAll();
+
+/* ===== Render KaTeX ===== */
+function renderMath(){
+  if(typeof renderMathInElement !== "function") return;
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "$", right: "$", display: false}
+    ],
+    throwOnError: false
+  });
+}
+document.addEventListener("DOMContentLoaded", renderMath);
+</script>
+
+</body>
+</html>
