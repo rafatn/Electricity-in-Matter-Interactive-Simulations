@@ -712,7 +712,7 @@
 
 <script>
 /**
- * INDEX.HTML — Emoji per file + Top10 most viewed + Export/Import.
+ * INDEX.HTML — Manual Emoji per file + Top10 most viewed + Export/Import.
  */
 
 const RAW_FILES = [
@@ -835,9 +835,66 @@ function descFromFile(file){
   return "מסמך רעיון/מודל מעוצב.";
 }
 
-/** === Emoji for each file === */
+/** ✅ Manual Emoji Map (file → emoji) */
+const EMOJI_MAP = {
+  "water_walking_shoes_sonar_pump.html": "👟",
+  "water_gas_train_blue.html": "🚆",
+  "water_air_shoes_trilingual_flow.html": "🌊",
+  "usb_network_osi_ipv6_plus_hw_usecase.html": "🛡️",
+  "thermosiphon_flow_calculator_he.html": "🌡️",
+  "smart_water_powered_door_full_plus_fixed_he.html": "🚪",
+  "smart_paver_mesh_thermal_sensing_he.html": "🧱",
+  "smart_floor_pressure_to_energy_model_he.html": "🧱",
+  "self_charging_headphones_FULL_katex_diagrams_simulation_explained.html": "🎧",
+  "qfm_plutos_combined_with_applications.html": "📡",
+  "qfm_plutos_combined.html": "📡",
+  "qfm_full_development_with_examples.html": "📡",
+  "qaxm_full_multilang_complete2.html": "📶",
+  "plutos_visual_socket_patent_style.html": "🔌",
+  "plugos_visual_socket_proposal.html": "🔌",
+  "plant_gas_to_bio_oil_mvp_he.html": "🪴",
+  "pendulum_drone_with_photo.html": "🛰️",
+  "pendulum_drone_ship_mountain_he_en_ar.html": "🛠️",
+  "patent_smart_boarding_token_he.html": "🎫",
+  "patent_clean_air_square_zone_he.html": "🌬️",
+  "Nobel_Physics_Submission_AnnaBelPeaks.html": "🏅",
+  "new 8.html": "💡",
+  "metabolic_railway_model_he_v3.html": "🧠",
+  "metabolic_railway_model_he.html": "🧬",
+  "living_tooth_model_full.html": "🦷",
+  "international_economic_constitution_offline_full_fr_es_ru.html": "⚖️",
+  "international_economic_constitution_all_languages.html": "🌍",
+  "international_constitution_graph_animation_and_proof_offline.html": "📈",
+  "integrated_model_description.html": "🧩",
+  "ideal_wave_supersonic_aircraft.html": "✈️",
+  "ideal_wave_aircraft.html": "🛫",
+  "ideal_wave_air_road_vehicle.html": "🚗",
+  "HybirdDataSecurity.html": "🔐",
+  "human_wave_transport_advanced.html": "🌊",
+  "hospital_integrative_flow_model_clear_equations.html": "🏥",
+  "hospital_flow_equations_all_packages_mega.html": "🏥",
+  "hospital_curtain_model_full_offline.html": "🧫",
+  "gamma_drawers_full.html": "🗄️",
+  "fingerprint_gesture_full_v_he.html": "🖐️",
+  "energy_harvesting_touch_tiles_road.html": "⚡",
+  "electricity_models_plus_simulations_bilingual_toggle.html": "🔋",
+  "earth_glider_train_multilang.html": "🌍",
+  "ceiling_house_theory_step_by_step_GOLD_OFFLINE.html": "🏠",
+  "building_stability_system_energy_he.html": "🏗️",
+  "blood_spectral_vector_model.html": "🩸",
+  "bivdn_multilang_full_mobile.html": "📱",
+  "bio_magnet_therapy.html": "🧲",
+  "absolute_organ_value_multilang_full_v2.html": "🫀",
+  "absolute_organ_value_multilang_full.html": "🫁"
+};
+
+/** === Emoji for each file (manual first, fallback after) === */
 function emojiForFile(file, tags){
-  const f = (file||"").toLowerCase();
+  const key = String(file||"").trim();
+  if(EMOJI_MAP[key]) return EMOJI_MAP[key];
+
+  // fallback if not mapped yet
+  const f = key.toLowerCase();
   const t = new Set((tags||[]).map(x=>String(x||"").trim()));
 
   if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
@@ -1194,7 +1251,7 @@ function render(){
     card.innerHTML = `
       <div class="cardInner">
         <div class="cardTop">
-          <div class="fileEmoji" title="אימוג'י לפי סוג קובץ" aria-hidden="true">${emoji}</div>
+          <div class="fileEmoji" title="אימוג'י קבוע לפי קובץ" aria-hidden="true">${emoji}</div>
 
           <div style="flex:1; min-width:0">
             <div class="badge" title="${escapeHtml(page.file)}">${escapeHtml(page.file)}</div>
