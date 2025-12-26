@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>משפט אקדמי + גבולות הטענה • ODE/PDE • אינטראקטיבי</title>
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --card:rgba(255,255,255,.82);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.10); --r:18px;
+      --accent:#6366f1; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--text);
+      background: radial-gradient(1200px 600px at 10% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(900px 500px at 90% 20%, #ecfeff, transparent 55%),
+                  linear-gradient(180deg, var(--bg0), #ffffff);
+    }
+    header{padding:28px 18px 10px; max-width:1100px; margin:0 auto;}
+    h1{margin:0 0 8px; font-size:22px}
+    p.lead{margin:0; color:var(--muted); line-height:1.6}
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 18px 40px;}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+      box-shadow:var(--shadow); padding:14px; overflow:hidden;
+    }
+    .card h2{margin:0 0 10px; font-size:16px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.65);
+      font-size:12px; color:var(--muted)
+    }
+    .k{font-family:var(--mono); font-size:13px; background:rgba(15,23,42,.04); border:1px solid var(--line);
+      padding:10px; border-radius:12px; overflow:auto; white-space:pre-wrap;
+    }
+    label{font-size:12px; color:var(--muted)}
+    input[type="range"]{width:240px}
+    canvas{width:100%; height:320px; display:block; border-radius:14px; background:rgba(255,255,255,.55);
+      border:1px solid var(--line)
+    }
+    .mini{font-size:12px; color:var(--muted); line-height:1.6}
+    .note{border-right:4px solid var(--accent); padding:10px 12px; background:rgba(99,102,241,.08); border-radius:12px;}
+    .bad{border-right-color:var(--bad); background:rgba(239,68,68,.08)}
+    .ok{border-right-color:var(--ok); background:rgba(22,163,74,.08)}
+    .btn{
+      border:1px solid var(--line); background:rgba(255,255,255,.7); padding:8px 10px; border-radius:12px;
+      cursor:pointer; font-size:13px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+  </style>
+</head>
+<body>
+<header>
+  <h1>משפט אקדמי, הוכחות קצרות, ודוגמאות נגדיות • ODE/PDE</h1>
+  <p class="lead">
+    מסמך אינטראקטיבי אופליין: (1) למה מותר להשתמש ב־CIS/מרוכבים בלינאריות ממשית, (2) blow-up בזמן סופי, (3) אי־קיום עקב תנאי שפה לא רציפים.
+  </p>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <section class="card">
+      <h2>1) CIS ולמה “לקחת חלק ממשי” עובד (רק בלינאריות ממשית)</h2>
+      <div class="row" style="justify-content:space-between">
+        <div class="pill">כלי חישובי (לא חובה)</div>
+        <div class="pill">אם L לינארי + מקדמים ממשיים ⇒ Re(Lu)=L(Re u)</div>
+      </div>
+      <div class="k" style="margin-top:10px">
+משפט (גרסה קצרה):
+אם L אופרטור לינארי עם מקדמים ממשיים, ו-u פתרון מרוכב של Lu=g (g ממשי),
+אז Re(u) פתרון ממשי: L(Re(u))=g.
+
+CIS:
+e^{iθ} = cos(θ) + i sin(θ)
+      </div>
+
+      <div class="row" style="margin:10px 0 8px">
+        <label>בחר θ (רדיאנים): <span id="thetaVal" class="pill">0.00</span></label>
+        <input id="theta" type="range" min="0" max="6.283185307" step="0.01" value="0">
+        <button class="btn" id="thetaPlay">נגן/עצור</button>
+      </div>
+
+      <canvas id="cisCanvas" width="900" height="320" aria-label="CIS plot"></canvas>
+      <p class="mini note ok" style="margin-top:10px">
+        אם המשוואה לא לינארית או שהמקדמים/האגפים לא ממשיים (או תלויים ב־u בצורה לא לינארית) — “לקחת חלק ממשי” עלול לא לשמר פתרון.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2) דוגמה נגדית: קיום מקומי אבל blow-up בזמן סופי</h2>
+      <div class="k">
+ODE:
+y' = y^2,  y(0)=y0
+פתרון סגור:
+y(t)= y0 / (1 - y0 t)
+כאשר y0>0 יש התבדרות ב- t* = 1/y0
+      </div>
+
+      <div class="row" style="margin:10px 0 8px">
+        <label>y0: <span id="y0Val" class="pill">1.00</span></label>
+        <input id="y0" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
+        <div class="pill">t* = <span id="tStar">1.00</span></div>
+      </div>
+
+      <canvas id="blowCanvas" width="900" height="320" aria-label="Blow up plot"></canvas>
+
+      <p class="mini note bad" style="margin-top:10px">
+        זה מפרק את הטענה “תמיד יש פתרון” אם הכוונה היא “לכל זמן/לכל תחום”. יש פתרון — אבל רק עד זמן סופי.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>3) דוגמה נגדית ל־PDE: תנאי שפה לא רציפים ⇒ אין פתרון רציף עד השפה</h2>
+      <div class="k">
+PDE (Laplace בדיסקה):
+Δu = 0  ב-D
+דרישה: u ∈ C(\bar D)
+
+תנאי שפה (על המעגל):
+u=0 על חצי מעגל, u=1 על חצי מעגל (קפיצה).
+
+אין פתרון רציף עד השפה, כי ההגבלה u|_{∂D} חייבת להיות רציפה.
+      </div>
+
+      <div class="row" style="margin:10px 0 8px">
+        <button class="btn" id="toggleBoundary">החלף צדדים (0/1)</button>
+        <div class="pill">המסר: הנתונים לא במרחב הפתרונות</div>
+      </div>
+
+      <canvas id="bcCanvas" width="900" height="320" aria-label="Boundary condition plot"></canvas>
+
+      <p class="mini note" style="margin-top:10px">
+        הערה: קיימים פתרונות “חלשים/בממוצע” או פתרונות שמקבלים את תנאי השפה כמעט בכל מקום,
+        אבל לא פתרון ב־C(\bar D) עם נתון קופץ.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>ניסוח מסכם (אקדמי)</h2>
+      <div class="k" id="summaryText">
+1) ODE: תחת רציפות + ליפשיץ ⇒ קיום ויחידות מקומית (Picard–Lindelöf).
+
+2) שימוש בפתרונות מרוכבים:
+בלינאריות עם מקדמים ממשיים מותר לחשב עם e^{iθ} ואז לקחת Re(·).
+
+3) PDE: לא “כל בעיה” פתירה.
+הפתירות תלויה בסוג המשוואה ובתנאי התחלה/שפה תואמים (well-posedness).
+דוגמאות נגדיות:
+- נתוני שפה לא רציפים עבור פתרון רציף עד השפה (Laplace).
+- blow-up בזמן סופי אפילו ב-ODE פשוט.
+      </div>
+      <p class="mini">
+        רוצה שאנסח את זה כמאמר מלא (Abstract, Theorem, Proof, Discussion) בעברית/אנגלית?
+      </p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ===== Helpers =====
+  function dprCanvas(canvas){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return ctx;
+  }
+  function clear(ctx, w, h){
+    ctx.clearRect(0,0,w,h);
+  }
+  function axes(ctx, w, h, pad){
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(100,116,139,0.45)";
+    // border
+    ctx.strokeRect(pad, pad, w-2*pad, h-2*pad);
+    ctx.restore();
+  }
+  function text(ctx, s, x, y){
+    ctx.save();
+    ctx.fillStyle = "rgba(15,23,42,0.9)";
+    ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+  function mapX(x, xmin, xmax, pad, W){
+    return pad + (x - xmin) * (W - 2*pad) / (xmax - xmin);
+  }
+  function mapY(y, ymin, ymax, pad, H){
+    return H - pad - (y - ymin) * (H - 2*pad) / (ymax - ymin);
+  }
+  function plot(ctx, W, H, pad, xmin, xmax, ymin, ymax, f, step){
+    ctx.save();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let first = true;
+    for(let x=xmin; x<=xmax+1e-9; x+=step){
+      const y = f(x);
+      const X = mapX(x,xmin,xmax,pad,W);
+      const Y = mapY(y,ymin,ymax,pad,H);
+      if(first){ ctx.moveTo(X,Y); first=false; } else { ctx.lineTo(X,Y); }
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ===== CIS Canvas =====
+  const cisCanvas = document.getElementById("cisCanvas");
+  const thetaSlider = document.getElementById("theta");
+  const thetaVal = document.getElementById("thetaVal");
+  const thetaPlay = document.getElementById("thetaPlay");
+
+  let cisCtx, cisW, cisH, cisPad=18;
+  let playing=false, animId=null;
+
+  function drawCIS(){
+    cisCtx = dprCanvas(cisCanvas);
+    const rect = cisCanvas.getBoundingClientRect();
+    cisW = rect.width; cisH = rect.height;
+    clear(cisCtx, cisW, cisH);
+    axes(cisCtx, cisW, cisH, cisPad);
+
+    const theta = parseFloat(thetaSlider.value);
+    thetaVal.textContent = theta.toFixed(2);
+
+    // Left: unit circle
+    const leftW = cisW*0.42;
+    const cy = cisH*0.52, cx = cisPad + leftW*0.55;
+    const R = Math.min(leftW, cisH)*0.32;
+
+    // circle
+    cisCtx.save();
+    cisCtx.lineWidth = 2;
+    cisCtx.strokeStyle = "rgba(99,102,241,0.9)";
+    cisCtx.beginPath();
+    cisCtx.arc(cx, cy, R, 0, Math.PI*2);
+    cisCtx.stroke();
+    cisCtx.restore();
+
+    // axes
+    cisCtx.save();
+    cisCtx.strokeStyle = "rgba(100,116,139,0.55)";
+    cisCtx.lineWidth = 1;
+    cisCtx.beginPath();
+    cisCtx.moveTo(cx-R, cy); cisCtx.lineTo(cx+R, cy);
+    cisCtx.moveTo(cx, cy-R); cisCtx.lineTo(cx, cy+R);
+    cisCtx.stroke();
+    cisCtx.restore();
+
+    // point
+    const px = cx + R*Math.cos(theta);
+    const py = cy - R*Math.sin(theta);
+
+    cisCtx.save();
+    cisCtx.strokeStyle = "rgba(15,23,42,0.65)";
+    cisCtx.lineWidth = 2;
+    cisCtx.beginPath();
+    cisCtx.moveTo(cx, cy); cisCtx.lineTo(px, py);
+    cisCtx.stroke();
+    cisCtx.restore();
+
+    cisCtx.save();
+    cisCtx.fillStyle = "rgba(239,68,68,0.95)";
+    cisCtx.beginPath();
+    cisCtx.arc(px, py, 5, 0, Math.PI*2);
+    cisCtx.fill();
+    cisCtx.restore();
+
+    text(cisCtx, `e^{iθ} = cos(θ) + i sin(θ)`, cisPad+8, cisPad+18);
+    text(cisCtx, `cos(θ)=${Math.cos(theta).toFixed(3)}, sin(θ)=${Math.sin(theta).toFixed(3)}`, cisPad+8, cisPad+36);
+
+    // Right: cos & sin vs theta
+    const rightX0 = cisW*0.47, rightX1 = cisW - cisPad;
+    const plotW = rightX1 - rightX0;
+    const plotH = cisH - 2*cisPad;
+    const W = plotW, H = plotH, pad = 14;
+    const originX = rightX0, originY = cisPad;
+
+    // frame
+    cisCtx.save();
+    cisCtx.strokeStyle = "rgba(148,163,184,0.5)";
+    cisCtx.strokeRect(originX, originY, W, H);
+    cisCtx.restore();
+
+    // draw sin/cos
+    cisCtx.save();
+    cisCtx.translate(originX, originY);
+
+    // y=0 line
+    cisCtx.strokeStyle = "rgba(100,116,139,0.35)";
+    cisCtx.beginPath();
+    const y0 = mapY(0,-1.2,1.2,pad,H);
+    cisCtx.moveTo(pad, y0);
+    cisCtx.lineTo(W-pad, y0);
+    cisCtx.stroke();
+
+    // cos (default strokeStyle)
+    cisCtx.strokeStyle = "rgba(99,102,241,0.95)";
+    plot(cisCtx, W, H, pad, 0, Math.PI*2, -1.2, 1.2, (x)=>Math.cos(x), 0.02);
+
+    // sin
+    cisCtx.strokeStyle = "rgba(22,163,74,0.95)";
+    plot(cisCtx, W, H, pad, 0, Math.PI*2, -1.2, 1.2, (x)=>Math.sin(x), 0.02);
+
+    // marker at theta
+    const mX = mapX(theta,0,Math.PI*2,pad,W);
+    cisCtx.strokeStyle = "rgba(15,23,42,0.55)";
+    cisCtx.beginPath();
+    cisCtx.moveTo(mX, pad);
+    cisCtx.lineTo(mX, H-pad);
+    cisCtx.stroke();
+
+    cisCtx.restore();
+
+    // legend
+    cisCtx.save();
+    cisCtx.fillStyle = "rgba(99,102,241,0.95)";
+    cisCtx.fillRect(rightX0+10, cisPad+10, 10, 10);
+    cisCtx.fillStyle = "rgba(15,23,42,0.9)";
+    cisCtx.fillText("cos(θ)", rightX0+26, cisPad+19);
+    cisCtx.fillStyle = "rgba(22,163,74,0.95)";
+    cisCtx.fillRect(rightX0+10, cisPad+28, 10, 10);
+    cisCtx.fillStyle = "rgba(15,23,42,0.9)";
+    cisCtx.fillText("sin(θ)", rightX0+26, cisPad+37);
+    cisCtx.restore();
+  }
+
+  function tick(){
+    if(!playing) return;
+    let v = parseFloat(thetaSlider.value);
+    v += 0.03;
+    if(v > 2*Math.PI) v = 0;
+    thetaSlider.value = v.toString();
+    drawCIS();
+    animId = requestAnimationFrame(tick);
+  }
+
+  thetaSlider.addEventListener("input", drawCIS);
+  thetaPlay.addEventListener("click", ()=>{
+    playing = !playing;
+    thetaPlay.textContent = playing ? "עצור" : "נגן";
+    if(playing){ tick(); } else if(animId){ cancelAnimationFrame(animId); }
+  });
+
+  // ===== Blow-up Canvas =====
+  const blowCanvas = document.getElementById("blowCanvas");
+  const y0Slider = document.getElementById("y0");
+  const y0Val = document.getElementById("y0Val");
+  const tStarEl = document.getElementById("tStar");
+  let blowCtx, blowW, blowH, blowPad=18;
+
+  function ySol(t, y0){ return y0 / (1 - y0*t); }
+
+  function drawBlow(){
+    blowCtx = dprCanvas(blowCanvas);
+    const rect = blowCanvas.getBoundingClientRect();
+    blowW = rect.width; blowH = rect.height;
+    clear(blowCtx, blowW, blowH);
+    axes(blowCtx, blowW, blowH, blowPad);
+
+    const y0 = parseFloat(y0Slider.value);
+    y0Val.textContent = y0.toFixed(2);
+    const tStar = 1/y0;
+    tStarEl.textContent = tStar.toFixed(2);
+
+    const xmin = 0, xmax = Math.min(2.2, tStar*1.15);
+    const ymin = -2, ymax = 8;
+
+    // plot until close to singularity
+    blowCtx.save();
+    blowCtx.strokeStyle = "rgba(99,102,241,0.95)";
+    blowCtx.lineWidth = 2;
+    blowCtx.beginPath();
+    let first = true;
+    const step = 0.01;
+    for(let t=xmin; t<=xmax; t+=step){
+      const denom = (1 - y0*t);
+      if(Math.abs(denom) < 0.05) break;
+      const y = ySol(t,y0);
+      const X = mapX(t,xmin,xmax,blowPad,blowW);
+      const Y = mapY(y,ymin,ymax,blowPad,blowH);
+      if(first){ blowCtx.moveTo(X,Y); first=false; } else { blowCtx.lineTo(X,Y); }
+    }
+    blowCtx.stroke();
+    blowCtx.restore();
+
+    // vertical line at t*
+    const Xs = mapX(tStar, xmin, xmax, blowPad, blowW);
+    blowCtx.save();
+    blowCtx.strokeStyle = "rgba(239,68,68,0.85)";
+    blowCtx.lineWidth = 2;
+    blowCtx.setLineDash([6,6]);
+    blowCtx.beginPath();
+    blowCtx.moveTo(Xs, blowPad);
+    blowCtx.lineTo(Xs, blowH - blowPad);
+    blowCtx.stroke();
+    blowCtx.setLineDash([]);
+    text(blowCtx, `התבדרות ב- t*=${tStar.toFixed(2)}`, Math.min(Xs+8, blowW-180), blowPad+18);
+    blowCtx.restore();
+
+    text(blowCtx, `y(t)=y0/(1-y0 t)`, blowPad+8, blowPad+18);
+  }
+
+  y0Slider.addEventListener("input", drawBlow);
+
+  // ===== Boundary condition Canvas =====
+  const bcCanvas = document.getElementById("bcCanvas");
+  const toggleBoundary = document.getElementById("toggleBoundary");
+  let bcCtx, bcW, bcH, bcPad=18;
+  let flipped=false;
+
+  function drawBC(){
+    bcCtx = dprCanvas(bcCanvas);
+    const rect = bcCanvas.getBoundingClientRect();
+    bcW = rect.width; bcH = rect.height;
+    clear(bcCtx, bcW, bcH);
+    axes(bcCtx, bcW, bcH, bcPad);
+
+    const cx = bcW*0.33, cy = bcH*0.55;
+    const R = Math.min(bcW*0.26, bcH*0.36);
+
+    // circle outline
+    bcCtx.save();
+    bcCtx.lineWidth = 2;
+    bcCtx.strokeStyle = "rgba(99,102,241,0.9)";
+    bcCtx.beginPath();
+    bcCtx.arc(cx, cy, R, 0, Math.PI*2);
+    bcCtx.stroke();
+    bcCtx.restore();
+
+    // boundary values: half 0, half 1 (step discontinuity)
+    // We'll color arcs: value 1 greenish, value 0 gray
+    const a0 = flipped ? 0 : Math.PI;      // where value switches
+    const a1 = flipped ? Math.PI : 0;
+
+    // draw arc for value 1
+    bcCtx.save();
+    bcCtx.lineWidth = 10;
+    bcCtx.strokeStyle = "rgba(22,163,74,0.9)";
+    bcCtx.beginPath();
+    bcCtx.arc(cx, cy, R, a1, a1+Math.PI, false);
+    bcCtx.stroke();
+    bcCtx.restore();
+
+    // arc for value 0
+    bcCtx.save();
+    bcCtx.lineWidth = 10;
+    bcCtx.strokeStyle = "rgba(100,116,139,0.6)";
+    bcCtx.beginPath();
+    bcCtx.arc(cx, cy, R, a0, a0+Math.PI, false);
+    bcCtx.stroke();
+    bcCtx.restore();
+
+    // mark jump points
+    function jumpPoint(angle){
+      return [cx + R*Math.cos(angle), cy + R*Math.sin(angle)];
+    }
+    const [jx1, jy1] = jumpPoint(a0);
+    const [jx2, jy2] = jumpPoint(a0+Math.PI);
+
+    bcCtx.save();
+    bcCtx.fillStyle = "rgba(239,68,68,0.95)";
+    bcCtx.beginPath(); bcCtx.arc(jx1, jy1, 5, 0, Math.PI*2); bcCtx.fill();
+    bcCtx.beginPath(); bcCtx.arc(jx2, jy2, 5, 0, Math.PI*2); bcCtx.fill();
+    bcCtx.restore();
+
+    text(bcCtx, "Δu=0 בדיסקה; תנאי שפה קופץ (לא רציף)", bcPad+8, bcPad+18);
+    text(bcCtx, "אין פתרון ב- C( D̄ ) שמקיים נתון שפה לא רציף.", bcPad+8, bcPad+36);
+
+    // right side: show boundary function vs angle
+    const rightX0 = bcW*0.52, rightW = bcW - rightX0 - bcPad;
+    const top = bcPad, H = bcH - 2*bcPad;
+
+    bcCtx.save();
+    bcCtx.strokeStyle = "rgba(148,163,184,0.5)";
+    bcCtx.strokeRect(rightX0, top, rightW, H);
+    bcCtx.restore();
+
+    // plot step function
+    bcCtx.save();
+    bcCtx.translate(rightX0, top);
+    const pad = 14;
+    const xmin = 0, xmax = 2*Math.PI;
+    const ymin = -0.2, ymax = 1.2;
+
+    // y=0 and y=1 guides
+    bcCtx.strokeStyle = "rgba(100,116,139,0.3)";
+    bcCtx.beginPath();
+    bcCtx.moveTo(pad, mapY(0,ymin,ymax,pad,H));
+    bcCtx.lineTo(rightW-pad, mapY(0,ymin,ymax,pad,H));
+    bcCtx.moveTo(pad, mapY(1,ymin,ymax,pad,H));
+    bcCtx.lineTo(rightW-pad, mapY(1,ymin,ymax,pad,H));
+    bcCtx.stroke();
+
+    function stepVal(theta){
+      // half circle 1, half 0
+      // switch at π
+      const th = ((theta % (2*Math.PI)) + 2*Math.PI)%(2*Math.PI);
+      const inOne = flipped ? (th < Math.PI) : (th >= Math.PI);
+      return inOne ? 1 : 0;
+    }
+
+    bcCtx.strokeStyle = "rgba(15,23,42,0.75)";
+    bcCtx.lineWidth = 2;
+    bcCtx.beginPath();
+    let first=true;
+    for(let th=0; th<=2*Math.PI+1e-9; th+=0.01){
+      const y = stepVal(th);
+      const X = mapX(th,xmin,xmax,pad,rightW);
+      const Y = mapY(y,ymin,ymax,pad,H);
+      if(first){ bcCtx.moveTo(X,Y); first=false; } else { bcCtx.lineTo(X,Y); }
+    }
+    bcCtx.stroke();
+
+    // show jump at π
+    const Xj = mapX(Math.PI,xmin,xmax,pad,rightW);
+    bcCtx.strokeStyle = "rgba(239,68,68,0.85)";
+    bcCtx.setLineDash([6,6]);
+    bcCtx.beginPath();
+    bcCtx.moveTo(Xj, pad);
+    bcCtx.lineTo(Xj, H-pad);
+    bcCtx.stroke();
+    bcCtx.setLineDash([]);
+
+    bcCtx.restore();
+  }
+
+  toggleBoundary.addEventListener("click", ()=>{
+    flipped = !flipped;
+    drawBC();
+  });
+
+  // initial draw + resize handling
+  function redrawAll(){
+    drawCIS();
+    drawBlow();
+    drawBC();
+  }
+  window.addEventListener("resize", redrawAll);
+  redrawAll();
+</script>
+</body>
+</html>
