@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מונוכרומטיות בזרם → מונוכרומטיות מגנטית | הדגמה אינטראקטיבית</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX (offline CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.55);
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.12);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --mono:#0ea5e9;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12;
+        --bg1:#0b1222;
+        --card:rgba(17,24,39,.66);
+        --card2:rgba(17,24,39,.45);
+        --text:#e5e7eb;
+        --muted:#94a3b8;
+        --line:rgba(148,163,184,.20);
+        --shadow:0 18px 55px rgba(0,0,0,.45);
+        --accent:#8b5cf6;
+        --mono:#38bdf8;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 15% 10%, var(--bg1), transparent 60%),
+        radial-gradient(900px 420px at 85% 5%, rgba(99,102,241,.25), transparent 55%),
+        radial-gradient(800px 420px at 25% 92%, rgba(14,165,233,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    header{
+      padding: 28px 18px 8px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .hero{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow);
+      padding: 18px 18px 16px;
+      display:grid;
+      gap:10px;
+    }
+    .title{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.6vw, 34px);
+      line-height:1.1;
+      letter-spacing:.2px;
+    }
+    .chips{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+      margin-top:2px;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.22);
+      padding:6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+      user-select:none;
+    }
+    .chip b{ color: var(--text); font-weight:700; }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: 14px;
+      line-height:1.55;
+    }
+
+    main{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 18px 40px;
+      display:grid;
+      gap:14px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .muted{ color:var(--muted); }
+
+    .controls{
+      display:grid;
+      gap:12px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    label{
+      font-size: 13px;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: var(--accent);
+    }
+    .val{
+      min-width: 90px;
+      text-align:left;
+      font-variant-numeric: tabular-nums;
+      padding:6px 10px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.18);
+      color: var(--text);
+    }
+    @media (prefers-color-scheme: dark){
+      .val{ background: rgba(17,24,39,.35); }
+      .chip{ background: rgba(17,24,39,.28); }
+    }
+
+    .toggles{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+    .toggle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.14);
+    }
+    .toggle span{
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .toggle b{
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    /* Switch */
+    .switch{
+      position: relative; width: 44px; height: 26px; flex: 0 0 auto;
+    }
+    .switch input{ display:none; }
+    .slider{
+      position:absolute; inset:0;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(148,163,184,.25);
+      transition: .18s ease;
+    }
+    .slider:before{
+      content:"";
+      position:absolute; top:3px; left:3px;
+      width:20px; height:20px;
+      border-radius:50%;
+      background: white;
+      box-shadow: 0 10px 18px rgba(0,0,0,.18);
+      transition: .18s ease;
+    }
+    .switch input:checked + .slider{
+      background: rgba(99,102,241,.35);
+      border-color: rgba(99,102,241,.55);
+    }
+    .switch input:checked + .slider:before{
+      transform: translateX(18px);
+    }
+    @media (prefers-color-scheme: dark){
+      .slider:before{ background: #e5e7eb; }
+      .toggle{ background: rgba(17,24,39,.25); }
+    }
+
+    .status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:99px;
+      background: var(--mono);
+      box-shadow: 0 0 0 3px rgba(14,165,233,.15);
+    }
+    .dot.warn{ background: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
+    .dot.bad{ background: var(--bad); box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+
+    .math{
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .charts{
+      display:grid;
+      gap:14px;
+    }
+    .chartwrap{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px;
+      background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){
+      .chartwrap{ background: rgba(17,24,39,.22); }
+    }
+    canvas{ width:100% !important; height:280px !important; }
+    .smallnote{
+      margin-top:10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    details{
+      margin-top: 8px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.12);
+    }
+    details summary{
+      cursor:pointer;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .foot{
+      max-width:1180px;
+      margin: 0 auto;
+      padding: 0 18px 28px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.7;
+    }
+    a{ color: var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    button{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 650;
+    }
+    button:hover{ filter: brightness(1.06); }
+    @media (prefers-color-scheme: dark){
+      button{ background: rgba(17,24,39,.25); }
+      details{ background: rgba(17,24,39,.25); }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <div class="title">
+      <div>
+        <h1>מונוכרומטיות בזרם → מונוכרומטיות מגנטית</h1>
+        <p class="sub">
+          הדגמה אינטראקטיבית: כאשר הזרם במעגל ליניארי הוא תדר יחיד, גם \(B(t)\) נשאר באותו תדר — רק המשרעת והמופע משתנים.
+          כאשר מכניסים <b>אי־ליניאריות</b>, נוצרים הרמוניות (תדרים חדשים).
+        </p>
+      </div>
+      <div class="chips">
+        <div class="chip">⚡ <b>זרם</b> \(I(t)\)</div>
+        <div class="chip">🧲 <b>שדה</b> \(B(t)\)</div>
+        <div class="chip">🎵 <b>ספקטרום</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- Controls -->
+  <section class="card">
+    <h2>בקרות</h2>
+    <div class="controls">
+      <div class="row">
+        <label for="freq">תדר (Hz)</label>
+        <div class="val" id="freqVal">50 Hz</div>
+      </div>
+      <input id="freq" type="range" min="1" max="500" value="50" step="1">
+
+      <div class="row">
+        <label for="amp">משרעת זרם \(I_0\) (A)</label>
+        <div class="val" id="ampVal">1.00 A</div>
+      </div>
+      <input id="amp" type="range" min="0.1" max="10" value="1" step="0.1">
+
+      <div class="row">
+        <label for="phase">מופע זרם \(\phi\) (deg)</label>
+        <div class="val" id="phaseVal">0°</div>
+      </div>
+      <input id="phase" type="range" min="-180" max="180" value="0" step="1">
+
+      <div class="row">
+        <label for="k">קבוע צימוד ליניארי \(k\) (הדגמה)</label>
+        <div class="val" id="kVal">1.00</div>
+      </div>
+      <input id="k" type="range" min="0" max="3" value="1" step="0.01">
+
+      <div class="row">
+        <label for="tau">השהיית מופע \(\Delta\phi\) (deg)</label>
+        <div class="val" id="tauVal">0°</div>
+      </div>
+      <input id="tau" type="range" min="-180" max="180" value="0" step="1">
+
+      <div class="toggles">
+        <div class="toggle">
+          <div>
+            <b>אי־ליניאריות (יצירת הרמוניות)</b><br>
+            <span>מוסיף רכיב \( \alpha I^2 + \beta I^3 \) ל-\(B(t)\)</span>
+          </div>
+          <label class="switch" title="Nonlinearity">
+            <input id="nonlin" type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="row" style="margin-top:-2px;">
+          <label for="alpha">\(\alpha\) (ריבועי)</label>
+          <div class="val" id="alphaVal">0.00</div>
+        </div>
+        <input id="alpha" type="range" min="0" max="1.5" value="0" step="0.01" disabled>
+
+        <div class="row" style="margin-top:-2px;">
+          <label for="beta">\(\beta\) (קובי)</label>
+          <div class="val" id="betaVal">0.00</div>
+        </div>
+        <input id="beta" type="range" min="0" max="1.5" value="0" step="0.01" disabled>
+
+        <div class="toggle">
+          <div>
+            <b>רעש מדידה (לא “תדר חדש” אמיתי)</b><br>
+            <span>מוסיף רעש לבן קטן רק לתצוגה</span>
+          </div>
+          <label class="switch" title="Noise">
+            <input id="noise" type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="row" style="margin-top:-2px;">
+          <label for="noiseAmp">עוצמת רעש</label>
+          <div class="val" id="noiseAmpVal">0.00</div>
+        </div>
+        <input id="noiseAmp" type="range" min="0" max="0.5" value="0" step="0.01" disabled>
+      </div>
+
+      <div class="status" id="status">
+        <div class="pill"><span class="dot" id="dotMono"></span> מצב: <b id="monoText">מונוכרומטי</b></div>
+        <div class="pill"><span class="dot" id="dotHarm"></span> הרמוניות: <b id="harmText">אין</b></div>
+        <div class="pill"><span class="dot" id="dotNoise"></span> רעש: <b id="noiseText">כבוי</b></div>
+      </div>
+
+      <div class="btnrow">
+        <button id="resetBtn">איפוס</button>
+        <button id="pauseBtn">עצור/הפעל</button>
+      </div>
+
+      <details>
+        <summary>הנוסחאות (KaTeX)</summary>
+        <div class="math">
+          <p>\[
+            I(t)=I_0\cos(\omega t+\phi)
+          \]</p>
+          <p>\[
+            B_{\text{lin}}(t)=k\,I_0\cos(\omega t+\phi+\Delta\phi)
+          \]</p>
+          <p class="muted">אי־ליניאריות מדגימה יצירת תדרים חדשים (למשל \(2\omega,3\omega\)):</p>
+          <p>\[
+            B(t)=B_{\text{lin}}(t)+\alpha I(t)^2+\beta I(t)^3
+          \]</p>
+          <p class="muted">
+            * במערכת ליניארית אידיאלית: אין ערבוב תדרים → נשארים בתדר \(\omega\) בלבד.
+          </p>
+        </div>
+      </details>
+
+      <div class="smallnote">
+        טיפ: הדלק “אי־ליניאריות” והגדל \(\alpha,\beta\) — תראה בספקטרום שפסים חדשים מופיעים ב-\(2f\), \(3f\) וכו'.
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts -->
+  <section class="card">
+    <h2>גרפים דינמיים</h2>
+    <div class="charts">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px; margin: 2px 6px 8px;">
+          זמן: \(I(t)\) ו-\(B(t)\)
+        </div>
+        <canvas id="timeChart"></canvas>
+      </div>
+
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px; margin: 2px 6px 8px;">
+          ספקטרום (FFT): עוצמה מול תדר
+        </div>
+        <canvas id="fftChart"></canvas>
+      </div>
+
+      <details>
+        <summary>פירוש תוצאות</summary>
+        <div class="math">
+          <ul>
+            <li><b>מונוכרומטי</b>: שיא יחיד סביב \(f\) (ייתכן זנב קטן מרזולוציית FFT).</li>
+            <li><b>אי־ליניאריות</b>: מופיעים שיאים חדשים ב-\(2f\), \(3f\), …</li>
+            <li><b>רעש</b>: מעלה “רצפה” בספקטרום (noise floor), אבל לא יוצר שיאים חדים כמו הרמוניות.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<div class="foot">
+  נבנה כקובץ יחיד (Single-File). ניתן לשמור כ-<b>mono_magnetic_demo.html</b> ולהריץ בדפדפן.
+  אם תרצה — אוסיף גם מצב “מעגל RLC” שבו המופע והמשרעת נקבעים מתגובת תדר ממשית \(H(j\omega)\).
+</div>
+
+<script>
+(() => {
+  // ====== Helpers ======
+  const $ = (id) => document.getElementById(id);
+  const clamp = (x,min,max)=>Math.max(min,Math.min(max,x));
+
+  function fmt(n, d=2){ return Number(n).toFixed(d); }
+  function deg2rad(d){ return d*Math.PI/180; }
+  function rad2deg(r){ return r*180/Math.PI; }
+
+  // ====== UI Elements ======
+  const freq = $("freq"), amp = $("amp"), phase = $("phase"), k = $("k"), tau = $("tau");
+  const nonlin = $("nonlin"), alpha = $("alpha"), beta = $("beta");
+  const noise = $("noise"), noiseAmp = $("noiseAmp");
+
+  const freqVal = $("freqVal"), ampVal = $("ampVal"), phaseVal = $("phaseVal"), kVal = $("kVal"), tauVal = $("tauVal");
+  const alphaVal = $("alphaVal"), betaVal = $("betaVal"), noiseAmpVal = $("noiseAmpVal");
+
+  const monoText = $("monoText"), harmText = $("harmText"), noiseText = $("noiseText");
+  const dotMono = $("dotMono"), dotHarm = $("dotHarm"), dotNoise = $("dotNoise");
+
+  const resetBtn = $("resetBtn"), pauseBtn = $("pauseBtn");
+
+  // ====== Simulation Setup ======
+  // Sampling for time plot and FFT
+  const N = 1024;          // samples
+  const viewCycles = 3;    // shown cycles (approx)
+  let paused = false;
+  let t0 = 0;              // animation time offset
+
+  // ====== Data buffers ======
+  const tArr = new Array(N);
+  const IArr = new Array(N);
+  const BArr = new Array(N);
+
+  // ====== FFT (naive DFT) for simplicity (N=1024 ok for browser; still fine) ======
+  // We compute only up to Nyquist, and use magnitude.
+  function dftMag(signal, fs){
+    const M = Math.floor(signal.length/2); // up to Nyquist-1
+    const mags = new Array(M);
+    for(let k=0;k<M;k++){
+      let re=0, im=0;
+      const w = 2*Math.PI*k/signal.length;
+      for(let n=0;n<signal.length;n++){
+        const a = w*n;
+        re += signal[n]*Math.cos(a);
+        im -= signal[n]*Math.sin(a);
+      }
+      const mag = Math.sqrt(re*re+im*im)/signal.length;
+      mags[k]=mag;
+    }
+    const freqs = new Array(M);
+    for(let k=0;k<M;k++) freqs[k]=k*fs/signal.length;
+    return {freqs, mags};
+  }
+
+  // Small deterministic PRNG for repeatable noise
+  let seed = 1234567;
+  function rand(){
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  }
+  function randn(){
+    // Box–Muller
+    const u1 = clamp(rand(), 1e-9, 1-1e-9);
+    const u2 = clamp(rand(), 1e-9, 1-1e-9);
+    return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+  }
+
+  // ====== Charts ======
+  const timeCtx = $("timeChart");
+  const fftCtx  = $("fftChart");
+
+  // base chart styles using CSS variables (no hard-coded colors beyond CSS)
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  const timeChart = new Chart(timeCtx, {
+    type: 'line',
+    data: {
+      labels: tArr,
+      datasets: [
+        { label: 'I(t) [A]', data: IArr, tension: 0.18, pointRadius: 0, borderWidth: 2 },
+        { label: 'B(t) [arb]', data: BArr, tension: 0.18, pointRadius: 0, borderWidth: 2 },
+      ]
+    },
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { boxWidth: 14 } },
+        tooltip: { callbacks: {
+          title: (items)=> `t = ${items[0].label} s`
+        }}
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'זמן (שניות)' },
+          ticks: { maxTicksLimit: 8 }
+        },
+        y: {
+          title: { display: true, text: 'אמפליטודה' },
+          ticks: { maxTicksLimit: 6 }
+        }
+      }
+    }
+  });
+
+  const fftChart = new Chart(fftCtx, {
+    type: 'bar',
+    data: { labels: [], datasets: [
+      { label: 'FFT |B(f)|', data: [], borderWidth: 1 }
+    ]},
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true },
+        tooltip: { callbacks: {
+          title: (items)=> `f = ${items[0].label} Hz`
+        }}
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'תדר (Hz)' },
+          ticks: { maxTicksLimit: 10 }
+        },
+        y: {
+          title: { display: true, text: 'עוצמה' },
+          ticks: { maxTicksLimit: 6 }
+        }
+      }
+    }
+  });
+
+  // Apply subtle colors (still driven by defaults + CSS)
+  function refreshDatasetColors(){
+    const accent = cssVar('--accent') || '#6366f1';
+    const mono = cssVar('--mono') || '#0ea5e9';
+    timeChart.data.datasets[0].borderColor = mono;
+    timeChart.data.datasets[0].backgroundColor = mono;
+
+    timeChart.data.datasets[1].borderColor = accent;
+    timeChart.data.datasets[1].backgroundColor = accent;
+
+    fftChart.data.datasets[0].backgroundColor = accent;
+    fftChart.data.datasets[0].borderColor = accent;
+  }
+  refreshDatasetColors();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    refreshDatasetColors();
+    timeChart.update('none');
+    fftChart.update('none');
+  });
+
+  // ====== Model ======
+  function computeSignals(){
+    const f = Number(freq.value);
+    const I0 = Number(amp.value);
+    const phi = deg2rad(Number(phase.value));
+    const kk = Number(k.value);
+    const dphi = deg2rad(Number(tau.value));
+
+    const useNonlin = nonlin.checked;
+    const a = Number(alpha.value);
+    const b = Number(beta.value);
+
+    const useNoise = noise.checked;
+    const nA = Number(noiseAmp.value);
+
+    // choose sampling rate relative to f for clean FFT
+    // keep fs fixed-ish to not distort chart too much:
+    // make fs at least 40*f but cap it
+    const fs = clamp(80*f, 800, 24000);
+
+    // choose a window duration ~ viewCycles periods
+    const T = viewCycles / f;
+    const dt = T / (N-1);
+
+    for(let i=0;i<N;i++){
+      const t = i*dt;
+      tArr[i] = fmt(t, 5);
+      const It = I0*Math.cos(2*Math.PI*f*(t+t0) + phi);
+      IArr[i] = It;
+
+      let Bt = kk*I0*Math.cos(2*Math.PI*f*(t+t0) + phi + dphi);
+
+      if(useNonlin){
+        Bt += a*(It*It) + b*(It*It*It);
+      }
+
+      if(useNoise && nA>0){
+        Bt += nA*randn();
+      }
+      BArr[i] = Bt;
+    }
+
+    // FFT on BArr (remove mean to reduce DC)
+    let mean = 0;
+    for(let i=0;i<N;i++) mean += BArr[i];
+    mean /= N;
+    const centered = new Array(N);
+    for(let i=0;i<N;i++) centered[i] = BArr[i]-mean;
+
+    const {freqs, mags} = dftMag(centered, fs);
+
+    // Downsample labels for bar chart (too many bars looks dense)
+    // Keep up to 300 bins
+    const maxBins = 300;
+    const step = Math.max(1, Math.floor(freqs.length / maxBins));
+    const labels = [];
+    const data = [];
+    for(let i=0;i<freqs.length;i+=step){
+      labels.push(Math.round(freqs[i]).toString());
+      data.push(mags[i]);
+    }
+
+    return { f, fs, labels, data, useNonlin, a, b, useNoise, nA };
+  }
+
+  function detectHarmonics(f, labels, data){
+    // rough detection: look for peaks near 2f and 3f
+    // Because labels are rounded, we search nearest index.
+    function findIndex(target){
+      let best=-1, bestErr=1e9;
+      for(let i=0;i<labels.length;i++){
+        const lf = Number(labels[i]);
+        const err = Math.abs(lf-target);
+        if(err < bestErr){ bestErr=err; best=i; }
+      }
+      return best;
+    }
+    const i1 = findIndex(f);
+    const i2 = findIndex(2*f);
+    const i3 = findIndex(3*f);
+
+    const p1 = (i1>=0)?data[i1]:0;
+    const p2 = (i2>=0)?data[i2]:0;
+    const p3 = (i3>=0)?data[i3]:0;
+
+    // If harmonics are sizable relative to fundamental
+    const has2 = p2 > 0.15*p1 && (2*f) < 5000;
+    const has3 = p3 > 0.10*p1 && (3*f) < 5000;
+    return {p1,p2,p3, has2, has3};
+  }
+
+  function refreshUI(){
+    freqVal.textContent = `${freq.value} Hz`;
+    ampVal.textContent = `${fmt(amp.value,2)} A`;
+    phaseVal.textContent = `${phase.value}°`;
+    kVal.textContent = `${fmt(k.value,2)}`;
+    tauVal.textContent = `${tau.value}°`;
+
+    alphaVal.textContent = `${fmt(alpha.value,2)}`;
+    betaVal.textContent = `${fmt(beta.value,2)}`;
+    noiseAmpVal.textContent = `${fmt(noiseAmp.value,2)}`;
+
+    alpha.disabled = !nonlin.checked;
+    beta.disabled  = !nonlin.checked;
+    noiseAmp.disabled = !noise.checked;
+
+    noiseText.textContent = noise.checked ? "פעיל" : "כבוי";
+    dotNoise.className = "dot" + (noise.checked ? " warn" : "");
+  }
+
+  function updateStatus(meta){
+    const {f, labels, data, useNonlin, useNoise} = meta;
+    const harm = detectHarmonics(f, labels, data);
+
+    const isMono = !useNonlin; // conceptually: nonlin is what creates new discrete harmonics here
+    monoText.textContent = isMono ? "מונוכרומטי" : "לא־מונוכרומטי";
+    dotMono.className = "dot" + (isMono ? "" : " warn");
+
+    const anyH = harm.has2 || harm.has3;
+    harmText.textContent = anyH ? "נמצאו" : "אין";
+    dotHarm.className = "dot" + (anyH ? " bad" : "");
+
+    // If nonlin off but noise on: still "mono" physically, but measurement isn't clean
+    if(isMono && useNoise){
+      monoText.textContent = "מונוכרומטי (עם רעש מדידה)";
+      dotMono.className = "dot warn";
+    }
+  }
+
+  function render(){
+    refreshUI();
+    const meta = computeSignals();
+
+    // Update time chart
+    timeChart.data.labels = tArr;
+    timeChart.data.datasets[0].data = IArr;
+    timeChart.data.datasets[1].data = BArr;
+    timeChart.update('none');
+
+    // Update FFT chart
+    fftChart.data.labels = meta.labels;
+    fftChart.data.datasets[0].data = meta.data;
+    fftChart.update('none');
+
+    updateStatus(meta);
+  }
+
+  // ====== Events ======
+  const rerender = () => render();
+  [freq, amp, phase, k, tau, nonlin, alpha, beta, noise, noiseAmp].forEach(el => {
+    el.addEventListener('input', rerender);
+    el.addEventListener('change', rerender);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    freq.value = 50;
+    amp.value = 1;
+    phase.value = 0;
+    k.value = 1;
+    tau.value = 0;
+
+    nonlin.checked = false;
+    alpha.value = 0;
+    beta.value = 0;
+
+    noise.checked = false;
+    noiseAmp.value = 0;
+
+    paused = false;
+    t0 = 0;
+    render();
+  });
+
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+  });
+
+  // Animation: advance phase slowly to feel "alive"
+  function loop(){
+    if(!paused){
+      const f = Number(freq.value);
+      // Move time offset small step; tied to f so looks stable
+      t0 += 0.002 * (50 / Math.max(1,f));
+      // keep bounded
+      if(t0 > 1e6) t0 = 0;
+      render();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // ====== KaTeX render ======
+  function renderMath(){
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false},
+        ]
+      });
+    }
+  }
+
+  // init
+  window.addEventListener('load', () => {
+    renderMath();
+    render();
+    requestAnimationFrame(loop);
+  });
+
+})();
+</script>
+</body>
+</html>
