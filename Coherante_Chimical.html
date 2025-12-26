@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מאמר אקדמי אינטראקטיבי • כימיה קוהרנטית מול מעבר גרעיני</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f5f7ff;
+      --bg1:#eef2ff;
+      --card: rgba(255,255,255,.78);
+      --card2: rgba(255,255,255,.55);
+
+      --text:#0f172a;
+      --muted:#475569;
+      --line: rgba(148,163,184,.35);
+
+      --accent:#4f46e5;
+      --accent2:#0891b2;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220;
+        --bg1:#0b1b30;
+        --card: rgba(17,24,39,.72);
+        --card2: rgba(17,24,39,.55);
+
+        --text:#e5e7eb;
+        --muted:#b6c2d1;
+        --line: rgba(148,163,184,.22);
+
+        --shadow: 0 18px 60px rgba(0,0,0,.45);
+      }
+      .katex { color: var(--text); }
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 500px at 80% -10%, rgba(79,70,229,.25), transparent 60%),
+        radial-gradient(900px 520px at 0% 10%, rgba(8,145,178,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+    }
+
+    header{
+      padding: 28px 18px 18px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .topbar{
+      display:flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{
+      width:44px; height:44px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(79,70,229,.95), rgba(8,145,178,.85));
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      color:white; font-weight:800; letter-spacing:.5px;
+    }
+    h1{
+      font-size: clamp(18px, 2.2vw, 26px);
+      margin:0;
+      line-height: 1.2;
+    }
+    .subtitle{ margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+    .controls{
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card2);
+      box-shadow: 0 8px 24px rgba(2,6,23,.08);
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.12);
+    }
+    .btn{
+      appearance:none; border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn:hover{ border-color: rgba(79,70,229,.45); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(79,70,229,.18), rgba(8,145,178,.10));
+      border-color: rgba(79,70,229,.35);
+    }
+    .hint{ font-size: 12px; color: var(--muted); margin: 12px 0 0; }
+
+    main{
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 18px 24px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display:flex; align-items:flex-start; justify-content: space-between; gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.14), transparent);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 16px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .tag{
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.10);
+      white-space: nowrap;
+    }
+    .card .bd{ padding: 14px 16px 16px; }
+
+    .section{
+      margin: 0 0 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed rgba(148,163,184,.35);
+    }
+    .section:last-child{ border-bottom: none; padding-bottom: 0; }
+    p{ margin: 10px 0; color: var(--text); line-height: 1.7; }
+    ul{ margin: 8px 0 0; padding: 0 18px 0 0; color: var(--text); }
+    li{ margin: 6px 0; line-height: 1.65; }
+
+    .callout{
+      border: 1px solid rgba(79,70,229,.25);
+      background: linear-gradient(135deg, rgba(79,70,229,.10), rgba(8,145,178,.08));
+      padding: 12px 12px;
+      border-radius: 14px;
+      margin: 10px 0;
+    }
+    .mono{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      background: rgba(2,6,23,.06);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      overflow:auto;
+      direction:ltr;
+      text-align:left;
+    }
+    @media (prefers-color-scheme: dark){
+      .mono{ background: rgba(0,0,0,.25); }
+    }
+
+    /* Tabs */
+    .tabs{
+      display:flex; gap:8px; flex-wrap: wrap;
+      margin: 6px 0 0;
+    }
+    .tab{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .tab[aria-selected="true"]{
+      background: linear-gradient(135deg, rgba(79,70,229,.20), rgba(8,145,178,.10));
+      border-color: rgba(79,70,229,.40);
+    }
+
+    /* Interactive widgets */
+    .widget{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .row{
+      display:flex; gap:10px; align-items:center; flex-wrap: wrap;
+    }
+    .row label{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      min-width: 170px;
+    }
+    input[type="range"]{ width: min(520px, 100%); }
+    .val{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.10);
+    }
+    canvas{
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+    }
+    .legend{
+      display:flex; gap:10px; flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 999px;
+      display:inline-block; margin-left:6px; vertical-align: middle;
+    }
+    .small{
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    /* Formal vs Intuition switch */
+    .switchWrap{
+      display:flex; gap:10px; align-items:center; flex-wrap: wrap;
+      margin: 8px 0 10px;
+      padding: 10px 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.10);
+    }
+    .switchWrap .title{
+      font-weight: 900;
+    }
+    .seg{
+      display:inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .seg button{
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .seg button.active{
+      background: linear-gradient(135deg, rgba(79,70,229,.20), rgba(8,145,178,.10));
+      border-right: 1px solid rgba(148,163,184,.25);
+    }
+
+    .modeBlock{ display:none; }
+    .modeBlock.active{ display:block; }
+
+    @media print{
+      .controls, .hint, .tabs, .tab, .no-print { display:none !important; }
+      body{ background:white; }
+      .card{ box-shadow:none; background:white; }
+      .switchWrap{ display:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">∑</div>
+      <div>
+        <h1>כימיה קוהרנטית מול מעבר גרעיני — מאמר אקדמי אינטראקטיבי</h1>
+        <div class="subtitle">KaTeX + תרשימי Canvas דינמיים + מוד “פורמלי/אינטואיטיבי” + סימולציית סופרפוזיציה \(\Psi\)</div>
+      </div>
+    </div>
+
+    <div class="controls no-print">
+      <span class="pill" title="מצב תצוגה">
+        <span style="font-weight:900;">🌓</span>
+        <select id="themeSel" class="btn" style="padding:8px 10px;">
+          <option value="auto">אוטומטי</option>
+          <option value="light">בהיר</option>
+          <option value="dark">כהה</option>
+        </select>
+      </span>
+      <button class="btn primary" id="btnPrint">🖨️ הדפס / PDF</button>
+      <button class="btn" id="btnCopyCite">📌 ציטוט (BibTeX)</button>
+    </div>
+  </div>
+
+  <div class="hint">
+    בצד שמאל: מאמר עם כפתור שמחליף בין <strong>מודל פורמלי</strong> ל־<strong>אינטואיציה פיזיקלית</strong>.
+    בצד ימין: תרשימים דינמיים + סימולציה של סופרפוזיציה \(\Psi\) עם פאזה \(\phi\) (אינטרפרנציה קוהרנטית).
+  </div>
+</header>
+
+<main class="grid">
+  <!-- Left: Paper -->
+  <section class="card" id="paper">
+    <div class="hd">
+      <h2>📄 המאמר</h2>
+      <span class="tag">גרסה 1.1 • דצמבר 2025</span>
+    </div>
+
+    <div class="bd">
+      <!-- Formal vs intuitive switch -->
+      <div class="switchWrap no-print" aria-label="החלפת תצוגה">
+        <span class="title">תצוגה:</span>
+        <div class="seg" role="tablist" aria-label="מצב תצוגה">
+          <button id="btnFormal" class="active" role="tab" aria-selected="true">מודל פורמלי</button>
+          <button id="btnIntuit" role="tab" aria-selected="false">אינטואיציה פיזיקלית</button>
+        </div>
+        <span class="small">אפשר להחליף בכל רגע—הנוסחאות נשארות, רק ההסבר משתנה.</span>
+      </div>
+
+      <!-- FORMAL MODE -->
+      <div id="formalBlock" class="modeBlock active">
+        <div class="section">
+          <h3 style="margin:0 0 6px;">תקציר</h3>
+          <p>
+            אנו מציגים ניסוח תאורטי ל<strong>חוק שמירת הקשר הכימי הקוהרנטי</strong> המבחין בין דינמיקה אלקטרונית (כימית)
+            לבין שינוי בהרכב גרעיני (מעבר גרעיני). ערבוב יסודות יכול ליצור מצבים אלקטרוניים קולקטיביים צפופי-רמות
+            בעלי תכונות “כבדות” (בליעה/פליטה/הרחבת ספקטרום), אך אינו משנה את זהות הגרעין.
+            ההבחנה מתבטאת גם בסולם האנרגיה: <span class="mono">eV</span> בכימיה מול <span class="mono">MeV</span> בגרעין.
+          </p>
+          <div class="callout">
+            <div style="font-weight:900; margin-bottom:6px;">תזה פורמלית</div>
+            <div class="small">
+              כימיה משנה את <em>פונקציית הגל האלקטרונית</em> ואת <em>אנרגיית הקשר</em>,
+              אך לא את <em>\(Z,N\)</em> של הגרעין. לכן דמיון ספקטרלי אינו שקול לזהות גרעינית.
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">1. הגדרות</h3>
+          <p><strong>כימיה קוהרנטית</strong> (תיאור עיוני): סופרפוזיציה קולקטיבית עם פאזה יחסית:</p>
+          <div class="katex-block">
+            \[
+              \Psi_{\mathrm{chem}}(\mathbf{r},t)=\sum_i c_i\,\psi_i(\mathbf{r})\,e^{-i\omega_i t}
+            \]
+          </div>
+          <p><strong>מערכת גרעינית</strong>:</p>
+          <div class="katex-block">
+            \[
+              \Psi_{\mathrm{nuc}}=\Psi_{\mathrm{nuc}}(Z,N;\mathbf{R})
+            \]
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">2. חוק שמירת הקשר הכימי הקוהרנטי</h3>
+          <ul>
+            <li><strong>שימור זהות גרעינית:</strong> \(\sum Z_i\) ו-\(\sum N_i\) נשמרים.</li>
+            <li><strong>מינימיזציה אנרגטית:</strong> המערכת נוטה להקטין \(E_{\mathrm{bond}}\).</li>
+            <li><strong>קורלציית פאזה:</strong> יתכן \(\langle e^{i(\phi_i-\phi_j)}\rangle \neq 0\).</li>
+          </ul>
+          <div class="katex-block">
+            \[
+              \sum_i Z_i=\mathrm{const},\qquad \sum_i N_i=\mathrm{const}
+            \]
+            \[
+              \frac{dE_{\mathrm{bond}}}{dt}\le 0
+            \]
+            \[
+              \left\langle e^{i(\phi_i-\phi_j)} \right\rangle \neq 0
+            \]
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">3. צפיפות רמות וספקטרום</h3>
+          <div class="katex-block">
+            \[
+              g(E)=\sum_{n}\delta(E-E_n),\qquad
+              \Delta E_{\mathrm{nuc}} \gg \Delta E_{\mathrm{chem}}
+            \]
+          </div>
+          <p>
+            \(g(E)\) צפופה עשויה להרחיב קווים וליצור בליעה/פליטה “כבדה”. אולם זהו אפקט אלקטרוני.
+          </p>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">4. השוואה מסכמת</h3>
+          <div class="mono" style="direction:rtl; text-align:right;">
+כימיה קוהרנטית:   אלקטרונים | ~eV | Z נשמר | ספקטרום צפוף/רחב
+מעבר גרעיני:      (Z,N)      | ~MeV | Z יכול להשתנות | ספקטרום בדיד
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">נספח: נוסחאות מפתח</h3>
+          <div class="katex-block">
+            \[
+            \Psi_{\mathrm{chem}}=\sum_i c_i\psi_i,\quad
+            g(E)=\sum_n \delta(E-E_n),\quad
+            \sum Z_i=\mathrm{const},\quad
+            \Delta E_{\mathrm{nuc}}\gg \Delta E_{\mathrm{chem}}
+            \]
+          </div>
+        </div>
+      </div>
+
+      <!-- INTUITIVE MODE -->
+      <div id="intuitBlock" class="modeBlock">
+        <div class="section">
+          <h3 style="margin:0 0 6px;">מה הרעיון באינטואיציה?</h3>
+          <p>
+            דמיין שיש לך “תזמורת” של אלקטרונים. כשמערבבים חומרים, אנחנו מחליפים את <strong>ההרמוניה</strong>
+            (איך האלקטרונים “מתיישבים” בין אטומים) — אבל <strong>לא מחליפים את הכלים עצמם</strong>
+            (הגרעינים).
+          </p>
+          <div class="callout">
+            <div style="font-weight:900; margin-bottom:6px;">משפט מפתח</div>
+            <div class="small">
+              בכימיה אפשר לשנות <em>איך</em> החומר מתנהג, לפעמים אפילו “כמו חומר כבד”,
+              אבל אי־אפשר לשנות <em>מי</em> הוא הגרעין (כל עוד זה תהליך כימי).
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">למה זה נראה לפעמים “כמו יסוד כבד”?</h3>
+          <ul>
+            <li>יש הרבה “רמות” אלקטרוניות קרובות → הבליעה נהיית רחבה.</li>
+            <li>יש אינטראקציות רבות → הקווים “נמרחים”.</li>
+            <li>מקבלים חתימה ספקטרלית עשירה → דומה במבט ראשון לחומרים מסוימים.</li>
+          </ul>
+          <p class="small">
+            מתמטית זה קשור ל-\(g(E)\) ולכך שרמות \(E_n\) נהיות צפופות:
+          </p>
+          <div class="katex-block">
+            \[
+              g(E)=\sum_{n}\delta(E-E_n)
+            \]
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">הקו האדום: eV מול MeV</h3>
+          <p>
+            בכימיה משחקים באנרגיות של קשרים אלקטרוניים (בערך eV).
+            כדי לשנות גרעין צריך “לגעת” בסקאלה אחרת לגמרי (בערך MeV).
+          </p>
+          <div class="katex-block">
+            \[
+              \Delta E_{\mathrm{nuc}} \gg \Delta E_{\mathrm{chem}}
+            \]
+          </div>
+          <p class="small">
+            לכן, אם אתה רואה “תופעה חזקה” בספקטרום — זה לא בהכרח אומר “תהליך גרעיני”.
+            הרבה פעמים זו פשוט כימיה מורכבת מאוד.
+          </p>
+        </div>
+
+        <div class="section">
+          <h3 style="margin:0 0 6px;">מה פירוש “קוהרנטיות” כאן?</h3>
+          <p>
+            קוהרנטיות פירושה שהפאזות של חלקים שונים במערכת “מסונכרנות” חלקית.
+            בסימולציה בצד ימין תראה איך שינוי \(\phi\) משנה את האינטרפרנציה (חיזוק/ביטול).
+          </p>
+          <div class="katex-block">
+            \[
+              \Psi = c_1 e^{i\phi_1}\psi_1 + c_2 e^{i\phi_2}\psi_2,\quad
+              \Delta\phi=\phi_2-\phi_1
+            \]
+          </div>
+        </div>
+      </div>
+
+      <details class="no-print" style="margin-top:10px;">
+        <summary style="cursor:pointer; font-weight:900;">BibTeX לציטוט (לחץ להרחבה)</summary>
+        <pre class="mono" id="bibtex">
+@article{CoherentChemicalBondConservation2025,
+  title   = {Coherent Chemical Bond Conservation: A Formal Comparison Between Coherent Chemistry and Nuclear Transitions (Interactive Note)},
+  author  = {Anonymous},
+  year    = {2025},
+  month   = {12},
+  note    = {Theoretical interactive HTML note (KaTeX + dynamic diagrams + phase superposition demo).}
+}
+        </pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- Right: Interactive Panels -->
+  <aside class="card">
+    <div class="hd">
+      <h2>🧪 אינטראקטיביות</h2>
+      <span class="tag">תרשימים + \(\Psi\)</span>
+    </div>
+
+    <div class="bd">
+      <div class="tabs no-print" role="tablist" aria-label="לשוניות אינטראקטיביות">
+        <button class="tab" role="tab" aria-selected="true" data-tab="tab-energy">סולם אנרגיה</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="tab-dos">צפיפות רמות \(g(E)\)</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="tab-spectrum">ספקטרום</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="tab-psi">סופרפוזיציה \(\Psi\)</button>
+      </div>
+
+      <!-- Tab: Energy scale -->
+      <section id="tab-energy" class="tabPanel">
+        <p class="small">
+          משחקים עם יחס סולם האנרגיה: <strong>כימיה (eV)</strong> מול <strong>גרעין (MeV)</strong>.
+          קו מקווקו מציין “אזור מעבר” סכמטי (המחשה בלבד).
+        </p>
+
+        <div class="widget">
+          <div class="row">
+            <label for="chemEv">כימיה: \(\Delta E_{\mathrm{chem}}\) [eV]</label>
+            <input id="chemEv" type="range" min="0.05" max="20" value="2.0" step="0.05">
+            <span class="val" id="chemEvVal"></span>
+          </div>
+          <div class="row">
+            <label for="nucMev">גרעין: \(\Delta E_{\mathrm{nuc}}\) [MeV]</label>
+            <input id="nucMev" type="range" min="0.05" max="20" value="3.0" step="0.05">
+            <span class="val" id="nucMevVal"></span>
+          </div>
+
+          <canvas id="cEnergy" width="900" height="320" aria-label="תרשים סולם אנרגיה"></canvas>
+
+          <div class="legend">
+            <span><span class="dot" style="background: rgba(79,70,229,.9)"></span>כימיה (eV)</span>
+            <span><span class="dot" style="background: rgba(8,145,178,.9)"></span>גרעין (MeV → eV)</span>
+            <span><span class="dot" style="background: rgba(245,158,11,.95)"></span>אזור מעבר (אזהרה)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: DOS -->
+      <section id="tab-dos" class="tabPanel" style="display:none;">
+        <p class="small">
+          הדגמה עקרונית לצפיפות רמות \(g(E)\): הרבה רמות + רוחב קו גדול ⇒ “ענן” ספקטרלי רחב.
+        </p>
+
+        <div class="widget">
+          <div class="row">
+            <label for="levelsN">מספר רמות \(N\)</label>
+            <input id="levelsN" type="range" min="6" max="140" value="50" step="1">
+            <span class="val" id="levelsNVal"></span>
+          </div>
+          <div class="row">
+            <label for="widthW">רוחב קו \(w\)</label>
+            <input id="widthW" type="range" min="0.5" max="30" value="8" step="0.5">
+            <span class="val" id="widthWVal"></span>
+          </div>
+          <div class="row">
+            <label for="spreadS">פיזור רמות</label>
+            <input id="spreadS" type="range" min="10" max="120" value="45" step="1">
+            <span class="val" id="spreadSVal"></span>
+          </div>
+
+          <canvas id="cDOS" width="900" height="320" aria-label="תרשים צפיפות רמות"></canvas>
+
+          <div class="small">
+            קירוב: במקום \(\delta\) משתמשים בסכום גאוסים כדי לדמות הרחבת קווים.
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: Spectrum comparison -->
+      <section id="tab-spectrum" class="tabPanel" style="display:none;">
+        <p class="small">
+          השוואת צורה סכמטית: כימי (רב־קווים רחבים) מול גרעיני (מעט קווים בדידים).
+        </p>
+
+        <div class="widget">
+          <div class="row">
+            <label for="chemBroad">כימיה: רוחב קו</label>
+            <input id="chemBroad" type="range" min="2" max="40" value="14" step="1">
+            <span class="val" id="chemBroadVal"></span>
+          </div>
+          <div class="row">
+            <label for="nucLines">גרעין: מספר קווים</label>
+            <input id="nucLines" type="range" min="2" max="18" value="6" step="1">
+            <span class="val" id="nucLinesVal"></span>
+          </div>
+
+          <canvas id="cSpec" width="900" height="320" aria-label="השוואת ספקטרום"></canvas>
+
+          <div class="callout">
+            <div style="font-weight:900; margin-bottom:6px;">אזהרת פירוש</div>
+            <div class="small">
+              זהו איור עקרוני בלבד. דמיון ויזואלי בספקטרום לא מספיק כדי להסיק “גרעיני”.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: Psi superposition -->
+      <section id="tab-psi" class="tabPanel" style="display:none;">
+        <p class="small">
+          סימולציה עקרונית של סופרפוזיציה:
+          \[
+            \Psi = c_1 e^{i\phi_1}\psi_1 + c_2 e^{i\phi_2}\psi_2,\quad \Delta\phi=\phi_2-\phi_1
+          \]
+          התרשים מציג “אינטרפרנציה” לאורך ציר \(x\) (המחשה: שתי פונקציות בסיס שונות).
+        </p>
+
+        <div class="widget">
+          <div class="row">
+            <label for="c1">משרעת \(c_1\)</label>
+            <input id="c1" type="range" min="0" max="1" value="0.75" step="0.01">
+            <span class="val" id="c1Val"></span>
+          </div>
+          <div class="row">
+            <label for="c2">משרעת \(c_2\)</label>
+            <input id="c2" type="range" min="0" max="1" value="0.65" step="0.01">
+            <span class="val" id="c2Val"></span>
+          </div>
+          <div class="row">
+            <label for="dphi">פאזה \(\Delta\phi\) [rad]</label>
+            <input id="dphi" type="range" min="-3.1416" max="3.1416" value="0.0" step="0.01">
+            <span class="val" id="dphiVal"></span>
+          </div>
+          <div class="row">
+            <label for="decoh">דה-קוהרנטיות \(\eta\)</label>
+            <input id="decoh" type="range" min="0" max="1" value="0.0" step="0.01">
+            <span class="val" id="decohVal"></span>
+          </div>
+
+          <canvas id="cPsi" width="900" height="320" aria-label="תרשים סופרפוזיציה Psi"></canvas>
+
+          <div class="small">
+            \(\eta\in[0,1]\) מדמה אובדן קוהרנטיות: האיבר האינטרפרנטי מוכפל ב-\((1-\eta)\).
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+</main>
+
+<footer style="max-width:1200px;margin:0 auto 26px;padding:0 18px;">
+  <div class="card" style="padding:14px 16px;">
+    <div style="font-weight:900; margin-bottom:6px;">הערת מסגרת (עיוני בלבד)</div>
+    <div class="small">
+      המסמך מציג הבחנה תיאורטית בין תהליכים כימיים לבין תהליכים גרעיניים, עם תרשימים סכמטיים להמחשה.
+      הוא אינו מדריך ניסויי ואינו מתאר שיטות מעשיות לשינוי גרעינים או יצירת חומרים מסוכנים.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ========= KaTeX render ========= */
+window.addEventListener("DOMContentLoaded", () => {
+  const renderAll = () => {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  };
+  setTimeout(renderAll, 50);
+});
+
+/* ========= Theme ========= */
+function setTheme(mode){
+  document.documentElement.dataset.theme = mode;
+  document.documentElement.style.colorScheme = (mode === "auto") ? "light dark" : mode;
+}
+function getEffectiveDark(){
+  const mode = document.documentElement.dataset.theme || "auto";
+  if(mode === "dark") return true;
+  if(mode === "light") return false;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+const themeSel = document.getElementById("themeSel");
+themeSel.addEventListener("change", () => { setTheme(themeSel.value); drawAll(); });
+setTheme("auto");
+
+/* ========= Header controls ========= */
+document.getElementById("btnPrint").addEventListener("click", () => window.print());
+document.getElementById("btnCopyCite").addEventListener("click", async () => {
+  const bib = document.getElementById("bibtex")?.innerText?.trim() || "";
+  try{
+    await navigator.clipboard.writeText(bib);
+    alert("הציטוט הועתק ללוח (Clipboard).");
+  }catch(e){
+    alert("לא הצלחתי להעתיק אוטומטית. אפשר לסמן ידנית ולהעתיק.");
+  }
+});
+
+/* ========= Formal / Intuition toggle ========= */
+const btnFormal = document.getElementById("btnFormal");
+const btnIntuit = document.getElementById("btnIntuit");
+const formalBlock = document.getElementById("formalBlock");
+const intuitBlock = document.getElementById("intuitBlock");
+
+function setMode(mode){
+  if(mode === "formal"){
+    btnFormal.classList.add("active");
+    btnIntuit.classList.remove("active");
+    btnFormal.setAttribute("aria-selected","true");
+    btnIntuit.setAttribute("aria-selected","false");
+    formalBlock.classList.add("active");
+    intuitBlock.classList.remove("active");
+  }else{
+    btnIntuit.classList.add("active");
+    btnFormal.classList.remove("active");
+    btnIntuit.setAttribute("aria-selected","true");
+    btnFormal.setAttribute("aria-selected","false");
+    intuitBlock.classList.add("active");
+    formalBlock.classList.remove("active");
+  }
+}
+btnFormal.addEventListener("click", () => setMode("formal"));
+btnIntuit.addEventListener("click", () => setMode("intuit"));
+
+/* ========= Tabs ========= */
+const tabs = Array.from(document.querySelectorAll(".tab"));
+const panels = Array.from(document.querySelectorAll(".tabPanel"));
+tabs.forEach(btn=>{
+  btn.addEventListener("click", () => {
+    tabs.forEach(t=>t.setAttribute("aria-selected","false"));
+    btn.setAttribute("aria-selected","true");
+    const id = btn.dataset.tab;
+    panels.forEach(p => p.style.display = (p.id === id) ? "" : "none");
+    requestAnimationFrame(drawAll);
+  });
+});
+
+/* ========= Small helpers ========= */
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+function fmt(x, unit){
+  const s = (Math.round(x*100)/100).toString();
+  return `${s} ${unit}`;
+}
+function clearCanvas(ctx){
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  ctx.clearRect(0,0,W,H);
+}
+function drawGrid(ctx, x0, y0, w, h, nx=6, ny=4){
+  const dark = getEffectiveDark();
+  ctx.save();
+  ctx.strokeStyle = dark ? "rgba(148,163,184,.18)" : "rgba(148,163,184,.25)";
+  ctx.lineWidth = 1;
+  for(let i=0;i<=nx;i++){
+    const x = x0 + (w*i/nx);
+    ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y0+h); ctx.stroke();
+  }
+  for(let j=0;j<=ny;j++){
+    const y = y0 + (h*j/ny);
+    ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x0+w,y); ctx.stroke();
+  }
+  ctx.restore();
+}
+function text(ctx, s, x, y, opts={}){
+  const dark = getEffectiveDark();
+  ctx.save();
+  ctx.fillStyle = opts.color || (dark ? "rgba(229,231,235,.92)" : "rgba(15,23,42,.92)");
+  ctx.font = opts.font || "800 13px system-ui";
+  ctx.textAlign = opts.align || "right";
+  ctx.fillText(s, x, y);
+  ctx.restore();
+}
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+function labelChip(ctx, x, y, s, color){
+  const padX=10, padY=6;
+  const dark = getEffectiveDark();
+  ctx.save();
+  ctx.font = "900 12px system-ui";
+  const w = ctx.measureText(s).width + padX*2;
+  const h = 26;
+  ctx.fillStyle = dark ? "rgba(17,24,39,.75)" : "rgba(255,255,255,.80)";
+  ctx.strokeStyle = dark ? "rgba(148,163,184,.22)" : "rgba(148,163,184,.35)";
+  ctx.lineWidth = 1;
+  roundRect(ctx, x-w, y-h, w, h, 12);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.textAlign = "right";
+  ctx.fillText(s, x-padX, y-8);
+  ctx.restore();
+}
+function lerp(a,b,t){ return a + (b-a)*t; }
+function mulberry32(seed){
+  return function(){
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ========= Widget elements ========= */
+const sChemEv = document.getElementById("chemEv");
+const sNucMev = document.getElementById("nucMev");
+const chemEvVal = document.getElementById("chemEvVal");
+const nucMevVal = document.getElementById("nucMevVal");
+
+const sLevelsN = document.getElementById("levelsN");
+const sWidthW  = document.getElementById("widthW");
+const sSpreadS = document.getElementById("spreadS");
+const levelsNVal = document.getElementById("levelsNVal");
+const widthWVal  = document.getElementById("widthWVal");
+const spreadSVal = document.getElementById("spreadSVal");
+
+const sChemBroad = document.getElementById("chemBroad");
+const sNucLines  = document.getElementById("nucLines");
+const chemBroadVal = document.getElementById("chemBroadVal");
+const nucLinesVal  = document.getElementById("nucLinesVal");
+
+/* Psi sliders */
+const sC1 = document.getElementById("c1");
+const sC2 = document.getElementById("c2");
+const sDP = document.getElementById("dphi");
+const sDe = document.getElementById("decoh");
+const c1Val = document.getElementById("c1Val");
+const c2Val = document.getElementById("c2Val");
+const dphiVal = document.getElementById("dphiVal");
+const decohVal = document.getElementById("decohVal");
+
+function syncLabels(){
+  chemEvVal.textContent = fmt(parseFloat(sChemEv.value), "eV");
+  nucMevVal.textContent = fmt(parseFloat(sNucMev.value), "MeV");
+  levelsNVal.textContent = `${parseInt(sLevelsN.value,10)}`;
+  widthWVal.textContent  = `${parseFloat(sWidthW.value).toFixed(1)}`;
+  spreadSVal.textContent = `${parseInt(sSpreadS.value,10)}`;
+  chemBroadVal.textContent = `${parseInt(sChemBroad.value,10)}`;
+  nucLinesVal.textContent  = `${parseInt(sNucLines.value,10)}`;
+
+  c1Val.textContent = parseFloat(sC1.value).toFixed(2);
+  c2Val.textContent = parseFloat(sC2.value).toFixed(2);
+  dphiVal.textContent = parseFloat(sDP.value).toFixed(2);
+  decohVal.textContent = parseFloat(sDe.value).toFixed(2);
+}
+[
+  sChemEv,sNucMev,sLevelsN,sWidthW,sSpreadS,sChemBroad,sNucLines,
+  sC1,sC2,sDP,sDe
+].forEach(el=>{
+  el.addEventListener("input", ()=>{ syncLabels(); drawAll(); });
+});
+syncLabels();
+
+/* ========= Draw: Energy ========= */
+function drawEnergy(){
+  const canvas = document.getElementById("cEnergy");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  clearCanvas(ctx);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = 34;
+  const x0 = pad, y0 = pad+10, w = W-pad*2, h = H-pad*2-10;
+
+  drawGrid(ctx, x0, y0, w, h, 8, 4);
+
+  const colChem = "rgba(79,70,229,.92)";
+  const colNuc  = "rgba(8,145,178,.92)";
+  const colWarn = "rgba(245,158,11,.95)";
+
+  const chemEv = parseFloat(sChemEv.value);
+  const nucMev = parseFloat(sNucMev.value);
+  const nucEv  = nucMev * 1e6;
+
+  // Log-scale mapping: 1e-2..1e8 eV
+  const minLog = Math.log10(1e-2);
+  const maxLog = Math.log10(1e8);
+  function xFromEv(ev){
+    const t = (Math.log10(ev) - minLog) / (maxLog - minLog);
+    return x0 + clamp(t,0,1)*w;
+  }
+
+  text(ctx, "סולם אנרגיה (לוג10 eV)", x0+w, y0-10, {font:"900 13px system-ui"});
+
+  // boundary (schematic)
+  const boundaryEv = 1e4;
+  const xb = xFromEv(boundaryEv);
+  ctx.save();
+  ctx.strokeStyle = colWarn;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8,6]);
+  ctx.beginPath(); ctx.moveTo(xb, y0); ctx.lineTo(xb, y0+h); ctx.stroke();
+  ctx.restore();
+  labelChip(ctx, xb-10, y0+22, "אזור מעבר (המחשה)", colWarn);
+
+  function marker(ev, color, label){
+    const x = xFromEv(ev);
+    const y = y0 + h*0.55;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI*2); ctx.stroke();
+    ctx.globalAlpha = 0.18;
+    ctx.beginPath(); ctx.arc(x, y, 16, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    labelChip(ctx, x+140, y-8, label, color);
+  }
+
+  marker(chemEv, colChem, `כימיה: ΔE≈${chemEv.toFixed(2)} eV`);
+  marker(nucEv,  colNuc,  `גרעין: ΔE≈${nucMev.toFixed(2)} MeV (= ${nucEv.toExponential(2)} eV)`);
+
+  const ratio = nucEv / chemEv;
+  const ratioStr = ratio >= 1e6 ? ratio.toExponential(2) : ratio.toFixed(0);
+  text(ctx, `יחס אופייני:  ΔE_nuc / ΔE_chem ≈ ${ratioStr}`, x0+w, y0+h-8, {font:"900 12px system-ui"});
+
+  // x ticks
+  ctx.save();
+  ctx.fillStyle = getEffectiveDark() ? "rgba(182,194,209,.95)" : "rgba(71,85,105,.95)";
+  ctx.font = "800 11px system-ui";
+  ctx.textAlign = "center";
+  [-2,0,2,4,6,8].forEach(p=>{
+    const ev = Math.pow(10,p);
+    const x = xFromEv(ev);
+    ctx.fillText(`10^${p}`, x, y0+h+16);
+  });
+  ctx.restore();
+}
+
+/* ========= Draw: DOS ========= */
+function gaussian(x, mu, sigma){
+  const z = (x-mu)/sigma;
+  return Math.exp(-0.5*z*z);
+}
+function drawDOS(){
+  const canvas = document.getElementById("cDOS");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  clearCanvas(ctx);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = 34;
+  const x0 = pad, y0 = pad+10, w = W-pad*2, h = H-pad*2-10;
+
+  drawGrid(ctx, x0, y0, w, h, 8, 4);
+
+  const col = "rgba(79,70,229,.92)";
+  const col2 = "rgba(8,145,178,.88)";
+
+  const N = parseInt(sLevelsN.value,10);
+  const width = parseFloat(sWidthW.value);
+  const spread = parseInt(sSpreadS.value,10);
+
+  const rng = mulberry32(123456 + N*7 + Math.floor(width*10) + spread*13);
+  const levels = [];
+  for(let i=0;i<N;i++){
+    const u = (rng()*2 - 1);
+    const v = (rng()*2 - 1);
+    const e = (u + 0.35*v) * spread;
+    levels.push(e);
+  }
+  levels.sort((a,b)=>a-b);
+
+  const Emin = -200, Emax = 200;
+  const M = 520;
+  const xs = new Array(M);
+  const g = new Array(M).fill(0);
+  for(let k=0;k<M;k++){
+    const E = lerp(Emin, Emax, k/(M-1));
+    xs[k]=E;
+    let sum=0;
+    for(let i=0;i<levels.length;i++){
+      sum += gaussian(E, levels[i], width);
+    }
+    g[k]=sum;
+  }
+  const gMax = Math.max(...g) || 1;
+
+  function X(E){ return x0 + ( (E - Emin) / (Emax - Emin) ) * w; }
+  function Y(val){ return y0 + h - (val / gMax) * (h*0.88); }
+
+  ctx.save();
+  ctx.strokeStyle = col;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for(let k=0;k<M;k++){
+    const x = X(xs[k]);
+    const y = Y(g[k]);
+    if(k===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = col2;
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 1;
+  levels.slice(0, Math.min(levels.length, 120)).forEach(E=>{
+    const x = X(E);
+    ctx.beginPath();
+    ctx.moveTo(x, y0+h);
+    ctx.lineTo(x, y0+h-28);
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  text(ctx, "הדגמת צפיפות רמות g(E) (קירוב באמצעות גאוסים)", x0+w, y0-10, {font:"900 13px system-ui"});
+  text(ctx, `N=${N}  •  w≈${width.toFixed(1)}  •  spread≈${spread}`, x0+w, y0+h-8, {font:"900 12px system-ui"});
+
+  ctx.save();
+  ctx.fillStyle = getEffectiveDark() ? "rgba(182,194,209,.95)" : "rgba(71,85,105,.95)";
+  ctx.font = "800 11px system-ui";
+  ctx.textAlign = "center";
+  [-200,-100,0,100,200].forEach(E=>{
+    ctx.fillText(`${E}`, X(E), y0+h+16);
+  });
+  ctx.restore();
+}
+
+/* ========= Draw: Spectrum ========= */
+function drawSpectrum(){
+  const canvas = document.getElementById("cSpec");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  clearCanvas(ctx);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = 34;
+  const x0 = pad, y0 = pad+10, w = W-pad*2, h = H-pad*2-10;
+
+  drawGrid(ctx, x0, y0, w, h, 8, 4);
+
+  const colChem = "rgba(79,70,229,.92)";
+  const colNuc  = "rgba(8,145,178,.92)";
+
+  const chemWidth = parseInt(sChemBroad.value,10);
+  const nucCount = parseInt(sNucLines.value,10);
+
+  const M=520;
+  const xs = new Array(M);
+  const chem = new Array(M).fill(0);
+
+  const rng = mulberry32(2025 + chemWidth*31 + nucCount*17);
+  const peaksN = 70;
+  const peaks = [];
+  for(let i=0;i<peaksN;i++){
+    peaks.push({
+      mu: rng(),
+      a:  0.6 + rng()*0.9,
+      s:  (chemWidth/220) * (0.5 + rng()*1.2)
+    });
+  }
+  for(let k=0;k<M;k++){
+    const x = k/(M-1);
+    xs[k]=x;
+    let sum=0;
+    for(const p of peaks){
+      const s = Math.max(0.002, p.s);
+      const z = (x-p.mu)/s;
+      sum += p.a*Math.exp(-0.5*z*z);
+    }
+    chem[k]=sum;
+  }
+  const chemMax = Math.max(...chem) || 1;
+
+  const nucLines = [];
+  for(let i=0;i<nucCount;i++){
+    nucLines.push(0.08 + (0.84)*(i/(Math.max(1,nucCount-1))));
+  }
+
+  function X(u){ return x0 + u*w; }
+
+  ctx.save();
+  ctx.strokeStyle = colChem;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for(let k=0;k<M;k++){
+    const x = X(xs[k]);
+    const y = y0 + (h*0.52) - (chem[k]/chemMax)*(h*0.45);
+    if(k===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  labelChip(ctx, x0+w, y0+26, "כימי: קווים צפופים/רחבים (עקרוני)", colChem);
+
+  ctx.save();
+  ctx.strokeStyle = colNuc;
+  ctx.lineWidth = 3;
+  nucLines.forEach(u=>{
+    const x = X(u);
+    const yBottom = y0+h;
+    const yTop = y0 + h*0.62;
+    ctx.beginPath(); ctx.moveTo(x, yBottom); ctx.lineTo(x, yTop); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, yTop, 4.5, 0, Math.PI*2);
+    ctx.fillStyle = colNuc; ctx.fill();
+  });
+  ctx.restore();
+
+  labelChip(ctx, x0+w, y0 + h*0.86, "גרעיני: קווים בדידים (עקרוני)", colNuc);
+
+  text(ctx, "השוואת צורה: ספקטרום כימי מול גרעיני (המחשה בלבד)", x0+w, y0-10, {font:"900 13px system-ui"});
+  text(ctx, `כימיה: רוחב≈${chemWidth}  •  גרעין: ${nucCount} קווים`, x0+w, y0+h-8, {font:"900 12px system-ui"});
+
+  ctx.save();
+  ctx.fillStyle = getEffectiveDark() ? "rgba(182,194,209,.95)" : "rgba(71,85,105,.95)";
+  ctx.font = "800 11px system-ui";
+  ctx.textAlign = "center";
+  [0,0.25,0.5,0.75,1].forEach(u=>{
+    ctx.fillText(u.toFixed(2), X(u), y0+h+16);
+  });
+  ctx.restore();
+}
+
+/* ========= Draw: Psi Superposition (Interference) =========
+   Model:
+     psi1(x) = cos(kx)
+     psi2(x) = sin(2kx)
+   Psi(x) = c1*psi1 + c2*e^{i dphi}*psi2
+   Intensity I(x) = |Psi|^2
+   Decoherence eta: cross term scaled by (1-eta).
+*/
+function drawPsi(){
+  const canvas = document.getElementById("cPsi");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  clearCanvas(ctx);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = 34;
+  const x0 = pad, y0 = pad+10, w = W-pad*2, h = H-pad*2-10;
+
+  drawGrid(ctx, x0, y0, w, h, 8, 4);
+
+  const colI   = "rgba(79,70,229,.92)"; // intensity
+  const colP1  = "rgba(8,145,178,.85)"; // psi1
+  const colP2  = "rgba(245,158,11,.90)"; // psi2
+
+  const c1 = parseFloat(sC1.value);
+  const c2 = parseFloat(sC2.value);
+  const dphi = parseFloat(sDP.value);
+  const eta = parseFloat(sDe.value);
+  const coh = (1 - eta);
+
+  // define functions
+  const k = 2*Math.PI; // one cycle over [0,1]
+  const M = 520;
+  const xs = new Array(M);
+  const p1 = new Array(M);
+  const p2 = new Array(M);
+  const I  = new Array(M);
+
+  // intensity computed analytically:
+  // |c1 psi1 + c2 e^{i dphi} psi2|^2 = c1^2 psi1^2 + c2^2 psi2^2 + 2 c1 c2 psi1 psi2 cos(dphi)
+  // decoherence: cross term scaled by coh
+  for(let i=0;i<M;i++){
+    const u = i/(M-1);
+    xs[i]=u;
+    const x = u;
+    const psi1 = Math.cos(k*x);
+    const psi2 = Math.sin(2*k*x);
+    p1[i]=psi1;
+    p2[i]=psi2;
+    const intensity = (c1*c1*psi1*psi1) + (c2*c2*psi2*psi2) + (2*c1*c2*psi1*psi2*Math.cos(dphi)*coh);
+    I[i]=intensity;
+  }
+
+  const Imax = Math.max(...I), Imin = Math.min(...I);
+  const pMax = 1.0;
+
+  function X(u){ return x0 + u*w; }
+  function Ymid(v){ // for waveforms (centered)
+    const mid = y0 + h*0.36;
+    const amp = h*0.22;
+    return mid - (v/pMax)*amp;
+  }
+  function YI(v){ // intensity in lower half
+    const top = y0 + h*0.55;
+    const ih = h*0.42;
+    const t = (v - Imin) / Math.max(1e-9,(Imax - Imin));
+    return top + ih - t*ih;
+  }
+
+  // psi1
+  ctx.save();
+  ctx.strokeStyle = colP1;
+  ctx.globalAlpha = 0.85;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let i=0;i<M;i++){
+    const x = X(xs[i]);
+    const y = Ymid(p1[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // psi2
+  ctx.save();
+  ctx.strokeStyle = colP2;
+  ctx.globalAlpha = 0.80;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let i=0;i<M;i++){
+    const x = X(xs[i]);
+    const y = Ymid(p2[i]) + h*0.18; // small offset for readability
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Intensity
+  ctx.save();
+  ctx.strokeStyle = colI;
+  ctx.lineWidth = 2.8;
+  ctx.beginPath();
+  for(let i=0;i<M;i++){
+    const x = X(xs[i]);
+    const y = YI(I[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Titles
+  text(ctx, "סופרפוזיציה והפרעה: I(x)=|Ψ(x)|² (המחשה עקרונית)", x0+w, y0-10, {font:"900 13px system-ui"});
+  text(ctx, `c1=${c1.toFixed(2)} • c2=${c2.toFixed(2)} • Δφ=${dphi.toFixed(2)} rad • η=${eta.toFixed(2)} (coh=${coh.toFixed(2)})`,
+       x0+w, y0+h-8, {font:"900 12px system-ui"});
+
+  // chips
+  labelChip(ctx, x0+w, y0+28, "ψ1(x)=cos(kx)", colP1);
+  labelChip(ctx, x0+w, y0+58, "ψ2(x)=sin(2kx)", colP2);
+  labelChip(ctx, x0+w, y0+ h*0.74, "I(x)=|Ψ|² (כולל איבר הפרעה)", colI);
+
+  // X ticks
+  ctx.save();
+  ctx.fillStyle = getEffectiveDark() ? "rgba(182,194,209,.95)" : "rgba(71,85,105,.95)";
+  ctx.font = "800 11px system-ui";
+  ctx.textAlign = "center";
+  [0,0.25,0.5,0.75,1].forEach(u=>{
+    ctx.fillText(u.toFixed(2), X(u), y0+h+16);
+  });
+  ctx.restore();
+}
+
+/* ========= Draw all ========= */
+function drawAll(){
+  drawEnergy();
+  drawDOS();
+  drawSpectrum();
+  drawPsi();
+}
+drawAll();
+window.addEventListener("resize", ()=> requestAnimationFrame(drawAll));
+window.matchMedia?.("(prefers-color-scheme: dark)")?.addEventListener?.("change", ()=> requestAnimationFrame(drawAll));
+</script>
+</body>
+</html>
