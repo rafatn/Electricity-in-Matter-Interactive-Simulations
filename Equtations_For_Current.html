@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מונוכרומטיות זרם/מגנטיות + RLC + Bode + FFT (אינטראקטיבי)</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff;
+      --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.55);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.12); --r:18px;
+      --accent:#6366f1; --mono:#0ea5e9; --warn:#f59e0b; --bad:#ef4444; --ok:#16a34a;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1222;
+        --card:rgba(17,24,39,.66); --card2:rgba(17,24,39,.45);
+        --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.20);
+        --shadow:0 18px 55px rgba(0,0,0,.45);
+        --accent:#8b5cf6; --mono:#38bdf8;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+      background:
+        radial-gradient(1200px 500px at 15% 10%, var(--bg1), transparent 60%),
+        radial-gradient(900px 420px at 85% 5%, rgba(99,102,241,.25), transparent 55%),
+        radial-gradient(800px 420px at 25% 92%, rgba(14,165,233,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    header{max-width:1220px;margin:0 auto;padding:24px 16px 10px}
+    .hero{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+      display:grid; gap:8px;
+    }
+    h1{margin:0;font-size:clamp(20px,2.4vw,34px);line-height:1.1}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+    main{max-width:1220px;margin:0 auto;padding:10px 16px 34px;display:grid;gap:12px}
+    .grid{display:grid;grid-template-columns: 420px 1fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 8px;font-size:16px}
+    .muted{color:var(--muted)}
+    .controls{display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+    input[type="range"]{width:100%;accent-color:var(--accent)}
+    select, input[type="number"]{
+      width:100%; padding:10px 10px;
+      border-radius: 12px; border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      select, input[type="number"]{background: rgba(17,24,39,.25);}
+    }
+    .val{
+      min-width: 105px; text-align:left;
+      font-variant-numeric: tabular-nums;
+      padding:6px 10px; border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.18);
+    }
+    @media (prefers-color-scheme: dark){.val{background: rgba(17,24,39,.35);}}
+    .toggle{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 12px;border:1px solid var(--line);border-radius:14px;
+      background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){.toggle{background: rgba(17,24,39,.25);}}
+    .toggle b{font-size:13px}
+    .toggle span{font-size:12px;color:var(--muted)}
+    .switch{position:relative;width:44px;height:26px;flex:0 0 auto}
+    .switch input{display:none}
+    .slider{
+      position:absolute; inset:0; border-radius:999px; border:1px solid var(--line);
+      background: rgba(148,163,184,.25); transition:.18s ease;
+    }
+    .slider:before{
+      content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+      background: white; box-shadow: 0 10px 18px rgba(0,0,0,.18); transition:.18s ease;
+    }
+    @media (prefers-color-scheme: dark){.slider:before{background:#e5e7eb}}
+    .switch input:checked + .slider{
+      background: rgba(99,102,241,.35); border-color: rgba(99,102,241,.55);
+    }
+    .switch input:checked + .slider:before{transform: translateX(18px)}
+    .status{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      font-size:12px;color:var(--muted);
+    }
+    .dot{width:10px;height:10px;border-radius:99px;background:var(--mono);box-shadow:0 0 0 3px rgba(14,165,233,.15)}
+    .dot.warn{background:var(--warn);box-shadow:0 0 0 3px rgba(245,158,11,.18)}
+    .dot.bad{background:var(--bad);box-shadow:0 0 0 3px rgba(239,68,68,.18)}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 650;
+    }
+    @media (prefers-color-scheme: dark){button{background: rgba(17,24,39,.25);}}
+    button:hover{filter:brightness(1.06)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+    .tab{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.14); cursor:pointer; font-size:12px; color:var(--muted);
+      user-select:none;
+    }
+    @media (prefers-color-scheme: dark){.tab{background: rgba(17,24,39,.25);}}
+    .tab.active{color:var(--text);border-color: rgba(99,102,241,.55); background: rgba(99,102,241,.18)}
+    .charts{display:grid;gap:12px}
+    .chartwrap{
+      border:1px solid var(--line);border-radius:16px;padding:10px;
+      background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){.chartwrap{background: rgba(17,24,39,.22);}}
+    canvas{width:100% !important;height:280px !important}
+    .foot{max-width:1220px;margin:0 auto;padding:0 16px 22px;color:var(--muted);font-size:12px;line-height:1.7}
+    details{margin-top:8px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background: rgba(255,255,255,.12)}
+    @media (prefers-color-scheme: dark){details{background: rgba(17,24,39,.25);}}
+    details summary{cursor:pointer;font-weight:750;font-size:13px}
+    .math{font-size:14px;line-height:1.7}
+    .hint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>הדגמה מלאה: זרם ↔ מגנטיות ↔ תדר ↔ פאזה/משרעת (RLC) + FFT + Bode</h1>
+    <p class="sub">
+      במערכת <b>ליניארית</b>: עירור סינוסואידלי בתדר \(\omega\) → תגובה באותו \(\omega\) בלבד (אין תדרים חדשים).
+      במערכת <b>לא־ליניארית</b> (ליבה ברוויה/היסטרזיס): נוצרים הרמוניות \(2\omega,3\omega,\dots\).
+      שינוי תדר <u>כן</u> יכול לשנות גם משרעת וגם פאזה דרך \(H(j\omega)\).
+    </p>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- Controls -->
+  <section class="card">
+    <h2>בקרות מערכת</h2>
+
+    <div class="controls">
+
+      <div class="row">
+        <label>מודל</label>
+        <select id="model">
+          <option value="k_simple">פשוט: \(B(t)=k\,I(t)\)</option>
+          <option value="rlc_current">RLC: מקור מתח → זרם (I) דרך \(Z(\omega)\)</option>
+          <option value="rlc_magnetic">RLC: מקור מתח → שדה \(B\) דרך \(I(\omega)\)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="freq">תדר עירור \(f\) (Hz)</label>
+        <div class="val" id="freqVal">50 Hz</div>
+      </div>
+      <input id="freq" type="range" min="1" max="2000" value="50" step="1">
+
+      <div class="row">
+        <label for="vamp">משרעת מקור מתח \(V_0\) (V)</label>
+        <div class="val" id="vampVal">1.00 V</div>
+      </div>
+      <input id="vamp" type="range" min="0.1" max="10" value="1" step="0.1">
+
+      <div class="row">
+        <label for="phase">מופע מקור \(\phi\) (deg)</label>
+        <div class="val" id="phaseVal">0°</div>
+      </div>
+      <input id="phase" type="range" min="-180" max="180" value="0" step="1">
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="row">
+        <label>טופולוגיית RLC</label>
+        <select id="rlcType">
+          <option value="series">RLC טורי</option>
+          <option value="parallel">RLC מקבילי</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="R">\(R\) (Ω)</label>
+        <div class="val" id="RVal">10.00</div>
+      </div>
+      <input id="R" type="range" min="0.1" max="200" value="10" step="0.1">
+
+      <div class="row">
+        <label for="L">\(L\) (mH)</label>
+        <div class="val" id="LVal">10.00</div>
+      </div>
+      <input id="L" type="range" min="0.1" max="200" value="10" step="0.1">
+
+      <div class="row">
+        <label for="C">\(C\) (µF)</label>
+        <div class="val" id="CVal">10.00</div>
+      </div>
+      <input id="C" type="range" min="0.1" max="200" value="10" step="0.1">
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="row">
+        <label for="k">צימוד מגנטי ליניארי \(k\) (arb)</label>
+        <div class="val" id="kVal">1.00</div>
+      </div>
+      <input id="k" type="range" min="0" max="5" value="1" step="0.01">
+
+      <div class="row">
+        <label for="dphi">השהיית פאזה \(\Delta\phi\) (deg)</label>
+        <div class="val" id="dphiVal">0°</div>
+      </div>
+      <input id="dphi" type="range" min="-180" max="180" value="0" step="1">
+
+      <div class="toggle">
+        <div>
+          <b>סביבה ממוגנטת ליניארית</b><br>
+          <span>מגדילה \(L\) אפקטיבי: \(L_{\text{eff}}=L(1+\mu)\)</span>
+        </div>
+        <label class="switch">
+          <input id="magLinear" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <label for="mu">מקדם \(\mu\)</label>
+        <div class="val" id="muVal">0.00</div>
+      </div>
+      <input id="mu" type="range" min="0" max="5" value="0" step="0.01" disabled>
+
+      <div class="toggle">
+        <div>
+          <b>רוויה / אי־ליניאריות מגנטית</b><br>
+          <span>מוסיף \(B \leftarrow B+\alpha I^2+\beta I^3\) (הרמוניות)</span>
+        </div>
+        <label class="switch">
+          <input id="nonlin" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <label for="alpha">\(\alpha\)</label>
+        <div class="val" id="alphaVal">0.00</div>
+      </div>
+      <input id="alpha" type="range" min="0" max="1.5" value="0" step="0.01" disabled>
+
+      <div class="row">
+        <label for="beta">\(\beta\)</label>
+        <div class="val" id="betaVal">0.00</div>
+      </div>
+      <input id="beta" type="range" min="0" max="1.5" value="0" step="0.01" disabled>
+
+      <div class="toggle">
+        <div>
+          <b>רעש מדידה</b><br>
+          <span>מעלה רצפת ספקטרום (noise floor) בלבד</span>
+        </div>
+        <label class="switch">
+          <input id="noise" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <label for="noiseAmp">עוצמת רעש</label>
+        <div class="val" id="noiseAmpVal">0.00</div>
+      </div>
+      <input id="noiseAmp" type="range" min="0" max="0.5" value="0" step="0.01" disabled>
+
+      <div class="status">
+        <div class="pill"><span class="dot" id="dotMono"></span> תדרים: <b id="monoText">תדר יחיד</b></div>
+        <div class="pill"><span class="dot" id="dotHarm"></span> הרמוניות: <b id="harmText">אין</b></div>
+        <div class="pill"><span class="dot" id="dotAmp"></span> משרעת עם \(f\): <b id="ampText">תלויה ב-\(H\)</b></div>
+      </div>
+
+      <div class="btnrow">
+        <button id="resetBtn">איפוס</button>
+        <button id="pauseBtn">עצור/הפעל</button>
+      </div>
+
+      <details>
+        <summary>הנוסחאות המרכזיות</summary>
+        <div class="math">
+          <p>\[
+            v(t)=V_0\cos(\omega t+\phi)
+          \]</p>
+          <p class="muted">מערכת ליניארית (מרוכזת):</p>
+          <p>\[
+            I(\omega)=\frac{V(\omega)}{Z(\omega)},\qquad B(\omega)=k\,I(\omega)\,e^{j\Delta\phi}
+          \]</p>
+          <p class="muted">אימפדנסים:</p>
+          <p>\[
+            Z_R=R,\quad Z_L=j\omega L,\quad Z_C=\frac{1}{j\omega C}
+          \]</p>
+          <p class="muted">אי־ליניאריות מגנטית (דוגמה ליצירת הרמוניות):</p>
+          <p>\[
+            B(t)=B_{\text{lin}}(t)+\alpha I(t)^2+\beta I(t)^3
+          \]</p>
+          <p class="muted">
+            לכן: שינוי תדר משנה <b>גם</b> משרעת וגם פאזה דרך \(|H(j\omega)|,\angle H(j\omega)\), ובלא־ליניאריות נוצרים תדרים חדשים.
+          </p>
+        </div>
+      </details>
+
+      <div class="hint">
+        נסה: העלה \(f\) ועבור למודל RLC → תראה ב-Bode שהמשרעת משתנה עם התדר. הדלק “רוויה” → תראה FFT עם שיאים ב-\(2f,3f\).
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts / Tabs -->
+  <section class="card">
+    <h2>תצוגות</h2>
+    <div class="tabs">
+      <div class="tab active" data-tab="time">זמן (V/I/B)</div>
+      <div class="tab" data-tab="fft">FFT (ספקטרום B)</div>
+      <div class="tab" data-tab="bode">Bode (|H|, ∠H)</div>
+      <div class="tab" data-tab="energy">אנרגיה ( \(W_E,W_B,P_R\) )</div>
+    </div>
+
+    <div id="tab_time" class="charts">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">זמן: \(v(t)\), \(i(t)\), \(b(t)\)</div>
+        <canvas id="timeChart"></canvas>
+      </div>
+    </div>
+
+    <div id="tab_fft" class="charts" style="display:none">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">ספקטרום: FFT של \(B(t)\)</div>
+        <canvas id="fftChart"></canvas>
+      </div>
+    </div>
+
+    <div id="tab_bode" class="charts" style="display:none">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">\( |H(j\omega)| \) (רווח משרעת)</div>
+        <canvas id="bodeMagChart"></canvas>
+      </div>
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">\( \angle H(j\omega) \) (מעלות)</div>
+        <canvas id="bodePhaseChart"></canvas>
+      </div>
+    </div>
+
+    <div id="tab_energy" class="charts" style="display:none">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">אנרגיה/הספק בזמן: \(W_E=\tfrac12 C v^2\), \(W_B=\tfrac12 L i^2\), \(p_R=i^2R\)</div>
+        <canvas id="energyChart"></canvas>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="foot">
+  שמור כ-<b>mono_full_demo.html</b> והפעל בדפדפן. זה קובץ יחיד.
+</div>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const fmt=(n,d=2)=>Number(n).toFixed(d);
+  const deg2rad=(d)=>d*Math.PI/180;
+
+  // UI
+  const model=$("model"), freq=$("freq"), vamp=$("vamp"), phase=$("phase");
+  const rlcType=$("rlcType"), R=$("R"), L=$("L"), C=$("C");
+  const k=$("k"), dphi=$("dphi");
+
+  const magLinear=$("magLinear"), mu=$("mu");
+  const nonlin=$("nonlin"), alpha=$("alpha"), beta=$("beta");
+  const noise=$("noise"), noiseAmp=$("noiseAmp");
+
+  const freqVal=$("freqVal"), vampVal=$("vampVal"), phaseVal=$("phaseVal");
+  const RVal=$("RVal"), LVal=$("LVal"), CVal=$("CVal"), kVal=$("kVal"), dphiVal=$("dphiVal");
+  const muVal=$("muVal"), alphaVal=$("alphaVal"), betaVal=$("betaVal"), noiseAmpVal=$("noiseAmpVal");
+
+  const monoText=$("monoText"), harmText=$("harmText"), ampText=$("ampText");
+  const dotMono=$("dotMono"), dotHarm=$("dotHarm"), dotAmp=$("dotAmp");
+
+  const resetBtn=$("resetBtn"), pauseBtn=$("pauseBtn");
+
+  // Tabs
+  const tabEls=[...document.querySelectorAll(".tab")];
+  function showTab(name){
+    tabEls.forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
+    ["time","fft","bode","energy"].forEach(x=>{
+      $("tab_"+x).style.display = (x===name) ? "" : "none";
+    });
+  }
+  tabEls.forEach(t=>t.addEventListener("click", ()=>showTab(t.dataset.tab)));
+
+  // Sampling
+  const N=1024;
+  const viewCycles=3;
+  let paused=false;
+  let t0=0;
+
+  // Buffers
+  const tArr=new Array(N), vArr=new Array(N), iArr=new Array(N), bArr=new Array(N);
+  const WEArr=new Array(N), WBArr=new Array(N), pRArr=new Array(N);
+
+  // Simple PRNG + Gaussian for noise
+  let seed=1234567;
+  function rand(){ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }
+  function randn(){
+    const u1=clamp(rand(),1e-9,1-1e-9), u2=clamp(rand(),1e-9,1-1e-9);
+    return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+  }
+
+  // DFT magnitude (naive)
+  function dftMag(signal, fs){
+    const M=Math.floor(signal.length/2);
+    const mags=new Array(M), freqs=new Array(M);
+    for(let k=0;k<M;k++){
+      let re=0, im=0;
+      const w=2*Math.PI*k/signal.length;
+      for(let n=0;n<signal.length;n++){
+        const a=w*n;
+        re += signal[n]*Math.cos(a);
+        im -= signal[n]*Math.sin(a);
+      }
+      mags[k]=Math.sqrt(re*re+im*im)/signal.length;
+      freqs[k]=k*fs/signal.length;
+    }
+    return {freqs,mags};
+  }
+
+  // Complex helpers (minimal)
+  function c(re, im){ return {re, im}; }
+  function cAdd(a,b){ return c(a.re+b.re, a.im+b.im); }
+  function cMul(a,b){ return c(a.re*b.re - a.im*b.im, a.re*b.im + a.im*b.re); }
+  function cInv(a){
+    const d=a.re*a.re + a.im*a.im;
+    return c(a.re/d, -a.im/d);
+  }
+  function cDiv(a,b){ return cMul(a, cInv(b)); }
+  function cAbs(a){ return Math.sqrt(a.re*a.re + a.im*a.im); }
+  function cArg(a){ return Math.atan2(a.im, a.re); }
+
+  // Impedances
+  function Z_R(R){ return c(R,0); }
+  function Z_L(w,L){ return c(0, w*L); }
+  function Z_C(w,C){ return c(0, -1/(w*C)); } // 1/(j w C) = -j/(wC)
+  function Z_series(zs){ return zs.reduce((acc,z)=>cAdd(acc,z), c(0,0)); }
+  function Z_parallel(zs){
+    // 1/Z = sum 1/zi
+    let inv=c(0,0);
+    for(const z of zs){ inv=cAdd(inv, cInv(z)); }
+    return cInv(inv);
+  }
+
+  function computeH_for_I(w){
+    // H_I = I / V  (A/V) = 1/Zeq
+    let Rv=Number(R.value);
+    let Lv=Number(L.value)/1000;      // mH -> H
+    let Cv=Number(C.value)/1e6;       // uF -> F
+
+    // magnetized linear => L_eff = L*(1+mu)
+    if(magLinear.checked){
+      const muv=Number(mu.value);
+      Lv = Lv*(1+muv);
+    }
+
+    const zR=Z_R(Rv);
+    const zL=Z_L(w,Lv);
+    const zC=Z_C(w,Cv);
+
+    let Zeq;
+    if(rlcType.value==="series"){
+      Zeq = Z_series([zR,zL,zC]);
+    }else{
+      Zeq = Z_parallel([zR,zL,zC]);
+    }
+    return cInv(Zeq); // I/V
+  }
+
+  function refreshUI(){
+    freqVal.textContent = `${freq.value} Hz`;
+    vampVal.textContent = `${fmt(vamp.value,2)} V`;
+    phaseVal.textContent = `${phase.value}°`;
+
+    RVal.textContent = fmt(R.value,2);
+    LVal.textContent = fmt(L.value,2);
+    CVal.textContent = fmt(C.value,2);
+
+    kVal.textContent = fmt(k.value,2);
+    dphiVal.textContent = `${dphi.value}°`;
+
+    mu.disabled = !magLinear.checked;
+    muVal.textContent = fmt(mu.value,2);
+
+    alpha.disabled = !nonlin.checked;
+    beta.disabled  = !nonlin.checked;
+    alphaVal.textContent = fmt(alpha.value,2);
+    betaVal.textContent  = fmt(beta.value,2);
+
+    noiseAmp.disabled = !noise.checked;
+    noiseAmpVal.textContent = fmt(noiseAmp.value,2);
+  }
+
+  // Charts
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  const timeChart = new Chart($("timeChart"), {
+    type:'line',
+    data:{ labels:tArr, datasets:[
+      {label:'v(t) [V]', data:vArr, tension:0.18, pointRadius:0, borderWidth:2},
+      {label:'i(t) [A]', data:iArr, tension:0.18, pointRadius:0, borderWidth:2},
+      {label:'B(t) [arb]', data:bArr, tension:0.18, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{boxWidth:14}}},
+      scales:{
+        x:{title:{display:true,text:'זמן (s)'},ticks:{maxTicksLimit:8}},
+        y:{title:{display:true,text:'אמפליטודה'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const fftChart = new Chart($("fftChart"), {
+    type:'bar',
+    data:{ labels:[], datasets:[{label:'FFT |B(f)|', data:[], borderWidth:1}] },
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true}},
+      scales:{
+        x:{title:{display:true,text:'תדר (Hz)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'עוצמה'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const bodeMagChart = new Chart($("bodeMagChart"), {
+    type:'line',
+    data:{ labels:[], datasets:[{label:'|H_I| = |I/V|  [A/V]', data:[], tension:0.12, pointRadius:0, borderWidth:2}] },
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true}},
+      scales:{
+        x:{title:{display:true,text:'תדר (Hz)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'משרעת'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const bodePhaseChart = new Chart($("bodePhaseChart"), {
+    type:'line',
+    data:{ labels:[], datasets:[{label:'∠H_I (deg)', data:[], tension:0.12, pointRadius:0, borderWidth:2}] },
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true}},
+      scales:{
+        x:{title:{display:true,text:'תדר (Hz)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'מעלות'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const energyChart = new Chart($("energyChart"), {
+    type:'line',
+    data:{ labels:tArr, datasets:[
+      {label:'W_E = 1/2 C v^2', data:WEArr, tension:0.18, pointRadius:0, borderWidth:2},
+      {label:'W_B = 1/2 L i^2', data:WBArr, tension:0.18, pointRadius:0, borderWidth:2},
+      {label:'p_R = i^2 R', data:pRArr, tension:0.18, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{boxWidth:14}}},
+      scales:{
+        x:{title:{display:true,text:'זמן (s)'},ticks:{maxTicksLimit:8}},
+        y:{title:{display:true,text:'ערך (arb)'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  function refreshColors(){
+    const accent=cssVar('--accent')||'#6366f1';
+    const mono=cssVar('--mono')||'#0ea5e9';
+    timeChart.data.datasets[0].borderColor = mono;
+    timeChart.data.datasets[1].borderColor = accent;
+    timeChart.data.datasets[2].borderColor = cssVar('--ok') || '#16a34a';
+
+    fftChart.data.datasets[0].backgroundColor = accent;
+    fftChart.data.datasets[0].borderColor = accent;
+
+    bodeMagChart.data.datasets[0].borderColor = accent;
+    bodePhaseChart.data.datasets[0].borderColor = mono;
+
+    energyChart.data.datasets[0].borderColor = mono;
+    energyChart.data.datasets[1].borderColor = accent;
+    energyChart.data.datasets[2].borderColor = cssVar('--bad') || '#ef4444';
+  }
+  refreshColors();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+    refreshColors();
+    timeChart.update('none'); fftChart.update('none');
+    bodeMagChart.update('none'); bodePhaseChart.update('none');
+    energyChart.update('none');
+  });
+
+  // Harmonics detection (rough)
+  function detectHarmonics(f, labels, data){
+    function findIdx(target){
+      let best=-1, bestErr=1e9;
+      for(let i=0;i<labels.length;i++){
+        const lf=Number(labels[i]);
+        const err=Math.abs(lf-target);
+        if(err<bestErr){bestErr=err;best=i;}
+      }
+      return best;
+    }
+    const i1=findIdx(f), i2=findIdx(2*f), i3=findIdx(3*f);
+    const p1=(i1>=0)?data[i1]:0;
+    const p2=(i2>=0)?data[i2]:0;
+    const p3=(i3>=0)?data[i3]:0;
+    const has2 = p2 > 0.15*p1 && (2*f)<5000;
+    const has3 = p3 > 0.10*p1 && (3*f)<5000;
+    return {has2,has3,p1,p2,p3};
+  }
+
+  // Core compute: build v(t), i(t), b(t) according to selected model
+  function computeAll(){
+    const f=Number(freq.value);
+    const w=2*Math.PI*f;
+    const V0=Number(vamp.value);
+    const phi=deg2rad(Number(phase.value));
+
+    const kk=Number(k.value);
+    const dph=deg2rad(Number(dphi.value));
+
+    const useNonlin=nonlin.checked;
+    const a=Number(alpha.value);
+    const b=Number(beta.value);
+
+    const useNoise=noise.checked;
+    const nA=Number(noiseAmp.value);
+
+    // sampling rate: enough for clean sine + harmonics
+    const fs = clamp(80*f, 1000, 24000);
+    const T=viewCycles/f;
+    const dt=T/(N-1);
+
+    // Determine I/V transfer at this frequency if needed
+    const HI = computeH_for_I(w);     // complex A/V
+    const HIabs = cAbs(HI);
+    const HIarg = cArg(HI);
+
+    // For time-domain: treat I(t) as sinusoid with amplitude = |HI|*V0 and phase shift = arg(HI)
+    const I0 = HIabs * V0;
+    const Iphi = phi + HIarg;
+
+    // For simple model: we can define current directly from V0 as "I0=V0" (just a demo)
+    // but keep it consistent: use I0=V0 for k_simple
+    const I0simple = V0;
+
+    // Effective L, C, R for energy calc (use L_eff if magnetized)
+    let Rv=Number(R.value);
+    let Lv=Number(L.value)/1000;
+    let Cv=Number(C.value)/1e6;
+    if(magLinear.checked){
+      const muv=Number(mu.value);
+      Lv = Lv*(1+muv);
+    }
+
+    for(let i=0;i<N;i++){
+      const t=i*dt;
+      tArr[i]=t.toFixed(5);
+
+      const vt = V0*Math.cos(w*(t+t0)+phi);
+      vArr[i]=vt;
+
+      let it;
+      if(model.value==="k_simple"){
+        it = I0simple*Math.cos(w*(t+t0)+phi);
+      }else{
+        it = I0*Math.cos(w*(t+t0)+Iphi);
+      }
+      iArr[i]=it;
+
+      // B(t)
+      let bt = kk*it*Math.cos(dph) + kk*it*0; // keep linear proportionality (time domain uses it directly)
+      // Better: B is proportional to current with phase shift => B(t)=k*I0*cos(wt + phase + dph)
+      // We'll compute via analytic form to be explicit:
+      let bLinear;
+      if(model.value==="k_simple"){
+        bLinear = kk*I0simple*Math.cos(w*(t+t0)+phi+dph);
+      }else{
+        bLinear = kk*I0*Math.cos(w*(t+t0)+Iphi+dph);
+      }
+      bt = bLinear;
+
+      // Nonlinearity adds harmonics
+      if(useNonlin){
+        bt += a*(it*it) + b*(it*it*it);
+      }
+
+      // Noise only in measured B
+      if(useNoise && nA>0){
+        bt += nA*randn();
+      }
+      bArr[i]=bt;
+
+      // Energy / power (illustrative)
+      WEArr[i] = 0.5*Cv*(vt*vt);
+      WBArr[i] = 0.5*Lv*(it*it);
+      pRArr[i] = (it*it)*Rv;
+    }
+
+    // FFT on B(t)
+    let mean=0;
+    for(let i=0;i<N;i++) mean += bArr[i];
+    mean/=N;
+    const centered=new Array(N);
+    for(let i=0;i<N;i++) centered[i]=bArr[i]-mean;
+
+    const {freqs,mags} = dftMag(centered, fs);
+
+    // Downsample bars
+    const maxBins=320;
+    const step=Math.max(1, Math.floor(freqs.length/maxBins));
+    const labels=[], data=[];
+    for(let i=0;i<freqs.length;i+=step){
+      labels.push(Math.round(freqs[i]).toString());
+      data.push(mags[i]);
+    }
+
+    return {f,w,fs,labels,data, HIabs, HIarg};
+  }
+
+  // Bode curves across range
+  function computeBode(){
+    const f0 = 1;
+    const fMax = 5000;
+    const points = 240;
+
+    const labels = [];
+    const mags = [];
+    const phases = [];
+
+    for(let i=0;i<points;i++){
+      // log-ish spacing
+      const r = i/(points-1);
+      const f = f0 * Math.pow(fMax/f0, r);
+      const w = 2*Math.PI*f;
+
+      const HI = computeH_for_I(w);
+      labels.push(Math.round(f).toString());
+      mags.push(cAbs(HI));
+      phases.push((cArg(HI)*180/Math.PI));
+    }
+    return {labels,mags,phases};
+  }
+
+  function updateStatus(meta){
+    const f=meta.f;
+
+    // Mono vs not: nonlin => harmonics generation
+    const isMono = !nonlin.checked;
+    monoText.textContent = isMono ? "תדר יחיד (ליניארי)" : "תדרים נוספים (לא־ליניארי)";
+    dotMono.className = "dot" + (isMono ? "" : "warn");
+
+    // harmonics from FFT detection
+    const harm = detectHarmonics(f, meta.labels, meta.data);
+    const anyH = harm.has2 || harm.has3;
+    harmText.textContent = anyH ? "נמצאו" : "אין";
+    dotHarm.className = "dot" + (anyH ? "bad" : "");
+
+    // amplitude depends on H(ω) for RLC models
+    const ampDepends = (model.value!=="k_simple");
+    ampText.textContent = ampDepends ? "כן (תלויה ב-\(H\))" : "מודל פשוט";
+    dotAmp.className = "dot" + (ampDepends ? "warn" : "");
+  }
+
+  function render(){
+    refreshUI();
+
+    const meta = computeAll();
+
+    // Time chart
+    timeChart.data.labels = tArr;
+    timeChart.data.datasets[0].data = vArr;
+    timeChart.data.datasets[1].data = iArr;
+    timeChart.data.datasets[2].data = bArr;
+    timeChart.update('none');
+
+    // FFT chart
+    fftChart.data.labels = meta.labels;
+    fftChart.data.datasets[0].data = meta.data;
+    fftChart.update('none');
+
+    // Energy chart
+    energyChart.data.labels = tArr;
+    energyChart.data.datasets[0].data = WEArr;
+    energyChart.data.datasets[1].data = WBArr;
+    energyChart.data.datasets[2].data = pRArr;
+    energyChart.update('none');
+
+    // Bode
+    const bode = computeBode();
+    bodeMagChart.data.labels = bode.labels;
+    bodeMagChart.data.datasets[0].data = bode.mags;
+    bodeMagChart.update('none');
+
+    bodePhaseChart.data.labels = bode.labels;
+    bodePhaseChart.data.datasets[0].data = bode.phases;
+    bodePhaseChart.update('none');
+
+    updateStatus(meta);
+  }
+
+  // Events
+  const rerender = ()=>render();
+  [model,freq,vamp,phase,rlcType,R,L,C,k,dphi,magLinear,mu,nonlin,alpha,beta,noise,noiseAmp].forEach(el=>{
+    el.addEventListener('input', rerender);
+    el.addEventListener('change', rerender);
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    model.value="k_simple";
+    freq.value=50; vamp.value=1; phase.value=0;
+    rlcType.value="series";
+    R.value=10; L.value=10; C.value=10;
+    k.value=1; dphi.value=0;
+
+    magLinear.checked=false; mu.value=0;
+    nonlin.checked=false; alpha.value=0; beta.value=0;
+    noise.checked=false; noiseAmp.value=0;
+
+    paused=false; t0=0;
+    render();
+  });
+
+  pauseBtn.addEventListener('click', ()=>{ paused=!paused; });
+
+  function loop(){
+    if(!paused){
+      const f = Number(freq.value);
+      t0 += 0.002*(50/Math.max(1,f));
+      if(t0>1e6) t0=0;
+      render();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // KaTeX
+  function renderMath(){
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false},
+        ]
+      });
+    }
+  }
+
+  // Enable/disable dependent sliders
+  function syncEnables(){
+    mu.disabled = !magLinear.checked;
+    alpha.disabled = !nonlin.checked;
+    beta.disabled = !nonlin.checked;
+    noiseAmp.disabled = !noise.checked;
+  }
+  [magLinear, nonlin, noise].forEach(el=>el.addEventListener('change', syncEnables));
+
+  window.addEventListener('load', ()=>{
+    syncEnables();
+    renderMath();
+    render();
+    requestAnimationFrame(loop);
+  });
+})();
+</script>
+</body>
+</html>
