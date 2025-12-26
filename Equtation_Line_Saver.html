@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>קו תמסורת + גנרטור + מנוע | מישור התדר (לפלס/פאזורים) | הדגמה אינטראקטיבית</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff;
+      --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.55);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.12); --r:18px;
+      --accent:#6366f1; --mono:#0ea5e9; --bad:#ef4444; --ok:#16a34a; --warn:#f59e0b;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1222;
+        --card:rgba(17,24,39,.66); --card2:rgba(17,24,39,.45);
+        --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.20);
+        --shadow:0 18px 55px rgba(0,0,0,.45);
+        --accent:#8b5cf6; --mono:#38bdf8;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+      background:
+        radial-gradient(1200px 500px at 15% 10%, var(--bg1), transparent 60%),
+        radial-gradient(900px 420px at 85% 5%, rgba(99,102,241,.25), transparent 55%),
+        radial-gradient(800px 420px at 25% 92%, rgba(14,165,233,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    header{max-width:1240px;margin:0 auto;padding:24px 16px 10px}
+    .hero{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+      display:grid; gap:8px;
+    }
+    h1{margin:0;font-size:clamp(20px,2.4vw,34px);line-height:1.1}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+    main{max-width:1240px;margin:0 auto;padding:10px 16px 34px;display:grid;gap:12px}
+    .grid{display:grid;grid-template-columns: 430px 1fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 8px;font-size:16px}
+    .muted{color:var(--muted)}
+    .controls{display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+    input[type="range"]{width:100%;accent-color:var(--accent)}
+    select{
+      width:100%; padding:10px 10px;
+      border-radius: 12px; border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      select{background: rgba(17,24,39,.25);}
+    }
+    .val{
+      min-width: 115px; text-align:left;
+      font-variant-numeric: tabular-nums;
+      padding:6px 10px; border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.18);
+    }
+    @media (prefers-color-scheme: dark){.val{background: rgba(17,24,39,.35);}}
+
+    .toggle{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 12px;border:1px solid var(--line);border-radius:14px;
+      background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){.toggle{background: rgba(17,24,39,.25);}}
+    .toggle b{font-size:13px}
+    .toggle span{font-size:12px;color:var(--muted)}
+    .switch{position:relative;width:44px;height:26px;flex:0 0 auto}
+    .switch input{display:none}
+    .slider{
+      position:absolute; inset:0; border-radius:999px; border:1px solid var(--line);
+      background: rgba(148,163,184,.25); transition:.18s ease;
+    }
+    .slider:before{
+      content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+      background: white; box-shadow: 0 10px 18px rgba(0,0,0,.18); transition:.18s ease;
+    }
+    @media (prefers-color-scheme: dark){.slider:before{background:#e5e7eb}}
+    .switch input:checked + .slider{
+      background: rgba(99,102,241,.35); border-color: rgba(99,102,241,.55);
+    }
+    .switch input:checked + .slider:before{transform: translateX(18px)}
+
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+    .tab{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.14); cursor:pointer; font-size:12px; color:var(--muted);
+      user-select:none;
+    }
+    @media (prefers-color-scheme: dark){.tab{background: rgba(17,24,39,.25);}}
+    .tab.active{color:var(--text);border-color: rgba(99,102,241,.55); background: rgba(99,102,241,.18)}
+
+    .charts{display:grid;gap:12px}
+    .chartwrap{
+      border:1px solid var(--line);border-radius:16px;padding:10px;
+      background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){.chartwrap{background: rgba(17,24,39,.22);}}
+    canvas{width:100% !important;height:280px !important}
+
+    .status{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.16);
+      font-size:12px;color:var(--muted);
+    }
+    .dot{width:10px;height:10px;border-radius:99px;background:var(--mono);box-shadow:0 0 0 3px rgba(14,165,233,.15)}
+    .dot.warn{background:var(--warn);box-shadow:0 0 0 3px rgba(245,158,11,.18)}
+    .dot.bad{background:var(--bad);box-shadow:0 0 0 3px rgba(239,68,68,.18)}
+    .dot.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+
+    details{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background: rgba(255,255,255,.12)}
+    @media (prefers-color-scheme: dark){details{background: rgba(17,24,39,.25);}}
+    details summary{cursor:pointer;font-weight:750;font-size:13px}
+    .math{font-size:14px;line-height:1.7}
+    .hint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+    .foot{max-width:1240px;margin:0 auto;padding:0 16px 22px;color:var(--muted);font-size:12px;line-height:1.7}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>קו תמסורת משולב עם גנרטור ומנוע — פתרון במישור התדר</h1>
+    <p class="sub">
+      הרעיון: במקום לחשב לאורך “אורך הגל” בזמן, עוברים ל-\(s\) / \(j\omega\), משתמשים ב-\(Z_0(s)\), \(\gamma(s)\), החזרות \(\Gamma\),
+      ומחזירים זמן רק בסוף. כאן תראה: \(|V(x)|, |I(x)|, P(x)\) לאורך הקו + Bode + פאזה + תרומת כל רכיב.
+    </p>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- Controls -->
+  <section class="card">
+    <h2>פרמטרים</h2>
+    <div class="controls">
+
+      <div class="row">
+        <label>מצב חישוב</label>
+        <select id="mode">
+          <option value="phasor">פאזורים (מצב יציב, \(s=j\omega\))</option>
+          <option value="laplace">לפלס כללי (דמו: אותו חישוב ב-\(s=\sigma+j\omega\))</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="freq">תדר \(f\) (Hz)</label>
+        <div class="val" id="freqVal">50 Hz</div>
+      </div>
+      <input id="freq" type="range" min="1" max="5000" value="50" step="1">
+
+      <div class="row">
+        <label for="sigma">\(\sigma\) ללפלס (1/s)</label>
+        <div class="val" id="sigmaVal">0.00</div>
+      </div>
+      <input id="sigma" type="range" min="0" max="500" value="0" step="1">
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="row">
+        <label for="Vs">מקור: \(V_s\) (V RMS)</label>
+        <div class="val" id="VsVal">10.0</div>
+      </div>
+      <input id="Vs" type="range" min="0.1" max="200" value="10" step="0.1">
+
+      <div class="row">
+        <label for="Rs">מקור: \(R_s\) (Ω)</label>
+        <div class="val" id="RsVal">1.00</div>
+      </div>
+      <input id="Rs" type="range" min="0" max="50" value="1" step="0.1">
+
+      <div class="row">
+        <label for="Xs">מקור: \(X_s\) (Ω)</label>
+        <div class="val" id="XsVal">0.00</div>
+      </div>
+      <input id="Xs" type="range" min="-50" max="50" value="0" step="0.1">
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="row">
+        <label for="ell">אורך קו \(\ell\) (m)</label>
+        <div class="val" id="ellVal">200 m</div>
+      </div>
+      <input id="ell" type="range" min="1" max="5000" value="200" step="1">
+
+      <div class="row">
+        <label for="Rpr">קו: \(R'\) (Ω/m)</label>
+        <div class="val" id="RprVal">0.0050</div>
+      </div>
+      <input id="Rpr" type="range" min="0" max="0.1" value="0.005" step="0.0005">
+
+      <div class="row">
+        <label for="Lpr">קו: \(L'\) (µH/m)</label>
+        <div class="val" id="LprVal">0.40</div>
+      </div>
+      <input id="Lpr" type="range" min="0.05" max="5" value="0.4" step="0.01">
+
+      <div class="row">
+        <label for="Gpr">קו: \(G'\) (S/m)</label>
+        <div class="val" id="GprVal">0.00000</div>
+      </div>
+      <input id="Gpr" type="range" min="0" max="0.001" value="0" step="0.00001">
+
+      <div class="row">
+        <label for="Cpr">קו: \(C'\) (pF/m)</label>
+        <div class="val" id="CprVal">50</div>
+      </div>
+      <input id="Cpr" type="range" min="5" max="500" value="50" step="1">
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="row">
+        <label>עומס: מודל</label>
+        <select id="loadType">
+          <option value="Z">עומס כללי \(Z_L = R_L + jX_L\)</option>
+          <option value="motor">“מנוע” ליניארי: \(Z_m = R_a + j\omega L_a\) + העמסה מכאנית</option>
+        </select>
+      </div>
+
+      <div id="loadZBlock">
+        <div class="row">
+          <label for="RL">\(R_L\) (Ω)</label>
+          <div class="val" id="RLVal">20.0</div>
+        </div>
+        <input id="RL" type="range" min="0.1" max="500" value="20" step="0.1">
+
+        <div class="row">
+          <label for="XL">\(X_L\) (Ω)</label>
+          <div class="val" id="XLVal">0.0</div>
+        </div>
+        <input id="XL" type="range" min="-500" max="500" value="0" step="0.5">
+      </div>
+
+      <div id="motorBlock" style="display:none">
+        <div class="row">
+          <label for="Ra">מנוע: \(R_a\) (Ω)</label>
+          <div class="val" id="RaVal">2.0</div>
+        </div>
+        <input id="Ra" type="range" min="0.1" max="200" value="2" step="0.1">
+
+        <div class="row">
+          <label for="La">מנוע: \(L_a\) (mH)</label>
+          <div class="val" id="LaVal">20.0</div>
+        </div>
+        <input id="La" type="range" min="0.1" max="500" value="20" step="0.1">
+
+        <div class="toggle">
+          <div>
+            <b>העמסה מכאנית (דמו)</b><br>
+            <span>מוסיף נגד תלוּי־תדר: \(R_\text{mech}(f)\) (כדי להראות “תרומה”)</span>
+          </div>
+          <label class="switch">
+            <input id="mechOn" type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="row">
+          <label for="Rmech">\(R_\text{mech}\) בסיס (Ω)</label>
+          <div class="val" id="RmechVal">10.0</div>
+        </div>
+        <input id="Rmech" type="range" min="0" max="500" value="10" step="0.5">
+      </div>
+
+      <div class="status">
+        <div class="pill"><span class="dot ok"></span> חוק פאזה: <b>\(\angle I=\angle V-\angle Z\)</b></div>
+        <div class="pill"><span class="dot" id="dotMatch"></span> התאמה: <b id="matchText">—</b></div>
+        <div class="pill"><span class="dot warn"></span> \(\Gamma_L\): <b id="gammaText">—</b></div>
+      </div>
+
+      <details>
+        <summary>הפורמליזם (מישור תדר/לפלס)</summary>
+        <div class="math">
+          <p>\[
+            \gamma(s)=\sqrt{(R'+sL')(G'+sC')},\quad
+            Z_0(s)=\sqrt{\frac{R'+sL'}{G'+sC'}}
+          \]</p>
+          <p>\[
+            Z_\text{in}(s)=Z_0\frac{Z_L+Z_0\tanh(\gamma\ell)}{Z_0+Z_L\tanh(\gamma\ell)}
+          \]</p>
+          <p>\[
+            \Gamma_L=\frac{Z_L-Z_0}{Z_L+Z_0}
+          \]</p>
+          <p class="muted">
+            כאן אנחנו מחשבים \(Z_\text{in}\), ואז זרם המקור \(I_s = \frac{V_s}{Z_s+Z_\text{in}}\).
+            לאחר מכן משחזרים את \(V(x),I(x)\) לאורך הקו בעזרת גל קדמי/אחורי.
+          </p>
+        </div>
+      </details>
+
+      <div class="hint">
+        נסה: העלה תדר, הגדל \(\ell\), או צור אי-התאמה ב-\(Z_L\) → תראה תנודות ב-\(|V(x)|\) ו-\(|I(x)|\) (גל עומד).
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts -->
+  <section class="card">
+    <h2>גרפים</h2>
+    <div class="tabs">
+      <div class="tab active" data-tab="along">לאורך הקו</div>
+      <div class="tab" data-tab="bode">Bode של המערכת</div>
+      <div class="tab" data-tab="contrib">תרומת רכיבים (דמו)</div>
+    </div>
+
+    <div id="tab_along" class="charts">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">\(|V(x)|\) ו-\(|I(x)|\) לאורך הקו</div>
+        <canvas id="alongVI"></canvas>
+      </div>
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">הספק ממוצע לאורך הקו: \(P(x)=\frac12\Re\{V(x)I^*(x)\}\)</div>
+        <canvas id="alongP"></canvas>
+      </div>
+    </div>
+
+    <div id="tab_bode" class="charts" style="display:none">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">\(|H(f)| = |V_L/V_s|\)</div>
+        <canvas id="bodeMag"></canvas>
+      </div>
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">\(\angle H(f)\) במעלות</div>
+        <canvas id="bodePh"></canvas>
+      </div>
+    </div>
+
+    <div id="tab_contrib" class="charts" style="display:none">
+      <div class="chartwrap">
+        <div class="muted" style="font-size:12px;margin:2px 6px 8px;">“תרומה” — איפה האנרגיה הולכת (קירוב)</div>
+        <canvas id="contrib"></canvas>
+      </div>
+      <div class="hint">
+        זה דמו שימושי: מחלק את ההספק במקור בין הפסדים בקו (R′), הפסדים בעומס (Re{Z_L}), והחזר (|Γ|).
+        במערכת אמיתית ניתן להרחיב לניתוח רגישות/פרמטרים.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="foot">
+  שמור כ-<b>transmission_line_generator_motor_demo.html</b> והפעל בדפדפן.
+</div>
+
+<script>
+(() => {
+  // ===== Helpers =====
+  const $ = (id)=>document.getElementById(id);
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const fmt=(n,d=3)=>Number(n).toFixed(d);
+
+  // Complex (minimal)
+  const C = (re,im)=>({re,im});
+  const cAdd=(a,b)=>C(a.re+b.re, a.im+b.im);
+  const cSub=(a,b)=>C(a.re-b.re, a.im-b.im);
+  const cMul=(a,b)=>C(a.re*b.re - a.im*b.im, a.re*b.im + a.im*b.re);
+  const cScale=(a,k)=>C(a.re*k, a.im*k);
+  const cConj=(a)=>C(a.re, -a.im);
+  const cAbs=(a)=>Math.hypot(a.re,a.im);
+  const cArg=(a)=>Math.atan2(a.im,a.re);
+  const cInv=(a)=>{ const d=a.re*a.re+a.im*a.im; return C(a.re/d, -a.im/d); };
+  const cDiv=(a,b)=>cMul(a,cInv(b));
+
+  // Complex sqrt using polar
+  const cSqrt=(z)=>{
+    const r=cAbs(z);
+    const th=cArg(z);
+    const sr=Math.sqrt(r);
+    return C(sr*Math.cos(th/2), sr*Math.sin(th/2));
+  };
+
+  // Complex tanh: tanh(a+jb) = (sinh(2a)+j sin(2b)) / (cosh(2a)+cos(2b))
+  const cTanh=(z)=>{
+    const a=z.re, b=z.im;
+    const denom = Math.cosh(2*a) + Math.cos(2*b);
+    return C(Math.sinh(2*a)/denom, Math.sin(2*b)/denom);
+  };
+
+  // UI
+  const mode=$("mode"), freq=$("freq"), sigma=$("sigma");
+  const Vs=$("Vs"), Rs=$("Rs"), Xs=$("Xs");
+  const ell=$("ell"), Rpr=$("Rpr"), Lpr=$("Lpr"), Gpr=$("Gpr"), Cpr=$("Cpr");
+  const loadType=$("loadType"), RL=$("RL"), XL=$("XL");
+  const Ra=$("Ra"), La=$("La"), mechOn=$("mechOn"), Rmech=$("Rmech");
+
+  const freqVal=$("freqVal"), sigmaVal=$("sigmaVal");
+  const VsVal=$("VsVal"), RsVal=$("RsVal"), XsVal=$("XsVal");
+  const ellVal=$("ellVal"), RprVal=$("RprVal"), LprVal=$("LprVal"), GprVal=$("GprVal"), CprVal=$("CprVal");
+  const RLVal=$("RLVal"), XLVal=$("XLVal");
+  const RaVal=$("RaVal"), LaVal=$("LaVal"), RmechVal=$("RmechVal");
+  const dotMatch=$("dotMatch"), matchText=$("matchText"), gammaText=$("gammaText");
+
+  const loadZBlock=$("loadZBlock"), motorBlock=$("motorBlock");
+
+  // Tabs
+  const tabs=[...document.querySelectorAll(".tab")];
+  const showTab=(name)=>{
+    tabs.forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
+    $("tab_along").style.display = name==="along" ? "" : "none";
+    $("tab_bode").style.display  = name==="bode"  ? "" : "none";
+    $("tab_contrib").style.display = name==="contrib" ? "" : "none";
+  };
+  tabs.forEach(t=>t.addEventListener("click", ()=>showTab(t.dataset.tab)));
+
+  // Charts
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  const alongVI = new Chart($("alongVI"), {
+    type:'line',
+    data:{ labels:[], datasets:[
+      {label:'|V(x)| (V RMS)', data:[], tension:0.12, pointRadius:0, borderWidth:2},
+      {label:'|I(x)| (A RMS)', data:[], tension:0.12, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{title:{display:true,text:'x (m) לאורך הקו'},ticks:{maxTicksLimit:8}},
+        y:{title:{display:true,text:'משרעת'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const alongP = new Chart($("alongP"), {
+    type:'line',
+    data:{ labels:[], datasets:[
+      {label:'P(x) ≈ 1/2 Re{V I*} (W)', data:[], tension:0.12, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{title:{display:true,text:'x (m)'},ticks:{maxTicksLimit:8}},
+        y:{title:{display:true,text:'W'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const bodeMag = new Chart($("bodeMag"), {
+    type:'line',
+    data:{ labels:[], datasets:[
+      {label:'|V_L/V_s|', data:[], tension:0.12, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{title:{display:true,text:'f (Hz)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'משרעת'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const bodePh = new Chart($("bodePh"), {
+    type:'line',
+    data:{ labels:[], datasets:[
+      {label:'∠(V_L/V_s) (deg)', data:[], tension:0.12, pointRadius:0, borderWidth:2},
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{title:{display:true,text:'f (Hz)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'deg'},ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+
+  const contrib = new Chart($("contrib"), {
+    type:'bar',
+    data:{ labels:['במנוע/עומס','איבוד בקו (R′)','החזר (Mismatch)'], datasets:[
+      {label:'חלוקת “תרומה” (קירוב)', data:[0,0,0], borderWidth:1}
+    ]},
+    options:{
+      animation:false,responsive:true,maintainAspectRatio:false,
+      scales:{
+        y:{title:{display:true,text:'יחסי (0..1)'},min:0,max:1}
+      }
+    }
+  });
+
+  function refreshColors(){
+    const accent=cssVar('--accent')||'#6366f1';
+    const mono=cssVar('--mono')||'#0ea5e9';
+    const ok=cssVar('--ok')||'#16a34a';
+    alongVI.data.datasets[0].borderColor = mono;
+    alongVI.data.datasets[1].borderColor = accent;
+    alongP.data.datasets[0].borderColor  = ok;
+
+    bodeMag.data.datasets[0].borderColor = accent;
+    bodePh.data.datasets[0].borderColor  = mono;
+
+    contrib.data.datasets[0].backgroundColor = accent;
+    contrib.data.datasets[0].borderColor = accent;
+  }
+  refreshColors();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+    refreshColors();
+    alongVI.update('none'); alongP.update('none'); bodeMag.update('none'); bodePh.update('none'); contrib.update('none');
+  });
+
+  // ===== Physics core =====
+  function getS(){
+    const f=Number(freq.value);
+    const w=2*Math.PI*f;
+    const sig = (mode.value==="laplace") ? Number(sigma.value) : 0;
+    return {f,w,s: C(sig, w)};
+  }
+
+  function Z_line_params(s){
+    // Convert UI: L' in µH/m, C' in pF/m
+    const Rp = Number(Rpr.value);
+    const Lp = Number(Lpr.value) * 1e-6;  // µH/m -> H/m
+    const Gp = Number(Gpr.value);
+    const Cp = Number(Cpr.value) * 1e-12; // pF/m -> F/m
+
+    const A = cAdd(C(Rp,0), cMul(s, C(Lp,0))); // R' + sL'
+    const B = cAdd(C(Gp,0), cMul(s, C(Cp,0))); // G' + sC'
+
+    const gamma = cSqrt(cMul(A,B));
+    const Z0 = cSqrt(cDiv(A,B));
+    return {gamma, Z0};
+  }
+
+  function Z_source(){
+    return C(Number(Rs.value), Number(Xs.value)); // Rs + jXs
+  }
+
+  function Z_load(s){
+    if(loadType.value==="Z"){
+      return C(Number(RL.value), Number(XL.value));
+    }
+    // Motor demo: Zm = Ra + s*La + Rmech(f) (purely real add)
+    const RaV = Number(Ra.value);
+    const LaV = Number(La.value) * 1e-3; // mH -> H
+    let Zm = cAdd(C(RaV,0), cMul(s, C(LaV,0)));
+
+    if(mechOn.checked){
+      // demo: Rmech(f) = Rmech_base * (1 + f/5000)
+      const {f} = getS();
+      const Rm = Number(Rmech.value) * (1 + f/5000);
+      Zm = cAdd(Zm, C(Rm,0));
+    }
+    return Zm;
+  }
+
+  function Z_in(s){
+    // Zin = Z0 * (ZL + Z0 tanh(g l)) / (Z0 + ZL tanh(g l))
+    const {gamma,Z0} = Z_line_params(s);
+    const L = Number(ell.value);
+    const gl = cScale(gamma, L);
+    const th = cTanh(gl);
+    const ZL = Z_load(s);
+
+    const num = cAdd(ZL, cMul(Z0, th));
+    const den = cAdd(Z0, cMul(ZL, th));
+    return cMul(Z0, cDiv(num, den));
+  }
+
+  // Compute V/I along line using forward/back waves with reflection at load:
+  // V(x) = V+ e^{-γx} + V- e^{+γx}
+  // I(x) = (V+/Z0) e^{-γx} - (V-/Z0) e^{+γx}
+  //
+  // Determine V+ from boundary at x=0: V(0)=V0 = V+ + V-
+  // and relationship between V0 and I0 at input: V0 = Zin * I0.
+  // Also: I0 = (V+/Z0) - (V-/Z0).
+  // Solve:
+  //   V0 = V+ + V-
+  //   I0 = (V+ - V-) / Z0
+  // => V+ = (V0 + Z0 I0)/2 , V- = (V0 - Z0 I0)/2
+  //
+  function solveAlong(){
+    const {f,w,s} = getS();
+    const Vs_rms = Number(Vs.value); // treat as RMS magnitude at angle 0
+    const Zs = Z_source();
+    const Zin = Z_in(s);
+
+    // Source current: Is = Vs / (Zs + Zin)
+    const Is = cDiv(C(Vs_rms,0), cAdd(Zs, Zin));
+    // Input voltage: V0 = Zin * Is
+    const V0 = cMul(Zin, Is);
+
+    const {gamma,Z0} = Z_line_params(s);
+
+    // Waves
+    const Vp = cScale(cAdd(V0, cMul(Z0, Is)), 0.5);
+    const Vm = cScale(cSub(V0, cMul(Z0, Is)), 0.5);
+
+    const L = Number(ell.value);
+    const N = 120;
+    const xs = [];
+    const Vmag = [];
+    const Imag = [];
+    const Pavg = [];
+
+    function cExp(re, im){
+      // exp(re + j im) = e^re (cos im + j sin im)
+      const er = Math.exp(re);
+      return C(er*Math.cos(im), er*Math.sin(im));
+    }
+
+    for(let i=0;i<=N;i++){
+      const x = L * i/N;
+      xs.push(Math.round(x).toString());
+
+      const gx = cScale(gamma, x);
+      const e_m = cExp(-gx.re, -gx.im); // e^{-γx}
+      const e_p = cExp(+gx.re, +gx.im); // e^{+γx}
+
+      const Vx = cAdd(cMul(Vp, e_m), cMul(Vm, e_p));
+      const Ix = cSub(cMul(cDiv(Vp, Z0), e_m), cMul(cDiv(Vm, Z0), e_p));
+
+      Vmag.push(cAbs(Vx));
+      Imag.push(cAbs(Ix));
+
+      // P ≈ 1/2 Re{V I*}
+      const VIc = cMul(Vx, cConj(Ix));
+      Pavg.push(0.5 * VIc.re);
+    }
+
+    // Reflection at load
+    const ZL = Z_load(s);
+    const {Z0:Z0l} = Z_line_params(s);
+    const GammaL = cDiv(cSub(ZL, Z0l), cAdd(ZL, Z0l));
+    const gAbs = cAbs(GammaL);
+
+    // Match status
+    const match = (gAbs < 0.05) ? "כמעט התאמה" : (gAbs < 0.3 ? "בינוני" : "אי-התאמה חזקה");
+    dotMatch.className = "dot " + (gAbs<0.05 ? "ok" : (gAbs<0.3 ? "warn":"bad"));
+    matchText.textContent = match;
+    gammaText.textContent = `|Γ|=${fmt(gAbs,3)}`;
+
+    // For Bode point: load-end voltage is at x=ℓ (last point)
+    const VL_over_Vs = cDiv(C(Vmag[Vmag.length-1],0), C(Vs_rms,0)); // magnitude only for display
+    // But need complex ratio. Let's compute complex V(L)/Vs properly:
+    // We'll recompute V(L) complex:
+    const gl = cScale(gamma, L);
+    const e_mL = cExp(-gl.re, -gl.im);
+    const e_pL = cExp(+gl.re, +gl.im);
+    const VLc = cAdd(cMul(Vp, e_mL), cMul(Vm, e_pL));
+    const H = cDiv(VLc, C(Vs_rms,0));
+
+    return {xs, Vmag, Imag, Pavg, H, Is, V0, Zin, Z0:Z0l, GammaL};
+  }
+
+  function computeBode(){
+    // |H| and phase of H = V(L)/Vs over frequency sweep
+    const points = 180;
+    const fMin = 1;
+    const fMax = 20000;
+
+    const labels=[], mags=[], phs=[];
+    const sig = (mode.value==="laplace") ? Number(sigma.value) : 0;
+
+    for(let i=0;i<points;i++){
+      const r = i/(points-1);
+      const f = fMin * Math.pow(fMax/fMin, r);
+      const w = 2*Math.PI*f;
+      const s = C(sig, w);
+
+      // Reuse solve logic but lighter: compute H only
+      const Vs_rms = Number(Vs.value);
+      const Zs = Z_source();
+      const Zin = Z_in(s);
+      const Is = cDiv(C(Vs_rms,0), cAdd(Zs, Zin));
+      const V0 = cMul(Zin, Is);
+      const {gamma,Z0} = Z_line_params(s);
+
+      const Vp = cScale(cAdd(V0, cMul(Z0, Is)), 0.5);
+      const Vm = cScale(cSub(V0, cMul(Z0, Is)), 0.5);
+
+      // V(L)
+      const Llen = Number(ell.value);
+
+      // exp helper
+      const cExp=(re,im)=>{ const er=Math.exp(re); return C(er*Math.cos(im), er*Math.sin(im)); };
+
+      const gl = cScale(gamma, Llen);
+      const e_mL = cExp(-gl.re, -gl.im);
+      const e_pL = cExp(+gl.re, +gl.im);
+      const VL = cAdd(cMul(Vp, e_mL), cMul(Vm, e_pL));
+      const H = cDiv(VL, C(Vs_rms,0));
+
+      labels.push(Math.round(f).toString());
+      mags.push(cAbs(H));
+      phs.push(cArg(H)*180/Math.PI);
+    }
+    return {labels,mags,phs};
+  }
+
+  function computeContribution(snapshot){
+    // Simple “accounting” demo:
+    // - Load share ~ real power at x=ℓ relative to input
+    // - Line loss share ~ drop in P(x) (if lossy)
+    // - Reflection share ~ |Γ|^2 (power reflection coefficient) scaled
+    const P0 = snapshot.Pavg[0];
+    const PL = snapshot.Pavg[snapshot.Pavg.length-1];
+
+    const drop = Math.max(0, P0-PL);
+    const load = Math.max(0, PL);
+    const refl = Math.min(1, Math.pow(cAbs(snapshot.GammaL),2));
+
+    // Normalize to 1 (rough; include reflection as a “bucket”)
+    const total = load + drop + refl*(P0>0?P0:1);
+    let a = 0, b = 0, c = 0;
+    if(total > 0){
+      a = load/total;
+      b = drop/total;
+      c = (refl*(P0>0?P0:1))/total;
+    }
+    return [a,b,c];
+  }
+
+  function syncUI(){
+    freqVal.textContent = `${freq.value} Hz`;
+    sigmaVal.textContent = fmt(sigma.value,2);
+    VsVal.textContent = fmt(Vs.value,1);
+    RsVal.textContent = fmt(Rs.value,2);
+    XsVal.textContent = fmt(Xs.value,2);
+
+    ellVal.textContent = `${ell.value} m`;
+    RprVal.textContent = fmt(Rpr.value,4);
+    LprVal.textContent = fmt(Lpr.value,2);
+    GprVal.textContent = fmt(Gpr.value,5);
+    CprVal.textContent = `${Math.round(Number(Cpr.value))}`;
+
+    RLVal.textContent = fmt(RL.value,1);
+    XLVal.textContent = fmt(XL.value,1);
+    RaVal.textContent = fmt(Ra.value,1);
+    LaVal.textContent = fmt(La.value,1);
+    RmechVal.textContent = fmt(Rmech.value,1);
+
+    sigma.disabled = (mode.value!=="laplace");
+  }
+
+  function render(){
+    syncUI();
+
+    // Load panel switch
+    if(loadType.value==="Z"){
+      loadZBlock.style.display = "";
+      motorBlock.style.display = "none";
+    }else{
+      loadZBlock.style.display = "none";
+      motorBlock.style.display = "";
+    }
+
+    // Along-line
+    const snap = solveAlong();
+    alongVI.data.labels = snap.xs;
+    alongVI.data.datasets[0].data = snap.Vmag;
+    alongVI.data.datasets[1].data = snap.Imag;
+    alongVI.update('none');
+
+    alongP.data.labels = snap.xs;
+    alongP.data.datasets[0].data = snap.Pavg;
+    alongP.update('none');
+
+    // Bode
+    const b = computeBode();
+    bodeMag.data.labels = b.labels;
+    bodeMag.data.datasets[0].data = b.mags;
+    bodeMag.update('none');
+
+    bodePh.data.labels = b.labels;
+    bodePh.data.datasets[0].data = b.phs;
+    bodePh.update('none');
+
+    // Contribution
+    const cvals = computeContribution(snap);
+    contrib.data.datasets[0].data = cvals;
+    contrib.update('none');
+  }
+
+  // Events
+  [
+    mode,freq,sigma,Vs,Rs,Xs,ell,Rpr,Lpr,Gpr,Cpr,
+    loadType,RL,XL,Ra,La,mechOn,Rmech
+  ].forEach(el=>{
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+
+  // KaTeX
+  function renderMath(){
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false},
+        ]
+      });
+    }
+  }
+
+  window.addEventListener('load', ()=>{
+    renderMath();
+    render();
+  });
+})();
+</script>
+</body>
+</html>
