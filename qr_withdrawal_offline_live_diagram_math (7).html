@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>משיכת מזומן עם ברקוד חד־פעמי • תרשים חי + מודל מתמטי (Offline)</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.80);
+      --card2:rgba(255,255,255,.62);
+      --cardSolid:#ffffff;
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1; --accent2:#0ea5e9; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", "Helvetica Neue";
+    }
+    [data-theme="dark"]{
+      --bg0:#0b1020; --bg1:#0a1630; --bg2:#071a22;
+      --card:rgba(17,24,39,.62);
+      --card2:rgba(17,24,39,.45);
+      --cardSolid:#0f172a;
+      --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.20);
+      --head:#f8fafc; --link:#60a5fa;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 80% 20%, var(--bg2), transparent 55%),
+        radial-gradient(900px 700px at 20% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    .wrap{max-width:1200px; margin:24px auto; padding:0 16px 32px}
+    header{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; margin-bottom:16px;}
+    .title, .controls{
+      padding:16px 18px; border:1px solid var(--line);
+      background:linear-gradient(135deg, var(--card), var(--card2));
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+    }
+    .title{flex:1 1 560px}
+    .title h1{margin:0; font-size:20px; color:var(--head)}
+    .title p{margin:8px 0 0 0; color:var(--muted); line-height:1.55}
+    .controls{flex:0 1 360px; display:flex; flex-direction:column; gap:10px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      border:1px solid var(--line);
+      background:var(--cardSolid);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:transform .08s ease;
+      user-select:none;
+      box-shadow:0 6px 16px rgba(2,6,23,.06);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background:var(--cardSolid);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12.5px;
+      color:var(--head);
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(99,102,241,.12);
+      border:1px solid rgba(99,102,241,.25);
+      font-size:13px;
+      color:var(--head);
+      flex-wrap:wrap;
+    }
+    .dot{width:9px; height:9px; border-radius:50%}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+    input[type="range"]{width:180px}
+    .mono{font-family:var(--mono)}
+    .small{font-size:13px; color:var(--muted); line-height:1.55}
+
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, var(--card), var(--card2));
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .hd h2{margin:0; font-size:16px; color:var(--head)}
+    .bd{padding:16px}
+
+    .kpis{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px;}
+    .kpi{
+      padding:12px; border:1px solid var(--line); border-radius:14px;
+      background:rgba(255,255,255,.55);
+    }
+    [data-theme="dark"] .kpi{background:rgba(2,6,23,.25)}
+    .kpi .lab{font-size:12px; color:var(--muted)}
+    .kpi .val{font-family:var(--mono); font-size:14px; margin-top:6px; overflow:hidden; text-overflow:ellipsis}
+
+    .callout{
+      padding:12px;
+      border:1px dashed rgba(99,102,241,.45);
+      background:rgba(99,102,241,.08);
+      border-radius:14px;
+      line-height:1.6;
+    }
+    .codebox{
+      border:1px solid var(--line);
+      background:rgba(2,6,23,.04);
+      border-radius:14px;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12.5px;
+      overflow:auto;
+      white-space:pre;
+      line-height:1.55;
+    }
+    [data-theme="dark"] .codebox{background:rgba(0,0,0,.25)}
+    .foot{
+      margin-top:14px;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.55);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+    [data-theme="dark"] .foot{background:rgba(2,6,23,.25)}
+
+    /* SVG diagram */
+    .diagramWrap{
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:var(--cardSolid);
+    }
+    .diagramTop{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(99,102,241,.10), transparent);
+    }
+    .svgBox{width:100%; overflow:auto; padding:12px;}
+    svg{max-width:100%; height:auto}
+    .node{fill:#fff; stroke:#cbd5e1; stroke-width:1}
+    [data-theme="dark"] .node{fill:#0b1020; stroke:#334155}
+    .nodeTitle{font-weight:700; fill:currentColor; font-size:13px}
+    .nodeText{fill:currentColor; opacity:.9; font-size:11.5px}
+    .edge{stroke:#94a3b8; stroke-width:1.4; fill:none}
+    .edgeLabel{font-size:12px; fill:#64748b}
+    [data-theme="dark"] .edgeLabel{fill:#94a3b8}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>משיכת מזומן עם ברקוד חד־פעמי — תרשים חי + מודל מתמטי (עובד Offline)</h1>
+        <p>
+          קובץ זה <b>לא משתמש</b> בספריות חיצוניות (אין CDN), לכן הוא עובד גם בלי אינטרנט.
+          הוא מציג תרשים מערכת חי (SVG), אסימון לדוגמה, וחישוב סיכונים בסיסי.
+        </p>
+      </div>
+
+      <div class="controls">
+        <div class="row">
+          <button class="btn" id="toggleThemeBtn">🌗 מצב כהה/בהיר</button>
+          <button class="btn" id="regenBtn">🔁 אסימון חדש</button>
+          <button class="btn" id="simulateBtn">▶️ סימולציה</button>
+        </div>
+
+        <div class="row">
+          <span class="tag">TTL (שניות)</span>
+          <input type="range" id="ttlRange" min="30" max="300" step="10" value="90" />
+          <span class="mono" id="ttlVal">90</span>
+        </div>
+
+        <div class="row">
+          <span class="tag">p(כשל ללקוח)</span>
+          <input type="range" id="pfailRange" min="0" max="0.25" step="0.01" value="0.03" />
+          <span class="mono" id="pfailVal">0.03</span>
+        </div>
+
+        <div class="row">
+          <span class="tag">λ התקפות/דקה</span>
+          <input type="range" id="lambdaRange" min="0" max="20" step="1" value="4" />
+          <span class="mono" id="lambdaVal">4</span>
+        </div>
+
+        <div class="pill" id="statusPill">
+          <span class="dot warn" id="statusDot"></span>
+          <span id="statusText">מוכן</span>
+        </div>
+
+        <div class="small">
+          הערה: “הסימולציה” מדגימה מודל פואסון פשוט לניסיונות תקיפה בחלון TTL.
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>תרשימים חיים (SVG) — Figure 1 / Figure 2</h2>
+          <span class="small">Offline • שבירת שורות • ללא גלישת מלל</span>
+        </div>
+        <div class="bd">
+          <div class="diagramWrap">
+            <div class="diagramTop">
+              <div class="small">
+                סטטוס תרשים: <span class="mono" id="diagMeta">—</span>
+              </div>
+              <div class="row" style="justify-content:flex-end">
+                <span class="tag">Zoom</span>
+                <button class="btn" id="zoomOutBtn" title="הקטן">−</button>
+                <input type="range" id="zoomRange" min="60" max="140" step="5" value="100" />
+                <button class="btn" id="zoomInBtn" title="הגדל">+</button>
+                <span class="mono" id="zoomVal">100%</span>
+              </div>
+              <div class="row" style="justify-content:flex-end">
+                <span class="tag">גודל מלבנים</span>
+                <button class="btn" id="boxDownBtn" title="הקטן מלבנים">−</button>
+                <input type="range" id="boxRange" min="80" max="160" step="5" value="100" />
+                <button class="btn" id="boxUpBtn" title="הגדל מלבנים">+</button>
+                <span class="mono" id="boxVal">100%</span>
+              </div>
+            </div>
+
+            <div class="row" style="padding:10px 12px; border-bottom:1px solid var(--line); gap:10px">
+              <button class="btn" id="tab1Btn" aria-pressed="true">Figure 1 — תהליך לקוח (Client Flow)</button>
+              <button class="btn" id="tab2Btn" aria-pressed="false">Figure 2 — תהליך בנקאי (Bank / Gateway)</button>
+              <span class="small" style="margin-inline-start:auto">
+                עיקרון: QR מכיל <span class="mono">Token + Sig + TTL</span> בלבד (ללא פרטים גלויים)
+              </span>
+            </div>
+
+            <div class="svgBox" id="svgStage">
+              <div id="fig1Wrap">
+                <div id="svgHost1"></div>
+                <div class="foot" style="margin-top:10px">
+                  <b>Figure 1:</b> זרימת לקוח — בקשה באפליקציה, יצירת Token/QR, סריקה ב־ATM, אימות נוסף, ושחרור מזומן.
+                </div>
+              </div>
+
+              <div id="fig2Wrap" style="display:none">
+                <div id="svgHost2"></div>
+                <div class="foot" style="margin-top:10px">
+                  <b>Figure 2:</b> זרימת מערכת — Gateway בין־בנקאי, ניתוב לבנק מקור, בדיקות Risk/AML, Burn + Audit Logs חתומים.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="foot">
+            <b>אבטחה “חוצה בנקים”:</b> ה־ATM לא צריך לדעת “איזה בנק זה”.
+            הוא שולח את ה־Token ל־Gateway בין־בנקאי שמנתב לבנק המקור (מאחורי הקלעים).
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>אסימון + מדדים</h2>
+          <span class="small">הדגמה בלבד</span>
+        </div>
+        <div class="bd">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="lab">Token ID (מדומה)</div>
+              <div class="val" id="tokenId">—</div>
+            </div>
+            <div class="kpi">
+              <div class="lab">תוקף עד</div>
+              <div class="val" id="expAt">—</div>
+            </div>
+            <div class="kpi">
+              <div class="lab">P_attack (תיאורטי)</div>
+              <div class="val" id="pAttack">—</div>
+            </div>
+            <div class="kpi">
+              <div class="lab">p_s (הצלחה לניסיון תקיפה)</div>
+              <div class="val" id="psVal">—</div>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="callout">
+            <b>מודל מתמטי קצר (קריא):</b><br>
+            <span class="mono">μ = λ · (T/60)</span> &nbsp; (T=TTL בשניות, λ התקפות לדקה)<br>
+            <span class="mono">P_attack = 1 − exp(−μ · p_s)</span><br>
+            <span class="mono">P_ok ≈ 1 − p_f</span> &nbsp; (הצלחה ללקוח בקירוב)
+          </div>
+
+          <div style="height:10px"></div>
+          <div class="small">Payload הדגמה (בפועל מוצפן/חתום):</div>
+          <div class="codebox" id="payloadBox">—</div>
+        </div>
+      </aside>
+    </div>
+
+    
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>מודל פואסוני לתזרים לקוחות וכסף (ATM Cashflow)</h2>
+        <span class="small">Compound Poisson • דילול • מלאי מזומן</span>
+      </div>
+      <div class="bd">
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:14px">
+          <div class="card" style="box-shadow:none">
+            <div class="hd">
+              <h2 style="font-size:15px">קלטים</h2>
+              <span class="small">הכל “לחלון” זמן T</span>
+            </div>
+            <div class="bd">
+              <div class="row">
+                <span class="tag">λ הגעות/שעה</span>
+                <input type="range" id="lamArrRange" min="0" max="300" step="5" value="60" />
+                <span class="mono" id="lamArrVal">60</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">q הסתברות משיכה</span>
+                <input type="range" id="qRange" min="0" max="1" step="0.01" value="0.55" />
+                <span class="mono" id="qVal">0.55</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">α יש Token פעיל</span>
+                <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="0.75" />
+                <span class="mono" id="alphaVal">0.75</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">β( TTL ) בזמן</span>
+                <input type="range" id="betaRange" min="0" max="1" step="0.01" value="0.85" />
+                <span class="mono" id="betaVal">0.85</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">T חלון (שעות)</span>
+                <input type="range" id="horizonRange" min="0.25" max="24" step="0.25" value="2" />
+                <span class="mono" id="horizonVal">2.00</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">E[A] ₪ ממוצע</span>
+                <input type="range" id="meanARange" min="20" max="2000" step="10" value="300" />
+                <span class="mono" id="meanAVal">300</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">Var(A) ₪²</span>
+                <input type="range" id="varARange" min="0" max="2500000" step="25000" value="180000" />
+                <span class="mono" id="varAVal">180000</span>
+              </div>
+
+              <div class="row">
+                <span class="tag">C0 מזומן התחלתי ₪</span>
+                <input type="range" id="c0Range" min="0" max="200000" step="1000" value="60000" />
+                <span class="mono" id="c0Val">60000</span>
+              </div>
+
+              <div class="small" style="margin-top:10px">
+                פירוש מהיר: <span class="mono">λ_eff = λ · q · α · β</span><br>
+                כאשר <span class="mono">N_w(T) ~ Poisson(λ_eff·T)</span> ו־<span class="mono">S(T)=Σ A_i</span>.
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none">
+            <div class="hd">
+              <h2 style="font-size:15px">פלטים</h2>
+              <span class="small">צפוי + סיכון “נגמר הכסף”</span>
+            </div>
+            <div class="bd">
+              <div class="kpis" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+                <div class="kpi">
+                  <div class="lab">λ_eff משיכות/שעה</div>
+                  <div class="val" id="lamEff">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="lab">E[N_w(T)]</div>
+                  <div class="val" id="EN">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="lab">E[S(T)] ₪</div>
+                  <div class="val" id="ES">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="lab">SD[S(T)] ₪</div>
+                  <div class="val" id="SDS">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="lab">E[C(T)] ₪</div>
+                  <div class="val" id="EC">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="lab">P(stockout)≈</div>
+                  <div class="val" id="Pout">—</div>
+                </div>
+              </div>
+
+              <div style="height:12px"></div>
+              <div class="callout">
+                <b>נוסחאות:</b><br>
+                <span class="mono">λ_eff = λ·q·α·β</span><br>
+                <span class="mono">E[S(T)] = λ_eff·T·E[A]</span><br>
+                <span class="mono">Var(S(T)) = λ_eff·T·E[A²]</span>, כאשר <span class="mono">E[A²]=Var(A)+E[A]²</span><br>
+                קירוב נורמלי (רק לצורך אינטואיציה):<br>
+                <span class="mono">P(stockout) ≈ 1 − Φ((C0 − μ_S)/σ_S)</span>
+              </div>
+
+              <div style="height:12px"></div>
+              <div class="small">גרף: מזומן צפוי לאורך החלון (ללא מילוי R(t))</div>
+              <div class="diagramWrap" style="padding:10px">
+                <canvas id="cashCanvas" width="900" height="320" style="width:100%; height:auto;"></canvas>
+              </div>
+                <div style="height:12px"></div>
+                <div class="row" style="justify-content:space-between; align-items:center">
+                  <div class="row">
+                    <button class="btn" id="simCashBtn">סימולציה: התפלגות S(T)</button>
+                    <span class="tag">הרצות</span>
+                    <input id="simRuns" type="number" min="200" step="200" value="2000" style="width:110px">
+                    <span class="small">דגימה Compound Poisson + LogNormal(A)</span>
+                  </div>
+                  <div class="small mono" id="simMeta">—</div>
+                </div>
+
+                <div class="kpis" style="margin-top:10px; grid-template-columns:repeat(4, minmax(0,1fr))">
+                  <div class="kpi"><div class="lab">P50 (₪)</div><div class="val" id="q50Out">—</div></div>
+                  <div class="kpi"><div class="lab">P90 (₪)</div><div class="val" id="q90Out">—</div></div>
+                  <div class="kpi"><div class="lab">P95 (₪)</div><div class="val" id="q95Out">—</div></div>
+                  <div class="kpi"><div class="lab">P99 (₪)</div><div class="val" id="q99Out">—</div></div>
+                </div>
+
+                <div style="height:10px"></div>
+                <div style="padding:12px; background:var(--cardSolid)">
+                  <canvas id="histCanvas" width="980" height="260" style="width:100%; height:auto; border-radius:12px; border:1px solid var(--line)"></canvas>
+                </div>
+
+
+              <div class="foot">
+                אם מוסיפים מילוי <span class="mono">R(t)</span> (לדוגמה פעם ביום), פשוט מחברים אותו: <span class="mono">C(t)=C0 + R(t) − S(t)</span>.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>הסבר מלא — שלבי המערכת (End-to-End)</h2>
+        <span class="small">העתקה למסמך/פטנט</span>
+      </div>
+      <div class="bd">
+        <div class="callout">
+          <ol style="margin:0; padding-inline-start:18px">
+            <li><b>בקשת משיכה</b>: הלקוח בוחר סכום ומטרה באפליקציה/אתר.</li>
+            <li><b>יצירת אסימון</b>: שרת טוקנים מייצר Token חד־פעמי, TTL קצר, וחתימה (Sig).</li>
+            <li><b>Commit לשדות “נסתרים”</b>: הבנק שומר אצלם מחויבות (Commit) למטרה/סוג לקוח/סכום/קבוצה בנקאית, לא בתוך ה־QR.</li>
+            <li><b>יצירת QR</b>: מציגים ללקוח QR שמכיל רק (Token, TTL, Sig). אין פרטים גלויים.</li>
+            <li><b>סריקה ב־ATM</b>: ה־ATM סורק ושולח ל־Gateway בין־בנקאי (אימות + ניתוב).</li>
+            <li><b>ניתוב לבנק מקור</b>: ה־Gateway מאתר את הבנק המקור “מאחורי הקלעים” ומבקש אישור.</li>
+            <li><b>בדיקות סיכון/AML</b>: הבנק מאשר/דוחה לפי מדיניות (סכום, תדירות, מטרה, חריגות).</li>
+            <li><b>אימות נוסף</b>: ה־ATM דורש PIN/ביומטרי/OTP. זה מוריד משמעותית את p_s.</li>
+            <li><b>שחרור מזומן</b>: אם הכל תקין—ה־ATM משחרר מזומן.</li>
+            <li><b>Burn + Audit</b>: האסימון נשרף (בלתי ניתן לשימוש חוזר) ונרשם לוג חתום לביקורת.</li>
+          </ol>
+        </div>
+        <div class="foot">
+          אם תרצה, אפשר להוסיף שכבת “חירום”: קוד חד־פעמי בלי טלפון (בנק מנפיק שוברים), ושכבת “Kill Switch” לביטול מיידי.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ========= Utilities =========
+    const $ = (id) => document.getElementById(id);
+
+    function setStatus(type, text){
+      const dot = $("statusDot");
+      dot.classList.remove("ok","warn","bad");
+      dot.classList.add(type);
+      $("statusText").textContent = text;
+    }
+
+    function fmtTime(d){
+      return d.toLocaleString('he-IL', { hour12:false });
+    }
+
+    function addSeconds(date, sec){
+      return new Date(date.getTime() + sec*1000);
+    }
+
+    function randHex(len){
+      const bytes = new Uint8Array(len/2);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    // ========= Model =========
+    let state = {
+      ttl: 90,       // seconds
+      lambda: 4,     // attacks/min
+      pfail: 0.03,   // legitimate user fail
+      ps: 0.02,      // attacker success per attempt
+      tokenId: "",
+      issuedAt: new Date(),
+      expAt: new Date()
+    };
+
+    function derivePs(pfail){
+      // demo mapping: baseline 0.015..0.06
+      return Math.min(0.06, Math.max(0.015, 0.015 + pfail*0.6));
+    }
+
+    function pAttackTheoretical(ttl, lambda, ps){
+      const mu = lambda * (ttl/60);
+      return 1 - Math.exp(-mu * ps);
+    }
+
+    
+    // ========= Normal CDF (Φ) approximation (offline) =========
+    function erfApprox(x){
+      const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+      const p = 0.3275911;
+      const sign = (x < 0) ? -1 : 1;
+      const ax = Math.abs(x);
+      const t = 1.0 / (1.0 + p*ax);
+      const y = 1.0 - (((((a5*t + a4)*t + a3)*t + a2)*t + a1)*t) * Math.exp(-ax*ax);
+      return sign * y;
+    }
+    function normalCDF(z){
+      return 0.5 * (1 + erfApprox(z / Math.SQRT2));
+    }
+
+    // ========= Cashflow model (Compound Poisson) =========
+    function readNum(id, fallback){
+      const el = $(id);
+      if(!el) return fallback;
+      const v = parseFloat(el.value);
+      return Number.isFinite(v) ? v : fallback;
+    }
+
+    function cashModel(){
+      const lam = readNum("lamArr", 30);        // customers/hour
+      const q = readNum("qWithdraw", 0.65);
+      const alpha = readNum("alphaTok", 0.75);
+      const beta = readNum("betaTTL", 0.92);
+      const T = readNum("horizonT", 8);         // hours
+      const C0 = readNum("cashC0", 60000);
+      const EA = readNum("EA", 350);
+      const EA2 = readNum("EA2", 160000);
+
+      const lamEff = Math.max(0, lam*q*alpha*beta); // withdrawals/hour
+      const ENw = lamEff * T;
+      const muS = ENw * EA;
+      const varS = ENw * EA2;
+      const sigS = Math.sqrt(Math.max(0, varS));
+      const z = (sigS > 0) ? ((C0 - muS) / sigS) : (C0 >= muS ? 10 : -10);
+      const Pso = 1 - normalCDF(z);
+      const cashMeanT = C0 - muS;
+
+      const muService = readNum("muService", 60);
+      const rho = (muService > 0) ? lam / muService : Infinity;
+      const EW = (muService > lam) ? (1/(muService - lam)) : Infinity; // hours
+      const EL = (rho < 1) ? (rho/(1-rho)) : Infinity;
+
+      return {lam, q, alpha, beta, T, C0, EA, EA2, lamEff, ENw, muS, sigS, Pso, cashMeanT, muService, rho, EW, EL};
+    }
+
+    function fmtILS(x){
+      if(!Number.isFinite(x)) return "—";
+      return Math.round(x).toLocaleString("he-IL");
+    }
+
+    function drawCashCanvas(m){
+      const c = $("cashCanvas");
+      if(!c) return;
+      const ctx = c.getContext("2d");
+      const W = c.width, H = c.height;
+      ctx.clearRect(0,0,W,H);
+
+      const padL = 56, padR = 18, padT = 18, padB = 38;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+
+      const T = Math.max(0.1, m.T);
+      const lamEff = m.lamEff;
+      const EA = m.EA;
+      const EA2 = m.EA2;
+
+      const n = 80;
+      const xs = [], cashMean = [], cashLo = [], cashHi = [];
+      for(let i=0;i<=n;i++){
+        const t = (T*i)/n;
+        const muS = (lamEff*t)*EA;
+        const sigS = Math.sqrt(Math.max(0, (lamEff*t)*EA2));
+        const cm = m.C0 - muS;
+        xs.push(t);
+        cashMean.push(cm);
+        cashLo.push(cm - sigS);
+        cashHi.push(cm + sigS);
+      }
+
+      const yMin = Math.min(...cashLo, 0);
+      const yMax = Math.max(...cashHi, m.C0);
+      const ySpan = (yMax - yMin) || 1;
+
+      const xTo = (t) => padL + (t/T)*innerW;
+      const yTo = (y) => padT + (1 - (y - yMin)/ySpan)*innerH;
+
+      // Axes
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(148,163,184,0.6)";
+      ctx.beginPath();
+      ctx.moveTo(padL, padT);
+      ctx.lineTo(padL, padT + innerH);
+      ctx.lineTo(padL + innerW, padT + innerH);
+      ctx.stroke();
+
+      // x grid
+      ctx.fillStyle = "rgba(100,116,139,0.9)";
+      ctx.font = "12px ui-monospace, Menlo, Consolas, monospace";
+      for(let k=0;k<=4;k++){
+        const t = (T*k)/4;
+        const x = xTo(t);
+        ctx.strokeStyle = "rgba(148,163,184,0.25)";
+        ctx.beginPath();
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, padT + innerH);
+        ctx.stroke();
+        ctx.fillText(t.toFixed(1)+"h", x-14, padT + innerH + 24);
+      }
+
+      // y grid
+      for(let k=0;k<=4;k++){
+        const y = yMin + (ySpan*k)/4;
+        const yy = yTo(y);
+        ctx.strokeStyle = "rgba(148,163,184,0.20)";
+        ctx.beginPath();
+        ctx.moveTo(padL, yy);
+        ctx.lineTo(padL + innerW, yy);
+        ctx.stroke();
+        ctx.fillText(fmtILS(y), 6, yy+4);
+      }
+
+      // band
+      ctx.fillStyle = "rgba(99,102,241,0.12)";
+      ctx.beginPath();
+      ctx.moveTo(xTo(xs[0]), yTo(cashHi[0]));
+      for(let i=1;i<xs.length;i++) ctx.lineTo(xTo(xs[i]), yTo(cashHi[i]));
+      for(let i=xs.length-1;i>=0;i--) ctx.lineTo(xTo(xs[i]), yTo(cashLo[i]));
+      ctx.closePath();
+      ctx.fill();
+
+      // mean line
+      ctx.strokeStyle = "rgba(99,102,241,0.95)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xTo(xs[0]), yTo(cashMean[0]));
+      for(let i=1;i<xs.length;i++) ctx.lineTo(xTo(xs[i]), yTo(cashMean[i]));
+      ctx.stroke();
+
+      // zero line
+      const y0 = yTo(0);
+      ctx.strokeStyle = "rgba(239,68,68,0.7)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, y0);
+      ctx.lineTo(padL + innerW, y0);
+      ctx.stroke();
+
+      // caption
+      ctx.fillStyle = "rgba(100,116,139,0.95)";
+      ctx.font = "12px ui-sans-serif, system-ui, Arial";
+      ctx.fillText("קו כחול: מזומן צפוי | פס: ±1σ | קו אדום: 0 ₪", padL, 14);
+    }
+
+    
+    // ========= Simulation: Compound Poisson S(T) distribution =========
+    function logNormalParamsFromMeanSecondMoment(EA, EA2){
+      // For LogNormal: E[A]=m, E[A^2]=s2.
+      // Let muLN, sigmaLN such that:
+      // E[A]=exp(mu+0.5*sigma^2)
+      // E[A^2]=exp(2mu+2sigma^2)
+      // => sigma^2 = ln(E[A^2]/E[A]^2)
+      // => mu = ln(E[A]) - 0.5*sigma^2
+      const m = Math.max(1e-9, EA);
+      const ratio = Math.max(1 + 1e-9, EA2 / (m*m));
+      const sigma2 = Math.log(ratio);
+      const sigma = Math.sqrt(Math.max(0, sigma2));
+      const mu = Math.log(m) - 0.5*sigma2;
+      return {mu, sigma};
+    }
+
+    // Box-Muller normal sampler
+    function randn(){
+      let u = 0, v = 0;
+      while(u === 0) u = Math.random();
+      while(v === 0) v = Math.random();
+      return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+    }
+
+    function sampleLogNormal(mu, sigma){
+      return Math.exp(mu + sigma * randn());
+    }
+
+    function quantile(sortedArr, q){
+      const n = sortedArr.length;
+      if(n === 0) return NaN;
+      const pos = (n-1)*q;
+      const lo = Math.floor(pos), hi = Math.ceil(pos);
+      if(lo === hi) return sortedArr[lo];
+      const w = pos - lo;
+      return sortedArr[lo]*(1-w) + sortedArr[hi]*w;
+    }
+
+    function simulateCompoundPoisson(runs){
+      const m = cashModel();
+      const lamEff = m.lamEff;
+      const T = Math.max(0.001, m.T);
+      const meanN = lamEff * T;
+
+      const {mu, sigma} = logNormalParamsFromMeanSecondMoment(m.EA, m.EA2);
+
+      const out = new Array(runs);
+      for(let r=0; r<runs; r++){
+        const N = samplePoisson(meanN);
+        let s = 0;
+        for(let i=0; i<N; i++){
+          s += sampleLogNormal(mu, sigma);
+        }
+        out[r] = s;
+      }
+      out.sort((a,b)=>a-b);
+
+      const q50 = quantile(out, 0.50);
+      const q90 = quantile(out, 0.90);
+      const q95 = quantile(out, 0.95);
+      const q99 = quantile(out, 0.99);
+
+      return {samples: out, q50, q90, q95, q99, meanN, muLN:mu, sigLN:sigma};
+    }
+
+    function drawHistogram(samples){
+      const c = $("histCanvas");
+      if(!c) return;
+      const ctx = c.getContext("2d");
+      const W = c.width, H = c.height;
+      ctx.clearRect(0,0,W,H);
+
+      const padL = 56, padR = 18, padT = 18, padB = 34;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+
+      if(!samples || samples.length === 0){
+        ctx.fillStyle = "rgba(100,116,139,0.9)";
+        ctx.font = "14px ui-sans-serif, system-ui, Arial";
+        ctx.fillText("אין נתונים להצגה", padL, padT+24);
+        return;
+      }
+
+      // Choose range between p1 and p99.5 to avoid extreme tails
+      const n = samples.length;
+      const lo = samples[Math.floor(0.01*(n-1))];
+      const hi = samples[Math.floor(0.995*(n-1))];
+      const span = (hi - lo) || 1;
+
+      const bins = 28;
+      const counts = new Array(bins).fill(0);
+      for(const x of samples){
+        if(x < lo || x > hi) continue;
+        const b = Math.min(bins-1, Math.floor(((x - lo)/span)*bins));
+        counts[b]++;
+      }
+      const maxC = Math.max(...counts, 1);
+
+      const xTo = (x) => padL + ((x - lo)/span)*innerW;
+
+      // axes
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(148,163,184,0.6)";
+      ctx.beginPath();
+      ctx.moveTo(padL, padT);
+      ctx.lineTo(padL, padT + innerH);
+      ctx.lineTo(padL + innerW, padT + innerH);
+      ctx.stroke();
+
+      // bars
+      for(let b=0;b<bins;b++){
+        const x0 = padL + (b/bins)*innerW;
+        const bw = innerW/bins - 2;
+        const h = (counts[b]/maxC)*innerH;
+        const y0 = padT + innerH - h;
+        ctx.fillStyle = "rgba(99,102,241,0.35)";
+        ctx.fillRect(x0+1, y0, bw, h);
+      }
+
+      // labels
+      ctx.fillStyle = "rgba(100,116,139,0.95)";
+      ctx.font = "12px ui-monospace, Menlo, Consolas, monospace";
+      ctx.fillText(fmtILS(lo)+"₪", padL, padT + innerH + 24);
+      ctx.fillText(fmtILS(hi)+"₪", padL + innerW - 70, padT + innerH + 24);
+
+      ctx.fillStyle = "rgba(100,116,139,0.95)";
+      ctx.font = "12px ui-sans-serif, system-ui, Arial";
+      ctx.fillText("היסטוגרמה: S(T) — כסף שנמשך (₪) בהרצות סימולציה", padL, 14);
+    }
+
+    function runCashSimulation(){
+      const runs = Math.max(200, Math.min(20000, parseInt($("simRuns").value, 10) || 2000));
+      $("simRuns").value = runs;
+
+      const sim = simulateCompoundPoisson(runs);
+      const set = (id, v) => { const el=$(id); if(el) el.textContent = v; };
+
+      set("q50Out", fmtILS(sim.q50));
+      set("q90Out", fmtILS(sim.q90));
+      set("q95Out", fmtILS(sim.q95));
+      set("q99Out", fmtILS(sim.q99));
+
+      const meta = `הרצות=${runs} • E[N_w(T)]=${sim.meanN.toFixed(1)} • LogNormal σ=${sim.sigLN.toFixed(2)}`;
+      const sm = $("simMeta"); if(sm) sm.textContent = meta;
+
+      drawHistogram(sim.samples);
+    }
+
+function renderCashPanel(){
+      const m = cashModel();
+      const set = (id, v) => { const el=$(id); if(el) el.textContent = v; };
+
+      set("lamEffOut", m.lamEff.toFixed(2));
+      set("ENwOut", m.ENw.toFixed(1));
+      set("ESOut", fmtILS(m.muS));
+      set("SigOut", fmtILS(m.sigS));
+      set("PsoOut", (Math.max(0, Math.min(1, m.Pso))*100).toFixed(1) + "%");
+      set("CashMeanT", fmtILS(m.cashMeanT));
+
+      const warn = (m.rho >= 1) ? " (ρ≥1 לא יציב!)" : "";
+      const meta = `λ_eff=${m.lamEff.toFixed(2)}/h • T=${m.T}h • C0=${fmtILS(m.C0)}₪ • E[S]=${fmtILS(m.muS)}₪ • Pso=${(m.Pso*100).toFixed(1)}% | ρ=${Number.isFinite(m.rho)?m.rho.toFixed(2):"—"}${warn} • E[W]=${Number.isFinite(m.EW)?(m.EW*60).toFixed(1)+"min":"∞"}`;
+      const pm = $("plotMeta"); if(pm) pm.textContent = meta;
+
+      drawCashCanvas(m);
+      // Clear histogram meta on parameter change (run simulation to refresh)
+      const sm=$('simMeta'); if(sm) sm.textContent = '—';
+    }
+
+
+    // Knuth Poisson sampler
+    function samplePoisson(mu){
+      const L = Math.exp(-mu);
+      let k = 0, p = 1;
+      do {
+        k++;
+        p *= Math.random();
+      } while (p > L);
+      return k - 1;
+    }
+
+    // ========= Diagram (SVG) =========
+    function makeDiagramSVG(){
+      const exp = fmtTime(state.expAt);
+      const pAtk = pAttackTheoretical(state.ttl, state.lambda, state.ps);
+
+      // Nodes positions (w/h tuned + text wrapping)
+      const nodes = [
+        {id:"U",   x:40,  y:70,  w:180, h:86,  title:"לקוח",              text:"מבקש משיכה + מקבל QR"},
+        {id:"APP", x:250, y:40,  w:260, h:136, title:"אפליקציית הבנק",     text:"יוצרת בקשה\nומציגה QR"},
+        {id:"TOK", x:545, y:30,  w:290, h:156, title:"שירות טוקנים",       text:"Mint / Verify / Burn\nToken + Sig + TTL"},
+        {id:"ATM", x:250, y:220, w:260, h:126, title:"ATM / קופה / סניף",  text:"סורק QR\nמבצע אימות נוסף"},
+        {id:"GW",  x:545, y:220, w:290, h:126, title:"Gateway בין־בנקאי",  text:"ניתוב + אימות\nלפי Token"},
+        {id:"BANK",x:870, y:220, w:290, h:126, title:"בנק מקור",          text:"Risk/AML + Ledger\nCommit לשדות"},
+        {id:"AUD", x:870, y:30,  w:290, h:156, title:"Audit/רגולטור",      text:"לוגים חתומים\nללא חשיפה מלאה"}
+      ];
+
+      const edges = [
+        {from:"U",   to:"APP",  label:"1) בקשת משיכה"},
+        {from:"APP", to:"TOK",  label:`2) Mint Token • TTL=${state.ttl}s`},
+        {from:"TOK", to:"APP",  label:"3) החזרת QR: Token,Sig,TTL"},
+        {from:"U",   to:"ATM",  label:"4) סריקה"},
+        {from:"ATM", to:"GW",   label:"5) Verify"},
+        {from:"GW",  to:"BANK", label:"6) Authorize + Risk/AML"},
+        {from:"BANK",to:"GW",   label:"OK / Reject"},
+        {from:"GW",  to:"ATM",  label:"7) אימות נוסף + אישור"},
+        {from:"ATM", to:"TOK",  label:"8) Burn לאחר משיכה"},
+        {from:"TOK", to:"AUD",  label:"9) Log חתום"}
+      ];
+
+
+      function center(n){ return {cx:n.x+n.w/2, cy:n.y+n.h/2}; }
+
+      // SVG size
+      const W = 1180, H = 420;
+
+      // Rough wrap helper (SVG has no automatic wrapping)
+      function wrapLines(text, maxChars){
+        const out = [];
+        const rawLines = String(text).split("\n");
+        for(const raw of rawLines){
+          const words = raw.split(/\s+/).filter(Boolean);
+          let line = "";
+          for(const w of words){
+            const cand = line ? (line + " " + w) : w;
+            if(cand.length > maxChars && line){
+              out.push(line);
+              line = w;
+            } else {
+              line = cand;
+            }
+          }
+          if(line) out.push(line);
+        }
+        return out;
+      }
+
+      function escapeXML(s){
+        return String(s)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#39;");
+      }
+
+      const svgParts = [];
+      svgParts.push(`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="תרשים מערכת">`);
+
+      // Arrow marker + clip paths
+      svgParts.push(`
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"></path>
+          </marker>
+          ${nodesS.map(n => `
+            <clipPath id="clip_${n.id}">
+              <rect x="${n.x}" y="${n.y}" rx="14" ry="14" width="${n.w}" height="${n.h}"></rect>
+            </clipPath>`).join("")}
+        </defs>
+      `);
+
+      // Edges
+      for(const e of edges){
+        const a = nodeById[e.from], b = nodeById[e.to];
+        const A = center(a), B = center(b);
+
+        const dy = B.cy - A.cy;
+        let path;
+        if(Math.abs(dy) < 35){
+          path = `M ${A.cx} ${A.cy} L ${B.cx} ${B.cy}`;
+        } else {
+          const mx = (A.cx + B.cx)/2;
+          path = `M ${A.cx} ${A.cy} L ${mx} ${A.cy} L ${mx} ${B.cy} L ${B.cx} ${B.cy}`;
+        }
+        svgParts.push(`<path class="edge" d="${path}" marker-end="url(#arrow)"></path>`);
+
+        // Edge label (wrap if long) + background
+        const lines = wrapLines(e.label, 18).slice(0, 2);
+        const lx = (A.cx + B.cx)/2;
+        const ly = (A.cy + B.cy)/2 - 10;
+
+        const maxLen = Math.max(...lines.map(s => s.length));
+        const bw = Math.min(260, 8*maxLen + 18);
+        const bh = 16*lines.length + 10;
+
+        svgParts.push(`<rect x="${lx - bw/2}" y="${ly - 16}" width="${bw}" height="${bh}" rx="8" ry="8" fill="rgba(255,255,255,0.75)" stroke="rgba(148,163,184,0.35)"></rect>`);
+        lines.forEach((t,i)=>{
+          svgParts.push(`<text class="edgeLabel" x="${lx}" y="${ly + i*16}" text-anchor="middle">${escapeXML(t)}</text>`);
+        });
+
+      // Box size controls (changes rectangle sizes inside the SVG)
+      $("boxRange").addEventListener("input", () => { renderAll(); });
+      $("boxUpBtn").addEventListener("click", () => {
+        $("boxRange").value = Math.min(160, parseInt($("boxRange").value,10) + 5);
+        renderAll();
+      });
+      $("boxDownBtn").addEventListener("click", () => {
+        $("boxRange").value = Math.max(80, parseInt($("boxRange").value,10) - 5);
+        renderAll();
+      });
+      }
+
+      // Nodes (with clipping + wrapped text)
+      for(const n of nodesS){
+        svgParts.push(`<rect class="node" x="${n.x}" y="${n.y}" rx="14" ry="14" width="${n.w}" height="${n.h}"></rect>`);
+        svgParts.push(`<text class="nodeTitle" x="${n.x+n.w-14}" y="${n.y+26}" text-anchor="end" font-size="14">${escapeXML(n.title)}</text>`);
+
+        const maxChars = Math.floor((n.w-28)/7.2); // heuristic
+        const lines = wrapLines(n.text, maxChars).slice(0, 6);
+
+        svgParts.push(`<g clip-path="url(#clip_${n.id})">`);
+        lines.forEach((line, i) => {
+          svgParts.push(`<text class="nodeText" x="${n.x+n.w-14}" y="${n.y+52+i*16}" text-anchor="end" font-size="12">${escapeXML(line)}</text>`);
+        });
+        svgParts.push(`</g>`);
+      }
+
+      // Header annotation
+      svgParts.push(`<text class="edgeLabel" x="40" y="20">Token=${escapeXML(state.tokenId)} • תוקף עד ${escapeXML(exp)} • P_attack≈${pAtk.toFixed(3)}</text>`);
+      svgParts.push(`</svg>`);
+      return svgParts.join("");
+    }
+
+    function escapeXML(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    
+    function makeDiagramSVG_Fig1(){
+      const exp = fmtTime(state.expAt);
+      const pAtk = pAttackTheoretical(state.ttl, state.lambda, state.ps);
+
+      const nodes = [
+        {id:"U",   x:60,  y:95,  w:230, h:100, title:"לקוח",          text:"מבקש משיכה\nמקבל QR"},
+        {id:"APP", x:340, y:60,  w:330, h:170, title:"אפליקציית הבנק", text:"בחירת סכום + מטרה\nקבלת Token חתום\nהצגת QR"},
+        {id:"TOK", x:730, y:55,  w:380, h:180, title:"שירות טוקנים",   text:"Mint Token\nSig + TTL\nMapping נשמר בשרת"},
+        {id:"ATM", x:340, y:270, w:330, h:150, title:"ATM / קופה",     text:"סריקת QR\nאימות נוסף (PIN/ביומטרי)\nשחרור מזומן"}
+      ];
+
+      const edges = [
+        {from:"U",   to:"APP", label:"1) בקשת משיכה"},
+        {from:"APP", to:"TOK", label:"2) Mint + Sign"},
+        {from:"TOK", to:"APP", label:"3) החזרת QR"},
+        {from:"U",   to:"ATM", label:"4) סריקה"},
+        {from:"ATM", to:"TOK", label:"5) Burn אחרי משיכה"}
+      ];
+
+      return buildFigureSVG(nodes, edges, 1180, 470, "fig1", exp, pAtk);
+    }
+
+    function makeDiagramSVG_Fig2(){
+      const exp = fmtTime(state.expAt);
+      const pAtk = pAttackTheoretical(state.ttl, state.lambda, state.ps);
+
+      const nodes = [
+        {id:"ATM",  x:70,  y:160, w:320, h:150, title:"ATM / קופה",        text:"סורק Token\nשולח ל-Gateway\nמקבל OK/Reject"},
+        {id:"GW",   x:430, y:150, w:360, h:180, title:"Gateway בין־בנקאי",  text:"Verify + Rate limit\nניתוב לבנק מקור\nאחידות בין בנקים"},
+        {id:"BANK", x:830, y:150, w:360, h:180, title:"בנק מקור",          text:"Risk/AML\nLedger\nCommit לשדות נסתרים"},
+        {id:"AUD",  x:830, y:45,  w:360, h:90,  title:"Audit/רגולטור",      text:"לוגים חתומים\nביקורת/ראיות"}
+      ];
+
+      const edges = [
+        {from:"ATM",  to:"GW",   label:"1) Verify(token,sig,ttl)"},
+        {from:"GW",   to:"BANK", label:"2) Authorize + AML"},
+        {from:"BANK", to:"GW",   label:"3) OK / Reject"},
+        {from:"GW",   to:"ATM",  label:"4) Allow disburse"},
+        {from:"BANK", to:"AUD",  label:"5) Log חתום"}
+      ];
+
+      return buildFigureSVG(nodes, edges, 1180, 380, "fig2", exp, pAtk);
+    }
+
+    // Generic SVG builder used by both figures
+    function buildFigureSVG(nodes, edges, W, H, suffix, exp, pAtk){
+      const sBox = parseInt($("boxRange").value, 10) / 100; // box size scale
+      $("boxVal").textContent = `${Math.round(sBox*100)}%`;
+      // scale a node's geometry (position and size) around origin
+      const S = (n) => ({...n, x: n.x*sBox, y: n.y*sBox, w: n.w*sBox, h: n.h*sBox});
+      const nodesS = nodes.map(S);
+      const nodeById = Object.fromEntries(nodesS.map(n => [n.id, n]));
+
+      function center(n){ return {cx:n.x+n.w/2, cy:n.y+n.h/2}; }
+
+      function wrapLines(text, maxChars){
+        const out = [];
+        const rawLines = String(text).split("\n");
+        for(const raw of rawLines){
+          const words = raw.split(/\s+/).filter(Boolean);
+          let line = "";
+          for(const w of words){
+            const cand = line ? (line + " " + w) : w;
+            if(cand.length > maxChars && line){ out.push(line); line = w; }
+            else { line = cand; }
+          }
+          if(line) out.push(line);
+        }
+        return out;
+      }
+
+      function escapeXML(s){
+        return String(s)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#39;");
+      }
+
+      const svgParts = [];
+      svgParts.push(`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Figure ${suffix}">`);
+      svgParts.push(`
+        <defs>
+          <marker id="arrow_${suffix}" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"></path>
+          </marker>
+          ${nodesS.map(n => `
+            <clipPath id="clip_${suffix}_${n.id}">
+              <rect x="${n.x}" y="${n.y}" rx="14" ry="14" width="${n.w}" height="${n.h}"></rect>
+            </clipPath>`).join("")}
+        </defs>
+      `);
+
+      for(const e of edges){
+        const a = nodeById[e.from], b = nodeById[e.to];
+        const A = center(a), B = center(b);
+        const dy = B.cy - A.cy;
+
+        let path;
+        if(Math.abs(dy) < 35) path = `M ${A.cx} ${A.cy} L ${B.cx} ${B.cy}`;
+        else {
+          const mx = (A.cx + B.cx)/2;
+          path = `M ${A.cx} ${A.cy} L ${mx} ${A.cy} L ${mx} ${B.cy} L ${B.cx} ${B.cy}`;
+        }
+
+        svgParts.push(`<path class="edge" d="${path}" marker-end="url(#arrow_${suffix})"></path>`);
+
+        const lines = wrapLines(e.label, 18).slice(0, 2);
+        const lx = (A.cx + B.cx)/2;
+        const ly = (A.cy + B.cy)/2 - 10;
+
+        const maxLen = Math.max(...lines.map(s => s.length));
+        const bw = Math.min(260, 8*maxLen + 18);
+        const bh = 16*lines.length + 10;
+
+        svgParts.push(`<rect x="${lx - bw/2}" y="${ly - 16}" width="${bw}" height="${bh}" rx="8" ry="8" fill="rgba(255,255,255,0.78)" stroke="rgba(148,163,184,0.35)"></rect>`);
+        lines.forEach((t,i)=>{
+          svgParts.push(`<text class="edgeLabel" x="${lx}" y="${ly + i*16}" text-anchor="middle">${escapeXML(t)}</text>`);
+        });
+      }
+
+      for(const n of nodesS){
+        svgParts.push(`<rect class="node" x="${n.x}" y="${n.y}" rx="14" ry="14" width="${n.w}" height="${n.h}"></rect>`);
+        svgParts.push(`<text class="nodeTitle" x="${n.x+n.w-14}" y="${n.y+26}" text-anchor="end">${escapeXML(n.title)}</text>`);
+
+        const maxChars = Math.floor((n.w-28)/7.2);
+        const lines = wrapLines(n.text, maxChars).slice(0, 7);
+
+        svgParts.push(`<g clip-path="url(#clip_${suffix}_${n.id})">`);
+        lines.forEach((line, i) => {
+          svgParts.push(`<text class="nodeText" x="${n.x+n.w-14}" y="${n.y+54+i*16}" text-anchor="end">${escapeXML(line)}</text>`);
+        });
+        svgParts.push(`</g>`);
+      }
+
+      svgParts.push(`<text class="edgeLabel" x="40" y="20">Token=${escapeXML(state.tokenId)} • TTL=${state.ttl}s • P_attack≈${pAtk.toFixed(3)} • exp=${escapeXML(exp)}</text>`);
+      svgParts.push(`</svg>`);
+      return svgParts.join("");
+    }
+
+
+    function renderAll(){
+      state.ttl = parseInt($("ttlRange").value, 10);
+      state.lambda = parseInt($("lambdaRange").value, 10);
+      state.pfail = parseFloat($("pfailRange").value);
+      state.ps = derivePs(state.pfail);
+
+      $("ttlVal").textContent = state.ttl;
+      $("lambdaVal").textContent = state.lambda;
+      $("pfailVal").textContent = state.pfail.toFixed(2);
+
+      $("tokenId").textContent = state.tokenId;
+      $("expAt").textContent = fmtTime(state.expAt);
+
+      const pAtk = pAttackTheoretical(state.ttl, state.lambda, state.ps);
+      $("pAttack").textContent = pAtk.toFixed(3);
+      $("psVal").textContent = state.ps.toFixed(3);
+
+      $("diagMeta").textContent = `TTL=${state.ttl}s • λ=${state.lambda}/min • p_f=${state.pfail.toFixed(2)} • p_s≈${state.ps.toFixed(3)}`;
+
+      // payload demo
+      const payload = {
+        token: state.tokenId,
+        ttl_s: state.ttl,
+        iat: state.issuedAt.toISOString(),
+        exp: state.expAt.toISOString(),
+        sig_demo: "sig_ed25519_" + randHex(40),
+        commit_demo: "H(bankGroup|custClass|purpose|amount|nonce)=" + randHex(32)
+      };
+      $("payloadBox").textContent = JSON.stringify(payload, null, 2);
+
+      // diagram
+      $("svgHost1").innerHTML = makeDiagramSVG_Fig1();
+      $("svgHost2").innerHTML = makeDiagramSVG_Fig2();
+      applyZoom();
+
+      renderCashPanel();
+
+      // status
+      const level = (pAtk < 0.10) ? "ok" : (pAtk < 0.25 ? "warn" : "bad");
+      setStatus(level, `עודכן • P_attack≈${pAtk.toFixed(3)} • TTL=${state.ttl}s`);
+    }
+
+    function regenToken(){
+      state.issuedAt = new Date();
+      state.tokenId = "tok_" + randHex(10) + "_" + Date.now().toString(16);
+      state.expAt = addSeconds(state.issuedAt, parseInt($("ttlRange").value, 10));
+      renderAll();
+    }
+
+    async function simulate(){
+      $("simulateBtn").disabled = true;
+      setStatus("warn","מריץ סימולציה…");
+
+      const ttl = parseInt($("ttlRange").value, 10);
+      const lambda = parseInt($("lambdaRange").value, 10);
+      const pfail = parseFloat($("pfailRange").value);
+      const ps = derivePs(pfail);
+
+      const mu = lambda * (ttl/60);
+      const K = 1500;
+      let hits = 0;
+      for(let i=0;i<K;i++){
+        const N = samplePoisson(mu);
+        let ok = false;
+        for(let j=0;j<N;j++){
+          if(Math.random() < ps){ ok = true; break; }
+        }
+        if(ok) hits++;
+      }
+      const est = hits / K;
+      const theo = pAttackTheoretical(ttl, lambda, ps);
+      const diff = Math.abs(est-theo);
+
+      const level = (theo < 0.10) ? "ok" : (theo < 0.25 ? "warn" : "bad");
+      setStatus(level, `סימולציה: p≈${est.toFixed(3)} • תיאוריה=${theo.toFixed(3)} • Δ=${diff.toFixed(3)}`);
+
+      $("simulateBtn").disabled = false;
+      renderAll();
+    }
+
+    function applyZoom(){
+      const z = parseInt($("zoomRange").value, 10) / 100;
+      $("zoomVal").textContent = `${Math.round(z*100)}%`;
+      const stage = $("svgStage");
+      stage.style.transformOrigin = "top right";
+      stage.style.transform = `scale(${z})`;
+      stage.style.width = `${100/z}%`;
+    }
+
+    function showFigure(which){
+      renderAll();
+      const f1 = $("fig1Wrap"), f2 = $("fig2Wrap");
+      const b1 = $("tab1Btn"), b2 = $("tab2Btn");
+      if(which === 1){
+        f1.style.display = "";
+        f2.style.display = "none";
+        b1.setAttribute("aria-pressed","true");
+        b2.setAttribute("aria-pressed","false");
+      }else{
+        f1.style.display = "none";
+        f2.style.display = "";
+        b1.setAttribute("aria-pressed","false");
+        b2.setAttribute("aria-pressed","true");
+      }
+      applyZoom();
+    }
+
+function toggleTheme(){
+      const root = document.documentElement;
+      const cur = root.getAttribute("data-theme") || "light";
+      root.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+      // re-render SVG + charts to adapt colors
+      renderAll();
+      updateCashflow();
+    }
+
+    
+    // ========= Cashflow (Poisson + Compound Poisson) =========
+    function normCdf(x){
+      // Abramowitz-Stegun approximation
+      const t = 1 / (1 + 0.2316419*Math.abs(x));
+      const d = 0.3989423*Math.exp(-x*x/2);
+      let p = d*t*(0.3193815 + t*(-0.3565638 + t*(1.781478 + t*(-1.821256 + t*1.330274))));
+      if(x > 0) p = 1 - p;
+      return p;
+    }
+
+    function updateCashflow(){
+      const lam = parseFloat($("lamArrRange").value);      // arrivals/hour
+      const q = parseFloat($("qRange").value);
+      const a = parseFloat($("alphaRange").value);
+      const b = parseFloat($("betaRange").value);
+      const T = parseFloat($("horizonRange").value);       // hours
+      const EA = parseFloat($("meanARange").value);        // ₪
+      const VarA = parseFloat($("varARange").value);       // ₪^2
+      const C0 = parseFloat($("c0Range").value);           // ₪
+
+      $("lamArrVal").textContent = lam.toFixed(0);
+      $("qVal").textContent = q.toFixed(2);
+      $("alphaVal").textContent = a.toFixed(2);
+      $("betaVal").textContent = b.toFixed(2);
+      $("horizonVal").textContent = T.toFixed(2);
+      $("meanAVal").textContent = EA.toFixed(0);
+      $("varAVal").textContent = VarA.toFixed(0);
+      $("c0Val").textContent = C0.toFixed(0);
+
+      const lamEff = lam * q * a * b;                      // withdrawals/hour
+      const EN = lamEff * T;
+      const EA2 = VarA + EA*EA;
+      const muS = lamEff * T * EA;
+      const varS = lamEff * T * EA2;
+      const sdS = Math.sqrt(Math.max(0, varS));
+      const EC = C0 - muS;
+
+      // stockout probability via normal approximation
+      let Pout = 0;
+      if(sdS < 1e-9){
+        Pout = (muS > C0) ? 1 : 0;
+      } else {
+        const z = (C0 - muS) / sdS;
+        Pout = 1 - normCdf(z);
+      }
+
+      $("lamEff").textContent = lamEff.toFixed(2);
+      $("EN").textContent = EN.toFixed(2);
+      $("ES").textContent = muS.toFixed(0);
+      $("SDS").textContent = sdS.toFixed(0);
+      $("EC").textContent = EC.toFixed(0);
+      $("Pout").textContent = Pout.toFixed(3);
+
+      drawCashChart(C0, lamEff, EA, T, muS, sdS);
+    }
+
+    function drawCashChart(C0, lamEff, EA, T, muS, sdS){
+      const c = $("cashCanvas");
+      if(!c) return;
+      const ctx = c.getContext("2d");
+
+      // device pixel ratio crispness
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = c.clientWidth || 900;
+      const cssH = (c.clientHeight || 320);
+      c.width = Math.round(cssW * dpr);
+      c.height = Math.round(cssH * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      const W = cssW, H = cssH;
+      ctx.clearRect(0,0,W,H);
+
+      // plot area
+      const padL=52, padR=16, padT=16, padB=36;
+      const x0=padL, y0=padT, x1=W-padR, y1=H-padB;
+
+      // expected cash over time: E[C(t)] = C0 - lamEff*t*EA
+      // also show a +/- 1 SD band for S(t) -> cash band
+      const n=80;
+      const xs=[], yc=[], yhi=[], ylo=[];
+      for(let i=0;i<=n;i++){
+        const t = (T*i)/n;
+        const muSt = lamEff * t * EA;
+        const sdSt = Math.sqrt(Math.max(0, lamEff * t * ( (sdS*sdS)/(Math.max(1e-9, lamEff*T)) ))); // proportional approx
+        const Ec = C0 - muSt;
+        const hi = C0 - (muSt - sdSt);
+        const lo = C0 - (muSt + sdSt);
+        xs.push(t); yc.push(Ec); yhi.push(hi); ylo.push(lo);
+      }
+
+      // y scale
+      const yMin = Math.min(...ylo, 0);
+      const yMax = Math.max(...yhi, C0, 1);
+      function X(t){ return x0 + (t/T)*(x1-x0); }
+      function Y(v){ return y1 - ((v - yMin)/(yMax - yMin))*(y1-y0); }
+
+      // axes
+      ctx.globalAlpha=1;
+      ctx.lineWidth=1;
+      ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line') || '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.lineTo(x1,y1);
+      ctx.stroke();
+
+      // zero line (cash=0)
+      const yz = Y(0);
+      ctx.setLineDash([6,4]);
+      ctx.strokeStyle="#94a3b8";
+      ctx.beginPath(); ctx.moveTo(x0,yz); ctx.lineTo(x1,yz); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // SD band
+      ctx.fillStyle="rgba(99,102,241,0.12)";
+      ctx.beginPath();
+      ctx.moveTo(X(xs[0]), Y(yhi[0]));
+      for(let i=1;i<xs.length;i++) ctx.lineTo(X(xs[i]), Y(yhi[i]));
+      for(let i=xs.length-1;i>=0;i--) ctx.lineTo(X(xs[i]), Y(ylo[i]));
+      ctx.closePath();
+      ctx.fill();
+
+      // expected line
+      ctx.strokeStyle="#2563eb";
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(X(xs[0]), Y(yc[0]));
+      for(let i=1;i<xs.length;i++) ctx.lineTo(X(xs[i]), Y(yc[i]));
+      ctx.stroke();
+
+      // labels
+      ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted') || '#64748b';
+      ctx.font="12px " + getComputedStyle(document.body).fontFamily;
+
+      // x labels
+      ctx.textAlign="center";
+      for(let k=0;k<=4;k++){
+        const t = (T*k)/4;
+        const x = X(t);
+        ctx.fillText(t.toFixed(1)+"h", x, H-12);
+      }
+
+      // y labels (3 ticks)
+      ctx.textAlign="right";
+      for(let k=0;k<=3;k++){
+        const v = yMin + (yMax-yMin)*k/3;
+        const y = Y(v);
+        ctx.fillText(Math.round(v).toString()+" ₪", x0-8, y+4);
+      }
+
+      // title
+      ctx.textAlign="left";
+      ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--head') || '#0b1220';
+      ctx.fillText("E[C(t)] צפוי + תחום ~±1SD", x0, 14);
+    }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Bind UI
+      $("ttlRange").addEventListener("input", () => {
+        state.expAt = addSeconds(state.issuedAt, parseInt($("ttlRange").value, 10));
+        renderAll();
+      });
+      $("pfailRange").addEventListener("input", renderAll);
+      $("lambdaRange").addEventListener("input", renderAll);
+
+      $("regenBtn").addEventListener("click", regenToken);
+      $("simulateBtn").addEventListener("click", simulate);
+      $("toggleThemeBtn").addEventListener("click", toggleTheme);
+
+      // Cashflow simulation button
+      const simBtn = $("simCashBtn");
+      if(simBtn) simBtn.addEventListener("click", runCashSimulation);
+
+      // Tabs (Figure 1/2)
+      $("tab1Btn").addEventListener("click", () => showFigure(1));
+      $("tab2Btn").addEventListener("click", () => showFigure(2));
+
+      // Zoom controls
+      $("zoomRange").addEventListener("input", applyZoom);
+      $("zoomInBtn").addEventListener("click", () => {
+        $("zoomRange").value = Math.min(140, parseInt($("zoomRange").value,10) + 5);
+        applyZoom();
+      });
+      $("zoomOutBtn").addEventListener("click", () => {
+        $("zoomRange").value = Math.max(60, parseInt($("zoomRange").value,10) - 5);
+        applyZoom();
+      });
+
+
+      // Cashflow bindings
+      ["lamArrRange","qRange","alphaRange","betaRange","horizonRange","meanARange","varARange","c0Range"].forEach(id => {
+        const el = $(id);
+        if(el) el.addEventListener("input", updateCashflow);
+      });
+      // Call once
+      updateCashflow();
+
+      // Start
+      regenToken();
+
+      // Expiry watcher
+      setInterval(() => {
+        const now = new Date();
+        if(now >= state.expAt){
+          setStatus("bad","פג תוקף האסימון (TTL) — לחץ 'אסימון חדש'");
+        }
+      }, 500);
+    });
+  </script>
+</body>
+</html>
