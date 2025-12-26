@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sea-Like Air for Hospitals • Gauss + Hooke + Newton + Hamming Air-Frame</title>
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- Optional online renderers (page remains readable offline) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    [data-theme="dark"]{
+      --bg0:#0b1020; --bg1:#0b1220; --bg2:#081025;
+      --card:rgba(15,23,42,.72); --card2:rgba(15,23,42,.55);
+      --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.18);
+      --head:#f8fafc; --link:#60a5fa;
+      --shadow: 0 18px 70px rgba(0,0,0,.45);
+      --accent:#a78bfa;
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 0%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1120px; margin:0 auto; padding:22px 16px 54px}
+    header{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      margin: 8px 0 16px; flex-wrap:wrap;
+    }
+    .hero{
+      flex: 1;
+      min-width: 300px;
+      background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(56,189,248,.14));
+      border:1px solid var(--line);
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      padding: 18px 18px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 220px at 20% 10%, rgba(99,102,241,.25), transparent 70%),
+                  radial-gradient(520px 240px at 80% 20%, rgba(56,189,248,.22), transparent 70%);
+      pointer-events:none;
+    }
+    .hero h1{margin:0 0 6px; font-size:22px; position:relative}
+    .hero p{margin:8px 0 0; color:var(--muted); line-height:1.7; position:relative}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; position:relative}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.35);
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+    [data-theme="dark"] .pill{background: rgba(2,6,23,.18)}
+
+    .side{
+      min-width: 320px;
+      max-width: 430px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h3{margin:0 0 10px; font-size:14px; color:var(--head)}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.5);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight: 800;
+      color: var(--text);
+      transition: transform .05s ease, background .2s ease;
+      user-select:none;
+    }
+    [data-theme="dark"] .btn{background: rgba(2,6,23,.22)}
+    .btn:hover{transform: translateY(-1px)}
+    .btn.primary{border-color: rgba(99,102,241,.35); background: rgba(99,102,241,.16)}
+    .btn.ok{border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.12)}
+    .mini{font-size:12px; color:var(--muted); line-height:1.6}
+
+    nav{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin: 14px 0 18px;
+    }
+    nav a{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background: var(--card2);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(2,6,23,.06);
+      font-weight:900;
+    }
+
+    .section{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--r) + 2px);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .section h2{margin:0 0 8px; font-size:18px; color: var(--head)}
+    .section p, .section li{line-height:1.78}
+    .muted{color:var(--muted)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      font-weight:900; font-size:12px;
+      background: rgba(255,255,255,.45);
+    }
+    [data-theme="dark"] .tag{background: rgba(2,6,23,.18)}
+    .note{
+      border-left: 5px solid rgba(99,102,241,.55);
+      padding: 10px 12px;
+      background: rgba(99,102,241,.08);
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    .okbox{
+      border-left: 5px solid rgba(22,163,74,.65);
+      padding: 10px 12px;
+      background: rgba(22,163,74,.10);
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    .warnbox{
+      border-left: 5px solid rgba(245,158,11,.65);
+      padding: 10px 12px;
+      background: rgba(245,158,11,.10);
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      background: rgba(2,6,23,.06);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      direction:ltr;
+      unicode-bidi: plaintext;
+      white-space: pre;
+    }
+    [data-theme="dark"] .code{background: rgba(2,6,23,.38)}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 840px){
+      .side{min-width:unset; max-width:unset; width:100%}
+      .two{grid-template-columns: 1fr}
+    }
+
+    .tbl{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.45);
+    }
+    [data-theme="dark"] .tbl{background: rgba(2,6,23,.18)}
+    .tbl th,.tbl td{
+      padding: 10px 10px;
+      border-bottom:1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    .tbl th{font-size:12px; color:var(--muted)}
+    .tbl tr:last-child td{border-bottom:none}
+    .hr{height:1px; background:var(--line); margin: 12px 0}
+
+    .mermaid{
+      background: rgba(255,255,255,.45);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      direction:ltr;
+    }
+    [data-theme="dark"] .mermaid{background: rgba(2,6,23,.18)}
+
+    /* Print */
+    @media print{
+      header, nav, .side{display:none !important}
+      .wrap{max-width:unset}
+      body{background:white}
+      .section{box-shadow:none}
+      a{text-decoration:underline}
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hero">
+      <h1>🌊🌬️ Sea-Like Air for Hospitals & Surroundings</h1>
+      <p>
+        A combined <b>academic + practical</b> document “from scratch”: we model dirty-air dispersion using
+        <b>Gauss + Hooke + Newton</b>, then propose a control framework based on a <b>Hamming Air-Frame</b>
+        (an “invisible air frame”) to run ventilation/filtration/pressure <b>stably</b>—aiming for a
+        <b>sea-breeze-like</b> fresh-air experience in and around a hospital.
+      </p>
+      <div class="pillrow">
+        <span class="pill">🧠 Theory → Implementation</span>
+        <span class="pill">🏥 Hospital + Community</span>
+        <span class="pill">🪟 Hamming Air-Frame</span>
+        <span class="pill">📈 KPIs + Pilot</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h3>🎛️ Quick Controls</h3>
+        <div class="row">
+          <button class="btn primary" id="toggleTheme" type="button">🌓 Theme</button>
+          <button class="btn" id="printBtn" type="button">🖨️ Print</button>
+          <button class="btn ok" id="copyLinkBtn" type="button">🔗 Copy link</button>
+        </div>
+        <p class="mini" style="margin-top:10px">
+          Offline-safe: explanations and formulas are always visible. If you are online, KaTeX/Mermaid will render math and diagrams nicely.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>🪟 Hamming Air-Frame Demo (concept)</h3>
+        <div class="mini">Choose <b>N</b> (window length). Larger N = smoother estimate, smaller N = faster response.</div>
+        <div class="row" style="margin-top:8px; width:100%">
+          <input id="N" type="range" min="5" max="61" value="21" step="2" style="flex:1" />
+          <div class="btn" style="cursor:default"><span id="Nval">21</span> N</div>
+        </div>
+        <div class="hr"></div>
+        <div class="code" id="hammingPreview"></div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#defs">📌 Definitions</a>
+    <a href="#core">⚙️ Core Laws</a>
+    <a href="#pde">🧮 Master PDE</a>
+    <a href="#hamming">🪟 Hamming Air-Frame</a>
+    <a href="#model">🌊 Sea-Like Air Model</a>
+    <a href="#hospital">🏥 Hospital Design</a>
+    <a href="#pilot">✅ Pilot & KPIs</a>
+    <a href="#flow">🧭 Flowchart</a>
+  </nav>
+
+  <section class="section" id="defs">
+    <h2>0) Basic Definitions</h2>
+    <p class="muted">
+      We define key quantities to describe “air” and “pollution” in space and time. These variables connect theory, sensing, and control.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Symbol</th><th>Meaning</th><th>In practice</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>C(x,y,z,t)</code></td><td>Pollutant concentration (PM/VOC/index)</td><td>Measured/estimated; fed to controllers</td></tr>
+        <tr><td><code>\vec v(x,y,z,t)</code></td><td>Airflow velocity field</td><td>Actuated via fans/dampers/pressure</td></tr>
+        <tr><td><code>P(x,y,z,t)</code></td><td>Pressure field</td><td>Critical for OR/isolation (ΔP)</td></tr>
+        <tr><td><code>D</code></td><td>Effective diffusion / mixing</td><td>Depends on turbulence, geometry, flow</td></tr>
+        <tr><td><code>S(x,y,z,t)</code></td><td>Sources</td><td>People, equipment, outdoor air, chemicals</td></tr>
+        <tr><td><code>\lambda</code></td><td>Removal rate</td><td>HEPA/carbon/UV/deposition</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <b>Overall goal:</b> reduce local peaks, enforce directional flow (clean → load → exhaust), and maintain stable pressure in critical zones.
+    </div>
+  </section>
+
+  <section class="section" id="core">
+    <h2>1) Core Laws for Dispersion (Gauss + Hooke + Newton)</h2>
+
+    <div class="two">
+      <div>
+        <div class="tag">① Gauss — spatial concentration cloud</div>
+        <p>
+          Around a source, pollutant distributions often resemble a Gaussian-like cloud. The spread parameters
+          <code>σx, σy, σz</code> describe how quickly the cloud “smears out”. Increasing <code>σ</code> (in a controlled way)
+          reduces local peaks—but it must be paired with a clear exhaust pathway to avoid recirculation.
+        </p>
+        <div class="code">C(x,y,z,t) ≈ A(t) · exp( - (x-x0)²/(2σx²) - (y-y0)²/(2σy²) - (z-z0)²/(2σz²) )</div>
+        <div class="okbox"><b>Engineering takeaway:</b> spreading alone is not enough; you also need <b>flow routing</b>.</div>
+      </div>
+
+      <div>
+        <div class="tag">② Hooke — elasticity/pressure as a “spring”</div>
+        <p>
+          Air is compressible and elastic: pressure differences drive motion. A practical mechanism is gentle
+          “pressure breathing”: small pressure oscillations that discourage stagnation and improve stability vs. ON/OFF switching.
+        </p>
+        <div class="code">ΔP(t) = Pa · sin(ωt)</div>
+        <div class="note"><b>Practical:</b> in OR/isolation zones, pressure modulation must remain within safe, standard-compliant bounds.</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="tag">③ Newton — flow dynamics</div>
+    <p>
+      By Newton’s laws, air motion results from forces (pressure/fan/wind) balanced by drag. In hospitals, the target is to define
+      clear flow routes (clean → load → exhaust) and to prioritize stability over aggressive oscillations.
+    </p>
+    <div class="code">Conceptually:  ρ · Dv/Dt  ≈  -∇P  +  (fan/wind forcing)  -  drag</div>
+  </section>
+
+  <section class="section" id="pde">
+    <h2>2) Master Equation: Advection–Diffusion–Removal</h2>
+    <p>This compact PDE ties together flow transport, mixing, sources, and real removal:</p>
+    <div class="code">∂C/∂t  +  v·∇C  =  D∇²C  +  S  -  λC</div>
+
+    <div class="two">
+      <div class="okbox"><b>True cleaning:</b> increase <code>λ</code> (HEPA/carbon/UV) where needed.</div>
+      <div class="note"><b>Prevent stagnation:</b> control <code>v</code> and effective <code>D</code> to avoid dead zones and re-entry.</div>
+    </div>
+
+    <div class="warnbox">
+      <b>Disclaimer:</b> This is an engineering-math framework. Real hospital deployments must comply with clinical HVAC standards and safety requirements.
+    </div>
+  </section>
+
+  <section class="section" id="hamming">
+    <h2>3) Hamming Air-Frame (the “invisible air frame”)</h2>
+    <p>
+      Instead of reacting to momentary sensor spikes (door opening, traffic), we form a stable estimate <code>Ĉ</code> using a Hamming window,
+      and control acts on <code>Ĉ</code>. This reduces controller chatter and yields smooth “breeze-like” behavior.
+    </p>
+
+    <div class="two">
+      <div>
+        <div class="tag">Hamming window</div>
+        <div class="code">w[n] = 0.54 - 0.46·cos( 2πn/(N-1) ),  n = 0..N-1</div>
+      </div>
+      <div>
+        <div class="tag">Time smoothing</div>
+        <div class="code">Ĉ_k = ( Σ_{n=0}^{N-1} w[n]·C_{k-n} ) / ( Σ w[n] )</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="tag">Spatial smoothing (sensor grid)</div>
+    <p>
+      With multiple sensors per zone, we can form a spatial “frame” that emphasizes the center and down-weights edges:
+    </p>
+    <div class="code">Ĉ(x0,y0) = ( Σ_i Σ_j wx[i]·wy[j]·C(xi,yj) ) / ( Σ_i Σ_j wx[i]·wy[j] )</div>
+
+    <div class="okbox"><b>Hospital benefits:</b> fewer false alarms, less chatter, more stable pressure, and improved energy efficiency.</div>
+  </section>
+
+  <section class="section" id="model">
+    <h2>4) Proposed “Sea-Like Air” Model</h2>
+    <p>
+      “Sea air” is not magic: it is continuous flow + dispersion + routing that prevents accumulation. We combine three levers:
+      <b>(1) true removal</b>, <b>(2) controlled dispersion</b>, and <b>(3) flow routing</b>.
+    </p>
+
+    <div class="two">
+      <div>
+        <div class="tag">1) True removal (λ)</div>
+        <ul>
+          <li>HEPA / activated carbon / UV as needed and compliant</li>
+          <li>Higher λ in critical zones (OR/isolation)</li>
+        </ul>
+      </div>
+      <div>
+        <div class="tag">2) Controlled dispersion (σ↑, D↑) without chaos</div>
+        <ul>
+          <li>Reduce local peaks via controlled mixing</li>
+          <li>Prefer continuous motion over aggressive jumps</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="tag">3) Flow routing: clean → load → exhaust</div>
+    <p>
+      Define a clean inflow and a clear exhaust path for each area so contaminated air does not recirculate into corridors and entrances.
+      Hamming-based control keeps actuation stable.
+    </p>
+    <div class="code">Control idea:
+u_k = clip( u_{k-1} + α(Ĉ_k - C_target), 0, 1 )
+and apply a slew-rate limit on Δu</div>
+  </section>
+
+  <section class="section" id="hospital">
+    <h2>5) Hospital-Scale + Perimeter (Community) Design</h2>
+
+    <div class="two">
+      <div>
+        <div class="tag">Zoning</div>
+        <table class="tbl">
+          <thead><tr><th>Zone</th><th>Primary goal</th><th>Recommended frame</th></tr></thead>
+          <tbody>
+            <tr><td>OR / sterile</td><td>Stable ΔP + high λ</td><td>30–60 s</td></tr>
+            <tr><td>Isolation</td><td>Prevent unwanted leakage</td><td>30–90 s</td></tr>
+            <tr><td>ER / waiting</td><td>Rapid occupancy changes</td><td>60–120 s</td></tr>
+            <tr><td>Wards</td><td>Comfort + stability</td><td>2–5 min</td></tr>
+            <tr><td>Corridors/elevators/entries</td><td>Bottlenecks, avoid recirculation</td><td>60–120 s</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note"><b>Golden rule:</b> in critical areas, ΔP and standards come first. “Sea-like” optimization is secondary.</div>
+      </div>
+
+      <div>
+        <div class="tag">Outdoor perimeter ring</div>
+        <p>
+          To improve air quality at entrances and ambulance/visitor areas, deploy a small “outdoor ring” of sensors and route intake/exhaust
+          to reduce re-entry:
+        </p>
+        <ul>
+          <li><b>Sensing:</b> PM2.5/PM10, wind direction/speed, temperature/humidity</li>
+          <li><b>Control:</b> prefer intake from the cleaner side and exhaust away from entrances</li>
+          <li><b>Frame:</b> Hamming time smoothing + spatial weighting for mapping</li>
+        </ul>
+        <div class="okbox"><b>Expected result:</b> less buildup near entrances, fewer stagnant clouds, and a more “open-air” feel.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pilot">
+    <h2>6) Minimal Pilot (from scratch) + KPIs</h2>
+
+    <div class="two">
+      <div>
+        <div class="tag">3-node pilot</div>
+        <ol>
+          <li>ER / waiting area (indoor)</li>
+          <li>Main corridor</li>
+          <li>Main entrance (outdoor)</li>
+        </ol>
+
+        <div class="tag">Minimal sensors</div>
+        <ul>
+          <li>PM2.5</li>
+          <li>CO₂ (proxy for ventilation/occupancy)</li>
+          <li>Temperature/humidity</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="tag">Recommended KPIs</div>
+        <ul>
+          <li><b>Recovery time:</b> return-to-target after disturbances</li>
+          <li><b>Stability:</b> controller chatter (state changes / Δu per minute)</li>
+          <li><b>Entrance quality:</b> entrance PM vs outdoor baseline</li>
+          <li><b>Energy:</b> average fan/flow load vs baseline</li>
+        </ul>
+
+        <div class="note">
+          <b>Unified risk index (example):</b>
+          <div class="code">R = a·PM_hat + b·CO2_hat + c·VOC_hat   (pilot can start without VOC)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="tag">Controller pseudocode</div>
+    <div class="code">Every Δt seconds:
+  read sensors (PM, CO2, T, RH, optional VOC, optional ΔP)
+  append readings into buffers
+
+  Ĉ = HammingSmooth(buffer)
+  build risk index R (weighted combination)
+
+  if zone is critical (OR/isolation):
+      enforce ΔP target first (pressure controller)
+      then adjust filtration/flow gently using R
+  else:
+      u = clip(u + α*(R - target), 0, 1)
+
+  apply slew-rate limit: |u - u_prev| ≤ du_max
+  log metrics and update dashboard
+  alarm only if R stays high long enough (use Ĉ/R with hysteresis)</div>
+  </section>
+
+  <section class="section" id="flow">
+    <h2>7) Flowchart (Sense → Frame → Decide → Act)</h2>
+
+    <div class="mermaid">
+flowchart TD
+  A["Sensor readings<br/>PM / CO2 / T / RH / VOC / dP"] --> B["Hamming Air-Frame<br/>Compute C_hat and/or Risk R"]
+  B --> C{"Zone type?"}
+  C -->|"OR / Isolation"| D["Priority: pressure stability (dP)<br/>then tune filtration / flow"]
+  C -->|"Public / Corridor / Ward"| E["Control: u = clip(u + a*(R - target))"]
+  D --> F["Safety bounds + slew-rate limit"]
+  E --> F["Safety bounds + slew-rate limit"]
+  F --> G["Actuators<br/>Fans / Dampers / Filters / UV / Exhaust routing"]
+  G --> H["Logging + KPIs<br/>Recovery / stability / energy"]
+  H --> B
+</div>
+
+    <div class="note">
+      <b>Offline note:</b> If Mermaid doesn’t load, the diagram may not render visually, but the logic is still captured in the text blocks above.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Appendix — Plain-text formulas (offline friendly)</h2>
+    <div class="code">Gaussian cloud (approx):
+  C(x,y,z,t) ≈ A(t) · exp( - (x-x0)^2/(2σx^2) - (y-y0)^2/(2σy^2) - (z-z0)^2/(2σz^2) )
+
+Hooke-like pressure breathing:
+  ΔP(t) = Pa · sin(ωt)
+
+Advection–Diffusion–Removal:
+  ∂C/∂t + v·∇C = D∇^2 C + S - λC
+
+Hamming window:
+  w[n] = 0.54 - 0.46·cos(2πn/(N-1)), n=0..N-1
+
+Hamming time smoothing:
+  Ĉ_k = (Σ w[n]·C_{k-n}) / (Σ w[n])
+
+Smooth control:
+  u_k = clip(u_{k-1} + α(Ĉ_k - C_target), 0, 1)
+  and limit rate of change Δu</div>
+
+    <p class="mini muted">
+      Generated as a single HTML file. Date: <span id="genDate"></span>
+    </p>
+  </section>
+
+</div>
+
+<script>
+  // Theme toggle
+  const root = document.documentElement;
+  document.getElementById('toggleTheme').addEventListener('click', ()=>{
+    const cur = root.getAttribute('data-theme') || 'light';
+    const next = (cur === 'light') ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('sea_air_theme', next);
+    try{
+      if(window.mermaid){
+        mermaid.initialize({ startOnLoad: true, theme: (next==='dark'?'dark':'default') });
+      }
+    }catch(e){}
+  });
+  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+  document.getElementById('copyLinkBtn').addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(location.href); }
+    catch(e){ alert('Copy failed in this browser.'); }
+  });
+
+  const savedTheme = localStorage.getItem('sea_air_theme');
+  if(savedTheme) root.setAttribute('data-theme', savedTheme);
+
+  // KaTeX auto render (if loaded)
+  window.addEventListener('load', ()=>{
+    document.getElementById('genDate').textContent = new Date().toISOString().slice(0,10);
+    try{
+      if(window.renderMathInElement){
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ]
+        });
+      }
+    }catch(e){}
+    try{
+      if(window.mermaid){
+        mermaid.initialize({ startOnLoad: true, theme: (root.getAttribute('data-theme')==='dark'?'dark':'default') });
+      }
+    }catch(e){}
+  });
+
+  // Hamming demo
+  const N = document.getElementById('N');
+  const Nval = document.getElementById('Nval');
+  const preview = document.getElementById('hammingPreview');
+
+  function hammingWeights(N){
+    const w = [];
+    for(let n=0;n<N;n++){
+      const val = 0.54 - 0.46*Math.cos((2*Math.PI*n)/(N-1));
+      w.push(val);
+    }
+    const sum = w.reduce((a,b)=>a+b,0);
+    return {w, sum};
+  }
+  function renderPreview(){
+    const n = parseInt(N.value,10);
+    Nval.textContent = String(n);
+    const {w,sum} = hammingWeights(n);
+    const lines = [];
+    lines.push(`Hamming window (N=${n})`);
+    lines.push(`w[n] = 0.54 - 0.46*cos(2πn/(N-1))`);
+    lines.push(`sum(w) ≈ ${sum.toFixed(6)}`);
+    lines.push('');
+    lines.push('First weights:');
+    for(let i=0;i<Math.min(10,w.length);i++){
+      lines.push(`  w[${i}] = ${w[i].toFixed(6)}`);
+    }
+    lines.push('');
+    lines.push('Time smoothing:');
+    lines.push('  Ĉ_k = (Σ w[n]·C_{k-n}) / (Σ w[n])');
+    preview.textContent = lines.join('\n');
+  }
+  N.addEventListener('input', renderPreview);
+  renderPreview();
+</script>
+
+</body>
+</html>
