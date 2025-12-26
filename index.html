@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>INDEX • Home</title>
+  <title>INDEX • דף הבית</title>
   <meta name="color-scheme" content="light dark">
 
   <style>
@@ -142,7 +142,7 @@
       display:flex; flex-direction:column; gap:6px; min-width:240px;
     }
     .hero .hTitle{
-      font-weight:800;
+      font-weight:900;
       color:var(--head);
       letter-spacing:.2px;
     }
@@ -304,7 +304,7 @@
 
     main{padding-top:16px}
 
-    /* Top 10 section */
+    /* TOP 10 */
     .top10{
       margin-top:14px;
       border:1px solid var(--line);
@@ -371,6 +371,7 @@
       font-weight:900;
       color:var(--head);
       flex:0 0 auto;
+      user-select:none;
     }
     .ticon{
       width:34px; height:34px;
@@ -380,6 +381,8 @@
       background: rgba(148,163,184,.10);
       box-shadow: 0 10px 24px rgba(2,6,23,.06);
       flex:0 0 auto;
+      user-select:none;
+      font-size:18px;
     }
     .ttext{
       min-width:0;
@@ -436,7 +439,7 @@
       display:flex; gap:14px; align-items:stretch;
     }
     .grid.list .cardBottom{
-      width: 320px;
+      width: 340px;
       border-top:none;
       border-right:1px solid var(--line);
       background: transparent;
@@ -479,22 +482,22 @@
 
     .cardTop{
       padding:14px 14px 10px;
-      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+      display:flex; gap:12px; align-items:flex-start;
     }
 
-    .iconBox{
-      width:44px; height:44px;
+    /* === Emoji Badge for each file === */
+    .fileEmoji{
+      width:44px;
+      height:44px;
       border-radius:16px;
-      display:grid; place-items:center;
+      display:grid;
+      place-items:center;
       border:1px solid var(--line);
       background: linear-gradient(135deg, rgba(148,163,184,.10), rgba(99,102,241,.10));
       box-shadow: 0 12px 28px rgba(2,6,23,.08);
-      flex:0 0 auto;
       user-select:none;
-    }
-    .iconBox span{
+      flex:0 0 auto;
       font-size:22px;
-      transform: translateY(1px);
     }
 
     .badge{
@@ -709,12 +712,7 @@
 
 <script>
 /**
- * INDEX.HTML — with:
- * - Icon per card (auto)
- * - Top 10 most viewed (clickable, counted)
- * - Favorites, filters, grid/list
- * - Per-file views (localStorage)
- * - Export/Import local data
+ * INDEX.HTML — Emoji per file + Top10 most viewed + Export/Import.
  */
 
 const RAW_FILES = [
@@ -837,6 +835,36 @@ function descFromFile(file){
   return "מסמך רעיון/מודל מעוצב.";
 }
 
+/** === Emoji for each file === */
+function emojiForFile(file, tags){
+  const f = (file||"").toLowerCase();
+  const t = new Set((tags||[]).map(x=>String(x||"").trim()));
+
+  if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
+  if(f.includes("hospital")) return "🏥";
+  if(f.includes("blood")) return "🩸";
+  if(f.includes("organ")) return "🫀";
+  if(f.includes("tooth")) return "🦷";
+  if(f.includes("bio") || f.includes("therapy")) return "🧬";
+  if(f.includes("security") || f.includes("ipv6") || f.includes("usb") || f.includes("hybirddata")) return "🛡️";
+  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) return "📡";
+  if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting")) return "⚡";
+  if(f.includes("thermal") || f.includes("thermo") || f.includes("thermosiphon")) return "🌡️";
+  if(f.includes("floor") || f.includes("paver") || f.includes("pressure")) return "🧱";
+  if(f.includes("water") && f.includes("shoes")) return "👟";
+  if(f.includes("water") || f.includes("gas") || f.includes("train")) return "🚆";
+  if(f.includes("aircraft") || f.includes("supersonic")) return "✈️";
+  if(f.includes("air_road") || f.includes("glider")) return "🪂";
+  if(f.includes("drone") || f.includes("pendulum")) return "🛠️";
+  if(f.includes("building") || f.includes("house") || f.includes("ceiling") || f.includes("stability")) return "🏗️";
+  if(f.includes("fingerprint") || f.includes("gesture") || f.includes("mobile") || f.includes("drawer")) return "🧩";
+  if(f.includes("constitution")) return "⚖️";
+  if(f.includes("calculator")) return "🧮";
+  if(f.includes("simulation")) return "🧪";
+  if(f.includes("multilang") || f.includes("trilingual") || f.includes("bilingual") || f.includes("all_languages")) return "🌍";
+  return "📄";
+}
+
 const FILES = uniq(RAW_FILES.map(ensureHtml).filter(Boolean));
 const PAGES = FILES.map(file => ({
   title: niceTitleFromFile(file),
@@ -945,6 +973,7 @@ function renderChips(){
       activeTag = t;
       renderChips();
       render();
+      renderTop10();
     };
     chipsEl.appendChild(b);
   }
@@ -1047,30 +1076,11 @@ function renderActiveInfo(){
   activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel}`;
 }
 
-/** Icon per card (auto by tags / filename) */
-function iconForPage(page){
-  const f = (page.file||"").toLowerCase();
-  const tags = new Set((page.tags||[]).map(x=>String(x||"").trim()));
-
-  // priority rules
-  if(tags.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
-  if(tags.has("רשת/אבטחה") || f.includes("security") || f.includes("ipv6") || f.includes("usb")) return "🛡️";
-  if(tags.has("אותות/מודלים") || f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) return "📡";
-  if(tags.has("בריאות/ביולוגיה") || f.includes("hospital") || f.includes("bio") || f.includes("organ") || f.includes("blood") || f.includes("therapy") || f.includes("tooth")) return "🧬";
-  if(tags.has("אנרגיה/תרמו") || f.includes("energy") || f.includes("thermo") || f.includes("thermal") || f.includes("harvesting") || f.includes("floor") || f.includes("paver")) return "⚡";
-  if(tags.has("תחבורה/מים") || f.includes("water") || f.includes("train") || f.includes("gas")) return "🚆";
-  if(tags.has("תעופה") || f.includes("aircraft") || f.includes("supersonic") || f.includes("glider")) return "✈️";
-  if(tags.has("רחפנים/מכניקה") || f.includes("drone") || f.includes("pendulum")) return "🛠️";
-  if(tags.has("בנייה/מבנים") || f.includes("building") || f.includes("house") || f.includes("ceiling") || f.includes("stability")) return "🏗️";
-  if(tags.has("ממשק/UX") || f.includes("fingerprint") || f.includes("gesture") || f.includes("mobile") || f.includes("drawer")) return "🧩";
-  return "📄";
-}
-
 /** open with counting (used everywhere) */
 function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
-  renderTop10(); // update instantly
+  renderTop10();
   window.location.href = encodeURI(file);
 }
 
@@ -1092,14 +1102,13 @@ function renderTop10(){
   const list = getTop10();
   top10List.innerHTML = "";
 
-  // if everything is 0, show the first items as suggestions
   const allZero = list.every(x=>Number(x.views||0)===0);
   const show = allZero ? PAGES.slice(0,10).map(p=>({ ...p, views: 0 })) : list;
 
   show.forEach((p, idx)=>{
     const row = document.createElement("div");
     row.className = "top10Item";
-    const icon = iconForPage(p);
+    const icon = emojiForFile(p.file, p.tags);
     row.innerHTML = `
       <div class="top10Left">
         <div class="rank">${idx+1}</div>
@@ -1162,10 +1171,12 @@ function render(){
       showFavBtn.textContent = "⭐ מועדפים";
       renderChips();
       render();
+      renderTop10();
     };
     $("#clearSearch").onclick = ()=>{
       q.value = "";
       render();
+      renderTop10();
     };
     return;
   }
@@ -1175,7 +1186,7 @@ function render(){
     const tags = (page.tags||[]).slice(0,4);
     const more = (page.tags||[]).length - tags.length;
     const views = getFileView(page.file);
-    const icon = iconForPage(page);
+    const emoji = emojiForFile(page.file, page.tags);
 
     const card = document.createElement("div");
     card.className = "card";
@@ -1183,7 +1194,7 @@ function render(){
     card.innerHTML = `
       <div class="cardInner">
         <div class="cardTop">
-          <div class="iconBox" title="אייקון לפי קטגוריה" aria-hidden="true"><span>${icon}</span></div>
+          <div class="fileEmoji" title="אימוג'י לפי סוג קובץ" aria-hidden="true">${emoji}</div>
 
           <div style="flex:1; min-width:0">
             <div class="badge" title="${escapeHtml(page.file)}">${escapeHtml(page.file)}</div>
@@ -1359,7 +1370,6 @@ function init(){
 
   q.addEventListener("input", ()=>{
     render();
-    // top10 stays global, but refresh feels nice
     renderTop10();
   });
 
