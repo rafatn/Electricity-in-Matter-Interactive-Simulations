@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מודל מתמטי • רכב מימן-סוללה עם סוללות בגלגלים ושחזור אנרגיה</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX (נוסחאות) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f6f7fb; --bg1:#eef2ff; --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 55px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --ink:#111827;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0f172a; --card:rgba(17,24,39,.65); --card2:rgba(17,24,39,.45);
+        --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.22);
+        --shadow:0 18px 55px rgba(0,0,0,.40);
+        --ink:#e5e7eb;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", sans-serif;
+      background: radial-gradient(1200px 700px at 15% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(1100px 650px at 90% 0%, rgba(99,102,241,.18), transparent 55%),
+                  var(--bg0);
+      color:var(--text);
+    }
+    header{
+      padding:24px 18px 10px;
+      max-width:1200px; margin:0 auto;
+    }
+    h1{margin:0; font-size:clamp(20px, 2.3vw, 30px); letter-spacing:.2px}
+    .sub{margin-top:8px; color:var(--muted); line-height:1.55}
+    .wrap{max-width:1200px; margin:0 auto; padding:14px 18px 40px}
+    .grid{display:grid; grid-template-columns: 1.2fr .9fr; gap:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0; padding:14px 16px; border-bottom:1px solid var(--line);
+      font-size:16px; color:var(--ink);
+    }
+    @media (prefers-color-scheme: dark){
+      .card h2{color:var(--text)}
+    }
+
+    .pad{padding:14px 16px}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .row > *{flex:1}
+    label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px}
+    input[type="range"]{width:100%}
+    .val{font-feature-settings:"tnum" 1, "ss01" 1; font-variant-numeric: tabular-nums}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line); border-radius:999px;
+      padding:8px 10px; background:rgba(255,255,255,.18);
+    }
+    .kpi{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    .kpi .box{
+      border:1px solid var(--line); border-radius:14px;
+      padding:10px 12px; background:rgba(255,255,255,.12);
+    }
+    .kpi .t{font-size:12px; color:var(--muted)}
+    .kpi .n{margin-top:4px; font-weight:800; font-size:18px}
+    .note{
+      margin-top:10px; padding:10px 12px; border-radius:14px;
+      border:1px solid var(--line); background:rgba(99,102,241,.10);
+      color:var(--text); line-height:1.55;
+    }
+    .bad{background:rgba(239,68,68,.12)}
+    .ok{background:rgba(34,197,94,.12)}
+    .warn{background:rgba(245,158,11,.12)}
+
+    .sec{margin-top:12px}
+    .sec h3{margin:0 0 8px; font-size:14px; color:var(--ink)}
+    @media (prefers-color-scheme: dark){ .sec h3{color:var(--text)} }
+    .bullets{margin:0; padding-inline-start:18px; color:var(--text); line-height:1.65}
+    .bullets li{margin:6px 0}
+    .math{
+      direction:ltr;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.10);
+      overflow:auto;
+    }
+    .tiny{font-size:12px; color:var(--muted); line-height:1.55}
+
+    /* "תמונה" של רכב (SVG) */
+    .carWrap{padding:12px 14px 16px}
+    .carLegend{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; color:var(--muted); font-size:12.5px
+    }
+    .dot{width:10px; height:10px; border-radius:999px; display:inline-block; margin-inline-start:6px}
+    .dot.acc{background:var(--accent)}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    .footer{
+      margin-top:14px; color:var(--muted); font-size:12px; line-height:1.6;
+      border-top:1px solid var(--line); padding-top:12px;
+    }
+    button{
+      appearance:none; border:1px solid var(--line);
+      background: rgba(255,255,255,.14);
+      color: var(--text);
+      padding:10px 12px; border-radius:14px;
+      cursor:pointer;
+      font-weight:650;
+    }
+    button:hover{transform: translateY(-1px)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>🚗💧⚡ מודל מתמטי לרכב “מימן + סוללה מרכזית + סוללות בגלגלים” (שחזור אנרגיה מחזורי)</h1>
+  <div class="sub">
+    הרעיון: סוללה מרכזית גדולה (Buffer) + סוללות/קבלים קטנים בכל גלגל + יחידת מימן (Fuel Cell / מנוע מימן),
+    כאשר חלק מהאנרגיה הקינטית (בעיקר בבלימה/ירידה) חוזרת לחשמל, וניהול מחזורי מחלק מי “מזין” את הסוללה המרכזית בכל רגע.
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- שמאל/ראשי -->
+    <section class="card">
+      <h2>1) “תמונה” של האוטו + רכיבי המערכת (SVG)</h2>
+      <div class="carWrap">
+        <!-- SVG car schematic -->
+        <svg viewBox="0 0 980 340" width="100%" height="auto" role="img" aria-label="שרטוט רכב עם סוללה מרכזית וארבע סוללות בגלגלים">
+          <defs>
+            <linearGradient id="gBody" x1="0" x2="1">
+              <stop offset="0" stop-color="rgba(99,102,241,.35)"/>
+              <stop offset="1" stop-color="rgba(99,102,241,.10)"/>
+            </linearGradient>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="rgba(0,0,0,.25)"/>
+            </filter>
+          </defs>
+
+          <!-- road -->
+          <line x1="60" y1="285" x2="920" y2="285" stroke="rgba(148,163,184,.55)" stroke-width="6" stroke-linecap="round"/>
+
+          <!-- car body -->
+          <path d="M170 245
+                   C210 195, 280 170, 360 168
+                   L540 168
+                   C625 168, 705 190, 750 230
+                   L805 235
+                   C835 238, 860 255, 862 272
+                   L862 276
+                   C862 292, 850 305, 835 305
+                   L215 305
+                   C195 305, 178 292, 175 272
+                   L170 245 Z"
+                fill="url(#gBody)" stroke="rgba(148,163,184,.55)" stroke-width="2" filter="url(#shadow)"/>
+
+          <!-- windows -->
+          <path d="M330 185 L520 185 C580 185, 640 200, 670 220
+                   L375 220 C350 220, 335 205, 330 185 Z"
+                fill="rgba(255,255,255,.12)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+
+          <!-- central battery -->
+          <rect x="410" y="232" width="190" height="50" rx="14"
+                fill="rgba(255,255,255,.12)" stroke="rgba(148,163,184,.45)" stroke-width="2"/>
+          <text x="505" y="262" text-anchor="middle" font-size="16" fill="currentColor" style="opacity:.95">
+            סוללה מרכזית (B)
+          </text>
+
+          <!-- hydrogen block -->
+          <rect x="240" y="232" width="150" height="50" rx="14"
+                fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.45)" stroke-width="2"/>
+          <text x="315" y="257" text-anchor="middle" font-size="15" fill="currentColor" style="opacity:.95">
+            Fuel Cell / H₂
+          </text>
+          <text x="315" y="276" text-anchor="middle" font-size="12" fill="currentColor" style="opacity:.70">
+            מים→מימן (אלקטרוליזה)
+          </text>
+
+          <!-- arrows between hydrogen and battery -->
+          <path d="M392 257 L410 257" stroke="rgba(34,197,94,.9)" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="410,257 400,252 400,262" fill="rgba(34,197,94,.9)"/>
+
+          <!-- wheels -->
+          <g id="wheelFL">
+            <circle cx="290" cy="295" r="42" fill="rgba(17,24,39,.85)" stroke="rgba(148,163,184,.35)" stroke-width="3"/>
+            <circle cx="290" cy="295" r="20" fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <rect x="252" y="238" width="76" height="22" rx="10"
+                  fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <text x="290" y="254" text-anchor="middle" font-size="12" fill="currentColor" style="opacity:.88">סוללת גלגל</text>
+          </g>
+
+          <g id="wheelFR">
+            <circle cx="760" cy="295" r="42" fill="rgba(17,24,39,.85)" stroke="rgba(148,163,184,.35)" stroke-width="3"/>
+            <circle cx="760" cy="295" r="20" fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <rect x="722" y="238" width="76" height="22" rx="10"
+                  fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <text x="760" y="254" text-anchor="middle" font-size="12" fill="currentColor" style="opacity:.88">סוללת גלגל</text>
+          </g>
+
+          <g id="wheelRL">
+            <circle cx="430" cy="295" r="42" fill="rgba(17,24,39,.85)" stroke="rgba(148,163,184,.35)" stroke-width="3"/>
+            <circle cx="430" cy="295" r="20" fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <rect x="392" y="238" width="76" height="22" rx="10"
+                  fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <text x="430" y="254" text-anchor="middle" font-size="12" fill="currentColor" style="opacity:.88">סוללת גלגל</text>
+          </g>
+
+          <g id="wheelRR">
+            <circle cx="620" cy="295" r="42" fill="rgba(17,24,39,.85)" stroke="rgba(148,163,184,.35)" stroke-width="3"/>
+            <circle cx="620" cy="295" r="20" fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <rect x="582" y="238" width="76" height="22" rx="10"
+                  fill="rgba(255,255,255,.10)" stroke="rgba(148,163,184,.35)" stroke-width="2"/>
+            <text x="620" y="254" text-anchor="middle" font-size="12" fill="currentColor" style="opacity:.88">סוללת גלגל</text>
+          </g>
+
+          <!-- arrows from wheels to central battery (regeneration) -->
+          <path d="M290 238 C320 220, 360 220, 410 250" stroke="rgba(245,158,11,.95)" stroke-width="3" fill="none"/>
+          <path d="M430 238 C450 220, 470 220, 495 232" stroke="rgba(245,158,11,.95)" stroke-width="3" fill="none"/>
+          <path d="M620 238 C600 220, 570 220, 540 232" stroke="rgba(245,158,11,.95)" stroke-width="3" fill="none"/>
+          <path d="M760 238 C730 220, 690 220, 600 250" stroke="rgba(245,158,11,.95)" stroke-width="3" fill="none"/>
+
+          <!-- label regen -->
+          <text x="505" y="212" text-anchor="middle" font-size="13" fill="currentColor" style="opacity:.78">
+            שחזור אנרגיה (בעיקר בבלימה/ירידה) → טעינה מחזורית לסוללה המרכזית
+          </text>
+        </svg>
+
+        <div class="carLegend">
+          <span class="pill"><span class="dot ok"></span> ירוק: מקור אנרגיה (Fuel Cell) → טעינה/הזנה</span>
+          <span class="pill"><span class="dot warn"></span> כתום: שחזור אנרגיה מהגלגלים (Regen)</span>
+          <span class="pill"><span class="dot acc"></span> סגול: סוללה מרכזית (Buffer)</span>
+        </div>
+
+        <div class="note warn">
+          ⚠️ חשוב: “מים” לבד אינם דלק. כדי להפיק מימן ממים צריך אנרגיה (למשל טעינה ראשונית/תא דלק/מקור חיצוני).
+          המערכת יכולה להיות יעילה מאוד כי היא <b>ממחזרת</b> אנרגיה שהייתה מתבזבזת כחום בבלימה.
+        </div>
+      </div>
+    </section>
+
+    <!-- ימין/בקרות -->
+    <aside class="card">
+      <h2>2) פרמטרים + חישוב חי (מודל פשוט וקריא)</h2>
+      <div class="pad">
+        <div class="row">
+          <div>
+            <label>מסה m (ק״ג)</label>
+            <input id="m" type="range" min="800" max="2800" step="50" value="1600">
+            <div class="val"><span id="mV"></span> kg</div>
+          </div>
+          <div>
+            <label>מהירות v (קמ״ש)</label>
+            <input id="v" type="range" min="0" max="160" step="1" value="72">
+            <div class="val"><span id="vV"></span> km/h</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>שיפוע כביש (°) — ירידה/עלייה</label>
+            <input id="theta" type="range" min="-10" max="10" step="0.5" value="0">
+            <div class="val"><span id="thetaV"></span>° (שלילי=ירידה)</div>
+          </div>
+          <div>
+            <label>עוצמת בלימה (0..1)</label>
+            <input id="brake" type="range" min="0" max="1" step="0.01" value="0.35">
+            <div class="val"><span id="brakeV"></span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>ניצולת שחזור (η<sub>regen</sub>)</label>
+            <input id="etaRegen" type="range" min="0.2" max="0.9" step="0.01" value="0.65">
+            <div class="val"><span id="etaRegenV"></span></div>
+          </div>
+          <div>
+            <label>ניצולת ממיר/מטען ל־B (η<sub>conv</sub>)</label>
+            <input id="etaConv" type="range" min="0.6" max="0.98" step="0.01" value="0.92">
+            <div class="val"><span id="etaConvV"></span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>קיבולת סוללה מרכזית B (kWh)</label>
+            <input id="capB" type="range" min="10" max="150" step="1" value="70">
+            <div class="val"><span id="capBV"></span> kWh</div>
+          </div>
+          <div>
+            <label>טעינה נוכחית של B (SOC)</label>
+            <input id="socB" type="range" min="0.05" max="0.95" step="0.01" value="0.55">
+            <div class="val"><span id="socBV"></span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>קיבולת לכל גלגל (kWh) — קטנה/קבלים</label>
+            <input id="capW" type="range" min="0.1" max="5" step="0.1" value="1.2">
+            <div class="val"><span id="capWV"></span> kWh</div>
+          </div>
+          <div>
+            <label>הזנת תא דלק/מימן (kW) — ממוצע</label>
+            <input id="pFC" type="range" min="0" max="120" step="1" value="22">
+            <div class="val"><span id="pFCV"></span> kW</div>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button id="stepBtn">בצע “מחזור” טעינה (גלגל בתור → B)</button>
+          <button id="resetBtn">איפוס מצב</button>
+        </div>
+
+        <div class="sec">
+          <h3>תוצאות (מיידי)</h3>
+          <div class="kpi">
+            <div class="box">
+              <div class="t">אנרגיה קינטית כרגע E<sub>k</sub></div>
+              <div class="n val" id="Ek"></div>
+            </div>
+            <div class="box">
+              <div class="t">הספק שחזור (הערכה) P<sub>regen</sub></div>
+              <div class="n val" id="Pregen"></div>
+            </div>
+            <div class="box">
+              <div class="t">טעינה נוספת ל־B בכל מחזור ΔE<sub>B</sub></div>
+              <div class="n val" id="dEB"></div>
+            </div>
+            <div class="box">
+              <div class="t">SOC של B אחרי המחזור</div>
+              <div class="n val" id="socAfter"></div>
+            </div>
+          </div>
+
+          <div class="note ok" id="queueNote"></div>
+          <div class="note bad" id="physicsNote"></div>
+        </div>
+
+        <div class="footer">
+          המודל כאן “שקוף”: הוא מחושב לפי אנרגיה/כוחות בסיסיים, כדי להמחיש את העיקרון.
+          בפיתוח אמיתי מוסיפים אווירודינמיקה, התנגדות גלגול, מגבלות זרם, טמפ׳, והפסדי ממיר/מנוע.
+        </div>
+      </div>
+    </aside>
+
+    <!-- מודל מתמטי והסברים -->
+    <section class="card">
+      <h2>3) המודל המתמטי — שלב אחרי שלב</h2>
+      <div class="pad">
+
+        <div class="sec">
+          <h3>שלב A — משתנים ומאזן אנרגיה</h3>
+          <ul class="bullets">
+            <li><b>m</b> מסה, <b>v</b> מהירות, <b>θ</b> שיפוע, <b>g</b>=9.81.</li>
+            <li><b>B</b> סוללה מרכזית (Buffer) עם SOC.</li>
+            <li><b>W<sub>i</sub></b> סוללת גלגל i (קדמי שמאלי/קדמי ימני/אחורי שמאלי/אחורי ימני).</li>
+            <li><b>η<sub>regen</sub></b> ניצולת הפקת חשמל מהגלגל (בבלימה/ירידה), <b>η<sub>conv</sub></b> ניצולת מעבר ל־B.</li>
+          </ul>
+
+          <div class="math">
+            \\[
+            E_k = \\frac{1}{2} m v^2
+            \\]
+            \\[
+            E_{out} \\le E_{H_2} + E_{B} \\; - \\; \\text{Losses}
+            \\]
+          </div>
+          <div class="tiny">
+            הערה: “שחזור” לא מייצר אנרגיה חדשה — הוא רק מחזיר חלק מהאנרגיה שהייתה הולכת לאיבוד כחום (בלמים).
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>שלב B — מקורות/צרכנים בזמן נסיעה</h3>
+          <ul class="bullets">
+            <li>הנעה: הספק למנועים <span dir="ltr">P<sub>drive</sub></span> מגיע מ־B ו/או מתא דלק (Fuel Cell).</li>
+            <li>תא דלק/מימן מספק הספק ממוצע <span dir="ltr">P<sub>FC</sub></span> שיכול גם לטעון את B.</li>
+            <li>שחזור: בבלימה/ירידה נוצרת “עודף אנרגיה מכנית” שניתן להמיר לחשמל.</li>
+          </ul>
+
+          <div class="math">
+            \\[
+            P_{FC} \\rightarrow \\text{טעינה/הזנה ל-}B
+            \\]
+            \\[
+            P_{regen} \\approx \\eta_{regen}\\,\\eta_{conv} \\cdot P_{mech\\,available}
+            \\]
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>שלב C — אנרגיה זמינה לשחזור (בלימה + ירידה)</h3>
+          <ul class="bullets">
+            <li><b>בלימה</b>: אם מאיטים, שינוי האנרגיה הקינטית הופך לזמין לשחזור (חלקית).</li>
+            <li><b>ירידה</b>: רכיב הכבידה לאורך הכביש יכול להזין את המערכת אם לא “מבזבזים” אותו בחום.</li>
+          </ul>
+
+          <div class="math">
+            \\[
+            P_{grav} = m g \\sin(\\theta) \\cdot v
+            \\]
+            \\[
+            P_{brake} \\approx \\beta \\cdot \\frac{E_k}{\\Delta t}
+            \\]
+            \\[
+            P_{mech\\,available} \\approx \\max(0,\\; -P_{grav}) + P_{brake}
+            \\]
+          </div>
+
+          <div class="tiny">
+            כאן השתמשנו בהערכה פשוטה: אם θ שלילי (ירידה), אז \\(\\sin(\\theta)\\) שלילי ולכן \\(-P_{grav}\\) חיובי → יש מה “לקצור”.
+            את \\(\\beta\\) מייצגים בסליידר “עוצמת בלימה”.
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>שלב D — “סוללה בכל גלגל” + ניהול מחזורי</h3>
+          <ul class="bullets">
+            <li>כל גלגל אוסף אנרגיה לחשבון שלו: <span dir="ltr">ΔE<sub>W_i</sub></span>.</li>
+            <li>בכל “מחזור” מערכת הבקרה בוחרת גלגל אחד בתור שמזין את B (לצמצום עומסי זרם/חום ולהארכת חיים).</li>
+          </ul>
+
+          <div class="math">
+            \\[
+            E_{W_i}(t{+}1)=\\min\\big(C_W,\\; E_{W_i}(t)+\\Delta E_{W_i}\\big)
+            \\]
+            \\[
+            E_B(t{+}1)=\\min\\big(C_B,\\; E_B(t)+\\Delta E_{B}\\big)
+            \\]
+            \\[
+            \\Delta E_B = \\min\\big(E_{W_{q}},\\; E_{B,\\,space}\\big)
+            \\]
+          </div>
+
+          <div class="tiny">
+            <b>q</b> הוא אינדקס התור (queue): FL→RL→RR→FR→… (אפשר לשנות).
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>שלב E — מים → מימן (רק מסגרת פיזיקלית נכונה)</h3>
+          <ul class="bullets">
+            <li>מים הם <b>נשא</b>, לא מקור אנרגיה. כדי להפיק מימן ממים צריך אנרגיה (אלקטרוליזה).</li>
+            <li>אפשר לבצע אלקטרוליזה באמצעות טעינה חיצונית או עודפים זמניים (במצבים מסוימים) — אבל תמיד יש הפסדים.</li>
+          </ul>
+
+          <div class="math">
+            \\[
+            2H_2O \\rightarrow 2H_2 + O_2
+            \\]
+            \\[
+            E_{elec} \\ge \\frac{E_{chem}(H_2)}{\\eta_{elec}}
+            \\]
+            \\[
+            P_{FC} \\approx \\eta_{FC}\\, \\dot{m}_{H_2}\\, LHV_{H_2}
+            \\]
+          </div>
+          <div class="tiny">
+            לפיתוח מוצר: לרוב משתמשים ב־Fuel Cell עם מיכל H₂ דחוס; “מים במיכל” לבדו לא מספיק ללא מקור אנרגיה שמפרק אותם.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- תרשים זרימה -->
+    <section class="card">
+      <h2>4) תרשים זרימה קצר (היגיון בקרה)</h2>
+      <div class="pad">
+        <ol class="bullets">
+          <li><b>מדידה</b>: מהירות, תאוצה, שיפוע, SOC של B, SOC של W<sub>i</sub>, טמפ׳.</li>
+          <li><b>החלטה</b>: אם יש בלימה/ירידה → הפעל regen לכל הגלגלים בגבולות זרם.</li>
+          <li><b>צבירה מקומית</b>: כל W<sub>i</sub> נטען עד C<sub>W</sub>.</li>
+          <li><b>תור הזנה</b>: כל מחזור בחר גלגל בתור q → העבר ממנו אנרגיה ל־B (DC-DC) כדי להפחית עומסי שיא.</li>
+          <li><b>מקור H₂</b>: Fuel Cell מספק P<sub>FC</sub> קבוע/מותאם → לבקשת הנהג ולייצוב SOC.</li>
+          <li><b>בטיחות</b>: אם B מלא או W מלא → צמצם regen (שמור על שליטה/בלימה מכנית).</li>
+        </ol>
+
+        <div class="note ok">
+          ✅ הנקודה החזקה ברעיון: “בקרת תור” (queue) מאפשרת חלוקת זרמים וחום בין גלגלים → עמידות טובה יותר, ומקסום שחזור במצבי בלימה.
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ---------- helpers ----------
+  const $ = (id)=>document.getElementById(id);
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+
+  // מצב פנימי (סימולציה מינימלית)
+  let queue = ["FL","RL","RR","FR"];
+  let qi = 0;
+  let Ew = { FL: 0, FR: 0, RL: 0, RR: 0 }; // kWh (טעינה בסוללות גלגל)
+  let EB = 0; // kWh (אנרגיה בסוללה מרכזית)
+
+  function readInputs(){
+    const m = +$("m").value;
+    const v_kmh = +$("v").value;
+    const v = v_kmh / 3.6;
+    const theta_deg = +$("theta").value;
+    const theta = theta_deg * Math.PI/180;
+    const brake = +$("brake").value; // 0..1
+    const etaRegen = +$("etaRegen").value;
+    const etaConv = +$("etaConv").value;
+
+    const capB = +$("capB").value;
+    const socB = +$("socB").value;
+    const capW = +$("capW").value;
+    const pFC = +$("pFC").value; // kW (ממוצע)
+
+    return {m, v_kmh, v, theta_deg, theta, brake, etaRegen, etaConv, capB, socB, capW, pFC};
+  }
+
+  function formatKWh(x){ return (Math.round(x*1000)/1000).toFixed(3) + " kWh"; }
+  function formatKW(x){ return (Math.round(x*10)/10).toFixed(1) + " kW"; }
+  function formatJ(x){
+    // show MJ
+    const MJ = x/1e6;
+    return (Math.round(MJ*100)/100).toFixed(2) + " MJ";
+  }
+
+  function render(){
+    const inp = readInputs();
+
+    // UI values
+    $("mV").textContent = inp.m.toFixed(0);
+    $("vV").textContent = inp.v_kmh.toFixed(0);
+    $("thetaV").textContent = inp.theta_deg.toFixed(1);
+    $("brakeV").textContent = inp.brake.toFixed(2);
+    $("etaRegenV").textContent = inp.etaRegen.toFixed(2);
+    $("etaConvV").textContent = inp.etaConv.toFixed(2);
+    $("capBV").textContent = inp.capB.toFixed(0);
+    $("socBV").textContent = inp.socB.toFixed(2);
+    $("capWV").textContent = inp.capW.toFixed(1);
+    $("pFCV").textContent = inp.pFC.toFixed(0);
+
+    // init energies based on SOC slider (for demo)
+    // keep EB within [0, capB] but do not overwrite after user starts stepping unless reset.
+    if (!render._started){
+      EB = inp.capB * inp.socB;
+      const initW = 0.15 * inp.capW; // initial small charge
+      Ew = { FL:initW, FR:initW, RL:initW, RR:initW };
+    }
+
+    // Core instantaneous calculations (simple)
+    const g = 9.81;
+    const Ek = 0.5 * inp.m * inp.v * inp.v; // Joule
+    $("Ek").textContent = formatJ(Ek);
+
+    // Gravity power along slope (can be negative on downhill)
+    const Pgrav = inp.m * g * Math.sin(inp.theta) * inp.v; // W
+    // Brake "available" power: a heuristic proportional to Ek per 4 seconds
+    const dt_est = 4.0; // seconds (heuristic window)
+    const Pbrake = inp.brake * (Ek / dt_est); // W
+
+    // available mechanical power for regeneration:
+    const Pavail = Math.max(0, (-Pgrav)) + Math.max(0, Pbrake); // W
+    const Pregen = (inp.etaRegen * inp.etaConv) * (Pavail/1000); // kW
+
+    $("Pregen").textContent = formatKW(Pregen);
+
+    // show physics note
+    const note = $("physicsNote");
+    if (Pregen < 0.2){
+      note.textContent = "ℹ️ כרגע כמעט אין מה לשחזר (אין בלימה חזקה/אין ירידה). זה תקין—שחזור עובד בעיקר בבלימה ובירידות.";
+      note.className = "note warn";
+    } else {
+      note.textContent = "✅ יש אנרגיה זמינה לשחזור. שים לב: זה יוצר מומנט נגד (מרגיש כמו בלימה) — זה בדיוק “המחיר” של טעינה מהגלגלים.";
+      note.className = "note ok";
+    }
+
+    // queue note
+    const q = queue[qi];
+    $("queueNote").innerHTML =
+      `🔁 תור הזנה נוכחי: <b dir="ltr">${q}</b> → מזין את <b>B</b> במחזור הבא. `
+      + `מצב סוללות גלגל (kWh): `
+      + `<span dir="ltr">FL=${Ew.FL.toFixed(2)}, RL=${Ew.RL.toFixed(2)}, RR=${Ew.RR.toFixed(2)}, FR=${Ew.FR.toFixed(2)}</span>`;
+
+    // per-cycle estimated transfer (what would happen on step)
+    const dE_per_cycle = (Pregen /*kW*/ / 3600) * 6.0; // assume 6 seconds "cycle" -> kWh
+    // allocate regen to all wheels evenly (simplified)
+    const dEwheel = dE_per_cycle / 4;
+
+    // after accumulating, chosen wheel feeds B (limited by B space)
+    const Bspace = inp.capB - EB;
+    const willWheelEnergy = clamp(Ew[q] + dEwheel, 0, inp.capW); // approximate state at step moment
+    const dEB = Math.min(willWheelEnergy, Bspace);
+
+    $("dEB").textContent = formatKWh(dEB);
+
+    const socAfter = (EB + dEB) / inp.capB;
+    $("socAfter").textContent = socAfter.toFixed(3);
+
+    // save instantaneous predicted numbers
+    render._predict = { dE_per_cycle, dEwheel, dEB, q, capB: inp.capB, capW: inp.capW };
+  }
+
+  function stepCycle(){
+    render._started = true;
+    const inp = readInputs();
+    const pred = render._predict;
+
+    // 1) add regen to each wheel battery (limited)
+    for (const k of ["FL","FR","RL","RR"]){
+      Ew[k] = Math.min(inp.capW, Ew[k] + pred.dEwheel);
+    }
+
+    // 2) fuel cell average adds to B over one cycle too (6s)
+    const dE_FC = (inp.pFC / 3600) * 6.0; // kWh
+    EB = Math.min(inp.capB, EB + dE_FC);
+
+    // 3) chosen wheel feeds B (limited by remaining space)
+    const q = pred.q;
+    const space = inp.capB - EB;
+    const take = Math.min(Ew[q], space);
+    Ew[q] -= take;
+    EB += take;
+
+    // 4) advance queue
+    qi = (qi + 1) % queue.length;
+
+    // also update SOC slider display without forcing its value
+    const soc = EB / inp.capB;
+    $("socAfter").textContent = soc.toFixed(3);
+    render();
+  }
+
+  function resetAll(){
+    render._started = false;
+    qi = 0;
+    render();
+  }
+
+  // KaTeX render
+  window.addEventListener("load", () => {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "\\\\(", right: "\\\\)", display: false},
+        {left: "\\\\[", right: "\\\\]", display: true},
+      ]
+    });
+  });
+
+  // bind events
+  for (const id of ["m","v","theta","brake","etaRegen","etaConv","capB","socB","capW","pFC"]){
+    $(id).addEventListener("input", render);
+  }
+  $("stepBtn").addEventListener("click", stepCycle);
+  $("resetBtn").addEventListener("click", resetAll);
+
+  render();
+</script>
+</body>
+</html>
