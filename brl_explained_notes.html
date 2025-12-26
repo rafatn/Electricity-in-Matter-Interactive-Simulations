@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BRL • הסברים ונוסחאות (מסמך)</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --card:rgba(255,255,255,.84);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.10); --r:18px;
+      --accent:#4f46e5; --accent2:#0ea5e9; --ok:#16a34a; --warn:#f59e0b;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0a122a; --card:rgba(17,24,39,.74);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.22);
+        --shadow:0 18px 60px rgba(0,0,0,.45);
+      }
+    }
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(900px 600px at 90% 0%, rgba(99,102,241,.18), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    .wrap{ max-width:980px; margin:0 auto; padding:22px; }
+    header{
+      border:1px solid var(--line); border-radius:calc(var(--r) + 6px);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.55));
+      box-shadow:var(--shadow); padding:16px 18px;
+    }
+    .top{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:space-between; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{
+      width:48px; height:48px; border-radius:16px;
+      background: radial-gradient(20px 20px at 30% 30%, rgba(255,255,255,.85), transparent 60%),
+                  linear-gradient(135deg, rgba(79,70,229,.95), rgba(14,165,233,.85));
+      display:grid; place-items:center; color:#fff; font-weight:900;
+      box-shadow:0 12px 30px rgba(79,70,229,.25);
+      flex:0 0 auto;
+    }
+    h1{ margin:0; font-size:18px; line-height:1.2; letter-spacing:.2px;}
+    .sub{ margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.4; }
+    .pillrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{
+      border:1px solid var(--line); background:rgba(255,255,255,.45);
+      padding:7px 10px; border-radius:999px; font-size:12px; color:var(--muted);
+    }
+
+    nav{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 12px; border:1px solid var(--line); border-radius:var(--r);
+      background:rgba(255,255,255,.25);
+    }
+    nav a{
+      text-decoration:none; color:var(--text);
+      border:1px solid var(--line); padding:7px 10px; border-radius:999px;
+      background:rgba(255,255,255,.35); font-size:12px;
+    }
+    nav a:hover{ filter:brightness(1.04); }
+
+    section.card{
+      margin-top:14px;
+      border:1px solid var(--line); border-radius:var(--r);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.55));
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .hd{
+      padding:13px 16px; border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .hd b{ font-size:14px; }
+    .bd{ padding:14px 16px; }
+    .muted{ color:var(--muted); font-size:12px; line-height:1.55; }
+    .k{
+      display:inline-flex; align-items:center; gap:7px;
+      padding:4px 8px; border-radius:999px; font-size:11px;
+      border:1px solid var(--line); background:rgba(255,255,255,.30); color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background:var(--accent); display:inline-block; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width: 760px){ .grid2{ grid-template-columns:1fr; } }
+
+    .box{
+      border:1px solid var(--line); border-radius:16px;
+      background:rgba(255,255,255,.34); padding:12px 12px;
+    }
+    .box h3{ margin:0 0 6px; font-size:13px; }
+    .box p{ margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.55; }
+    ul{ margin:8px 0 0; padding:0 18px 0 0; color:var(--muted); font-size:12px; line-height:1.6; }
+    li{ margin:6px 0; }
+
+    .eq{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed var(--line);
+      background:rgba(2,6,23,.04);
+      overflow:auto;
+      line-height:1.65;
+      margin-top:10px;
+      direction:ltr; /* equations look better LTR */
+      text-align:left;
+    }
+    .callout{
+      margin-top:10px;
+      border-right:3px solid rgba(79,70,229,.55);
+      padding-right:10px;
+      color:var(--muted); font-size:12px; line-height:1.55;
+    }
+    .warn{
+      border-right-color: rgba(245,158,11,.75);
+    }
+    .ok{
+      border-right-color: rgba(22,163,74,.75);
+    }
+
+    table{ width:100%; border-collapse:separate; border-spacing:0; margin-top:10px; }
+    th,td{ padding:10px 8px; border-bottom:1px solid var(--line); font-size:12px; }
+    th{ color:var(--muted); text-align:right; }
+    td.mono{ font-family:var(--mono); direction:ltr; text-align:left; }
+    footer{
+      margin:14px 0 4px;
+      padding:12px 16px;
+      border:1px solid var(--line); border-radius:var(--r);
+      background:rgba(255,255,255,.22);
+      color:var(--muted); font-size:12px; line-height:1.55;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="top">
+        <div class="brand">
+          <div class="logo">BRL</div>
+          <div>
+            <h1>מסמך הסברים ונוסחאות • מודל BRL (Bohr-Resonant Ladder)</h1>
+            <div class="sub">
+              סיכום מהתחלה: מה ההבדל בין Bremsstrahlung לקרינה אופיינית, מה זה near-field, איך מגדירים “רמות” לפי תהודה,
+              ואיך מתח/מסלול/מחזוריות מאפשרים תכנון מקור קרינה.
+            </div>
+          </div>
+        </div>
+        <div class="pillrow">
+          <span class="pill">⚡ V → אנרגיה</span>
+          <span class="pill">🧲 B → מסלול</span>
+          <span class="pill">📏 L → תהודה</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#start">התחלה והבעיה</a>
+        <a href="#two">שני מנגנוני X</a>
+        <a href="#near">Near-field ומה “נספג”</a>
+        <a href="#brl">מודל BRL</a>
+        <a href="#orbit">מסלול אלקטרון</a>
+        <a href="#voltage">מתח בלימה וחיתוך X</a>
+        <a href="#dev">תהליך פיתוח</a>
+        <a href="#limits">גבולות ואזהרות</a>
+        <a href="#use">איך להשתמש בקובץ הדינמי</a>
+      </nav>
+    </header>
+
+    <section class="card" id="start">
+      <div class="hd">
+        <b>1) התחלה: מה ניסינו להסביר?</b>
+        <span class="k"><span class="dot"></span>מפל אנרגיה vs שדה</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>הרעיון המקורי (האינטואיציה)</h3>
+          <p>
+            “בכל מעבר חלק נשאר עם החלקיק, חלק נספג ברמה, ואז נפלטת קרינה בכל רמה עד לרמה האחרונה (X)”.
+          </p>
+        </div>
+
+        <div class="callout ok">
+          מה שתפס כאן את הכיוון הנכון: יש <b>אנרגיית שדה מקומית חלשה</b> (near-field) שיכולה “להיראות” רק במדידה קרובה/צימוד,
+          אבל זה <b>לא</b> בהכרח “רמות אטומיות” או “קפיצות”.
+        </div>
+
+        <div class="callout warn">
+          התיקון העיקרי: לאלקטרון חופשי אין “רמות” טבעיות. כדי לקבל “סולם רמות” בדיד חייבים <b>מנגנון כימות חיצוני</b>:
+          תהודה/מחזוריות/חלל-תהודה/אונדיולטור/מבנה מחזורי.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="two">
+      <div class="hd">
+        <b>2) שני מנגנוני קרינת X (חשוב להפריד)</b>
+        <span class="k"><span class="dot"></span>רציף מול בדיד</span>
+      </div>
+      <div class="bd">
+        <div class="grid2">
+          <div class="box">
+            <h3>Bremsstrahlung (קרינת בלימה) — רציף</h3>
+            <p>
+              אלקטרון חופשי מואט/מואץ בשדה הגרעין → השדה האלקטרומגנטי מגיב → נפלטת קרינה.
+              אין “רמות ביניים” אטומיות; הספקטרום רציף עד חיתוך עליון לפי המתח.
+            </p>
+            <div class="eq">
+K_e ≈ eV
+Eγ,max ≈ eV
+λ_min = hc/(eV)
+            </div>
+          </div>
+          <div class="box">
+            <h3>קרינה אופיינית (Characteristic X) — בדיד</h3>
+            <p>
+              אלקטרון עוקר אלקטרון פנימי (K/L). אלקטרון חיצוני “נופל” למטה ומפיק פוטון X בדיד.
+              כאן הרמות הן רמות אטומיות אמיתיות.
+            </p>
+            <div class="eq">
+Eγ = E(n_i) − E(n_f)
+(קווי Kα, Kβ, ...)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="near">
+      <div class="hd">
+        <b>3) Near-field: מה “נספג” ולמה סיבים אופטיים יכולים למדוד?</b>
+        <span class="k"><span class="dot"></span>צימוד שדה מקומי</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>הרעיון המרכזי</h3>
+          <p>
+            לפני שהקרינה הופכת ל-far-field (גל מתפשט), קיימים רכיבי שדה מקומי (near-field / evanescent) שאינם “גל חופשי”.
+            ניתן לצמד אותם לגלאים קרובים (כמו מבנה/ננו-אנטנה/סיב אופטִי) ולהמירם לאות מדיד.
+          </p>
+          <ul>
+            <li><b>לא</b> כל אנרגיית שדה היא “פוטון חופשי”.</li>
+            <li>סיב אופטי יכול “למשוך” אנרגיית שדה מקומית באמצעות צימוד.</li>
+            <li>זה לא מחייב “אורכי גל לא ידועים”; לעתים זה פשוט תחום שקשה למדידה בלי צימוד.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="brl">
+      <div class="hd">
+        <b>4) מודל חדש: BRL — Bohr-Resonant Ladder (סולם בוהרי-תהודתי)</b>
+        <span class="k"><span class="dot"></span>בדידות מהנדסית</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>למה צריך BRL?</h3>
+          <p>
+            לאלקטרון חופשי אין “רמות”. לכן מייצרים “רמות” ע״י תנאי תהודה/מחזוריות:
+            מערכת מאלצת מצב שדה להיסגר במספר מחזורים שלם — מתקבל סולם בדיד.
+          </p>
+          <div class="eq">
+ν0 = v/L
+νn = n·ν0
+λn = c/νn
+Eγ,n = h·νn
+          </div>
+          <div class="callout ok">
+            המשמעות: “הרמות” הן <b>מצבי שדה/תהודה</b> (ספקטרליים), לא רמות אטומיות.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="orbit">
+      <div class="hd">
+        <b>5) פונקציית מסלול האלקטרון (דינמיקה) + ציקלוטרון</b>
+        <span class="k"><span class="dot"></span>מסלול מעגלי/הליקלי</span>
+      </div>
+      <div class="bd">
+        <div class="grid2">
+          <div class="box">
+            <h3>מסלול מעגלי בקירוב</h3>
+            <div class="eq">
+r(t) = ( R cos(ωc t), R sin(ωc t), vz t )
+ωc = eB/(γm)
+fc = ωc/(2π)
+            </div>
+            <p>
+              כאשר B גדול יותר → תדירות סיבוב גדולה יותר. כאשר γ גדול יותר (אנרגיה גבוהה) → ωc קטן יותר (יחסות).
+            </p>
+          </div>
+          <div class="box">
+            <h3>מהירות יחסותית מתוך מתח</h3>
+            <div class="eq">
+K ≈ eV
+γ = 1 + K/(mc²)
+β = sqrt(1 − 1/γ²)
+v = βc
+            </div>
+            <p>
+              כך מחברים את “מתח המקור” ל־“מהירות המסלול”, ואז למהירויות תדר/אורך-גל של סולם BRL.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="voltage">
+      <div class="hd">
+        <b>6) מתח בלימה + חיתוך X-ray</b>
+        <span class="k"><span class="dot"></span>שליטה ב-λmin</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>מתח בלימה (Stopping Potential)</h3>
+          <div class="eq">
+V_stop = K/e
+ΔV = (Ki − Kf)/e
+          </div>
+          <p>
+            אם ברצונך “להוריד” אלקטרון מאנרגיה Ki לאנרגיה Kf — אתה שולט בזה באמצעות הפרש מתחים.
+          </p>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <h3>חיתוך מינימלי של אורך גל ב-Bremsstrahlung</h3>
+          <div class="eq">
+Eγ,max ≈ eV
+λmin = hc/(eV)
+          </div>
+          <p>
+            זה קובע את “הרמה העליונה” של אנרגיית הפוטון האפשרית עבור אלקטרון שמואץ במתח V.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="dev">
+      <div class="hd">
+        <b>7) תהליך הפיתוח (Workflow) — מהרעיון עד מקור קרינה</b>
+        <span class="k"><span class="dot"></span>צעדים מעשיים</span>
+      </div>
+      <div class="bd">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:120px">שלב</th>
+              <th>מה עושים</th>
+              <th style="width:260px">תוצר מתמטי</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>1</b></td>
+              <td>בחר מנגנון: רציף (Brems) / בדיד (אטומי) / בדיד-תהודתי (BRL)</td>
+              <td class="mono">בחירת מודל</td>
+            </tr>
+            <tr>
+              <td><b>2</b></td>
+              <td>קבע מקור אנרגיה לאלקטרון: מתח V → K</td>
+              <td class="mono">K≈eV, γ, β, v</td>
+            </tr>
+            <tr>
+              <td><b>3</b></td>
+              <td>קבע גאומטריה/מחזוריות: אורך L (תהודה) ו/או שדה B (מסלול)</td>
+              <td class="mono">ν0=v/L, ωc=eB/(γm)</td>
+            </tr>
+            <tr>
+              <td><b>4</b></td>
+              <td>בנה “סולם” רמות: n=1..N, חשב νn, λn, Eγ,n</td>
+              <td class="mono">νn=n·ν0, λn=c/νn</td>
+            </tr>
+            <tr>
+              <td><b>5</b></td>
+              <td>הוסף בלימה/ספים: Vstop או ΔV כדי “לנעול” אנרגיות רצויות</td>
+              <td class="mono">Vstop=K/e</td>
+            </tr>
+            <tr>
+              <td><b>6</b></td>
+              <td>אם המטרה X: בדוק λmin לפי V, וקבע חומר מטרה/מסלול מתאים</td>
+              <td class="mono">λmin=hc/(eV)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout ok">
+          המהות: אתה שולט ב-<b>V</b> (אנרגיה), ב-<b>B</b> (מסלול), ב-<b>L</b> (תהודה),
+          ובכך “מתרגם” אותם לסולם אורכי גל \(\lambda_n\).
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="limits">
+      <div class="hd">
+        <b>8) גבולות ואזהרות (כדי לשמור על עקביות פיזיקלית)</b>
+        <span class="k"><span class="dot"></span>מה כן ומה לא</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>מה המודל BRL כן נותן?</h3>
+          <ul>
+            <li>דרך <b>סדורה</b> לדבר על “רמות” לאלקטרון חופשי באמצעות תהודה (L) ומסלול (B).</li>
+            <li>יכולת לתכנן מקור כך שיש דגש על תדרים מסוימים (קווים/הרמוניות).</li>
+            <li>חיבור ברור בין V↔K↔γ↔v↔(νn,λn).</li>
+          </ul>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <h3>מה המודל BRL לא מבטיח לבדו?</h3>
+          <ul>
+            <li>הוא לא מוכיח “קרינה חדשה”. הוא נותן מסגרת לתכנון <b>תדרים קשים למדידה</b> או “מצבי שדה מקומיים”.</li>
+            <li>כדי ש-νn באמת ייצא כ-far-field נדרש מנגנון צימוד/חלל/אנטנה/מטרה שמאפשר פליטה יעילה.</li>
+            <li>ב-X ויותר מזה, יש מגבלות הנדסיות קשות (מתחים, חומרים, קרינה מייננת).</li>
+          </ul>
+        </div>
+
+        <div class="callout warn">
+          חשוב: “אורך גל” מוגדר היטב ל-far-field. ב-near-field לעתים נכון יותר לדבר על <b>סקאלות מרחביות</b> ומצבי שדה,
+          לא על \(\lambda\) יחיד שמתפשט.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="use">
+      <div class="hd">
+        <b>9) איך להשתמש בקובץ ה-HTML הדינמי שיצרנו?</b>
+        <span class="k"><span class="dot"></span>הדגמות</span>
+      </div>
+      <div class="bd">
+        <div class="box">
+          <h3>מה לשנות כדי לראות השפעות</h3>
+          <ul>
+            <li><b>V</b> ↑ → האנרגיה עולה, v עולה (עד קרוב ל-c), וחיתוך X מקצר λmin.</li>
+            <li><b>L</b> ↓ → ν0=v/L גדל → כל הסולם זז לתדרים גבוהים יותר.</li>
+            <li><b>N</b> ↑ → יותר הרמוניות (קווים) בטבלה.</li>
+            <li><b>B</b> ↑ → ωc גדל (אך יורד עם γ), שימושי למסלולים מחזוריים.</li>
+          </ul>
+          <div class="callout ok">
+            רוצה “לכוון” לטווח מסוים? בחר L כך ש-λ1 (או λn) ייפול בתחום הרצוי,
+            ואז כוון V כדי להשיג v/אנרגיה מתאימה.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      מסמך זה מציג את המודל BRL כמסגרת רעיונית-מתמטית עקבית (תהודה/מסלול/מתח → סולם תדרים),
+      לצד ההפרדה ההכרחית בין Bremsstrahlung (רציף) וקרינה אופיינית (בדיד אטומי).
+      אם תרצה, אפשר להוסיף כאן גם דוגמאות מספריות מוכנות (סטים) לטווחי RF/IR/נראה/UV/X.
+    </footer>
+  </div>
+</body>
+</html>

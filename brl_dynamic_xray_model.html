@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מודל BRL דינמי • רמות תהודה + חיתוך X-ray</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --card:rgba(255,255,255,.82);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.10); --r:18px;
+      --accent:#4f46e5; --good:#16a34a; --warn:#f59e0b;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0a122a; --card:rgba(17,24,39,.72);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.22);
+        --shadow:0 18px 60px rgba(0,0,0,.45);
+      }
+    }
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background: radial-gradient(1100px 700px at 15% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(900px 600px at 90% 0%, rgba(99,102,241,.18), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    .wrap{ max-width:1100px; margin:0 auto; padding:22px; }
+    header{
+      display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+      padding:16px 18px; border:1px solid var(--line); border-radius:calc(var(--r) + 4px);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.55));
+      box-shadow:var(--shadow);
+    }
+    .title{
+      display:flex; gap:12px; align-items:center;
+    }
+    .badge{
+      width:46px; height:46px; border-radius:14px;
+      background: radial-gradient(20px 20px at 30% 30%, rgba(255,255,255,.8), transparent 60%),
+                  linear-gradient(135deg, rgba(79,70,229,.95), rgba(14,165,233,.85));
+      display:grid; place-items:center; color:#fff; font-weight:800;
+      box-shadow:0 12px 30px rgba(79,70,229,.25);
+      flex:0 0 auto;
+    }
+    h1{ margin:0; font-size:18px; line-height:1.2; letter-spacing:.2px;}
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+    .right{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      border:1px solid var(--line); background:rgba(255,255,255,.45);
+      padding:7px 10px; border-radius:999px; font-size:12px; color:var(--muted);
+    }
+    main{ margin-top:14px; display:grid; grid-template-columns: 1.05fr .95fr; gap:14px; }
+    @media (max-width: 980px){ main{ grid-template-columns: 1fr; } }
+
+    .card{
+      border:1px solid var(--line); border-radius:var(--r);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.55));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px; border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .card .hd b{ font-size:14px; }
+    .card .bd{ padding:14px 16px; }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    @media (max-width: 600px){ .grid2{ grid-template-columns:1fr; } }
+
+    .field{ border:1px solid var(--line); border-radius:14px; padding:10px 12px; background:rgba(255,255,255,.38); }
+    .field label{ display:flex; justify-content:space-between; gap:10px; font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .field label span.value{ color:var(--text); font-family:var(--mono); font-size:12px; }
+    input[type="range"]{ width:100%; }
+    input[type="number"]{
+      width:100%; padding:9px 10px; border-radius:12px; border:1px solid var(--line);
+      background:rgba(255,255,255,.35); color:var(--text); font-family:var(--mono);
+      outline:none;
+    }
+    .note{
+      margin-top:10px; font-size:12px; color:var(--muted); line-height:1.45;
+      border-right:3px solid rgba(79,70,229,.55); padding-right:10px;
+    }
+
+    .kpi{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    @media (max-width: 520px){ .kpi{ grid-template-columns:1fr; } }
+    .kpi .box{
+      border:1px solid var(--line); border-radius:16px; padding:12px 12px;
+      background:rgba(255,255,255,.36);
+    }
+    .kpi .box .t{ font-size:12px; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between; gap:10px; }
+    .kpi .box .v{ font-family:var(--mono); font-size:14px; font-weight:700; }
+    .kpi .box .s{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+    .eq{
+      font-family:var(--mono); font-size:12px; padding:10px 12px; border-radius:14px;
+      border:1px dashed var(--line); background:rgba(2,6,23,.04); overflow:auto;
+    }
+
+    table{ width:100%; border-collapse:separate; border-spacing:0; }
+    thead th{
+      position:sticky; top:0; z-index:1;
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.45));
+      border-bottom:1px solid var(--line);
+      font-size:12px; color:var(--muted); text-align:right; padding:10px 8px;
+    }
+    tbody td{
+      border-bottom:1px solid var(--line);
+      padding:9px 8px; font-size:12px;
+    }
+    tbody tr:hover td{ background:rgba(79,70,229,.06); }
+    td.mono{ font-family:var(--mono); }
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 8px; border-radius:999px; font-size:11px;
+      border:1px solid var(--line); background:rgba(255,255,255,.32); color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background:var(--accent); }
+    .footer{
+      margin-top:14px; padding:12px 16px; color:var(--muted); font-size:12px;
+      border:1px solid var(--line); border-radius:var(--r); background:rgba(255,255,255,.25);
+    }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+    button{
+      border:1px solid var(--line); background:rgba(255,255,255,.35); color:var(--text);
+      padding:10px 12px; border-radius:14px; cursor:pointer; font-weight:700; font-size:12px;
+    }
+    button:hover{ filter:brightness(1.04); }
+    .warn{ color:#7c2d12; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <div class="badge">BRL</div>
+        <div>
+          <h1>מודל BRL דינמי — “סולם בוהרי” לאלקטרון חופשי (תהודה) + חיתוך X-ray</h1>
+          <div class="subtitle">קלט → חישוב מהירות יחסותית, רמות תהודה (ν<sub>n</sub>, λ<sub>n</sub>), תדירות ציקלוטרון, וחיתוך λ<sub>min</sub> של Bremsstrahlung.</div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="pill">🧲 B → מסלול מעגלי</div>
+        <div class="pill">⚡ V → אנרגיית אלקטרון</div>
+        <div class="pill">📏 L → מחזוריות/תהודה</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Controls -->
+      <section class="card">
+        <div class="hd">
+          <b>קלטים (דינמי)</b>
+          <span class="tag"><span class="dot"></span>שנה ערכים ותראה טבלה מתעדכנת</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div class="field">
+              <label>
+                <span>מתח האצה V (קובע K ≈ eV)</span>
+                <span class="value" id="V_show"></span>
+              </label>
+              <input id="V_range" type="range" min="100" max="200000" step="100" value="10000">
+              <div style="margin-top:8px">
+                <input id="V_num" type="number" min="0" step="100" value="10000" inputmode="numeric" />
+              </div>
+              <div class="note">משמש גם לחיתוך X-ray:  λ<sub>min</sub> = hc/(eV).</div>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>שדה מגנטי B (טסלה)</span>
+                <span class="value" id="B_show"></span>
+              </label>
+              <input id="B_range" type="range" min="0" max="5" step="0.01" value="0.50">
+              <div style="margin-top:8px">
+                <input id="B_num" type="number" min="0" step="0.01" value="0.50" inputmode="decimal" />
+              </div>
+              <div class="note">קובע תדירות ציקלוטרון: ω<sub>c</sub> = eB/(γm).</div>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>אורך מחזוריות/תהודה L</span>
+                <span class="value" id="L_show"></span>
+              </label>
+              <input id="L_range" type="range" min="0.001" max="2" step="0.001" value="0.10">
+              <div style="margin-top:8px">
+                <input id="L_num" type="number" min="0.0001" step="0.001" value="0.10" inputmode="decimal" />
+              </div>
+              <div class="note">BRL: ν<sub>0</sub> = v/L, ואז ν<sub>n</sub> = nν<sub>0</sub>.</div>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>מספר רמות (harmonics) N</span>
+                <span class="value" id="N_show"></span>
+              </label>
+              <input id="N_range" type="range" min="5" max="200" step="1" value="40">
+              <div style="margin-top:8px">
+                <input id="N_num" type="number" min="1" step="1" value="40" inputmode="numeric" />
+              </div>
+              <div class="note">כמות השורות בטבלה. בחר N גדול כדי לראות “סולם” צפוף.</div>
+            </div>
+          </div>
+
+          <div class="btnrow" style="margin-top:10px">
+            <button id="preset_radio">Preset: RF/מיקרוגל</button>
+            <button id="preset_opt">Preset: נראה/IR</button>
+            <button id="preset_xray">Preset: X-ray (חיתוך קצר)</button>
+            <button id="export_csv">ייצוא CSV</button>
+          </div>
+
+          <div class="note">
+            ⚠ הערה: המודל BRL כאן הוא “בוהר-הנדסי” (תהודה/מחזוריות) לאלקטרון חופשי.
+            אם רוצים קווים בדידים “אטומיים” אמיתיים (K/L/M) זה מודל אחר (קרינה אופיינית).
+          </div>
+        </div>
+      </section>
+
+      <!-- Outputs -->
+      <section class="card">
+        <div class="hd">
+          <b>תוצאות עיקריות</b>
+          <span class="tag"><span class="dot"></span>יחסות + ספקטרום</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box">
+              <div class="t"><span>אנרגיית אלקטרון K</span><span class="tag">≈ eV</span></div>
+              <div class="v" id="K_eV"></div>
+              <div class="s" id="K_J"></div>
+            </div>
+            <div class="box">
+              <div class="t"><span>γ (יחסות)</span><span class="tag">1/√(1-β²)</span></div>
+              <div class="v" id="gamma"></div>
+              <div class="s" id="beta"></div>
+            </div>
+            <div class="box">
+              <div class="t"><span>מהירות v</span><span class="tag">m/s</span></div>
+              <div class="v" id="v_ms"></div>
+              <div class="s" id="v_c"></div>
+            </div>
+            <div class="box">
+              <div class="t"><span>חיתוך X-ray λ<sub>min</sub></span><span class="tag">Brems</span></div>
+              <div class="v" id="lam_min"></div>
+              <div class="s" id="Emax"></div>
+            </div>
+            <div class="box">
+              <div class="t"><span>ציקלוטרון ω<sub>c</sub></span><span class="tag">rad/s</span></div>
+              <div class="v" id="wc"></div>
+              <div class="s" id="fc"></div>
+            </div>
+            <div class="box">
+              <div class="t"><span>BRL בסיס: ν<sub>0</sub>=v/L</span><span class="tag">Hz</span></div>
+              <div class="v" id="nu0"></div>
+              <div class="s" id="lam0"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="eq" id="eqbox"></div>
+
+          <div class="note warn" id="warnBox" style="display:none;margin-top:10px">
+            אזהרה: הערכים שבחרת יוצרים ν<sub>n</sub> גבוה מאוד (למשל מעל תחומי מדידה נפוצים).
+            זה לא “קרינה חדשה” בהכרח — זה פשוט תדר/אורך גל קצר מאוד שנדרש לו מקור פיזיקלי מתאים וגלאים מתאימים.
+          </div>
+        </div>
+      </section>
+
+      <!-- Table -->
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <b>טבלת “רמות” BRL (ν<sub>n</sub>, λ<sub>n</sub>)</b>
+          <span class="tag"><span class="dot"></span>ν<sub>n</sub>=n·v/L</span>
+        </div>
+        <div class="bd" style="padding:0">
+          <div style="max-height: 520px; overflow:auto;">
+            <table id="tbl">
+              <thead>
+                <tr>
+                  <th style="width:70px">n</th>
+                  <th>ν<sub>n</sub> (Hz)</th>
+                  <th>λ<sub>n</sub> (m)</th>
+                  <th>תחום (בערך)</th>
+                  <th>E<sub>γ</sub>=hν (eV)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      טיפים:  
+      (1) כדי לקבל “קווים” בדידים אמיתיים צריך תהודה/מחזוריות פיזיקלית (L) או מסלול מחזורי (B).  
+      (2) כדי להגיע ל-X קצר: הגדל V (מוריד λ<sub>min</sub>) או הקטן L/הגדל n (מעלה ν<sub>n</sub>).  
+      (3) מדידת near-field עם סיבים/צימוד אינה הופכת כל תדר לפוטון חופשי — אבל כן מאפשרת “לחלץ” אנרגיה מקומית למדידה.
+    </div>
+  </div>
+
+  <script>
+    // Physical constants
+    const c  = 299792458;                  // m/s
+    const h  = 6.62607015e-34;             // J*s
+    const e  = 1.602176634e-19;            // C
+    const me = 9.1093837015e-31;           // kg
+    const mc2_J = me * c * c;              // J
+    const mc2_eV = mc2_J / e;              // eV ~ 511 keV
+
+    // Elements
+    const V_range = document.getElementById('V_range');
+    const V_num   = document.getElementById('V_num');
+    const B_range = document.getElementById('B_range');
+    const B_num   = document.getElementById('B_num');
+    const L_range = document.getElementById('L_range');
+    const L_num   = document.getElementById('L_num');
+    const N_range = document.getElementById('N_range');
+    const N_num   = document.getElementById('N_num');
+
+    const fmt = (x, sig=6) => {
+      if (!isFinite(x)) return '—';
+      if (x === 0) return '0';
+      const ax = Math.abs(x);
+      if (ax >= 1e6 || ax < 1e-3) return x.toExponential(Math.max(2, sig-1));
+      return x.toLocaleString('en-US', { maximumFractionDigits: Math.max(0, sig), minimumFractionDigits: 0 });
+    };
+
+    function bandFromLambda(lam){
+      // rough electromagnetic spectrum bands by wavelength
+      // (very approximate labels, just for intuition)
+      if (lam > 1) return "רדיו (RF)";
+      if (lam > 1e-3) return "מיקרוגל";
+      if (lam > 7e-7) return "אינפרא-אדום";
+      if (lam > 4e-7) return "נראה";
+      if (lam > 1e-8) return "אולטרה-סגול";
+      if (lam > 1e-11) return "X-ray";
+      return "גמא/קצר מאוד";
+    }
+
+    function syncRangeNum(rangeEl, numEl, parser = parseFloat){
+      rangeEl.addEventListener('input', () => { numEl.value = rangeEl.value; update(); });
+      numEl.addEventListener('input', () => {
+        const v = parser(numEl.value);
+        if (isFinite(v)) rangeEl.value = v;
+        update();
+      });
+    }
+
+    syncRangeNum(V_range, V_num, parseFloat);
+    syncRangeNum(B_range, B_num, parseFloat);
+    syncRangeNum(L_range, L_num, parseFloat);
+    syncRangeNum(N_range, N_num, (x)=>parseInt(x,10));
+
+    function updateLabels(V, B, L, N){
+      document.getElementById('V_show').textContent = `${fmt(V,0)} V`;
+      document.getElementById('B_show').textContent = `${fmt(B,3)} T`;
+      document.getElementById('L_show').textContent = `${fmt(L,6)} m`;
+      document.getElementById('N_show').textContent = `${N}`;
+    }
+
+    function update(){
+      const V = Math.max(0, parseFloat(V_num.value || 0));
+      const B = Math.max(0, parseFloat(B_num.value || 0));
+      const L = Math.max(1e-12, parseFloat(L_num.value || 0.1));
+      const N = Math.max(1, parseInt(N_num.value || 40, 10));
+
+      updateLabels(V,B,L,N);
+
+      // Electron kinetic energy from acceleration: K = eV (J), in eV it's simply V
+      const K_eV = V;              // eV
+      const K_J  = K_eV * e;       // J
+
+      // Relativistic gamma: gamma = 1 + K/(mc^2)
+      const gamma = 1 + (K_J / mc2_J);
+      // beta = sqrt(1 - 1/gamma^2)
+      const beta = Math.sqrt(Math.max(0, 1 - 1/(gamma*gamma)));
+      const v = beta * c;
+
+      // X-ray cutoff
+      const lam_min = (h * c) / (e * Math.max(V, 1e-12)); // meters
+      const Emax_eV = V;
+
+      // Cyclotron frequency (relativistic)
+      const wc = (e * B) / (gamma * me);      // rad/s
+      const fc = wc / (2*Math.PI);            // Hz
+
+      // BRL ladder
+      const nu0 = v / L;                      // Hz
+      const lam0 = c / Math.max(nu0, 1e-30);  // m
+
+      // Update KPI
+      document.getElementById('K_eV').textContent = `${fmt(K_eV,0)} eV`;
+      document.getElementById('K_J').textContent  = `(${fmt(K_J,4)} J)`;
+
+      document.getElementById('gamma').textContent = fmt(gamma,6);
+      document.getElementById('beta').textContent  = `β = v/c = ${fmt(beta,6)}`;
+
+      document.getElementById('v_ms').textContent = `${fmt(v,6)} m/s`;
+      document.getElementById('v_c').textContent  = `(${fmt(beta,6)}·c)`;
+
+      document.getElementById('lam_min').textContent = `${fmt(lam_min,6)} m`;
+      document.getElementById('Emax').textContent    = `Eγ,max ≈ eV = ${fmt(Emax_eV,0)} eV`;
+
+      document.getElementById('wc').textContent = `${fmt(wc,6)} rad/s`;
+      document.getElementById('fc').textContent = `f_c = ${fmt(fc,6)} Hz`;
+
+      document.getElementById('nu0').textContent = `${fmt(nu0,6)} Hz`;
+      document.getElementById('lam0').textContent = `λ0 = ${fmt(lam0,6)} m`;
+
+      // Equations box
+      document.getElementById('eqbox').innerHTML =
+`נוסחאות (המודל הדינמי):
+• K ≈ eV  →  K(eV)=V
+• γ = 1 + K/(mc²)
+• β = √(1 − 1/γ²),  v = βc
+• חיתוך Bremsstrahlung:  λ_min = hc/(eV)
+• ציקלוטרון:  ω_c = eB/(γm),  f_c = ω_c/(2π)
+• BRL (תהודה):  ν0 = v/L,  ν_n = n·ν0,  λ_n = c/ν_n,  E_n = hν_n`;
+
+      // Warn if super high freq
+      const nuN = N * nu0;
+      const warn = (nuN > 1e20); // arbitrary threshold for "very high"
+      const warnBox = document.getElementById('warnBox');
+      warnBox.style.display = warn ? 'block' : 'none';
+
+      // Table
+      const tbody = document.querySelector('#tbl tbody');
+      tbody.innerHTML = '';
+      const maxRows = Math.min(N, 5000); // guard
+      for (let n=1; n<=maxRows; n++){
+        const nu = n * nu0;
+        const lam = c / Math.max(nu, 1e-30);
+        const Eg_eV = (h * nu) / e;
+        const tr = document.createElement('tr');
+
+        const tdN = document.createElement('td');
+        tdN.textContent = n;
+        tdN.className = 'mono';
+
+        const tdNu = document.createElement('td');
+        tdNu.textContent = fmt(nu,6);
+        tdNu.className = 'mono';
+
+        const tdLam = document.createElement('td');
+        tdLam.textContent = fmt(lam,6);
+        tdLam.className = 'mono';
+
+        const tdBand = document.createElement('td');
+        tdBand.textContent = bandFromLambda(lam);
+
+        const tdE = document.createElement('td');
+        tdE.textContent = fmt(Eg_eV,6);
+        tdE.className = 'mono';
+
+        tr.appendChild(tdN);
+        tr.appendChild(tdNu);
+        tr.appendChild(tdLam);
+        tr.appendChild(tdBand);
+        tr.appendChild(tdE);
+        tbody.appendChild(tr);
+      }
+
+      // store latest data for CSV
+      window.__BRL_STATE__ = { V,B,L,N, K_eV, K_J, gamma, beta, v, lam_min, Emax_eV, wc, fc, nu0, lam0 };
+    }
+
+    // Presets
+    document.getElementById('preset_radio').addEventListener('click', () => {
+      // aim for RF/microwave ladder: large L, modest V
+      V_num.value = 500; V_range.value = 500;
+      B_num.value = 0.10; B_range.value = 0.10;
+      L_num.value = 1.5; L_range.value = 1.5;
+      N_num.value = 40; N_range.value = 40;
+      update();
+    });
+    document.getElementById('preset_opt').addEventListener('click', () => {
+      // aim around IR/visible ladder: L ~ cm-mm scale, V ~ few kV
+      V_num.value = 5000; V_range.value = 5000;
+      B_num.value = 0.50; B_range.value = 0.50;
+      L_num.value = 0.02; L_range.value = 0.02;
+      N_num.value = 80; N_range.value = 80;
+      update();
+    });
+    document.getElementById('preset_xray').addEventListener('click', () => {
+      // push cutoff and ladder higher
+      V_num.value = 80000; V_range.value = 80000;
+      B_num.value = 1.50; B_range.value = 1.50;
+      L_num.value = 0.002; L_range.value = 0.002;
+      N_num.value = 120; N_range.value = 120;
+      update();
+    });
+
+    // CSV export
+    document.getElementById('export_csv').addEventListener('click', () => {
+      const s = window.__BRL_STATE__;
+      if (!s) return;
+
+      const rows = [];
+      rows.push(["param","value","units"].join(","));
+      rows.push(["V", s.V, "V"].join(","));
+      rows.push(["B", s.B, "T"].join(","));
+      rows.push(["L", s.L, "m"].join(","));
+      rows.push(["N", s.N, ""].join(","));
+      rows.push(["K", s.K_eV, "eV"].join(","));
+      rows.push(["gamma", s.gamma, ""].join(","));
+      rows.push(["beta", s.beta, ""].join(","));
+      rows.push(["v", s.v, "m/s"].join(","));
+      rows.push(["lambda_min", s.lam_min, "m"].join(","));
+      rows.push(["omega_c", s.wc, "rad/s"].join(","));
+      rows.push(["f_c", s.fc, "Hz"].join(","));
+      rows.push(["nu0", s.nu0, "Hz"].join(","));
+      rows.push(["lambda0", s.lam0, "m"].join(","));
+      rows.push(["---","---","---"].join(","));
+      rows.push(["n","nu_n_Hz","lambda_n_m","band","E_gamma_eV"].join(","));
+
+      const nu0 = s.nu0;
+      const N = Math.min(s.N, 5000);
+      for (let n=1; n<=N; n++){
+        const nu = n * nu0;
+        const lam = c / Math.max(nu, 1e-30);
+        const Eg_eV = (h * nu) / e;
+        rows.push([n, nu, lam, bandFromLambda(lam), Eg_eV].join(","));
+      }
+
+      const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "BRL_levels_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Init
+    update();
+  </script>
+</body>
+</html>
