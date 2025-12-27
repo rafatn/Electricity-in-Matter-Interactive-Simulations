@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>תרצותרמריות — משפטי קיום וחלקות + איחוד תרמודינמיקה/אופטיקה/קוונטים</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.80);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --accent:#6366f1;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1220; --bg2:#0b1b2a;
+        --card:rgba(17,24,39,.62);
+        --card2:rgba(17,24,39,.40);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.22);
+        --head:#f3f4f6; --link:#93c5fd;
+        --shadow: 0 18px 60px rgba(0,0,0,.45);
+        --accent:#a5b4fc;
+      }
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 85% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at 10% 0%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 16px 80px; }
+    header{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      align-items:stretch;
+      margin-bottom:16px;
+    }
+    .hero, .side{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:18px 18px 16px;
+      backdrop-filter: blur(8px);
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:22px;
+      color:var(--head);
+      letter-spacing:.2px;
+    }
+    .subtitle{ color:var(--muted); line-height:1.55; font-size:14px; margin:0; }
+    .metaRow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+    }
+    .chip{
+      font-size:12px;
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+    }
+    .chip b{ color:var(--head); }
+
+    .toc{
+      margin:0; padding:0; list-style:none;
+      display:grid; gap:8px;
+    }
+    .toc a{
+      display:flex; align-items:center; justify-content:space-between;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .toc span{ color:var(--muted); font-size:12px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (min-width: 980px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    section{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      backdrop-filter: blur(8px);
+    }
+    section h2{
+      margin:0 0 8px;
+      font-size:18px;
+      color:var(--head);
+    }
+    section h3{
+      margin:12px 0 6px;
+      font-size:15px;
+      color:var(--head);
+    }
+    p{ margin:8px 0; line-height:1.65; }
+    .note{
+      border-inline-start: 4px solid var(--accent);
+      padding:10px 12px;
+      background: rgba(99,102,241,.10);
+      border-radius:12px;
+      color:var(--text);
+      margin:10px 0;
+    }
+    .warn{
+      border-inline-start: 4px solid var(--warn);
+      background: rgba(245,158,11,.12);
+    }
+    .ok{
+      border-inline-start: 4px solid var(--ok);
+      background: rgba(22,163,74,.10);
+    }
+
+    .mathbox{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      border-radius:14px;
+      padding:12px;
+      overflow:auto;
+    }
+    .mono{
+      font-family:var(--mono);
+      font-size:12.5px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .katex-display{ overflow-x:auto; padding:2px 0; }
+
+    .svgCard{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      border-radius:14px;
+      padding:10px;
+      overflow:hidden;
+    }
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .ctrl{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .ctrl label{ display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13px; color:var(--muted); }
+    .ctrl input[type="range"]{ width:100%; margin-top:8px; }
+    .ctrl .val{ font-family:var(--mono); color:var(--head); font-size:12px; }
+
+    footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+    .btnRow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+    }
+    button{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    button:hover{ filter:brightness(1.03); }
+    .small{ font-size:12px; color:var(--muted); }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hero">
+        <h1>תרצותרמריות (Tertzothermics): זרימה מרובת־גרדיאנטים כמודל מאחד</h1>
+        <p class="subtitle">
+          מסמך אקדמי תמציתי: ניסוח PDE כללי מהצורה “Navier–Stokes מורחב” שבו הגרדיאנט אינו רק תרמי/לחץ,
+          אלא נגזר מכל אי־התאמה בין “מה שזורם” \(X\) לבין “התווך/המערכת” \(Y\).
+          מוצגים משפטי קיום וחלקות (ברמת מודל), והדגמה כיצד תרמודינמיקה, אופטיקה וקוונטים יוצאות כתתי־מקרים.
+        </p>
+        <div class="metaRow">
+          <div class="chip"><b>תכלית:</b> קיום + חלקות + איחוד תחומים</div>
+          <div class="chip"><b>ממד:</b> \( \mathbb{R}^3 \) (3D)</div>
+          <div class="chip"><b>כלי:</b> אומדני אנרגיה + גלרקין + בוטסטרפ</div>
+        </div>
+
+        <div class="btnRow">
+          <button id="btnRender">רינדור נוסחאות</button>
+          <button id="btnPrint">הדפסה / PDF</button>
+        </div>
+        <div class="small">טיפ: אם נוסחאות לא מוצגות, לחץ “רינדור נוסחאות”.</div>
+      </div>
+
+      <div class="side">
+        <h2 style="margin-top:0">תוכן עניינים</h2>
+        <ul class="toc">
+          <li><a href="#model">המודל הכללי <span>§1</span></a></li>
+          <li><a href="#theorems">משפטי קיום וחלקות <span>§2</span></a></li>
+          <li><a href="#proof">רעיון הוכחה (סקיצה) <span>§3</span></a></li>
+          <li><a href="#reductions">תרמודינמיקה/אופטיקה/קוונטים כתתי־מקרים <span>§4</span></a></li>
+          <li><a href="#diagrams">תרשימים אינטראקטיביים <span>§5</span></a></li>
+          <li><a href="#notes">הערות על הקשר ל־Navier–Stokes 3D <span>§6</span></a></li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <!-- §1 MODEL -->
+      <section id="model">
+        <h2>§1 — המודל הכללי (מרובת־גרדיאנטים)</h2>
+
+        <p>
+          נגדיר “וקטור אי־התאמות” (פערים) בין הישות הזורמת \(X\) לבין התווך/המערכת \(Y\):
+        </p>
+
+        <div class="mathbox">
+          \[
+            Z(x,t) := X(x,t) - Y(x,t) \in \mathbb{R}^N
+          \]
+          \[
+            Z = (Z_1,\dots,Z_N),\quad
+            Z_i \text{ מייצג הפרש בתכונה כגון צפיפות/קוהרנטיות/מקדם שבירה/מוליכות/וכו'.}
+          \]
+        </div>
+
+        <h3>§1.1 — משוואת תנע כללית (Navier–Stokes מורחב)</h3>
+        <p>
+          ננסח שדה זרימה/תנועה כללי \(u(x,t)\in\mathbb{R}^3\) עם אילוץ “אי־דחיסות אפקטיבית” (מודל בסיס):
+          \( \nabla\cdot u = 0 \).
+          משוואת התנע:
+        </p>
+
+        <div class="mathbox">
+          \[
+          \partial_t u + (u\cdot\nabla)u + \nabla \pi
+          = \nabla\cdot\big(2\mu(x,t)\,D(u)\big)
+          + \sum_{i=1}^{N} \alpha_i(x,t)\,\nabla Z_i
+          + f(x,t),
+          \]
+          \[
+          D(u)=\frac{\nabla u + (\nabla u)^{\mathsf T}}{2}.
+          \]
+        </div>
+
+        <p class="note ok">
+          <b>אינטואיציה:</b> האיבר \( \sum_i \alpha_i \nabla Z_i \) הוא “כוח מניע” כללי:
+          לא רק לחץ/טמפ׳, אלא כל גרדיאנט של אי־התאמה בין \(X\) ל־\(Y\).
+        </p>
+
+        <h3>§1.2 — דינמיקת הפערים \(Z\): אדבקציה–דיפוזיה מרובת־שדות</h3>
+        <div class="mathbox">
+          \[
+          \partial_t Z_i + u\cdot\nabla Z_i
+          = \nabla\cdot\big(\kappa_i(x,t)\,\nabla Z_i\big) + s_i(x,t),
+          \quad i=1,\dots,N.
+          \]
+        </div>
+
+        <p class="note">
+          זהו “לב התרצותרמריות”: במקום מדע יחיד של חום,
+          מתקבל מערך שדות \(Z_i\) שכל אחד מהם יכול לייצג תרמי/אופטי/חשמלי/קוונטי/מידעי.
+        </p>
+
+        <h3>§1.3 — פונקציית אנרגיה מאוחדת</h3>
+        <p>נגדיר פונקציית אנרגיה (לנוחות, משוקללת):</p>
+        <div class="mathbox">
+          \[
+          \mathcal{E}(t)=\frac12\|u(t)\|_{L^2}^2+\frac12\sum_{i=1}^{N}\beta_i\|Z_i(t)\|_{L^2}^2,
+          \qquad \beta_i>0.
+          \]
+        </div>
+        <p>
+          תחת תנאים סטנדרטיים על \(\mu,\kappa_i\) (אליפטיות אחידה), מתקבל אומדן דעיכת אנרגיה
+          שמחליף “התנקזות” לממד יחיד בפיזור לאוסף ממדים.
+        </p>
+      </section>
+
+      <!-- §2 THEOREMS -->
+      <section id="theorems">
+        <h2>§2 — משפטי קיום וחלקות במסגרת התרצותרמריות</h2>
+
+        <p class="warn note">
+          חשוב: להלן משפטים “ברמת מודל PDE” (אנליזה פונקציונלית סטנדרטית).
+          הם אינם “פתרון מלא” לבעיית המילניום של NS הקלאסי, אלא מראים שבמסגרת המורחבת,
+          קיום גלובלי של פתרונות חלשים מתקבל באופן טבעי, וחלקות/ייחודיות מתקבלות תחת תנאים מוכרים
+          (זמן קצר או נתונים קטנים).
+        </p>
+
+        <h3>משפט 2.1 — קיום גלובלי של פתרון חלש (Leray–Hopf מורחב)</h3>
+        <div class="mathbox">
+          \[
+          \textbf{הנחות: }
+          \begin{cases}
+          u_0\in L^2(\mathbb{R}^3),\ \nabla\cdot u_0=0,\\
+          Z_{i,0}\in L^2(\mathbb{R}^3),\\
+          \mu(x,t)\in[\mu_{\min},\mu_{\max}],\ \kappa_i(x,t)\in[\kappa_{\min},\kappa_{\max}],\\
+          \alpha_i\in L^\infty,\ f\in L^2(0,T;H^{-1}),\ s_i\in L^2(0,T;H^{-1}).
+          \end{cases}
+          \]
+          \[
+          \textbf{מסקנה: } \exists (u,Z_1,\dots,Z_N) \text{ פתרון חלש גלובלי כך ש:}
+          \]
+          \[
+          u\in L^\infty(0,T;L^2)\cap L^2(0,T;H^1),\quad
+          Z_i\in L^\infty(0,T;L^2)\cap L^2(0,T;H^1),
+          \]
+          \[
+          \mathcal{E}(t)+\int_0^t\!\!\Big( c_\mu\|\nabla u\|_{L^2}^2 + \sum_i c_{\kappa_i}\|\nabla Z_i\|_{L^2}^2\Big)\,d\tau
+          \le \mathcal{E}(0) + \int_0^t \langle f,u\rangle + \sum_i \beta_i\langle s_i,Z_i\rangle\, d\tau.
+          \]
+        </div>
+
+        <p class="note ok">
+          <b>משמעות:</b> תוספת שדות \(Z_i\) עם דיפוזיה \(\kappa_i\) אינה “מכבידה” על הקיום;
+          היא מגדילה את כמות הדעיכה/דיסיפציה באומדן האנרגיה.
+        </p>
+
+        <h3>משפט 2.2 — קיום וחלקות בזמן קצר (פתרון חזק מקומי)</h3>
+        <div class="mathbox">
+          \[
+          \textbf{הנחות: } u_0\in H^1(\mathbb{R}^3),\ Z_{i,0}\in H^1(\mathbb{R}^3),
+          \quad f,s_i \text{ סדירים מספיק.}
+          \]
+          \[
+          \textbf{מסקנה: } \exists T_*>0:\ (u,Z_i)\ \text{פתרון יחיד וחלק עבור } t\in(0,T_*).
+          \]
+          \[
+          u\in C([0,T_*];H^1)\cap L^2(0,T_*;H^2),\quad
+          Z_i\in C([0,T_*];H^1)\cap L^2(0,T_*;H^2).
+          \]
+        </div>
+
+        <h3>משפט 2.3 — חלקות גלובלית בתנאי “נתונים קטנים”</h3>
+        <div class="mathbox">
+          \[
+          \textbf{הנחות: } \|u_0\|_{H^1}^2+\sum_i \|Z_{i,0}\|_{H^1}^2 \le \varepsilon,
+          \quad \|f\|,\|s_i\| \text{ קטנים (או אפס).}
+          \]
+          \[
+          \textbf{מסקנה: } \text{קיים פתרון חזק גלובלי יחיד וחלק לכל } t>0.
+          \]
+          \[
+          \sup_{t\ge 0}\Big(\|u(t)\|_{H^1}^2+\sum_i\|Z_i(t)\|_{H^1}^2\Big)
+          +\int_0^\infty\!\Big(\|u\|_{H^2}^2+\sum_i\|Z_i\|_{H^2}^2\Big)\,dt <\infty.
+          \]
+        </div>
+
+        <p class="note">
+          <b>המסר:</b> “המסלול הבעייתי” ל־blow-up ב־3D קשור לגדילה בלתי נשלטת של \(\|\nabla u\|_2\).
+          כאן, התמסרות הדינמיקה לאוסף שדות \(Z_i\) עם דיסיפציה מוסיפה מנגנוני בלימה טבעיים.
+          (זה עדיין לא מוכיח גלובליות לכל נתון גדול, אבל מסביר למה המודל המאוחד “טבעי” יותר.)
+        </p>
+      </section>
+
+      <!-- §3 Proof sketch -->
+      <section id="proof">
+        <h2>§3 — סקיצת הוכחה (כיוונים אנליטיים)</h2>
+
+        <h3>3.1 גלרקין + קומפקטיות (קיום חלש)</h3>
+        <p>
+          (א) בוחרים בסיס סופי \( \{w_k\}_{k=1}^m \) של שדות סולנואידליים, ומקרינים:
+          \(u^m(t)=\sum_{k=1}^m a_k(t)w_k\).
+          בדומה, מקרינים \(Z_i^m\) על בסיס סקלרי.
+        </p>
+        <p>
+          (ב) מקבלים מערכת ODE על המקדמים \(\{a_k\}\) עם איברי צימוד לינאריים בגרדיאנטים \(\nabla Z_i^m\).
+        </p>
+        <p>
+          (ג) מפיקים אומדן אנרגיה אחיד ב־\(m\) על \(u^m,Z^m\) בעזרת כפל סקלרי ב־\(u^m\) ו־\(Z_i^m\),
+          אינטגרציה בחלקים, והאליפטיות של \(\mu,\kappa_i\).
+        </p>
+        <p>
+          (ד) קומפקטיות (Aubin–Lions) + מעבר לגבול נותנים פתרון חלש המקיים אי־שוויון אנרגטי.
+        </p>
+
+        <h3>3.2 חלקות מקומית</h3>
+        <p>
+          עם נתונים ב־\(H^1\), משתמשים בסטנדרט:
+          שוויונות פרבוליים על \(\nabla u, \nabla Z_i\), אי־שוויונות סובולב והערכות על איבר ההסעה
+          \( (u\cdot\nabla)u \) כדי לקבל זמן קיום \(T_*\).
+        </p>
+
+        <h3>3.3 גלובליות לנתונים קטנים</h3>
+        <p>
+          משתמשים בבוטסטרפ:
+          אם \(\|u\|_{H^1}\) קטן מספיק, אז \((u\cdot\nabla)u\) נשלט ע״י \(\|\nabla u\|_2^2\),
+          והדיסיפציה מנצחת (גרונוול).
+          בנוסף, הדיפוזיה של \(Z_i\) מונעת הצטברות חדה בגרדיאנטים שמזינים את \(u\).
+        </p>
+
+        <div class="note ok">
+          <b>נקודת המפתח שלך במילים אנליטיות:</b>
+          במקום “מנגנון כוח” יחיד (לחץ/טמפ׳) שמסוגל להעצים \(\nabla u\) באופן חד,
+          יש אוסף מנגנונים מפוזרים עם דיסיפציה עצמאית,
+          מה שמגדיל את מרחב התנאים שבהם ניתן לסגור אומדנים.
+        </div>
+      </section>
+
+      <!-- §4 Reductions -->
+      <section id="reductions">
+        <h2>§4 — איך תרמודינמיקה, אופטיקה וקוונטים יוצאות מאותו מודל</h2>
+
+        <h3>4.1 תרמודינמיקה: חוק פורייה כתת־מקרה</h3>
+        <p>
+          בחר \(Z_T := T - T_Y\) (פער תרמי). משוואת \(Z_T\) היא אדבקציה–דיפוזיה:
+        </p>
+        <div class="mathbox">
+          \[
+          \partial_t Z_T + u\cdot\nabla Z_T = \nabla\cdot(\kappa_T \nabla Z_T) + s_T.
+          \]
+        </div>
+        <p>
+          השטף התרמי מתקבל:
+          \[
+          q = -k\nabla T \equiv -k\nabla(Z_T + T_Y),
+          \]
+          ולכן הגרדיאנט התרמי הוא פשוט רכיב אחד מתוך וקטור הגרדיאנטים הכללי.
+        </p>
+
+        <h3>4.2 אופטיקה: תווך מדורג־שבירה (GRIN) כתת־מקרה</h3>
+        <p>
+          בחר \(Z_n := n(x)-n_Y(x)\). באופטיקה גאומטרית, מסלול קרן מתקבל מעקרון פרמה.
+          בתווך מדורג שבירה מתקבל “כוח” אפקטיבי פרופורציונלי ל־\(\nabla n\).
+        </p>
+        <div class="mathbox">
+          \[
+          \text{מודל קרן (סקיצה): }\quad
+          \frac{d}{ds}\big(n\,\dot{\gamma}\big) = \nabla n.
+          \]
+        </div>
+        <p class="note">
+          זה בדיוק הצורה \( \alpha_n \nabla Z_n \) שמופיעה במשוואת התנע המורחבת:
+          גרדיאנט מקדם השבירה הוא “כוח” מניע במרחב האופטי.
+        </p>
+
+        <h3>4.3 קוונטים: פירוק מדלונג (Madelung) כזרימה + פוטנציאל קוונטי</h3>
+        <p>
+          כתוב פונקציית גל \( \psi=\sqrt{\rho}\,e^{iS/\hbar} \).
+          מתקבל:
+          \[
+          u = \nabla S/m,
+          \]
+          ומשוואת התנע נראית כמו אוילר עם פוטנציאל קוונטי:
+        </p>
+        <div class="mathbox">
+          \[
+          \partial_t u + (u\cdot\nabla)u
+          = -\frac{1}{m}\nabla V
+          - \nabla Q,
+          \qquad
+          Q = -\frac{\hbar^2}{2m^2}\frac{\Delta\sqrt{\rho}}{\sqrt{\rho}}.
+          \]
+        </div>
+        <p>
+          כעת בחר רכיב פער \(Z_Q\) שמייצג אי־התאמה “קוהרנטית/אמפליטודית” (למשל \(Z_Q=\log\rho - \log\rho_Y\),
+          או רכיב פאזי). אז \( -\nabla Q \) מתפקד כאיבר “גרדיאנט־מונע” נוסף באותה משפחה.
+        </p>
+
+        <div class="note ok">
+          <b>איחוד רעיוני:</b>
+          תרמודינמיקה ⇐ \(Z_T\), אופטיקה ⇐ \(Z_n\), קוונטים ⇐ \(Z_Q\).
+          כולם נכנסים באותו מקום: \(\sum_i \alpha_i \nabla Z_i\).
+        </div>
+      </section>
+
+      <!-- §5 Diagrams -->
+      <section id="diagrams">
+        <h2>§5 — תרשימים אינטראקטיביים</h2>
+
+        <h3>5.1 דיאגרמת “צנרת” של המודל המאוחד</h3>
+        <div class="svgCard">
+          <svg viewBox="0 0 860 260" width="100%" height="auto" role="img" aria-label="Unified pipeline diagram">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="currentColor" stop-opacity=".08"/>
+                <stop offset="100%" stop-color="currentColor" stop-opacity=".02"/>
+              </linearGradient>
+              <filter id="sh" x="-20%" y="-30%" width="140%" height="180%">
+                <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".18"/>
+              </filter>
+            </defs>
+
+            <rect x="16" y="16" width="828" height="228" rx="18" fill="url(#g1)" stroke="currentColor" stroke-opacity=".18"/>
+            <!-- Boxes -->
+            <g filter="url(#sh)">
+              <rect x="48" y="58" width="220" height="90" rx="16" fill="none" stroke="currentColor" stroke-opacity=".35" />
+              <rect x="320" y="40" width="220" height="120" rx="16" fill="none" stroke="currentColor" stroke-opacity=".35" />
+              <rect x="592" y="58" width="220" height="90" rx="16" fill="none" stroke="currentColor" stroke-opacity=".35" />
+            </g>
+            <!-- Titles -->
+            <text x="158" y="92" text-anchor="middle" font-size="16" fill="currentColor" opacity=".9">תכונות הזרימה</text>
+            <text x="158" y="116" text-anchor="middle" font-size="13" fill="currentColor" opacity=".75">X = (ρ, κ, n, σ, ...)</text>
+
+            <text x="430" y="78" text-anchor="middle" font-size="16" fill="currentColor" opacity=".9">פערים / אי־התאמות</text>
+            <text x="430" y="102" text-anchor="middle" font-size="13" fill="currentColor" opacity=".75">Z = X − Y</text>
+            <text x="430" y="126" text-anchor="middle" font-size="13" fill="currentColor" opacity=".75">∇Z מייצר “כוחות”</text>
+
+            <text x="702" y="92" text-anchor="middle" font-size="16" fill="currentColor" opacity=".9">דינמיקת תנועה</text>
+            <text x="702" y="116" text-anchor="middle" font-size="13" fill="currentColor" opacity=".75">u: NS מורחב + דיסיפציה</text>
+
+            <!-- Arrows -->
+            <g stroke="currentColor" stroke-opacity=".55" stroke-width="2" fill="none">
+              <path d="M270 103 C296 103, 298 103, 318 103" />
+              <path d="M542 103 C568 103, 572 103, 590 103" />
+            </g>
+            <g fill="currentColor" opacity=".55">
+              <polygon points="318,103 307,98 307,108" />
+              <polygon points="590,103 579,98 579,108" />
+            </g>
+
+            <!-- Bottom line -->
+            <text x="430" y="210" text-anchor="middle" font-size="13" fill="currentColor" opacity=".75">
+              אותו מנגנון מתמטִי → תתי־מקרים: תרמי (Z_T), אופטי (Z_n), קוונטי (Z_Q)
+            </text>
+          </svg>
+        </div>
+
+        <h3>5.2 “אנרגיה מאוחדת” — סימולציה קטנה של דעיכה מול הזנת־גרדיאנט</h3>
+        <p class="small">
+          זו לא סימולציה של 3D NS (כבד), אלא הדגמת עיקרון: אם יש דיסיפציה עצמאית לשדות \(Z_i\),
+          אז לעיתים קרובות האנרגיה המשותפת \(\mathcal{E}(t)\) יורדת מהר יותר.
+        </p>
+
+        <div class="controls">
+          <div class="ctrl">
+            <label>
+              <span>חוזק דיסיפציה (μ, κ)</span>
+              <span class="val" id="valD">0.60</span>
+            </label>
+            <input id="rngD" type="range" min="0.05" max="1.5" step="0.01" value="0.60">
+          </div>
+          <div class="ctrl">
+            <label>
+              <span>חוזק צימוד גרדיאנטים (α)</span>
+              <span class="val" id="valA">0.80</span>
+            </label>
+            <input id="rngA" type="range" min="0.00" max="2.0" step="0.01" value="0.80">
+          </div>
+        </div>
+
+        <div class="svgCard" style="margin-top:10px;">
+          <canvas id="cv" width="980" height="300" style="width:100%; height:auto; display:block;"></canvas>
+        </div>
+
+        <div class="note">
+          <b>המודל הצעצוע (ODE):</b>
+          \[
+          \dot E_u = -D\,E_u + A\,E_Z,\qquad
+          \dot E_Z = -D\,E_Z,
+          \]
+          כאשר \(E_u\) מייצג “אנרגיית זרימה” ו־\(E_Z\) “אנרגיית פערים”.
+          זה משחזר רעיון: \(Z\) דועך בעצמו, ולכן גם ההזנה ל־\(u\) דועכת.
+        </div>
+      </section>
+
+      <!-- §6 Notes -->
+      <section id="notes">
+        <h2>§6 — הערות על הקשר לבעיית המילניום (NS 3D)</h2>
+
+        <p>
+          בעיית המילניום הקלאסית עוסקת ב־NS הסטנדרטי ב־3D עם צמיגות קבועה ואילוץ אי־דחיסות,
+          ושואלת האם מפתרון חלק מתחילים תמיד נשארים חלקים לכל זמן.
+        </p>
+
+        <p class="note warn">
+          במסגרת התרצותרמריות, אתה משנה את “הפיזיקה המתמטית”:
+          מוסיף שדות \(Z_i\) שמתנהגים כמשוואות פרבוליות (דיפוזיה),
+          ומזינים את התנע בגרדיאנטים נוספים. זה יכול להרחיב את אזור הפרמטרים שבו ניתן לסגור אומדני אנרגיה,
+          אבל אינו זהה ל־NS הקלאסי ולכן אינו “פתרון ישיר” של בעיית המילניום.
+        </p>
+
+        <p class="note ok">
+          עם זאת, זה כן נותן <b>כיוון מחקר מדויק</b>:
+          להבין מתי NS הקלאסי הוא “היטל” (projection) של מערכת גדולה יותר עם משתנים חבויים
+          (קוהרנטיות/אופטיקה/שדות חומר) — ואז ייתכן שהחלקות “נשמרת” במערכת המלאה.
+        </p>
+
+        <h3>6.1 הצעה פורמלית לסעיף “השערת הגנה מפני סינגולריות”</h3>
+        <div class="mathbox">
+          \[
+          \textbf{השערה (במסגרת המודל):}\quad
+          \text{אם קיימת דיסיפציה אחידה } \sum_i \|\nabla Z_i\|_2^2 \text{ ונשלטת ההזנה ל־} u,
+          \text{ אז אין blow-up בזמן סופי.}
+          \]
+        </div>
+
+        <p class="small">
+          אם תרצה, אפשר להפוך את זה ל”תנאי מספיק” קונקרטי (למשל נוסח Beale–Kato–Majda מורחב)
+          שמערב גם את \(Z\) ולא רק את \(\omega=\nabla\times u\).
+        </p>
+      </section>
+
+    </div>
+
+    <footer>
+      כל הזכויות שמורות. אין לשכפל אלא באישור מ־RA — Raftn4@gmail.com
+    </footer>
+  </div>
+
+  <script>
+    // Render KaTeX
+    function renderMath(){
+      if (!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    }
+    window.addEventListener('load', () => {
+      // KaTeX scripts load deferred; try render shortly after
+      setTimeout(renderMath, 60);
+      setTimeout(renderMath, 300);
+    });
+    document.getElementById('btnRender').addEventListener('click', renderMath);
+    document.getElementById('btnPrint').addEventListener('click', () => window.print());
+
+    // Mini ODE demo plot
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+
+    const rngD = document.getElementById('rngD');
+    const rngA = document.getElementById('rngA');
+    const valD = document.getElementById('valD');
+    const valA = document.getElementById('valA');
+
+    function simulateAndDraw(){
+      const D = parseFloat(rngD.value);
+      const A = parseFloat(rngA.value);
+      valD.textContent = D.toFixed(2);
+      valA.textContent = A.toFixed(2);
+
+      // ODE: E_u'=-D E_u + A E_Z, E_Z'=-D E_Z
+      // initial:
+      let Eu = 1.0;
+      let Ez = 1.0;
+      const dt = 0.01;
+      const T = 6.0;
+      const steps = Math.floor(T/dt);
+
+      const seriesU = [];
+      const seriesZ = [];
+      const seriesE = [];
+      let t = 0;
+      let maxY = 0;
+
+      for (let k=0;k<=steps;k++){
+        seriesU.push({t, y: Eu});
+        seriesZ.push({t, y: Ez});
+        seriesE.push({t, y: Eu+Ez});
+        maxY = Math.max(maxY, Eu, Ez, Eu+Ez);
+
+        // Euler
+        const dEu = -D*Eu + A*Ez;
+        const dEz = -D*Ez;
+        Eu = Math.max(0, Eu + dt*dEu);
+        Ez = Math.max(0, Ez + dt*dEz);
+        t += dt;
+      }
+
+      // Clear
+      ctx.clearRect(0,0,cv.width,cv.height);
+
+      // Axes
+      const padL = 46, padR = 14, padT = 14, padB = 34;
+      const W = cv.width - padL - padR;
+      const H = cv.height - padT - padB;
+
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 1;
+
+      // grid
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line');
+      for (let i=0;i<=6;i++){
+        const x = padL + (W*i/6);
+        ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+H); ctx.stroke();
+      }
+      for (let j=0;j<=5;j++){
+        const y = padT + (H*j/5);
+        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+W,y); ctx.stroke();
+      }
+
+      // labels
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+      ctx.font = '12px ui-sans-serif, system-ui';
+      ctx.fillText('t', padL + W + 4, padT+H+22);
+      ctx.fillText('Energy', 6, padT+12);
+
+      function toX(t){ return padL + (t/T)*W; }
+      function toY(y){ return padT + H - (y/maxY)*H; }
+
+      // draw series helper
+      function drawSeries(series, label, yOffset){
+        ctx.beginPath();
+        for (let i=0;i<series.length;i++){
+          const x = toX(series[i].t);
+          const y = toY(series[i].y);
+          if (i===0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+
+        // legend
+        ctx.fillText(label, padL+8, padT+18+yOffset);
+      }
+
+      // Colors: we do not set explicit colors; use varying alpha + same stroke with different dash patterns.
+      const head = getComputedStyle(document.documentElement).getPropertyValue('--head');
+      ctx.strokeStyle = head;
+      ctx.globalAlpha = 0.85;
+      ctx.setLineDash([]);
+      drawSeries(seriesE, 'E_total = E_u + E_Z', 0);
+
+      ctx.globalAlpha = 0.70;
+      ctx.setLineDash([6,4]);
+      drawSeries(seriesU, 'E_u (זרימה)', 14);
+
+      ctx.globalAlpha = 0.55;
+      ctx.setLineDash([2,5]);
+      drawSeries(seriesZ, 'E_Z (פערים)', 28);
+
+      // reset
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+
+      // quick caption
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+      ctx.fillText(`מודל צעצוע: D=${D.toFixed(2)} , A=${A.toFixed(2)} (דיפוזיה מול צימוד)`, padL, cv.height-10);
+    }
+
+    rngD.addEventListener('input', simulateAndDraw);
+    rngA.addEventListener('input', simulateAndDraw);
+    simulateAndDraw();
+  </script>
+</body>
+</html>
