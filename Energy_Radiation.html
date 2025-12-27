@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Multi-Field Measurement Model • מודל מדידה רב-שדות</title>
+  <meta name="color-scheme" content="light dark" />
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.62);
+      --cardSolid:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --head:#0b1220;
+      --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1220; --bg2:#0b1220;
+        --card:rgba(15,23,42,.68);
+        --card2:rgba(15,23,42,.52);
+        --cardSolid:#0f172a;
+        --text:#e5e7eb;
+        --muted:#94a3b8;
+        --line:rgba(148,163,184,.18);
+        --head:#f1f5f9;
+        --link:#93c5fd;
+        --shadow: 0 18px 50px rgba(0,0,0,.40);
+      }
+      html[data-theme="light"]{
+        /* if user forces light, don't override */
+      }
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 10% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:22px}
+    .topbar{
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 220deg, var(--accent), #06b6d4, #a855f7, var(--accent));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute;inset:-20px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 45%);
+      transform:rotate(12deg);
+      opacity:.8;
+    }
+    h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      color:var(--head);
+    }
+    .sub{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: 0 10px 25px rgba(2,6,23,.06);
+      backdrop-filter: blur(8px);
+    }
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--cardSolid), rgba(255,255,255,.70));
+      color:var(--text);
+      padding:8px 10px;border-radius:12px;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(2,6,23,.08);
+      transition: transform .08s ease, border-color .2s ease;
+      font-weight:600;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(99,102,241,.55)}
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      border-color: rgba(99,102,241,.55);
+      background: linear-gradient(180deg, rgba(99,102,241,.18), rgba(255,255,255,.70));
+    }
+    .btn.small{padding:7px 9px;border-radius:10px;font-weight:600;font-size:13px}
+    .btn.ghost{background:transparent;box-shadow:none}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+    }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+    }
+    .card .hd h2{
+      margin:0;font-size:14px;color:var(--head);
+    }
+    .card .hd .hint{
+      font-size:12px;color:var(--muted);margin-top:4px;max-width:56ch;
+    }
+    .card .bd{padding:12px 14px 14px}
+
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .k{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      min-width:56px;
+      direction:ltr;
+      text-align:left;
+    }
+    html[dir="rtl"] .k{direction:ltr;text-align:left}
+    .v{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--text);
+      min-width:88px;
+      text-align:end;
+    }
+    .slider{
+      width:100%;
+      accent-color: var(--accent);
+    }
+    .stack{display:flex;flex-direction:column;gap:10px}
+    .divider{height:1px;background:var(--line);margin:10px 0}
+
+    .mini{
+      font-size:12px;color:var(--muted);
+      line-height:1.45;
+    }
+    .mono{
+      font-family:var(--mono);
+      font-size:12px;
+    }
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 9px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.35);
+      font-size:12px;color:var(--muted);
+    }
+
+    canvas{
+      width:100%;
+      height:260px;
+      border-radius:16px;
+      background: rgba(255,255,255,.25);
+      border:1px solid var(--line);
+    }
+    .chartgrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .chartgrid{grid-template-columns: 1fr}
+      canvas{height:260px}
+    }
+    .controls2{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-start;
+      margin-top:10px;
+    }
+    select{
+      padding:8px 10px;border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      color:var(--text);
+      outline:none;
+      font-weight:600;
+    }
+    input[type="number"]{
+      width:110px;
+      padding:8px 10px;border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      color:var(--text);
+      outline:none;
+      font-weight:600;
+      font-family:var(--mono);
+    }
+
+    .coefTable{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.35);
+    }
+    .coefTable th, .coefTable td{
+      padding:8px 8px;
+      font-size:12px;
+      border-bottom:1px solid var(--line);
+      vertical-align:middle;
+    }
+    .coefTable th{
+      text-align:start;
+      color:var(--muted);
+      font-weight:800;
+      background: rgba(255,255,255,.20);
+    }
+    .coefTable tr:last-child td{border-bottom:none}
+    .coefTable td:first-child{
+      font-family:var(--mono);
+      color:var(--muted);
+      width:78px;
+      direction:ltr;
+    }
+    .coefTable input{
+      width:100%;
+      padding:6px 8px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.60);
+      color:var(--text);
+      font-family:var(--mono);
+      font-size:12px;
+      outline:none;
+    }
+
+    .footer{
+      margin-top:14px;
+      padding:12px 14px;
+      border:1px dashed var(--line);
+      border-radius:16px;
+      color:var(--muted);
+      font-size:12px;
+      background: rgba(255,255,255,.18);
+    }
+    .rtlNote{direction:ltr; unicode-bidi: plaintext;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 data-i18n="title">מודל מדידה רב-שדות (E,H,A,W,N,h,x,t) • 4 ערוצי M</h1>
+          <div class="sub" data-i18n="subtitle">דו-לשוני • אינטראקטיבי • זמן + פורייה + רגישויות (קרוב לנקודת עבודה)</div>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill">
+          <span class="tag" title="Language">🌐 <span data-i18n="lang">שפה</span></span>
+          <button class="btn small primary" id="btnHE">עברית</button>
+          <button class="btn small" id="btnEN">English</button>
+        </div>
+        <div class="pill">
+          <span class="tag">🌓 <span data-i18n="theme">תצוגה</span></span>
+          <button class="btn small" id="btnTheme" title="Toggle theme">Toggle</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Inputs -->
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="inputsH">קלטים (שדות + סביבה + מיקום)</h2>
+            <div class="hint" data-i18n="inputsHint">
+              הזז סליידרים. המודל מחשב ארבע מדידות רגעיות: קרינה כללית, אור, אנרגיה רגעית, טמפרטורה.
+            </div>
+          </div>
+          <div class="tag">🎚️ <span data-i18n="live">Live</span></div>
+        </div>
+        <div class="bd">
+          <div class="stack" id="sliders"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div class="tag">⏱️ <span data-i18n="sim">סימולציה</span></div>
+            <div class="pillrow">
+              <button class="btn small primary" id="btnRun">▶ <span data-i18n="run">הרץ</span></button>
+              <button class="btn small" id="btnPause">⏸ <span data-i18n="pause">עצור</span></button>
+              <button class="btn small ghost" id="btnReset">↺ <span data-i18n="reset">איפוס</span></button>
+            </div>
+          </div>
+
+          <div class="controls2" style="margin-top:10px">
+            <span class="tag">🧪 <span data-i18n="params">פרמטרים</span></span>
+            <label class="mini"><span data-i18n="fs">דגימה (Hz)</span> <input id="fs" type="number" min="5" max="200" step="1" value="50"></label>
+            <label class="mini"><span data-i18n="win">חלון (s)</span> <input id="win" type="number" min="2" max="60" step="1" value="16"></label>
+            <label class="mini"><span data-i18n="noise">רעש פנימי</span> <input id="intNoise" type="number" min="0" max="1" step="0.01" value="0.08"></label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="mini" data-i18n="nearNote">
+            📌 “בקרבת המספר הנמדד” = לינאריזציה סביב נקודת עבודה:  \u0394M ≈ J·\u0394u.
+            כאן J מתקבלת מהמקדמים (רגישויות).
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div class="tag">🧩 <span data-i18n="coeffs">מקדמים</span></div>
+            <button class="btn small" id="btnDefaults">✨ <span data-i18n="defaults">ברירת-מחדל</span></button>
+          </div>
+          <div class="mini" data-i18n="coeffHint" style="margin-top:8px">
+            ערוך מקדמים לכל ערוץ כדי לבחון רגישויות שונות. (Bias הוא קבוע בסיס.)
+          </div>
+
+          <div style="margin-top:10px; overflow:auto">
+            <table class="coefTable" id="coefTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Charts + Outputs -->
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="outputsH">תוצאות (4 ערוצים) + פורייה</h2>
+            <div class="hint" data-i18n="outputsHint">
+              הגרפים מציגים מדידות רגעיות לאורך זמן + ספקטרום תדר לערוץ שנבחר.
+            </div>
+          </div>
+          <div class="tag">📈 <span data-i18n="charts">Charts</span></div>
+        </div>
+        <div class="bd">
+          <div class="chartgrid">
+            <div class="stack">
+              <div class="row">
+                <div class="tag">🟣 <span data-i18n="ts">זמן</span></div>
+                <div class="mono" id="liveReadout">—</div>
+              </div>
+              <canvas id="timeChart" width="900" height="320" aria-label="Time series chart"></canvas>
+              <div class="mini" data-i18n="legend">
+                מקרא: קרינה (Rad) • אור (Light) • אנרגיה רגעית (Eng) • טמפרטורה (Temp)
+              </div>
+            </div>
+
+            <div class="stack">
+              <div class="row">
+                <div class="tag">🔵 <span data-i18n="fft">פורייה</span></div>
+                <div>
+                  <select id="fftSelect" title="Select channel">
+                    <option value="rad">Radiation</option>
+                    <option value="light">Light</option>
+                    <option value="eng">Energy</option>
+                    <option value="temp">Temperature</option>
+                  </select>
+                </div>
+              </div>
+              <canvas id="fftChart" width="900" height="320" aria-label="FFT chart"></canvas>
+              <div class="mini" data-i18n="fftNote">
+                הפורייה כאן הוא FFT על חלון המדידה הנוכחי (אחרי הסרת ממוצע).
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row" style="align-items:flex-start">
+            <div class="stack" style="flex:1">
+              <div class="tag">🧠 <span data-i18n="jac">רגישויות (J)</span></div>
+              <div class="mini" data-i18n="jacHint">
+                J היא “מטריצת רגישויות” — כמה כל שדה משפיע על כל ערוץ מדידה. כאן אנו מציגים את המקדמים הלינאריים כ־J.
+              </div>
+            </div>
+            <button class="btn small" id="btnCopyJ">📋 <span data-i18n="copy">העתק</span></button>
+          </div>
+          <pre id="jacOut" class="mono" style="margin:10px 0 0; padding:12px; border-radius:16px; border:1px solid var(--line); background: rgba(255,255,255,.18); overflow:auto; max-height:220px;"></pre>
+
+          <div class="footer">
+            <div>© <span data-i18n="rights">כל הזכויות שמורות. אין לשכפל אלא באישור.</span></div>
+            <div class="rtlNote">Contact: RA - Raftn4@gmail.com</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+/* =======================
+   Bilingual i18n
+======================= */
+const I18N = {
+  he: {
+    title: "מודל מדידה רב-שדות (E,H,A,W,N,h,x,t) • 4 ערוצי M",
+    subtitle: "דו-לשוני • אינטראקטיבי • זמן + פורייה + רגישויות (קרוב לנקודת עבודה)",
+    lang: "שפה",
+    theme: "תצוגה",
+    inputsH: "קלטים (שדות + סביבה + מיקום)",
+    inputsHint: "הזז סליידרים. המודל מחשב ארבע מדידות רגעיות: קרינה כללית, אור, אנרגיה רגעית, טמפרטורה.",
+    live: "חי",
+    sim: "סימולציה",
+    run: "הרץ",
+    pause: "עצור",
+    reset: "איפוס",
+    params: "פרמטרים",
+    fs: "דגימה (Hz)",
+    win: "חלון (s)",
+    noise: "רעש פנימי",
+    nearNote: "📌 “בקרבת המספר הנמדד” = לינאריזציה סביב נקודת עבודה:  ΔM ≈ J·Δu. כאן J מתקבלת מהמקדמים (רגישויות).",
+    coeffs: "מקדמים",
+    defaults: "ברירת-מחדל",
+    coeffHint: "ערוך מקדמים לכל ערוץ כדי לבחון רגישויות שונות. (Bias הוא קבוע בסיס.)",
+    outputsH: "תוצאות (4 ערוצים) + פורייה",
+    outputsHint: "הגרפים מציגים מדידות רגעיות לאורך זמן + ספקטרום תדר לערוץ שנבחר.",
+    charts: "גרפים",
+    ts: "זמן",
+    legend: "מקרא: קרינה (Rad) • אור (Light) • אנרגיה רגעית (Eng) • טמפרטורה (Temp)",
+    fft: "פורייה",
+    fftNote: "הפורייה כאן הוא FFT על חלון המדידה הנוכחי (אחרי הסרת ממוצע).",
+    jac: "רגישויות (J)",
+    jacHint: "J היא “מטריצת רגישויות” — כמה כל שדה משפיע על כל ערוץ מדידה. כאן אנו מציגים את המקדמים הלינאריים כ־J.",
+    copy: "העתק",
+    rights: "כל הזכויות שמורות. אין לשכפל אלא באישור."
+  },
+  en: {
+    title: "Multi-Field Measurement Model (E,H,A,W,N,h,x,t) • 4 M-channels",
+    subtitle: "Bilingual • Interactive • Time + Fourier + Sensitivities (near operating point)",
+    lang: "Language",
+    theme: "Appearance",
+    inputsH: "Inputs (fields + environment + location)",
+    inputsHint: "Move the sliders. The model computes four instantaneous measurements: general radiation, light, instantaneous energy, temperature.",
+    live: "Live",
+    sim: "Simulation",
+    run: "Run",
+    pause: "Pause",
+    reset: "Reset",
+    params: "Parameters",
+    fs: "Sampling (Hz)",
+    win: "Window (s)",
+    noise: "Internal noise",
+    nearNote: "📌 “Near the measured number” = linearization around an operating point:  ΔM ≈ J·Δu. Here J is given by the linear coefficients (sensitivities).",
+    coeffs: "Coefficients",
+    defaults: "Defaults",
+    coeffHint: "Edit coefficients per channel to explore different sensitivities. (Bias is the baseline constant.)",
+    outputsH: "Outputs (4 channels) + Fourier",
+    outputsHint: "Charts show instantaneous measurements over time + frequency spectrum for the selected channel.",
+    charts: "Charts",
+    ts: "Time",
+    legend: "Legend: Radiation (Rad) • Light • Instant Energy (Eng) • Temperature (Temp)",
+    fft: "Fourier",
+    fftNote: "FFT is computed on the current measurement window (after mean removal).",
+    jac: "Sensitivities (J)",
+    jacHint: "J is the sensitivity matrix — how each field affects each measured channel. Here we show the linear coefficients as J.",
+    copy: "Copy",
+    rights: "All rights reserved. No copying without permission."
+  }
+};
+
+let LANG = "he";
+function applyI18n(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = (LANG === "he") ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if(I18N[LANG][key]) el.textContent = I18N[LANG][key];
+  });
+  // Update FFT select labels
+  const sel = document.getElementById("fftSelect");
+  sel.options[0].text = (LANG==="he") ? "קרינה" : "Radiation";
+  sel.options[1].text = (LANG==="he") ? "אור" : "Light";
+  sel.options[2].text = (LANG==="he") ? "אנרגיה רגעית" : "Instant Energy";
+  sel.options[3].text = (LANG==="he") ? "טמפרטורה" : "Temperature";
+}
+document.getElementById("btnHE").onclick = ()=>{LANG="he"; setLangButtons(); applyI18n();};
+document.getElementById("btnEN").onclick = ()=>{LANG="en"; setLangButtons(); applyI18n();};
+function setLangButtons(){
+  document.getElementById("btnHE").classList.toggle("primary", LANG==="he");
+  document.getElementById("btnEN").classList.toggle("primary", LANG==="en");
+}
+
+/* =======================
+   Theme toggle
+======================= */
+document.getElementById("btnTheme").onclick = ()=>{
+  const html = document.documentElement;
+  const cur = html.getAttribute("data-theme") || "light";
+  html.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+};
+
+/* =======================
+   Sliders (inputs)
+======================= */
+const sliderDefs = [
+  {key:"E",  min:-2, max: 2, step:0.01, val: 0.40, emoji:"⚡", he:"E שדה חשמלי",   en:"E electric field"},
+  {key:"H",  min:-2, max: 2, step:0.01, val: 0.20, emoji:"🧲", he:"H שדה מגנטי",   en:"H magnetic field"},
+  {key:"A",  min: 0, max: 100, step:0.1, val: 25.0, emoji:"🌬️", he:"A אוויר",      en:"A air (env)"},
+  {key:"W",  min: 0, max: 100, step:0.1, val: 0.0, emoji:"💧", he:"W מים",        en:"W water (env)"},
+  {key:"N",  min: 0, max: 3, step:0.01, val: 0.25, emoji:"📡", he:"N רעש/זיהום",  en:"N noise/pollution"},
+  {key:"h",  min:-500, max: 500, step:1, val: 10, emoji:"📏", he:"h גובה",        en:"h altitude"},
+  {key:"x",  min:-100, max: 100, step:1, val: 0, emoji:"📍", he:"x קואורדינטה",   en:"x coordinate"},
+  {key:"y",  min:-100, max: 100, step:1, val: 0, emoji:"📍", he:"y קואורדינטה",   en:"y coordinate"},
+  {key:"z",  min:-100, max: 100, step:1, val: 0, emoji:"📍", he:"z קואורדינטה",   en:"z coordinate"},
+];
+
+const S = {}; // current slider values
+const slidersDiv = document.getElementById("sliders");
+
+function makeSlider(def){
+  S[def.key] = def.val;
+  const wrap = document.createElement("div");
+  wrap.className = "stack";
+  wrap.style.gap = "6px";
+
+  const title = document.createElement("div");
+  title.className = "row";
+
+  const left = document.createElement("div");
+  left.className = "mini";
+  left.style.fontWeight = "800";
+  left.textContent = `${def.emoji} ${LANG==="he" ? def.he : def.en}`;
+
+  const val = document.createElement("div");
+  val.className = "v";
+  val.id = `val_${def.key}`;
+  val.textContent = fmt(def.val);
+
+  title.appendChild(left);
+  title.appendChild(val);
+
+  const row = document.createElement("div");
+  row.className = "row";
+  row.style.gap = "12px";
+
+  const key = document.createElement("div");
+  key.className = "k";
+  key.textContent = def.key;
+
+  const input = document.createElement("input");
+  input.type = "range";
+  input.className = "slider";
+  input.min = def.min;
+  input.max = def.max;
+  input.step = def.step;
+  input.value = def.val;
+
+  input.addEventListener("input", ()=>{
+    S[def.key] = parseFloat(input.value);
+    document.getElementById(`val_${def.key}`).textContent = fmt(S[def.key]);
+    tickOnce(); // live update without running full animation
+  });
+
+  row.appendChild(key);
+  row.appendChild(input);
+
+  wrap.appendChild(title);
+  wrap.appendChild(row);
+  return wrap;
+}
+
+function rebuildSliders(){
+  slidersDiv.innerHTML = "";
+  sliderDefs.forEach(d => slidersDiv.appendChild(makeSlider(d)));
+}
+function fmt(x){
+  if (Math.abs(x) >= 100) return x.toFixed(0);
+  if (Math.abs(x) >= 10)  return x.toFixed(2);
+  return x.toFixed(3);
+}
+
+/* =======================
+   Coefficients (J matrix)
+   Variables order: [bias, E,H,A,W,N,h,x,y,z]
+   Channels: rad, light, eng, temp
+======================= */
+const VARS = ["bias","E","H","A","W","N","h","x","y","z"];
+const CH = ["rad","light","eng","temp"];
+
+const CH_LABEL = {
+  he: {rad:"קרינה", light:"אור", eng:"אנרגיה רגעית", temp:"טמפרטורה"},
+  en: {rad:"Radiation", light:"Light", eng:"Instant Energy", temp:"Temperature"}
+};
+
+let B = {}; // B[channel][var] = coefficient
+function setDefaultCoefficients(){
+  // Reasonable defaults (you can edit):
+  // Radiation responds to E,H,N; Light responds to Temp + Rad; Eng responds to E,H and some noise; Temp responds to A + Eng.
+  B = {
+    rad:  {bias:1.0, E: 1.10, H:0.70, A:0.02, W:0.01, N:0.85, h:0.000, x:0.002, y:-0.001, z:0.001},
+    light:{bias:2.0, E: 0.40, H:0.10, A:0.01, W:0.02, N:0.35, h:0.000, x:0.001, y:0.001, z:0.000},
+    eng:  {bias:0.8, E: 1.30, H:0.45, A:0.00, W:0.00, N:0.60, h:0.000, x:0.000, y:0.000, z:0.000},
+    temp: {bias:25,  E: 0.05, H:0.02, A:0.12, W:0.06, N:0.08, h:-0.005, x:0.000, y:0.000, z:0.000},
+  };
+}
+setDefaultCoefficients();
+
+function buildCoefTable(){
+  const t = document.getElementById("coefTable");
+  t.innerHTML = "";
+
+  const thead = document.createElement("thead");
+  const hr = document.createElement("tr");
+  const th0 = document.createElement("th");
+  th0.textContent = (LANG==="he") ? "משתנה" : "Variable";
+  hr.appendChild(th0);
+  CH.forEach(ch=>{
+    const th = document.createElement("th");
+    th.textContent = (LANG==="he") ? CH_LABEL.he[ch] : CH_LABEL.en[ch];
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+  t.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  VARS.forEach(v=>{
+    const tr = document.createElement("tr");
+    const td0 = document.createElement("td");
+    td0.textContent = v;
+    tr.appendChild(td0);
+
+    CH.forEach(ch=>{
+      const td = document.createElement("td");
+      const inp = document.createElement("input");
+      inp.type = "number";
+      inp.step = "0.001";
+      inp.value = B[ch][v];
+      inp.addEventListener("input", ()=>{
+        B[ch][v] = parseFloat(inp.value || "0");
+        tickOnce();
+      });
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+  t.appendChild(tbody);
+}
+document.getElementById("btnDefaults").onclick = ()=>{
+  setDefaultCoefficients();
+  buildCoefTable();
+  tickOnce();
+};
+
+/* =======================
+   Model core
+   u = [bias, E,H,A,W,N,h,x,y,z]
+   M = B*u + internal dynamics + cross-coupling + periodic components
+======================= */
+function uVector(){
+  return {
+    bias: 1,
+    E:S.E, H:S.H, A:S.A, W:S.W, N:S.N, h:S.h, x:S.x, y:S.y, z:S.z
+  };
+}
+
+function lin(channel, u){
+  let sum = 0;
+  for(const v of VARS){
+    sum += (B[channel][v] || 0) * (u[v] ?? 0);
+  }
+  return sum;
+}
+
+// Cross-couplings between outputs (simple physical-ish relations)
+function crossCouple(base, prev){
+  // prev = {rad, light, eng, temp} last state
+  // Light boosted by temperature and radiation
+  base.light += 0.035*(prev.temp - 25) + 0.18*(prev.rad - 1.0);
+  // Temperature responds to instantaneous energy and some radiation
+  base.temp  += 0.10*(prev.eng - 0.8) + 0.05*(prev.rad - 1.0);
+  // Radiation mildly increases with energy
+  base.rad   += 0.08*(prev.eng - 0.8);
+  return base;
+}
+
+// First-order sensor dynamics (taus seconds)
+const TAU = {rad:0.30, light:0.45, eng:0.20, temp:1.50};
+
+function stepState(state, dt, tSec){
+  const u = uVector();
+
+  // periodic components (to make Fourier meaningful)
+  // user-controlled noise amplitude via S.N and internal noise parameter
+  const periodic = {
+    rad:   0.20*S.H*Math.sin(2*Math.PI*0.25*tSec + 0.4) + 0.12*S.E*Math.sin(2*Math.PI*1.0*tSec),
+    light: 0.10*Math.sin(2*Math.PI*0.12*tSec) + 0.05*S.N*Math.sin(2*Math.PI*2.0*tSec),
+    eng:   0.18*S.E*Math.sin(2*Math.PI*0.80*tSec + 1.3),
+    temp:  0.25*Math.sin(2*Math.PI*0.02*tSec),
+  };
+
+  // linear base
+  let target = {
+    rad:   lin("rad", u)   + periodic.rad,
+    light: lin("light", u) + periodic.light,
+    eng:   lin("eng", u)   + periodic.eng,
+    temp:  lin("temp", u)  + periodic.temp
+  };
+
+  // cross coupling uses previous state
+  target = crossCouple(target, state);
+
+  // internal noise
+  const inNoise = parseFloat(document.getElementById("intNoise").value || "0");
+  const n = () => (Math.random()*2-1) * inNoise;
+
+  // first order lag: dM/dt = (target - M)/tau
+  const next = {};
+  for(const ch of CH){
+    const tau = TAU[ch];
+    const d = (target[ch] - state[ch]) / Math.max(1e-6, tau);
+    next[ch] = state[ch] + dt*d + n();
+  }
+  return next;
+}
+
+/* =======================
+   Time series storage
+======================= */
+let running = false;
+let timer = null;
+
+let fs = 50;
+let winSec = 16;
+let Nwin = Math.floor(fs*winSec);
+
+let t0 = 0;
+let idx = 0;
+
+let series = {
+  t: [],
+  rad: [],
+  light: [],
+  eng: [],
+  temp: []
+};
+
+let state = {rad:1, light:2, eng:0.8, temp:25};
+
+function resetSeries(){
+  fs = clamp(parseFloat(document.getElementById("fs").value || "50"), 5, 200);
+  winSec = clamp(parseFloat(document.getElementById("win").value || "16"), 2, 60);
+  Nwin = Math.floor(fs*winSec);
+
+  t0 = 0;
+  idx = 0;
+  series = { t:[], rad:[], light:[], eng:[], temp:[] };
+  state = {
+    rad: lin("rad", uVector()),
+    light: lin("light", uVector()),
+    eng: lin("eng", uVector()),
+    temp: lin("temp", uVector())
+  };
+  // prefill window
+  for(let i=0;i<Nwin;i++){
+    pushOne();
+  }
+}
+
+function pushOne(){
+  const t = idx / fs;
+  const dt = 1/fs;
+  state = stepState(state, dt, t);
+
+  series.t.push(t);
+  series.rad.push(state.rad);
+  series.light.push(state.light);
+  series.eng.push(state.eng);
+  series.temp.push(state.temp);
+
+  // keep fixed window
+  if(series.t.length > Nwin){
+    for(const k of Object.keys(series)){
+      series[k].shift();
+    }
+  }
+  idx++;
+}
+
+function tickOnce(){
+  if(series.t.length === 0){
+    resetSeries();
+  }else{
+    // update a few samples to reflect parameter changes smoothly
+    for(let i=0;i<Math.min(8, Math.floor(fs/10)); i++) pushOne();
+  }
+  renderAll();
+  updateJacobian();
+}
+
+/* =======================
+   Rendering (Canvas)
+======================= */
+const timeCanvas = document.getElementById("timeChart");
+const fftCanvas = document.getElementById("fftChart");
+const ctxT = timeCanvas.getContext("2d");
+const ctxF = fftCanvas.getContext("2d");
+
+function clear(ctx, w, h){
+  ctx.clearRect(0,0,w,h);
+}
+
+function drawAxes(ctx, w, h, pad, xLabel, yLabel){
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = 1;
+
+  // background grid
+  ctx.strokeStyle = getCss("--line");
+  ctx.fillStyle = "transparent";
+  const gx = 6, gy = 5;
+  for(let i=0;i<=gx;i++){
+    const x = pad + i*(w-2*pad)/gx;
+    ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,h-pad); ctx.stroke();
+  }
+  for(let j=0;j<=gy;j++){
+    const y = pad + j*(h-2*pad)/gy;
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();
+  }
+
+  // frame
+  ctx.strokeStyle = getCss("--muted");
+  ctx.globalAlpha = 0.55;
+  ctx.strokeRect(pad,pad,w-2*pad,h-2*pad);
+
+  // labels
+  ctx.globalAlpha = 0.85;
+  ctx.fillStyle = getCss("--muted");
+  ctx.font = "12px " + getCss("--sans");
+  ctx.textAlign = "start";
+  ctx.fillText(yLabel, pad, pad-8);
+  ctx.textAlign = "end";
+  ctx.fillText(xLabel, w-pad, h-8);
+
+  ctx.restore();
+}
+
+function getCss(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function extent(arr){
+  let mn = Infinity, mx = -Infinity;
+  for(const v of arr){
+    if(v < mn) mn = v;
+    if(v > mx) mx = v;
+  }
+  if(!isFinite(mn) || !isFinite(mx)) return [0,1];
+  if(mn === mx) return [mn-1, mx+1];
+  const pad = 0.08*(mx-mn);
+  return [mn-pad, mx+pad];
+}
+
+function mapX(i, n, w, pad){
+  if(n<=1) return pad;
+  return pad + i*(w-2*pad)/(n-1);
+}
+function mapY(v, mn, mx, h, pad){
+  const t = (v - mn) / (mx - mn);
+  return (h-pad) - t*(h-2*pad);
+}
+
+function drawLine(ctx, xs, ys, mn, mx, w, h, pad, alpha=1){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.beginPath();
+  for(let i=0;i<ys.length;i++){
+    const x = mapX(i, ys.length, w, pad);
+    const y = mapY(ys[i], mn, mx, h, pad);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function renderTime(){
+  const w = timeCanvas.width, h = timeCanvas.height;
+  clear(ctxT,w,h);
+
+  const pad = 34;
+  const all = series.rad.concat(series.light, series.eng, series.temp);
+  const [mn,mx] = extent(all);
+
+  drawAxes(ctxT,w,h,pad, (LANG==="he") ? "זמן (s)" : "Time (s)", (LANG==="he") ? "M" : "M");
+
+  // draw lines (no fixed colors: use default strokes but differentiate by width/dash)
+  ctxT.lineWidth = 2.2;
+  ctxT.setLineDash([]);
+  ctxT.strokeStyle = getCss("--accent");
+  drawLine(ctxT, series.t, series.rad, mn,mx,w,h,pad, 0.95);
+
+  ctxT.lineWidth = 2.0;
+  ctxT.setLineDash([6,4]);
+  ctxT.strokeStyle = getCss("--accent2");
+  drawLine(ctxT, series.t, series.light, mn,mx,w,h,pad, 0.90);
+
+  ctxT.lineWidth = 1.8;
+  ctxT.setLineDash([2,4]);
+  ctxT.strokeStyle = getCss("--warn");
+  drawLine(ctxT, series.t, series.eng, mn,mx,w,h,pad, 0.90);
+
+  ctxT.lineWidth = 2.0;
+  ctxT.setLineDash([10,6]);
+  ctxT.strokeStyle = getCss("--danger");
+  drawLine(ctxT, series.t, series.temp, mn,mx,w,h,pad, 0.85);
+
+  // live readout
+  const last = {
+    rad: series.rad.at(-1),
+    light: series.light.at(-1),
+    eng: series.eng.at(-1),
+    temp: series.temp.at(-1),
+    t: series.t.at(-1)
+  };
+  const txt = (LANG==="he")
+    ? `t=${last.t.toFixed(2)}s  |  Rad=${last.rad.toFixed(3)}  Light=${last.light.toFixed(3)}  Eng=${last.eng.toFixed(3)}  Temp=${last.temp.toFixed(3)}`
+    : `t=${last.t.toFixed(2)}s  |  Rad=${last.rad.toFixed(3)}  Light=${last.light.toFixed(3)}  Eng=${last.eng.toFixed(3)}  Temp=${last.temp.toFixed(3)}`;
+  document.getElementById("liveReadout").textContent = txt;
+}
+
+/* =======================
+   FFT (Real) — Cooley-Tukey iterative
+======================= */
+function nextPow2(n){
+  let p=1; while(p<n) p<<=1; return p;
+}
+function fftComplex(re, im){
+  const n = re.length;
+  // bit reversal
+  for(let i=1,j=0;i<n;i++){
+    let bit = n>>1;
+    for(; j & bit; bit>>=1) j ^= bit;
+    j ^= bit;
+    if(i<j){
+      [re[i],re[j]]=[re[j],re[i]];
+      [im[i],im[j]]=[im[j],im[i]];
+    }
+  }
+  for(let len=2; len<=n; len<<=1){
+    const ang = -2*Math.PI/len;
+    const wlenRe = Math.cos(ang);
+    const wlenIm = Math.sin(ang);
+    for(let i=0;i<n;i+=len){
+      let wRe=1, wIm=0;
+      for(let j=0;j<len/2;j++){
+        const uRe = re[i+j], uIm = im[i+j];
+        const vRe = re[i+j+len/2]*wRe - im[i+j+len/2]*wIm;
+        const vIm = re[i+j+len/2]*wIm + im[i+j+len/2]*wRe;
+
+        re[i+j] = uRe + vRe;
+        im[i+j] = uIm + vIm;
+        re[i+j+len/2] = uRe - vRe;
+        im[i+j+len/2] = uIm - vIm;
+
+        const nwRe = wRe*wlenRe - wIm*wlenIm;
+        const nwIm = wRe*wlenIm + wIm*wlenRe;
+        wRe=nwRe; wIm=nwIm;
+      }
+    }
+  }
+}
+function computeFFTReal(x, fs){
+  const n0 = x.length;
+  const n = nextPow2(n0);
+  const re = new Array(n).fill(0);
+  const im = new Array(n).fill(0);
+
+  // remove mean + pad
+  let mean = 0;
+  for(const v of x) mean += v;
+  mean /= Math.max(1,n0);
+  for(let i=0;i<n0;i++) re[i] = x[i] - mean;
+
+  fftComplex(re, im);
+
+  // magnitude (single-sided)
+  const half = n/2;
+  const freq = [];
+  const mag = [];
+  for(let k=0;k<=half;k++){
+    const m = Math.sqrt(re[k]*re[k] + im[k]*im[k]) / n;
+    freq.push(k*fs/n);
+    mag.push(m);
+  }
+  return {freq, mag};
+}
+
+function renderFFT(){
+  const w = fftCanvas.width, h = fftCanvas.height;
+  clear(ctxF,w,h);
+  const pad = 34;
+
+  const which = document.getElementById("fftSelect").value;
+  const x = series[which] || [];
+  if(x.length < 8){
+    drawAxes(ctxF,w,h,pad, (LANG==="he") ? "תדר (Hz)" : "Frequency (Hz)", (LANG==="he") ? "|FFT|" : "|FFT|");
+    return;
+  }
+  const {freq, mag} = computeFFTReal(x, fs);
+
+  const [mn,mx] = extent(mag);
+  drawAxes(ctxF,w,h,pad, (LANG==="he") ? "תדר (Hz)" : "Frequency (Hz)", (LANG==="he") ? "עוצמה" : "Magnitude");
+
+  // draw spectrum as polyline
+  ctxF.lineWidth = 2.0;
+  ctxF.setLineDash([]);
+  ctxF.strokeStyle = getCss("--accent");
+
+  ctxF.beginPath();
+  for(let i=0;i<mag.length;i++){
+    const xx = pad + i*(w-2*pad)/(mag.length-1);
+    const yy = mapY(mag[i], mn, mx, h, pad);
+    if(i===0) ctxF.moveTo(xx,yy); else ctxF.lineTo(xx,yy);
+  }
+  ctxF.stroke();
+
+  // annotate a couple peaks (simple)
+  const peaks = [];
+  for(let i=2;i<mag.length-2;i++){
+    if(mag[i] > mag[i-1] && mag[i] > mag[i+1]) peaks.push({i, v:mag[i]});
+  }
+  peaks.sort((a,b)=>b.v-a.v);
+  const top = peaks.slice(0,3);
+
+  ctxF.fillStyle = getCss("--muted");
+  ctxF.font = "12px " + getCss("--sans");
+  ctxF.textAlign = "start";
+  top.forEach((p,pi)=>{
+    const f = freq[p.i];
+    const label = (LANG==="he") ? `שיא ~ ${f.toFixed(2)}Hz` : `Peak ~ ${f.toFixed(2)}Hz`;
+    const xx = pad + p.i*(w-2*pad)/(mag.length-1);
+    const yy = mapY(mag[p.i], mn, mx, h, pad);
+    ctxF.globalAlpha = 0.9;
+    ctxF.fillText(label, Math.min(w-pad-120, xx+6), Math.max(pad+14, yy-6));
+  });
+  ctxF.globalAlpha = 1;
+}
+
+function renderAll(){
+  renderTime();
+  renderFFT();
+}
+
+document.getElementById("fftSelect").addEventListener("change", renderFFT);
+document.getElementById("fs").addEventListener("change", ()=>{resetSeries(); renderAll(); updateJacobian();});
+document.getElementById("win").addEventListener("change", ()=>{resetSeries(); renderAll(); updateJacobian();});
+document.getElementById("intNoise").addEventListener("change", ()=>{tickOnce();});
+
+/* =======================
+   Jacobian output (coefficients as J)
+======================= */
+function updateJacobian(){
+  const lines = [];
+  const uOrder = ["E","H","A","W","N","h","x","y","z"];
+  lines.push((LANG==="he") ? "J (רגישויות) — ערוצים × משתנים" : "J (Sensitivities) — channels × variables");
+  lines.push((LANG==="he") ? "סדר משתנים: E,H,A,W,N,h,x,y,z" : "Variable order: E,H,A,W,N,h,x,y,z");
+  lines.push("");
+
+  for(const ch of CH){
+    const label = (LANG==="he") ? CH_LABEL.he[ch] : CH_LABEL.en[ch];
+    const row = uOrder.map(v => (B[ch][v] ?? 0).toFixed(6)).join("  ");
+    lines.push(`${label.padEnd(14," ")} | ${row}`);
+  }
+  lines.push("");
+  lines.push((LANG==="he")
+    ? "הערה: אלו המקדמים הלינאריים. בקרבת נקודת עבודה: ΔM ≈ J·Δu."
+    : "Note: These are linear coefficients. Near an operating point: ΔM ≈ J·Δu."
+  );
+
+  document.getElementById("jacOut").textContent = lines.join("\n");
+}
+
+document.getElementById("btnCopyJ").onclick = async ()=>{
+  const text = document.getElementById("jacOut").textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    // tiny feedback
+    const b = document.getElementById("btnCopyJ");
+    const old = b.innerHTML;
+    b.innerHTML = "✅";
+    setTimeout(()=> b.innerHTML = old, 700);
+  }catch(e){
+    alert((LANG==="he") ? "לא ניתן להעתיק אוטומטית בדפדפן זה." : "Clipboard copy is not available in this browser.");
+  }
+};
+
+/* =======================
+   Run / Pause
+======================= */
+function loop(){
+  if(!running) return;
+  // push a small batch per frame
+  const batch = Math.max(1, Math.floor(fs/12));
+  for(let i=0;i<batch;i++) pushOne();
+  renderAll();
+  updateJacobian();
+  timer = requestAnimationFrame(loop);
+}
+
+document.getElementById("btnRun").onclick = ()=>{
+  if(series.t.length === 0) resetSeries();
+  running = true;
+  cancelAnimationFrame(timer);
+  timer = requestAnimationFrame(loop);
+};
+
+document.getElementById("btnPause").onclick = ()=>{
+  running = false;
+  cancelAnimationFrame(timer);
+};
+
+document.getElementById("btnReset").onclick = ()=>{
+  running = false;
+  cancelAnimationFrame(timer);
+  resetSeries();
+  renderAll();
+  updateJacobian();
+};
+
+/* =======================
+   Utils
+======================= */
+function clamp(x,a,b){ return Math.min(b, Math.max(a,x)); }
+
+/* =======================
+   Init
+======================= */
+function init(){
+  setLangButtons();
+  rebuildSliders();
+  buildCoefTable();
+  applyI18n();
+  resetSeries();
+  renderAll();
+  updateJacobian();
+}
+init();
+
+// When language changes, rebuild labels that were created dynamically
+const origApply = applyI18n;
+applyI18n = function(){
+  origApply();
+  // rebuild slider titles in selected language without losing values
+  const saved = {...S};
+  rebuildSliders();
+  // restore values
+  sliderDefs.forEach(d=>{
+    S[d.key] = saved[d.key] ?? d.val;
+    const el = document.querySelector(`input[type="range"][min="${d.min}"][max="${d.max}"]`);
+  });
+  // fix displayed values
+  sliderDefs.forEach(d=>{
+    const vEl = document.getElementById(`val_${d.key}`);
+    if(vEl) vEl.textContent = fmt(S[d.key]);
+  });
+  // rebuild coef table header labels
+  buildCoefTable();
+  updateJacobian();
+  renderAll();
+};
+
+// Ensure applyI18n replacement runs at least once with correct rebuild
+applyI18n();
+</script>
+</body>
+</html>

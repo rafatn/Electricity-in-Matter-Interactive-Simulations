@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Multi-Field Model — Explanation + Formulas • הסבר + נוסחאות</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.62);
+      --cardSolid:#ffffff;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+
+      --head:#0b1220;
+      --link:#2563eb;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1220; --bg2:#0b1220;
+        --card:rgba(15,23,42,.68);
+        --card2:rgba(15,23,42,.52);
+        --cardSolid:#0f172a;
+
+        --text:#e5e7eb;
+        --muted:#94a3b8;
+        --line:rgba(148,163,184,.18);
+
+        --head:#f1f5f9;
+        --link:#93c5fd;
+
+        --shadow: 0 18px 50px rgba(0,0,0,.40);
+      }
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 10% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+    .topbar{
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 220deg, var(--accent), #06b6d4, #a855f7, var(--accent));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute;inset:-20px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 45%);
+      transform:rotate(12deg);
+      opacity:.8;
+    }
+    h1{margin:0;font-size:18px;line-height:1.2;color:var(--head)}
+    .sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: 0 10px 25px rgba(2,6,23,.06);
+      backdrop-filter: blur(8px);
+    }
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--cardSolid), rgba(255,255,255,.70));
+      color:var(--text);
+      padding:8px 10px;border-radius:12px;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(2,6,23,.08);
+      transition: transform .08s ease, border-color .2s ease;
+      font-weight:700;
+      user-select:none;
+      font-size:13px;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(99,102,241,.55)}
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      border-color: rgba(99,102,241,.55);
+      background: linear-gradient(180deg, rgba(99,102,241,.18), rgba(255,255,255,.70));
+    }
+    .btn.ghost{background:transparent;box-shadow:none}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+    }
+    .card .hd h2{margin:0;font-size:14px;color:var(--head)}
+    .card .hd .hint{font-size:12px;color:var(--muted);margin-top:4px;max-width:70ch}
+    .card .bd{padding:12px 14px 14px}
+
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 9px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.35);
+      font-size:12px;color:var(--muted);
+      font-weight:700;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .cols{grid-template-columns: 1fr}
+    }
+
+    .mini{font-size:12px;color:var(--muted);line-height:1.55}
+    .mono{font-family:var(--mono);font-size:12px}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,.18);
+      padding:12px;
+      overflow:auto;
+    }
+
+    .sectionTitle{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin:6px 0 10px;
+    }
+
+    .katex-block{overflow-x:auto; padding-bottom:2px}
+    .callout{
+      border:1px solid rgba(99,102,241,.35);
+      background: rgba(99,102,241,.10);
+      border-radius:16px;
+      padding:12px;
+    }
+    .callout b{color:var(--head)}
+    .ok{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.10);
+    }
+    .warn{
+      border-color: rgba(245,158,11,.35);
+      background: rgba(245,158,11,.10);
+    }
+
+    details{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,.16);
+      padding:10px 12px;
+    }
+    details summary{
+      cursor:pointer;
+      font-weight:800;
+      color:var(--head);
+    }
+    details .mini{margin-top:8px}
+
+    .footer{
+      margin-top:14px;
+      padding:12px 14px;
+      border:1px dashed var(--line);
+      border-radius:16px;
+      color:var(--muted);
+      font-size:12px;
+      background: rgba(255,255,255,.18);
+    }
+    .rtlNote{direction:ltr; unicode-bidi: plaintext;}
+    .nowrap{white-space:nowrap}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 data-i18n="title">הסבר + נוסחאות למודל מדידה רב-שדות (4 ערוצי M)</h1>
+          <div class="sub" data-i18n="subtitle">דו-לשוני • ניסוח מתמטי • “בקרבת המספר הנמדד” • זמן / פורייה / לפלס</div>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill">
+          <span class="tag">🌐 <span data-i18n="lang">שפה</span></span>
+          <button class="btn primary" id="btnHE">עברית</button>
+          <button class="btn" id="btnEN">English</button>
+        </div>
+        <div class="pill">
+          <span class="tag">🌓 <span data-i18n="theme">תצוגה</span></span>
+          <button class="btn" id="btnTheme">Toggle</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec0">0) הגדרות: שדות, מיקום וזמן</h2>
+            <div class="hint" data-i18n="sec0hint">
+              כאן מנסחים מה זה “מספר נמדד” כשיש הרבה ממדים: E,H,A,W,N,h,קואורדינטות, זמן וטרנספורמים.
+            </div>
+          </div>
+          <div class="tag">📚 Definitions</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="box">
+              <div class="sectionTitle">
+                <div class="tag">🧩 <span data-i18n="vars">וקטור משתנים</span></div>
+              </div>
+
+              <div class="katex-block">
+                \[
+                \mathbf{x}=(x,y,z),\quad t\in\mathbb{R},\quad h\in\mathbb{R}
+                \]
+                \[
+                E(\mathbf{x},t),\;H(\mathbf{x},t),\;A(\mathbf{x},t),\;W(\mathbf{x},t),\;N(\mathbf{x},t)
+                \]
+              </div>
+
+              <div class="mini" data-i18n="varsText">
+                \(E\) שדה חשמלי, \(H\) שדה מגנטי, \(A\) סביבה/אוויר, \(W\) מים/תווך נוזלי,
+                \(N\) רעש/זיהום, \(h\) גובה מדידה, \(\mathbf{x}\) מקום, \(t\) זמן.
+              </div>
+            </div>
+
+            <div class="callout ok">
+              <b data-i18n="keyIdeaT">רעיון מרכזי</b>
+              <div class="mini" data-i18n="keyIdea">
+                “המספר הנמדד” אינו מספר טהור; הוא תוצאה של הקרנה (projection) של שדות מרובי-ממדים דרך תגובת מערכת המדידה/חיישן.
+              </div>
+              <div class="divider"></div>
+              <div class="katex-block">
+                \[
+                \text{Measured} = \text{Sensor}\big(\text{Physics}(E,H,A,W,N;\mathbf{x},t),\,h,\mathbf{x}\big)+\epsilon
+                \]
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <details>
+            <summary data-i18n="sec0more">הערה על “איפה מדדת” (Place + Coordinates)</summary>
+            <div class="mini" data-i18n="sec0moreText">
+              אותו שדה יכול להיראות אחרת במיקום שונה: שינוי \(\Delta \mathbf{x}\) או \(\Delta h\) יגרור שינוי במדידה,
+              בגלל גרדיאנטים מרחביים \(\nabla_{\mathbf{x}}M\) או תלות בגובה.
+            </div>
+            <div class="katex-block">
+              \[
+              M(\mathbf{x}+\Delta\mathbf{x},t)\approx M(\mathbf{x},t)+\nabla_{\mathbf{x}}M\cdot\Delta\mathbf{x}
+              \]
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec1">1) ארבע מדידות: קרינה כללית, אור, אנרגיה רגעית, טמפרטורה</h2>
+            <div class="hint" data-i18n="sec1hint">
+              מגדירים וקטור מדידות \(\mathbf{M}\) — לכל ערוץ יש תלות בשדות ובמיקום/זמן.
+            </div>
+          </div>
+          <div class="tag">🧾 Measurements</div>
+        </div>
+        <div class="bd">
+          <div class="box">
+            <div class="katex-block">
+              \[
+              \mathbf{M}(\mathbf{x},t)=
+              \begin{bmatrix}
+              M_{\text{rad}}(\mathbf{x},t)\\
+              M_{\text{light}}(\mathbf{x},t)\\
+              M_{\text{eng}}(\mathbf{x},t)\\
+              M_{\text{temp}}(\mathbf{x},t)
+              \end{bmatrix}
+              \]
+            </div>
+            <div class="mini" data-i18n="sec1note">
+              כאן \(M_{\text{eng}}\) היא אנרגיה/הספק רגעי (לא מצטבר), ו-\(M_{\text{rad}}\) היא “קרינה כללית”.
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="cols">
+            <div class="callout">
+              <b data-i18n="map1">מיפוי כללי</b>
+              <div class="katex-block">
+                \[
+                \mathbf{M}(\mathbf{x},t)=\mathbf{F}\big(E,H,A,W,N,h,\mathbf{x},t\big)+\boldsymbol{\epsilon}
+                \]
+              </div>
+              <div class="mini" data-i18n="map1t">
+                \(\mathbf{F}\) מייצגת את הפיזיקה + השיטה; \(\boldsymbol{\epsilon}\) שאריות/רעש לא מוסבר.
+              </div>
+            </div>
+
+            <div class="callout warn">
+              <b data-i18n="map2">מה מודדים בפועל</b>
+              <div class="mini" data-i18n="map2t">
+                המדידה היא “תמונה” של המערכת דרך חיישן: כיול, פילטרים, השהיות, ורעש פנימי.
+                לכן לעיתים צריך טרנספורמים (זמן/פורייה/לפלס) כדי להפריד רכיבים.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec2">2) “בקרבת המספר הנמדד”: לינאריזציה ורגישויות</h2>
+            <div class="hint" data-i18n="sec2hint">
+              זה החלק שמייצר את הקירוב המקומי: \(\Delta \mathbf{M}\approx \mathbf{J}\Delta\mathbf{u}\).
+            </div>
+          </div>
+          <div class="tag">🧠 Sensitivity</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="box">
+              <div class="sectionTitle">
+                <div class="tag">🧷 <span data-i18n="uvec">וקטור קלטים</span></div>
+              </div>
+              <div class="katex-block">
+                \[
+                \mathbf{u}=
+                \begin{bmatrix}
+                E& H& A& W& N& h& x& y& z
+                \end{bmatrix}^T
+                \]
+              </div>
+              <div class="mini" data-i18n="uvecT">
+                (אפשר להוסיף גם רכיבי זמן או מאפייני טרנספורמים כתכונות נוספות).
+              </div>
+            </div>
+
+            <div class="callout ok">
+              <b data-i18n="jacT">יעקובי (Jacobian) = מטריצת רגישויות</b>
+              <div class="katex-block">
+                \[
+                \Delta\mathbf{M}\approx \mathbf{J}\,\Delta\mathbf{u}
+                \]
+                \[
+                \mathbf{J}_{ij}=\frac{\partial M_i}{\partial u_j}\Big|_{(\mathbf{x}_0,t_0)}
+                \]
+              </div>
+              <div class="mini" data-i18n="jacText">
+                כל שורה מייצגת ערוץ מדידה; כל עמודה מייצגת משתנה (שדה/סביבה/מיקום).
+                זה “מי משפיע על מי” בקרבת נקודת עבודה.
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="box">
+            <div class="sectionTitle">
+              <div class="tag">📏 <span data-i18n="lin">מודל לינארי נפוץ</span></div>
+            </div>
+            <div class="katex-block">
+              \[
+              M_j \approx \beta_{j,0}+\beta_{j,E}E+\beta_{j,H}H+\beta_{j,A}A+\beta_{j,W}W+\beta_{j,N}N+\beta_{j,h}h+\beta_{j,x}x+\beta_{j,y}y+\beta_{j,z}z
+              \]
+            </div>
+            <div class="mini" data-i18n="linText">
+              במודל לינארי — המקדמים \(\beta\) הם בדיוק הערכים של \(\mathbf{J}\) (כלומר, רגישויות קבועות מקומית).
+            </div>
+
+            <div class="divider"></div>
+
+            <details>
+              <summary data-i18n="interSum">אינטראקציות (מומלץ כשיש השפעות לא-לינאריות)</summary>
+              <div class="mini" data-i18n="interText">
+                לפעמים השפעת \(E\) תלויה ב-\(H\) או ברעש \(N\). מוסיפים איברי מכפלה:
+              </div>
+              <div class="katex-block">
+                \[
+                M_j \approx \dots +\gamma_{j,EH}(E\cdot H)+\gamma_{j,EN}(E\cdot N)+\gamma_{j,HN}(H\cdot N)+\cdots
+                \]
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec3">3) תחום הזמן / פורייה / לפלס: מה כל טרנספורם “מפריד”</h2>
+            <div class="hint" data-i18n="sec3hint">
+              כשמדידות רגעיות כוללות רעש ותגובה של חיישן — הטרנספורם עוזר להבחין בין “אות” ל”רעשים/דינמיקה”.
+            </div>
+          </div>
+          <div class="tag">⏱️🔵 Transform</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="box">
+              <div class="sectionTitle">
+                <div class="tag">⏱️ <span data-i18n="timeDom">תחום הזמן</span></div>
+              </div>
+              <div class="mini" data-i18n="timeText">
+                מתאים לטרנזיינטים, קפיצות, מגמות איטיות, ואירועים בזמן.
+                לרוב מפרקים:
+              </div>
+              <div class="katex-block">
+                \[
+                M(t)=M_{\text{trend}}(t)+M_{\text{periodic}}(t)+M_{\text{noise}}(t)
+                \]
+              </div>
+            </div>
+
+            <div class="box">
+              <div class="sectionTitle">
+                <div class="tag">🔵 <span data-i18n="fourDom">פורייה (Fourier)</span></div>
+              </div>
+              <div class="mini" data-i18n="fourText">
+                מפרק לתדרים, טוב לזיהוי רעשי רשת (50/60Hz), רטיטות, או חתימות מחזוריות.
+              </div>
+              <div class="katex-block">
+                \[
+                \widehat{M}(f)=\int_{-\infty}^{\infty} M(t)\,e^{-i2\pi ft}\,dt
+                \]
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="box">
+            <div class="sectionTitle">
+              <div class="tag">🧪 <span data-i18n="lapDom">לפלס (Laplace) + דינמיקת חיישן</span></div>
+            </div>
+
+            <div class="mini" data-i18n="lapText">
+              אם החיישן לא באמת “מיידי”, אפשר למודל אותו כפילטר מסדר ראשון (קבוע זמן \(\tau\)).
+              זה קריטי כשאתה קורא לזה “רגעי” אבל בפועל יש השהיה/סינון.
+            </div>
+
+            <div class="katex-block">
+              \[
+              \tau_j\frac{dM_j}{dt}+M_j=\Phi_j(E,H,A,W,N,h,\mathbf{x},t)
+              \]
+              \[
+              M_j(s)=\frac{1}{\tau_j s+1}\,\Phi_j(s)
+              \]
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec4">4) קשרים פנימיים בין הערוצים (אופציונלי, אבל חזק)</h2>
+            <div class="hint" data-i18n="sec4hint">
+              לפעמים המדידות משפיעות זו על זו (למשל אור ↔ טמפרטורה). זה מודל דו-שלבי: שדות→מדידות + מדידות↔מדידות.
+            </div>
+          </div>
+          <div class="tag">🔁 Coupling</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="callout ok">
+              <b data-i18n="twoStage">מודל דו-שלבי</b>
+              <div class="katex-block">
+                \[
+                \mathbf{M}\approx \mathbf{B}\mathbf{z}\qquad(\text{Fields}\to\text{Measurements})
+                \]
+                \[
+                M_{\text{light}}\approx b_0+b_1 M_{\text{temp}}+b_2 M_{\text{rad}}
+                \]
+              </div>
+              <div class="mini" data-i18n="twoStageText">
+                כך אתה מפריד בין “השפעה סביבתית” לבין “יחסים פנימיים” בין ערוצי המדידה.
+              </div>
+            </div>
+
+            <div class="callout">
+              <b data-i18n="whyCouple">למה זה שימושי?</b>
+              <div class="mini" data-i18n="whyCoupleText">
+                אם למשל טמפרטורה גורמת לעליית עוצמת אור (כמו בתצפית שלך), כדאי לייצג זאת ישירות במודל,
+                במקום “להעמיס” הכל על \(E,H,N\).
+              </div>
+              <div class="katex-block">
+                \[
+                M_{\text{temp}}\approx a_0+a_1 M_{\text{eng}}+a_2 M_{\text{rad}}
+                \]
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2 data-i18n="sec5">5) מה יוצא בסוף: (1) רגישויות, (2) ספקטרום, (3) מדידה “נקייה”</h2>
+            <div class="hint" data-i18n="sec5hint">
+              זה הפלט הפרקטי שמאפשר להבין “מה באמת משפיע” על המספר הנמדד.
+            </div>
+          </div>
+          <div class="tag">✅ Outputs</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="box">
+              <div class="tag">1) <span data-i18n="out1">וקטור/טבלת רגישויות</span></div>
+              <div class="mini" data-i18n="out1t" style="margin-top:8px">
+                לכל ערוץ, מקבלים \(\frac{\partial M}{\partial E},\frac{\partial M}{\partial H},\dots\).
+                זה נותן דירוג: מי דומיננטי ומי זניח.
+              </div>
+              <div class="katex-block">
+                \[
+                \text{Sensitivity score (example)}:\quad
+                |\beta_{j,E}|,\;|\beta_{j,H}|,\;|\beta_{j,N}|,\dots
+                \]
+              </div>
+            </div>
+
+            <div class="box">
+              <div class="tag">2) <span data-i18n="out2">ניתוח תדרי</span></div>
+              <div class="mini" data-i18n="out2t" style="margin-top:8px">
+                לכל ערוץ \(M_j(t)\) בודקים איפה יושבת האנרגיה בתדרים.
+              </div>
+              <div class="katex-block">
+                \[
+                \text{BandEnergy}(f_1,f_2)=\int_{f_1}^{f_2}|\widehat{M}(f)|^2\,df
+                \]
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="callout warn">
+            <b data-i18n="cleanT">3) “מדידה נקייה” (de-bias / de-noise)</b>
+            <div class="mini" data-i18n="cleanText">
+              רעיון פרקטי: להסיר רכיבי רעש וסביבה ידועים (למשל \(N\) או תדרי רשת) כדי לקבל אות משופר.
+              (זה מודל עזר — לא “אמת מוחלטת”.)
+            </div>
+            <div class="katex-block">
+              \[
+              M_{j,\text{clean}}(t)=M_j(t)-\beta_{j,N}N(t)-\sum_{k\in\mathcal{K}} c_k\sin(2\pi f_k t+\phi_k)
+              \]
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="footer">
+        <div>© <span data-i18n="rights">כל הזכויות שמורות. אין לשכפל אלא באישור.</span></div>
+        <div class="rtlNote">Contact: RA - Raftn4@gmail.com</div>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+/* =======================
+   Bilingual i18n
+======================= */
+const I18N = {
+  he: {
+    title: "הסבר + נוסחאות למודל מדידה רב-שדות (4 ערוצי M)",
+    subtitle: "דו-לשוני • ניסוח מתמטי • “בקרבת המספר הנמדד” • זמן / פורייה / לפלס",
+    lang: "שפה",
+    theme: "תצוגה",
+
+    sec0: "0) הגדרות: שדות, מיקום וזמן",
+    sec0hint: "כאן מנסחים מה זה “מספר נמדד” כשיש הרבה ממדים: E,H,A,W,N,h,קואורדינטות, זמן וטרנספורמים.",
+    vars: "וקטור משתנים",
+    varsText: "E שדה חשמלי, H שדה מגנטי, A סביבה/אוויר, W מים/תווך נוזלי, N רעש/זיהום, h גובה, x מקום, t זמן.",
+    keyIdeaT: "רעיון מרכזי",
+    keyIdea: "“המספר הנמדד” אינו מספר טהור; הוא תוצאה של הקרנה (projection) של שדות מרובי-ממדים דרך תגובת מערכת המדידה/חיישן.",
+    sec0more: "הערה על “איפה מדדת” (Place + Coordinates)",
+    sec0moreText: "אותו שדה יכול להיראות אחרת במיקום שונה: שינוי Δx או Δh יגרור שינוי במדידה בגלל גרדיאנטים מרחביים ∇M או תלות בגובה.",
+
+    sec1: "1) ארבע מדידות: קרינה כללית, אור, אנרגיה רגעית, טמפרטורה",
+    sec1hint: "מגדירים וקטור מדידות M — לכל ערוץ יש תלות בשדות ובמיקום/זמן.",
+    sec1note: "כאן M_eng היא אנרגיה/הספק רגעי (לא מצטבר), ו-M_rad היא “קרינה כללית”.",
+    map1: "מיפוי כללי",
+    map1t: "F מייצגת את הפיזיקה + השיטה; ε שאריות/רעש לא מוסבר.",
+    map2: "מה מודדים בפועל",
+    map2t: "המדידה היא “תמונה” דרך חיישן: כיול, פילטרים, השהיות ורעש פנימי. לעיתים צריך טרנספורמים כדי להפריד רכיבים.",
+
+    sec2: "2) “בקרבת המספר הנמדד”: לינאריזציה ורגישויות",
+    sec2hint: "זה הקירוב המקומי: ΔM ≈ J·Δu.",
+    uvec: "וקטור קלטים",
+    uvecT: "אפשר להוסיף גם רכיבי זמן או מאפייני טרנספורמים כתכונות.",
+    jacT: "יעקובי (Jacobian) = מטריצת רגישויות",
+    jacText: "שורות: ערוצי מדידה. עמודות: משתנים (שדה/סביבה/מיקום). זה “מי משפיע על מי” קרוב לנקודת עבודה.",
+    lin: "מודל לינארי נפוץ",
+    linText: "במודל לינארי — המקדמים β הם בדיוק הערכים של J (רגישויות מקומיות).",
+    interSum: "אינטראקציות (מומלץ כשיש השפעות לא-לינאריות)",
+    interText: "לפעמים השפעת E תלויה ב-H או ברעש N. מוסיפים איברי מכפלה:",
+
+    sec3: "3) תחום הזמן / פורייה / לפלס: מה כל טרנספורם “מפריד”",
+    sec3hint: "כשמדידות רגעיות כוללות רעש ותגובה של חיישן — הטרנספורם עוזר להבחין בין “אות” ל”רעשים/דינמיקה”.",
+    timeDom: "תחום הזמן",
+    timeText: "מתאים לקפיצות, מגמות ואירועים בזמן. לרוב מפרקים את M(t) לטרנד + מחזורי + רעש.",
+    fourDom: "פורייה (Fourier)",
+    fourText: "מפרק לתדרים: טוב לזיהוי רעשי רשת (50/60Hz), רטיטות, או חתימות מחזוריות.",
+    lapDom: "לפלס (Laplace) + דינמיקת חיישן",
+    lapText: "אם החיישן לא באמת “מיידי”, מודלים אותו כפילטר מסדר ראשון עם קבוע זמן τ. זה קריטי כשקוראים לזה “רגעי” אבל יש השהיה.",
+
+    sec4: "4) קשרים פנימיים בין הערוצים (אופציונלי, אבל חזק)",
+    sec4hint: "לפעמים המדידות משפיעות זו על זו. זה מודל דו-שלבי: שדות→מדידות + מדידות↔מדידות.",
+    twoStage: "מודל דו-שלבי",
+    twoStageText: "כך מפרידים בין השפעה סביבתית לבין יחסים פנימיים בין ערוצי המדידה.",
+    whyCouple: "למה זה שימושי?",
+    whyCoupleText: "אם טמפרטורה משפיעה על עוצמת אור, כדאי לייצג זאת ישירות במודל במקום להעמיס הכל על E/H/N.",
+
+    sec5: "5) מה יוצא בסוף: (1) רגישויות, (2) ספקטרום, (3) מדידה “נקייה”",
+    sec5hint: "פלט פרקטי: להבין מה באמת משפיע על המספר הנמדד.",
+    out1: "וקטור/טבלת רגישויות",
+    out1t: "לכל ערוץ: נגזרות חלקיות ביחס לשדות. מאפשר דירוג השפעה.",
+    out2: "ניתוח תדרי",
+    out2t: "בודקים באילו תחומי תדר יושבת האנרגיה של האות.",
+    cleanT: "3) “מדידה נקייה” (de-bias / de-noise)",
+    cleanText: "מסירים רכיבי רעש/תדרים ידועים כדי לשפר את האות. זה מודל עזר, לא אמת מוחלטת.",
+    rights: "כל הזכויות שמורות. אין לשכפל אלא באישור."
+  },
+  en: {
+    title: "Explanation + Formulas for a Multi-Field Measurement Model (4 M-channels)",
+    subtitle: "Bilingual • Mathematical formulation • “near the measured number” • Time / Fourier / Laplace",
+    lang: "Language",
+    theme: "Appearance",
+
+    sec0: "0) Definitions: fields, location, and time",
+    sec0hint: "We formalize what a “measured number” means when many dimensions exist: E,H,A,W,N,h, coordinates, time, and transforms.",
+    vars: "Variable vector",
+    varsText: "E electric field, H magnetic field, A air/environment, W water/liquid medium, N noise/pollution, h altitude, x location, t time.",
+    keyIdeaT: "Core idea",
+    keyIdea: "The “measured number” is not a pure scalar; it is a projection of multi-dimensional fields through the sensor/measurement response.",
+    sec0more: "Note on “where you measured” (Place + Coordinates)",
+    sec0moreText: "The same field can appear different at a different location: changing Δx or Δh changes the measurement through spatial gradients ∇M and altitude dependence.",
+
+    sec1: "1) Four measurements: general radiation, light, instant energy, temperature",
+    sec1hint: "Define the measurement vector M — each channel depends on fields plus location/time.",
+    sec1note: "Here M_eng is instantaneous energy/power (not accumulated), and M_rad is a general radiation index.",
+    map1: "Generic mapping",
+    map1t: "F represents physics + method; ε is unexplained residual/noise.",
+    map2: "What is measured in practice",
+    map2t: "Measurements go through a sensor: calibration, filtering, delays, and internal noise. Transforms help separate components.",
+
+    sec2: "2) “Near the measured number”: linearization and sensitivities",
+    sec2hint: "Local approximation: ΔM ≈ J·Δu.",
+    uvec: "Input vector",
+    uvecT: "You can also add time features or transform-based features as inputs.",
+    jacT: "Jacobian = sensitivity matrix",
+    jacText: "Rows: measurement channels. Columns: variables (field/env/location). This tells “who affects what” near an operating point.",
+    lin: "Common linear model",
+    linText: "In a linear model, coefficients β are exactly the Jacobian entries (local sensitivities).",
+    interSum: "Interactions (recommended for nonlinearity)",
+    interText: "Sometimes E depends on H or noise N; add product terms:",
+
+    sec3: "3) Time / Fourier / Laplace: what each transform separates",
+    sec3hint: "With instantaneous measurements, noise and sensor dynamics exist; transforms help separate signal vs noise/dynamics.",
+    timeDom: "Time domain",
+    timeText: "Good for transients, trends, and events. Often decompose M(t) into trend + periodic + noise.",
+    fourDom: "Fourier domain",
+    fourText: "Frequency decomposition: detects mains noise (50/60Hz), vibrations, or periodic signatures.",
+    lapDom: "Laplace domain + sensor dynamics",
+    lapText: "If the sensor is not truly instantaneous, model it as a first-order system with time constant τ (a low-pass behavior).",
+
+    sec4: "4) Internal coupling between channels (optional but powerful)",
+    sec4hint: "Sometimes channels influence each other. Use a two-stage model: fields→measurements + measurements↔measurements.",
+    twoStage: "Two-stage model",
+    twoStageText: "Separates environmental impact from internal relationships between measured channels.",
+    whyCouple: "Why useful?",
+    whyCoupleText: "If temperature affects light output, represent it directly instead of forcing everything into E/H/N.",
+
+    sec5: "5) Final outputs: (1) sensitivities, (2) spectrum, (3) “cleaned” measurement",
+    sec5hint: "Practical deliverables: identify what truly affects the measured number.",
+    out1: "Sensitivity vector/table",
+    out1t: "For each channel: partial derivatives w.r.t. fields. Enables influence ranking.",
+    out2: "Frequency analysis",
+    out2t: "Check where the signal’s energy sits across frequency bands.",
+    cleanT: "3) “Cleaned” measurement (de-bias / de-noise)",
+    cleanText: "Remove known noise/certain frequency components to improve the signal. This is an auxiliary model, not absolute truth.",
+    rights: "All rights reserved. No copying without permission."
+  }
+};
+
+let LANG = "he";
+
+function applyI18n(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = (LANG === "he") ? "rtl" : "ltr";
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if(I18N[LANG][key]) el.textContent = I18N[LANG][key];
+  });
+
+  // re-render KaTeX (because direction/lang changes might reflow)
+  renderMath();
+}
+
+function renderMath(){
+  if(!window.renderMathInElement) return;
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\[", right: "\\]", display: true},
+      {left: "$", right: "$", display: false},
+      {left: "\\(", right: "\\)", display: false}
+    ],
+    throwOnError: false
+  });
+}
+
+document.getElementById("btnHE").onclick = ()=>{
+  LANG="he";
+  setLangButtons();
+  applyI18n();
+};
+document.getElementById("btnEN").onclick = ()=>{
+  LANG="en";
+  setLangButtons();
+  applyI18n();
+};
+
+function setLangButtons(){
+  document.getElementById("btnHE").classList.toggle("primary", LANG==="he");
+  document.getElementById("btnEN").classList.toggle("primary", LANG==="en");
+}
+
+document.getElementById("btnTheme").onclick = ()=>{
+  const html = document.documentElement;
+  const cur = html.getAttribute("data-theme") || "light";
+  html.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+};
+
+window.addEventListener("load", ()=>{
+  setLangButtons();
+  applyI18n();
+  // KaTeX scripts are defer; ensure one more pass after they load
+  setTimeout(renderMath, 50);
+});
+</script>
+</body>
+</html>
