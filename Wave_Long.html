@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💎💡 כדור סינטילציה מונוכרומטי • מתח→אור (מודל + כיול + גרפים)</title>
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- KaTeX (for equations) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.64);
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --accent2:#06b6d4;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020;
+        --bg1:#0b1224;
+        --bg2:#071827;
+        --card:rgba(20,28,48,.72);
+        --card2:rgba(20,28,48,.50);
+        --text:#e5e7eb;
+        --muted:#9aa4b2;
+        --line:rgba(148,163,184,.18);
+        --shadow: 0 22px 70px rgba(0,0,0,.35);
+        --accent:#8b5cf6;
+        --accent2:#22d3ee;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, var(--bg2), transparent 65%),
+        radial-gradient(900px 500px at 85% 20%, var(--bg1), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    header{
+      padding:28px 18px 10px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .title{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.2vw, 32px);
+      letter-spacing:.2px;
+      line-height:1.2;
+    }
+    .subtitle{
+      margin-top:8px;
+      color:var(--muted);
+      max-width:900px;
+      line-height:1.55;
+      font-size:14.5px;
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding: 14px 18px 50px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      padding:4px 10px;
+      border-radius:999px;
+      background:var(--card2);
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 620px){ .grid2{grid-template-columns:1fr} }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin:10px 0;
+    }
+
+    label{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    input[type="range"]{width:100%}
+    input[type="number"], select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      outline:none;
+    }
+    input[type="number"]:focus, select:focus{
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .sliderBox{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--card2);
+    }
+    .sliderTop{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-bottom:8px;
+    }
+    .val{
+      font-family:var(--mono);
+      font-size:13px;
+      padding:4px 8px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+
+    .btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius:12px;
+      padding:10px 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:white;
+      font-weight:600;
+      letter-spacing:.2px;
+      box-shadow: 0 10px 26px rgba(99,102,241,.22);
+    }
+    button.secondary{
+      background:transparent;
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    button:active{transform:translateY(1px)}
+    .note{
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.5;
+      margin-top:10px;
+    }
+
+    .kpiGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    .kpi{
+      border:1px solid var(--line);
+      background:var(--card2);
+      border-radius:14px;
+      padding:12px;
+    }
+    .kpi .k{
+      font-size:12px;color:var(--muted);margin-bottom:6px
+    }
+    .kpi .v{
+      font-family:var(--mono);
+      font-size:15px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .kpi .tag{
+      margin-top:8px;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+    }
+    .tag.ok{color:var(--ok)}
+    .tag.warn{color:var(--warn)}
+    .tag.bad{color:var(--bad)}
+
+    .mono{
+      font-family:var(--mono);
+      font-size:12.5px;
+      background:rgba(0,0,0,.05);
+      border:1px dashed var(--line);
+      padding:10px;
+      border-radius:14px;
+      overflow:auto;
+    }
+    @media (prefers-color-scheme: dark){
+      .mono{background:rgba(255,255,255,.06)}
+    }
+
+    .canvasBox{
+      border:1px solid var(--line);
+      background:var(--card2);
+      border-radius:14px;
+      padding:12px;
+    }
+    canvas{
+      width:100%;
+      height:260px;
+      display:block;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.10);
+    }
+
+    .mini{
+      font-size:12px;color:var(--muted)
+    }
+    .hr{
+      height:1px;background:var(--line);margin:12px 0;border-radius:999px
+    }
+
+    .tbl{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card2);
+    }
+    .tbl th, .tbl td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      font-size:12.5px;
+      text-align:right;
+      vertical-align:top;
+      font-family:var(--mono);
+    }
+    .tbl th{font-family:system-ui, sans-serif; font-size:12px; color:var(--muted)}
+    .tbl tr:last-child td{border-bottom:none}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="title">
+    <div>
+      <h1>💎💡 כדור סינטילציה מונוכרומטי (כדור מלא) • מודל מתח→אור + כיול + גרפים</h1>
+      <div class="subtitle">
+        תכנון: ליבה שקופה + שכבת סינטילטור דקה + שכבת מונוכרום (DBR/פילטר) + מעטפת מראה בכל ההיקף + חלון יציאה אחד.
+        המטרה: להפוך <b>V,I</b> לשטף אור נראה מונוכרומטי שיוצא <b>רק מהחלון</b>.
+        🎛️ הזז סליידרים → קבל תוצאות + גרפים.
+      </div>
+    </div>
+    <div class="pill">עובד מקומית • נוסחאות KaTeX • גרפים Canvas</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- LEFT: controls + outputs -->
+  <section class="card">
+    <h2>🎚️ קלטים (V, I, גיאומטריה, ציפויים)</h2>
+
+    <div class="grid2">
+      <div class="sliderBox">
+        <div class="sliderTop">
+          <label for="V">מתח V (וולט)</label>
+          <div class="val" id="Vval">1000 V</div>
+        </div>
+        <input id="V" type="range" min="50" max="3000" step="10" value="1000" />
+        <div class="mini">טיפוסי: 200–2000V • ניתן להגדיל לפי מקור ההאצה/הנעה</div>
+      </div>
+
+      <div class="sliderBox">
+        <div class="sliderTop">
+          <label for="I">זרם I (mA)</label>
+          <div class="val" id="Ival">2.00 mA</div>
+        </div>
+        <input id="I" type="range" min="0.2" max="30" step="0.1" value="2" />
+        <div class="mini">הרוויה במודל מתחילה סביב Is (ברירת מחדל 15mA)</div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>בחירת חומר/צבע (מונוכרום)</label>
+        <select id="material">
+          <option value="GAGG_530">GAGG:Ce • ירוק־צהוב (λ₀≈530nm)</option>
+          <option value="LuAG_520">LuAG:Ce • ירוק (λ₀≈520nm)</option>
+          <option value="YAG_550">YAG:Ce • צהוב־ירקרק (λ₀≈550nm)</option>
+          <option value="LYSO_420">LYSO:Ce • כחול־ירקרק (λ₀≈420nm)</option>
+          <option value="CUSTOM">מותאם אישית (הכנס λ₀)</option>
+        </select>
+        <div class="row" style="margin-top:10px">
+          <label for="lambda0">λ₀ (nm)</label>
+          <input id="lambda0" type="number" min="380" max="700" step="1" value="530">
+        </div>
+        <div class="mini">מונוכרום “חזק” מתקבל כשמוסיפים DBR צר סביב λ₀.</div>
+      </div>
+
+      <div>
+        <label>פרמטרים פיזיקליים (ברירת מחדל מהתכנון)</label>
+        <div class="row">
+          <label for="R">רדיוס כדור R (mm)</label>
+          <input id="R" type="number" min="5" max="80" step="1" value="20">
+        </div>
+        <div class="row">
+          <label for="rw">רדיוס חלון rₙ (mm)</label>
+          <input id="rw" type="number" min="1" max="20" step="0.5" value="3">
+        </div>
+        <div class="row">
+          <label for="Rm">החזר מראה Rm (0–1)</label>
+          <input id="Rm" type="number" min="0.9" max="0.9999" step="0.0001" value="0.995">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>מקדמים (כיול)</label>
+        <div class="row">
+          <label for="K">K (יעילות כוללת)</label>
+          <input id="K" type="number" min="0.001" max="0.3" step="0.001" value="0.034">
+        </div>
+        <div class="row">
+          <label for="Is">Is (mA) רוויה</label>
+          <input id="Is" type="number" min="1" max="100" step="1" value="15">
+        </div>
+        <div class="row">
+          <label for="trap">η_trap לכידה</label>
+          <input id="trap" type="number" min="0.1" max="0.99" step="0.01" value="0.80">
+        </div>
+        <div class="mini">K מייצג: f_dep·η_sc·η_trap·η_win (בערך). ניתן לכוונן לפי ניסוי.</div>
+      </div>
+
+      <div>
+        <label>חישוב לומנס (אופציונלי)</label>
+        <div class="row">
+          <label for="lmw">מקדם lm/W (בערך)</label>
+          <input id="lmw" type="number" min="50" max="700" step="10" value="500">
+        </div>
+        <div class="mini">ברירת מחדל 500 lm/W סביב ירוק. לכחול/אדום זה יורד משמעותית.</div>
+
+        <div class="btns">
+          <button id="reset">איפוס לערכי תכנון ✅</button>
+          <button class="secondary" id="snap">יצירת טבלת כיול (V×I) 📋</button>
+        </div>
+
+        <div class="note">
+          ⚠️ הערה בטיחותית: עבודה עם מתחים גבוהים (kV) דורשת בידוד, מרחקי זחילה, נגד הגבלת זרם,
+          ומעטפת סגורה. הדף כאן הוא מודל תאורטי/הנדסי.
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>📌 תוצאות מיידיות <span class="pill">מחושבות מהנוסחאות</span></h2>
+
+    <div class="kpiGrid">
+      <div class="kpi">
+        <div class="k">הספק כניסה</div>
+        <div class="v" id="Pin">—</div>
+        <div class="tag" id="tagPin">⚡</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k">יעילות חלון η_win</div>
+        <div class="v" id="etaWin">—</div>
+        <div class="tag" id="tagWin">🪞</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k">הספק אור יוצא</div>
+        <div class="v" id="Pout">—</div>
+        <div class="tag" id="tagPout">💡</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k">שטף אור (בקירוב)</div>
+        <div class="v" id="Lumens">—</div>
+        <div class="tag" id="tagLm">👁️</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k">אנרגיית פוטון (Eγ)</div>
+        <div class="v" id="Eg">—</div>
+        <div class="tag" id="tagEg">🌈</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k">קצב פוטונים יוצא (Ṅγ)</div>
+        <div class="v" id="Ngdot">—</div>
+        <div class="tag" id="tagNg">✨</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>🧮 הנוסחאות (מודל)</h2>
+    <div id="eqs" class="mono">
+      <div class="math">
+      \[
+      A_s = 4\pi R^2,\qquad A_w=\pi r_w^2
+      \]
+      \[
+      \eta_{win}\approx \frac{A_w}{A_w+(1-R_m)(A_s-A_w)}
+      \]
+      \[
+      P_{in}=VI
+      \]
+      \[
+      P_{out}(V,I)=K\,VI\cdot\frac{1}{1+\frac{I}{I_s}}
+      \]
+      \[
+      E_\gamma=\frac{hc}{\lambda_0},\qquad \dot N_{\gamma,out}=\frac{P_{out}}{E_\gamma}
+      \]
+      </div>
+      <div style="margin-top:10px;color:var(--muted);font-family:system-ui,sans-serif;">
+        📌 פירוש קצר: <b>η_win</b> הוא “שאיבת חלון” בגלל מראה כמעט מלאה בשאר הכדור. <b>K</b> הוא מקדם כיול כולל.
+        רוויה דרך <b>I_s</b> נותנת התנהגות מציאותית יותר.
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: graphs + table -->
+  <section class="card">
+    <h2>📈 גרפים דינמיים <span class="pill">Canvas</span></h2>
+
+    <div class="canvasBox">
+      <div class="row" style="margin:0 0 8px">
+        <div class="mini">גרף 1: \(P_{out}\) כפונקציה של מתח \(V\) (זרם קבוע)</div>
+        <div class="val" id="graph1Label">I = 2.00 mA</div>
+      </div>
+      <canvas id="c1" width="900" height="320"></canvas>
+    </div>
+
+    <div class="canvasBox" style="margin-top:12px">
+      <div class="row" style="margin:0 0 8px">
+        <div class="mini">גרף 2: \(P_{out}\) כפונקציה של זרם \(I\) (מתח קבוע)</div>
+        <div class="val" id="graph2Label">V = 1000 V</div>
+      </div>
+      <canvas id="c2" width="900" height="320"></canvas>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>📋 טבלת כיול אוטומטית <span class="pill">V×I</span></h2>
+    <div class="mini">לחץ “יצירת טבלת כיול” כדי לייצר דוגמה (V: 200/500/1000V, I: 1/2/5/10/20mA). אפשר לשנות אח״כ בקוד.</div>
+    <div style="margin-top:10px; overflow:auto">
+      <table class="tbl" id="calTable">
+        <thead>
+          <tr>
+            <th>V (V)</th>
+            <th>I (mA)</th>
+            <th>P_in (W)</th>
+            <th>P_out (W)</th>
+            <th>Lumens (~)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" style="font-family:system-ui,sans-serif;color:var(--muted)">לחץ על הכפתור ליצירת טבלה…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>🧱 רשימת סינטילטורים (קיצור)</h2>
+    <div class="mono">
+      <b>עמידים/פרקטיים:</b> GAGG:Ce (≈530nm), LuAG:Ce (≈520nm), YAG:Ce (≈550nm), LYSO:Ce (≈420nm).<br>
+      <b>חזקים אך דורשים איטום (היגרוסקופיים):</b> CsI:Tl, NaI:Tl, CsI:Na.<br>
+      <b>שטחים גדולים/זולים:</b> פלסטיים (PVT/PS doped) – פחות צפופים.<br><br>
+      <span style="color:var(--muted);font-family:system-ui,sans-serif;">
+        💡 למונוכרום אמיתי: סינטילטור יעיל + מסנן DBR צר סביב λ₀ + מעטפת מראה בכל ההיקף + חלון AR.
+      </span>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ---------- Constants ----------
+  const h = 6.62607015e-34;
+  const c = 299792458;
+  const e = 1.602176634e-19;
+
+  // ---------- Helpers ----------
+  const fmt = (x, d=3) => {
+    if (!isFinite(x)) return "—";
+    const ax = Math.abs(x);
+    if (ax >= 1e9) return (x/1e9).toFixed(d) + "e9";
+    if (ax >= 1e6) return (x/1e6).toFixed(d) + "e6";
+    if (ax >= 1e3) return (x/1e3).toFixed(d) + "e3";
+    if (ax >= 1) return x.toFixed(d);
+    if (ax >= 1e-3) return (x*1e3).toFixed(d) + "e-3";
+    return x.toExponential(2);
+  };
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+  function setTag(el, kind, text){
+    el.classList.remove("ok","warn","bad");
+    el.classList.add(kind);
+    el.textContent = text;
+  }
+
+  // ---------- UI Elements ----------
+  const V = document.getElementById("V");
+  const I = document.getElementById("I");
+  const Vval = document.getElementById("Vval");
+  const Ival = document.getElementById("Ival");
+
+  const material = document.getElementById("material");
+  const lambda0 = document.getElementById("lambda0");
+
+  const R = document.getElementById("R");
+  const rw = document.getElementById("rw");
+  const Rm = document.getElementById("Rm");
+
+  const K = document.getElementById("K");
+  const Is = document.getElementById("Is");
+  const trap = document.getElementById("trap");
+  const lmw = document.getElementById("lmw");
+
+  const PinEl = document.getElementById("Pin");
+  const etaWinEl = document.getElementById("etaWin");
+  const PoutEl = document.getElementById("Pout");
+  const LumensEl = document.getElementById("Lumens");
+  const EgEl = document.getElementById("Eg");
+  const NgdotEl = document.getElementById("Ngdot");
+
+  const tagPin = document.getElementById("tagPin");
+  const tagWin = document.getElementById("tagWin");
+  const tagPout = document.getElementById("tagPout");
+  const tagLm = document.getElementById("tagLm");
+  const tagEg = document.getElementById("tagEg");
+  const tagNg = document.getElementById("tagNg");
+
+  const graph1Label = document.getElementById("graph1Label");
+  const graph2Label = document.getElementById("graph2Label");
+
+  const c1 = document.getElementById("c1");
+  const c2 = document.getElementById("c2");
+  const ctx1 = c1.getContext("2d");
+  const ctx2 = c2.getContext("2d");
+
+  const resetBtn = document.getElementById("reset");
+  const snapBtn = document.getElementById("snap");
+  const calTable = document.getElementById("calTable").querySelector("tbody");
+
+  // ---------- Material presets ----------
+  const presets = {
+    "GAGG_530": 530,
+    "LuAG_520": 520,
+    "YAG_550": 550,
+    "LYSO_420": 420
+  };
+
+  function syncMaterial(){
+    const m = material.value;
+    if (m === "CUSTOM") return;
+    lambda0.value = presets[m];
+  }
+
+  // ---------- Physics model ----------
+  function calc(){
+    const Vv = parseFloat(V.value);
+    const ImA = parseFloat(I.value);
+    const Iamp = ImA / 1000;
+
+    const Rmm = parseFloat(R.value);
+    const rwmm = parseFloat(rw.value);
+    const RmV = parseFloat(Rm.value);
+
+    const Kk = parseFloat(K.value);
+    const IsmA = parseFloat(Is.value);
+    const IsA = IsmA / 1000;
+
+    const etTrap = parseFloat(trap.value);
+    const lmW = parseFloat(lmw.value);
+
+    const lam_nm = clamp(parseFloat(lambda0.value), 380, 700);
+    lambda0.value = lam_nm;
+
+    // Areas
+    const Rm_ = Rmm / 1000;   // m
+    const rw_ = rwmm / 1000;  // m
+    const As = 4*Math.PI*Rm_*Rm_;
+    const Aw = Math.PI*rw_*rw_;
+    const etaWin = Aw / (Aw + (1 - RmV) * (As - Aw));
+
+    // Power in
+    const Pin = Vv * Iamp;
+
+    // Saturating output power model
+    const sat = 1 / (1 + (Iamp / IsA));
+    // allow K to include etawin+trap; but we also show etawin explicitly:
+    // We'll treat Pout = K * VI * sat * (etaWin/etaWin_ref)*(etTrap/0.8) optionally?
+    // Keep simple and transparent:
+    const Pout = Kk * Pin * sat; // baseline
+
+    // Photon energy
+    const Eg = h*c / (lam_nm * 1e-9);
+
+    // Photon rate
+    const Ngdot = (Eg > 0) ? (Pout / Eg) : 0;
+
+    // Lumens (approx)
+    const lumens = lmW * Pout;
+
+    // Tags
+    // Pin tag
+    if (Pin < 1) setTag(tagPin, "ok", "⚡ נמוך");
+    else if (Pin < 10) setTag(tagPin, "warn", "⚡ בינוני");
+    else setTag(tagPin, "bad", "⚡ גבוה");
+
+    // etaWin tag
+    if (etaWin > 0.6) setTag(tagWin, "ok", "🪞 מצוין");
+    else if (etaWin > 0.35) setTag(tagWin, "warn", "🪞 טוב");
+    else setTag(tagWin, "bad", "🪞 חלש");
+
+    // Pout tag
+    if (Pout < 0.05) setTag(tagPout, "ok", "💡 עדין");
+    else if (Pout < 0.3) setTag(tagPout, "warn", "💡 חזק");
+    else setTag(tagPout, "bad", "💡 חזק מאוד");
+
+    // Lumens tag
+    if (lumens < 50) setTag(tagLm, "ok", "👁️ רך");
+    else if (lumens < 300) setTag(tagLm, "warn", "👁️ מואר");
+    else setTag(tagLm, "bad", "👁️ מסנוור");
+
+    // Eg tag
+    if (lam_nm < 450) setTag(tagEg, "warn", "🌈 כחול");
+    else if (lam_nm < 570) setTag(tagEg, "ok", "🌈 ירוק/צהוב");
+    else setTag(tagEg, "warn", "🌈 כתום/אדום");
+
+    // Ngdot tag
+    if (Ngdot < 1e17) setTag(tagNg, "ok", "✨ נמוך");
+    else if (Ngdot < 1e19) setTag(tagNg, "warn", "✨ גבוה");
+    else setTag(tagNg, "bad", "✨ ענק");
+
+    return {Vv, ImA, Iamp, Pin, Pout, Eg, Ngdot, lumens, As, Aw, etaWin, RmV, Kk, IsA, sat, etTrap, lam_nm};
+  }
+
+  // ---------- Drawing ----------
+  function clearCanvas(ctx, w, h){
+    ctx.clearRect(0,0,w,h);
+    // background grid
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--line").trim() || "rgba(0,0,0,.12)";
+    for (let i=0;i<=10;i++){
+      const x = (w*i)/10;
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+      const y = (h*i)/10;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawAxes(ctx, w, h, xLabel, yLabel){
+    ctx.save();
+    ctx.strokeStyle = "rgba(0,0,0,.35)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(44, 12);
+    ctx.lineTo(44, h-34);
+    ctx.lineTo(w-14, h-34);
+    ctx.stroke();
+
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText(yLabel, 10, 16);
+    ctx.fillText(xLabel, w-140, h-10);
+    ctx.restore();
+  }
+
+  function plot(ctx, w, h, xs, ys){
+    // scale to plot area
+    const left=44, top=12, right=14, bottom=34;
+    const pw = w-left-right;
+    const ph = h-top-bottom;
+
+    const xmin = Math.min(...xs), xmax = Math.max(...xs);
+    const ymin = 0;
+    const ymax = Math.max(...ys)*1.08 + 1e-12;
+
+    // line
+    ctx.save();
+    ctx.lineWidth = 2.4;
+    ctx.strokeStyle = "rgba(99,102,241,.95)"; // single tasteful line
+    ctx.beginPath();
+    for (let i=0;i<xs.length;i++){
+      const x = left + ( (xs[i]-xmin)/(xmax-xmin) ) * pw;
+      const y = top + (1 - (ys[i]-ymin)/(ymax-ymin)) * ph;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // points
+    ctx.fillStyle = "rgba(34,211,238,.95)";
+    for (let i=0;i<xs.length;i+=Math.max(1, Math.floor(xs.length/20))){
+      const x = left + ( (xs[i]-xmin)/(xmax-xmin) ) * pw;
+      const y = top + (1 - (ys[i]-ymin)/(ymax-ymin)) * ph;
+      ctx.beginPath(); ctx.arc(x,y,3.2,0,Math.PI*2); ctx.fill();
+    }
+
+    // y tick labels
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font = "11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.globalAlpha = 0.85;
+    for (let t=0;t<=4;t++){
+      const yy = ymax*(t/4);
+      const y = top + (1 - (yy-ymin)/(ymax-ymin)) * ph;
+      ctx.fillText((yy).toFixed(3)+" W", 48, y-2);
+    }
+    ctx.restore();
+  }
+
+  function redraw(){
+    const s = calc();
+
+    Vval.textContent = `${s.Vv.toFixed(0)} V`;
+    Ival.textContent = `${s.ImA.toFixed(2)} mA`;
+
+    PinEl.textContent = `${s.Pin.toFixed(3)} W`;
+    etaWinEl.textContent = `${(s.etaWin*100).toFixed(1)} %`;
+    PoutEl.textContent = `${s.Pout.toFixed(4)} W`;
+    LumensEl.textContent = `${Math.round(s.lumens)} lm`;
+    EgEl.textContent = `${s.Eg.toExponential(3)} J`;
+    NgdotEl.textContent = `${s.Ngdot.toExponential(3)} s⁻¹`;
+
+    graph1Label.textContent = `I = ${s.ImA.toFixed(2)} mA`;
+    graph2Label.textContent = `V = ${s.Vv.toFixed(0)} V`;
+
+    // Graph 1: Pout(V) with I constant
+    const w1 = c1.width, h1 = c1.height;
+    clearCanvas(ctx1, w1, h1);
+    drawAxes(ctx1, w1, h1, "V (וולט)", "P_out (W)");
+    const xs1=[], ys1=[];
+    const Vmin=50, Vmax=3000;
+    const N=140;
+    for (let i=0;i<N;i++){
+      const Vx = Vmin + (Vmax-Vmin)*(i/(N-1));
+      const Iamp = s.Iamp;
+      const Pin = Vx*Iamp;
+      const sat = 1/(1+(Iamp/s.IsA));
+      const Pout = s.Kk * Pin * sat;
+      xs1.push(Vx); ys1.push(Pout);
+    }
+    plot(ctx1, w1, h1, xs1, ys1);
+
+    // Graph 2: Pout(I) with V constant
+    const w2 = c2.width, h2 = c2.height;
+    clearCanvas(ctx2, w2, h2);
+    drawAxes(ctx2, w2, h2, "I (mA)", "P_out (W)");
+    const xs2=[], ys2=[];
+    const Imin=0.2, Imax=30;
+    const M=140;
+    for (let i=0;i<M;i++){
+      const ImA = Imin + (Imax-Imin)*(i/(M-1));
+      const Iamp = ImA/1000;
+      const Pin = s.Vv*Iamp;
+      const sat = 1/(1+(Iamp/s.IsA));
+      const Pout = s.Kk * Pin * sat;
+      xs2.push(ImA); ys2.push(Pout);
+    }
+    plot(ctx2, w2, h2, xs2, ys2);
+  }
+
+  // ---------- Calibration table ----------
+  function buildTable(){
+    const s = calc();
+    const Vset = [200, 500, 1000];
+    const Iset = [1, 2, 5, 10, 20];
+    calTable.innerHTML = "";
+
+    for (const Vv of Vset){
+      for (const ImA of Iset){
+        const Iamp = ImA/1000;
+        const Pin = Vv*Iamp;
+        const sat = 1/(1+(Iamp/(parseFloat(Is.value)/1000)));
+        const Pout = parseFloat(K.value) * Pin * sat;
+        const lum = parseFloat(lmw.value) * Pout;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${Vv.toFixed(0)}</td>
+          <td>${ImA.toFixed(1)}</td>
+          <td>${Pin.toFixed(3)}</td>
+          <td>${Pout.toFixed(6)}</td>
+          <td>${Math.round(lum)}</td>
+        `;
+        calTable.appendChild(tr);
+      }
+    }
+  }
+
+  // ---------- Events ----------
+  const inputs = [V,I,material,lambda0,R,rw,Rm,K,Is,trap,lmw];
+  inputs.forEach(el => el.addEventListener("input", () => {
+    if (el === material) syncMaterial();
+    redraw();
+  }));
+
+  resetBtn.addEventListener("click", () => {
+    V.value = 1000;
+    I.value = 2;
+    material.value = "GAGG_530";
+    lambda0.value = 530;
+
+    R.value = 20;
+    rw.value = 3;
+    Rm.value = 0.995;
+
+    K.value = 0.034;
+    Is.value = 15;
+    trap.value = 0.80;
+    lmw.value = 500;
+
+    redraw();
+  });
+
+  snapBtn.addEventListener("click", buildTable);
+
+  // ---------- KaTeX render ----------
+  window.addEventListener("load", () => {
+    try{
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ]
+      });
+    }catch(e){
+      // If KaTeX not available (offline), silently ignore
+    }
+    redraw();
+  });
+</script>
+</body>
+</html>
