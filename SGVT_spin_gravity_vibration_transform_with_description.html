@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SGVT — סימולטור + נוסחאות (ללא חיתוך) + העתקה + Live + Hamiltonian</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px; --accent:#6366f1; --accent2:#22c55e; --warn:#f59e0b;
+      --danger:#ef4444; --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1020; --bg2:#06131a;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.52);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.22);
+        --head:#f8fafc; --shadow:0 18px 50px rgba(0,0,0,.45);
+        --accent:#818cf8; --accent2:#34d399;
+      }
+    }
+
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 55%),
+        radial-gradient(1200px 800px at 90% 30%, var(--bg1), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    header{
+      padding:22px 18px 12px;
+      max-width:1200px; margin:0 auto;
+    }
+    .titleRow{ display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border:1px solid var(--line);
+      border-radius:999px; background:linear-gradient(180deg,var(--card),var(--card2));
+      box-shadow:var(--shadow);
+      font-weight:900;
+    }
+    h1{ margin:0; font-size:22px; letter-spacing:.2px; color:var(--head); }
+    .sub{ margin:8px 0 0; color:var(--muted); line-height:1.65; max-width:100ch; }
+
+    main{
+      max-width:1200px; margin:0 auto; padding:0 18px 24px;
+      display:grid; grid-template-columns: 420px 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ main{ grid-template-columns:1fr; } }
+
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .cardHead h2{ margin:0; font-size:15px; letter-spacing:.2px; }
+    .cardBody{ padding:14px; }
+
+    .controls{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .controls .wide{ grid-column:1 / -1; }
+
+    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; }
+    button{
+      appearance:none; border:1px solid var(--line);
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(2,6,23,.08);
+      font-weight:900;
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: translateY(0px); }
+    .primary{ border-color:rgba(99,102,241,.45); box-shadow:0 14px 30px rgba(99,102,241,.18); }
+    .danger{ border-color:rgba(239,68,68,.35); box-shadow:0 14px 30px rgba(239,68,68,.12); }
+    .ghost{ border-style:dashed; opacity:.95; }
+
+    .field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.08);
+    }
+    label{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-weight:900; font-size:13px;
+    }
+    input[type="range"]{ width:100%; }
+    .val{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .hint{ margin-top:10px; color:var(--muted); line-height:1.65; font-size:13px; }
+
+    .canvasWrap{ position:relative; padding:14px; }
+    canvas{
+      width:100%; height:auto;
+      display:block;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: radial-gradient(900px 500px at 20% 10%, rgba(99,102,241,.10), transparent 55%),
+                  radial-gradient(900px 500px at 85% 20%, rgba(34,197,94,.10), transparent 60%),
+                  rgba(255,255,255,.02);
+    }
+    .legend{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border:1px solid var(--line);
+      border-radius:999px; background:rgba(255,255,255,.06);
+      font-weight:900; color:var(--muted); font-size:12px;
+    }
+    .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; }
+    .dot.up{ background:rgba(99,102,241,.85); }
+    .dot.dn{ background:rgba(239,68,68,.80); }
+    .dot.g{ background:rgba(34,197,94,.85); }
+
+    .formulaGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 980px){ .formulaGrid{ grid-template-columns:1fr; } }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    .box p{ margin:8px 0 0; color:var(--muted); line-height:1.65; font-size:13px; }
+    .mini{ font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:900; }
+
+    /* ===== Fix KaTeX clipping in RTL ===== */
+    .katexBlock{
+      direction:ltr;
+      text-align:left;
+      overflow-x:auto;
+      overflow-y:hidden;
+      max-width:100%;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px dashed var(--line);
+      background:rgba(0,0,0,.06);
+    }
+    .katexBlock .katex-display{
+      text-align:left !important;
+      margin:0.65em 0 !important;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding:6px 6px;
+    }
+    .katexBlock .katex-display > .katex{
+      display:inline-block;
+      min-width:max-content;
+    }
+
+    /* Copy button */
+    .copyBtn{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      background:rgba(255,255,255,.06);
+      color:var(--muted);
+    }
+    .copyBtn:hover{ transform: translateY(-1px); }
+    .toast{
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      box-shadow:var(--shadow);
+      font-weight:900;
+      color:var(--muted);
+      opacity:0;
+      pointer-events:none;
+      transform: translateY(8px);
+      transition: .18s ease;
+      z-index:9999;
+    }
+    .toast.show{ opacity:1; transform: translateY(0); }
+
+    /* Tabs */
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    .tabBtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:900;
+      cursor:pointer;
+      color:var(--muted);
+    }
+    .tabBtn.active{
+      border-color:rgba(99,102,241,.55);
+      color:var(--text);
+      box-shadow:0 14px 30px rgba(99,102,241,.14);
+    }
+    .tabPanel{ display:none; }
+    .tabPanel.active{ display:block; }
+
+    footer{
+      max-width:1200px; margin:0 auto; padding:10px 18px 22px;
+      color:var(--muted); font-size:12px; line-height:1.65;
+    }
+    .smallNote{ border-top:1px solid var(--line); padding-top:10px; }
+
+    /* ===== Dynamic formula windows ===== */
+    .box.dynamic{
+      position:relative;
+      padding:0;
+      overflow:hidden;
+    }
+    .box.dynamic .boxHead{
+      padding:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .box.dynamic .boxHead h3{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .box.dynamic .boxTools{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    .boxToolBtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--muted);
+    }
+    .boxToolBtn:hover{ transform: translateY(-1px); }
+    .box.dynamic .boxBody{
+      padding:12px;
+      border-top:1px solid var(--line);
+      max-height:520px;     /* default */
+      overflow:auto;        /* scroll inside */
+      resize:vertical;      /* native resize handle */
+    }
+    .box.dynamic.collapsed .boxBody{
+      max-height:0 !important;
+      padding-top:0 !important;
+      padding-bottom:0 !important;
+      border-top:0 !important;
+      overflow:hidden !important;
+      resize:none !important;
+    }
+    .chev{
+      display:inline-block;
+      transition:.18s ease;
+      font-weight:900;
+    }
+    .box.dynamic.collapsed .chev{ transform: rotate(-90deg); }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="titleRow">
+    <div class="badge">🧲🧊🌌 <span>SGVT</span></div>
+    <div>
+      <h1>SGVT — איחוד ייצוגי: ספין • תנודות גביש • כבידה אפקטיבית</h1>
+      <p class="sub">
+        העיגול בכל אתר מייצג ספין (↑/↓). החץ מייצג שדה כבידה אפקטיבי סביב האתר:
+        \( \mathbf{g}_i=-\nabla_\Lambda \Phi_i \) כאשר \( \Delta_\Lambda \Phi_i = 4\pi G_{\text{eff}}\varepsilon_i \).
+        ניתן לבחור מסלול \(\gamma\) שמגדיר משקולות \(w_i(\gamma)\) ומחזק את ההנעה לאורך מסלול נבחר.
+      </p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Controls -->
+  <section class="card">
+    <div class="cardHead">
+      <h2>בקרה ⚙️</h2>
+      <div class="btnRow">
+        <button id="btnPlay" class="primary">▶️ הפעלה</button>
+        <button id="btnStep">⏭️ צעד</button>
+        <button id="btnReset" class="danger">↩️ איפוס</button>
+      </div>
+    </div>
+
+    <div class="cardBody">
+      <div class="controls">
+        <div class="field wide">
+          <label>גודל סריג N×N <span class="val" id="vN"></span></label>
+          <input id="N" type="range" min="8" max="36" step="1" value="18">
+        </div>
+
+        <div class="field">
+          <label>אמפליטודה A <span class="val" id="vA"></span></label>
+          <input id="A" type="range" min="0" max="2.5" step="0.01" value="1.00">
+        </div>
+
+        <div class="field">
+          <label>תדר ω <span class="val" id="vW"></span></label>
+          <input id="W" type="range" min="0" max="8" step="0.01" value="3.20">
+        </div>
+
+        <div class="field">
+          <label>α <span class="val" id="vAlpha"></span></label>
+          <input id="alpha" type="range" min="0" max="3" step="0.01" value="1.00">
+        </div>
+
+        <div class="field">
+          <label>β <span class="val" id="vBeta"></span></label>
+          <input id="beta" type="range" min="0" max="3" step="0.01" value="0.90">
+        </div>
+
+        <div class="field">
+          <label>λ (צימוד ספין) <span class="val" id="vLambda"></span></label>
+          <input id="lambda" type="range" min="-2" max="2" step="0.01" value="0.45">
+        </div>
+
+        <div class="field">
+          <label>G_eff <span class="val" id="vGeff"></span></label>
+          <input id="Geff" type="range" min="0" max="2" step="0.01" value="0.70">
+        </div>
+
+        <div class="field">
+          <label>Jacobi איטרציות/פריים <span class="val" id="vIter"></span></label>
+          <input id="iter" type="range" min="5" max="120" step="1" value="45">
+        </div>
+
+        <div class="field wide">
+          <label>מסלול γ <span class="val" id="vPath"></span></label>
+          <input id="path" type="range" min="0" max="3" step="1" value="0">
+          <div class="hint" id="pathHint"></div>
+        </div>
+
+        <div class="field wide">
+          <label>pathGain <span class="val" id="vPathGain"></span></label>
+          <input id="pathGain" type="range" min="0" max="6" step="0.01" value="1.80">
+        </div>
+
+        <div class="field wide">
+          <div class="btnRow">
+            <button id="btnRandom">🎲 ספינים אקראיים</button>
+            <button id="btnZeroU">🧊 אפס תנודה</button>
+            <button id="btnCenter">🎯 מרכז מקור</button>
+          </div>
+          <div class="hint">
+            <b>טיפ:</b> קליק על עיגול = flip. הערכים של \(\alpha,\beta,\lambda,G_{\text{eff}}\) נכנסים ישירות ל-\(\varepsilon_i\) ולפואסון.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right side with tabs -->
+  <section class="card">
+    <div class="cardHead">
+      <h2>תצוגה 📚</h2>
+      <div class="badge">🧭 עיגול=ספין | חץ= g⃗</div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="SGVT tabs">
+      <button class="tabBtn active" data-tab="sim">🌀 סימולטור</button>
+      <button class="tabBtn" data-tab="math">∑ נוסחאות</button>
+      <button class="tabBtn" data-tab="H">🧠 המילטוניאן</button>
+    </div>
+
+    <!-- SIM TAB -->
+    <div class="tabPanel active" id="tab-sim">
+      <div class="canvasWrap">
+        <canvas id="cv" width="980" height="760"></canvas>
+
+        <div class="legend">
+          <span class="chip"><span class="dot up"></span> ספין ↑ (σᶻ=+1)</span>
+          <span class="chip"><span class="dot dn"></span> ספין ↓ (σᶻ=-1)</span>
+          <span class="chip"><span class="dot g"></span> חצים: \( \mathbf{g}_i \)</span>
+          <span class="chip">קליק על עיגול = flip</span>
+        </div>
+
+        <div class="hint">
+          “כבידה” כאן היא שדה אפקטיבי על סריג המתקבל מפתרון פואסון בדיד. מטרת הדף: ייצוג מאוחד ויזואלי + פורמליזציה.
+        </div>
+      </div>
+    </div>
+
+    <!-- MATH TAB -->
+    <div class="tabPanel" id="tab-math">
+      <div class="cardBody">
+
+        <div class="box dynamic" data-box-id="problemBox">
+          <div class="boxHead">
+            <h3><span class="chev">▾</span> הבעיה: למה הנוסחאות נחתכות? 🧩 <span class="mini">RTL + KaTeX</span></h3>
+            <div class="boxTools">
+              <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+            </div>
+          </div>
+          <div class="boxBody">
+            <p>
+              בדפי RTL נוסחאות “Display” ארוכות עלולות לחרוג מרוחב הקופסה. אם אין גלילה אופקית, הדפדפן חותך את הקצוות.
+            </p>
+            <div class="katexBlock" id="probK" data-latex="
+\text{RTL page} + \text{long display equation} \Rightarrow \text{needs horizontal scroll (no clipping)}
+"></div>
+            <div class="hint">
+              הפתרון: מכולת LTR לנוסחאות + יישור שמאלה + overflow-x:auto. כך יש גלילה במקום חיתוך.
+            </div>
+          </div>
+        </div>
+
+        <div class="box dynamic" data-box-id="fixBox">
+          <div class="boxHead">
+            <h3><span class="chev">▾</span> הפתרון שהצעת (ממומש כאן) ✅</h3>
+            <div class="boxTools">
+              <button class="boxToolBtn copyBtn" data-copy-target="fix1" type="button">📋 העתק</button>
+              <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+            </div>
+          </div>
+          <div class="boxBody">
+            <div class="katexBlock" id="fix1" data-latex="
+\text{LTR container} + \text{left align} + \text{overflow-x:auto} + \min\text{-width:max-content}
+\Rightarrow \text{scroll instead of clipping}
+"></div>
+            <div class="hint">
+              יישום בפועל: <b>.katexBlock</b> עם direction:ltr, text-align:left, overflow-x:auto +
+              ביטול center של KaTeX ב-.katex-display + min-width:max-content.
+            </div>
+          </div>
+        </div>
+
+        <div class="box dynamic" data-box-id="liveEpsBox">
+          <div class="boxHead">
+            <h3><span class="chev">▾</span> Live: \(\varepsilon_i\) עם הערכים שלך עכשיו 🔢 <span class="mini">α=<span id="liveA">1.00</span>, β=<span id="liveB">0.90</span>, λ=<span id="liveL">0.45</span></span></h3>
+            <div class="boxTools">
+              <button class="boxToolBtn copyBtn" data-copy-target="epsLiveSrc" type="button">📋 העתק</button>
+              <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+            </div>
+          </div>
+          <div class="boxBody">
+            <div class="katexBlock" id="epsLiveBox"></div>
+
+            <div class="katexBlock" id="epsLiveSrc" data-latex="
+\varepsilon_i=
+\alpha\left|\frac{du_i}{dt}\right|^2
++\beta\,\|\nabla_\Lambda u\|_i^2
++\lambda\,\sigma_i^z
+"></div>
+            <div class="hint">
+              הבלוק העליון מתעדכן דינמית עם הערכים הנוכחיים של \(\alpha,\beta,\lambda\).
+            </div>
+          </div>
+        </div>
+
+        <div class="formulaGrid">
+
+          <div class="box dynamic" data-box-id="m1box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 1) מצב ספין 🧲</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m1" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m1" data-latex="
+\ket{\psi_i}=a_i\ket{\uparrow}+b_i\ket{\downarrow},\quad |a_i|^2+|b_i|^2=1
+\qquad
+\sigma_i^z\in\{+1,-1\}
+"></div>
+              <p>בסימולטור אנחנו משתמשים ב-\(\sigma_i^z=\pm 1\) כמצב בדיד לציור ↑/↓.</p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="m2box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 2) תנודת גביש 🧊</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m2" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m2" data-latex="
+u''_i=-k u_i + c(\Delta_\Lambda u)_i + A\sin(\omega t)\bigl(1+\text{pathGain}\,w_i(\gamma)\bigr)
+"></div>
+              <p>זה מנגנון “הנעה לאורך מסלול” דרך \(w_i(\gamma)\).</p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="m3box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 3) מקור אנרגיה \(\varepsilon_i\) ⚡</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m3" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m3" data-latex="
+\varepsilon_i
+=\alpha\left|\frac{du_i}{dt}\right|^2+\beta\|\nabla_\Lambda u\|_i^2+\lambda\sigma_i^z
+"></div>
+              <p>האיבר \(\lambda\sigma_i^z\) מקשר ספין לתרומה אנרגטית מקומית.</p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="m4box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 4) פואסון בדיד (Jacobi) 🌌</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m4" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m4" data-latex="
+(\Delta_\Lambda\Phi)_i=4\pi G_{\text{eff}}\varepsilon_i,\quad
+\Phi_i\leftarrow \frac{1}{4}\Bigl(\sum_{n\in N(i)}\Phi_n-4\pi G_{\text{eff}}\varepsilon_i\Bigr)
+"></div>
+              <p>\(N(i)\) הם השכנים (ימין/שמאל/מעלה/מטה). מספר האיטרציות נשלט בסליידר.</p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="m5box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 5) שדה החצים \( \mathbf{g}_i \) 🧭</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m5" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m5" data-latex="
+\mathbf{g}_i=-\nabla_\Lambda\Phi_i,\quad
+g_{x,i}\approx-\frac{\Phi_{i+\hat{x}}-\Phi_{i-\hat{x}}}{2},\;
+g_{y,i}\approx-\frac{\Phi_{i+\hat{y}}-\Phi_{i-\hat{y}}}{2}
+"></div>
+              <p>החצים מנורמלים כדי להציג את ההבדלים בצורה יציבה ויזואלית.</p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="m6box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> 6) טרנספורמציית SGVT 🔁</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="m6" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="m6" data-latex="
+\mathcal{T}_{SGVT}:\;(\{\sigma_i^z\},\{u_i(t)\},\gamma)\mapsto \{(C_i,\mathbf{g}_i)\}_{i\in\Lambda}
+"></div>
+              <p>זה הייצוג המאוחד: עיגול=ספין, חץ=\(\mathbf{g}_i\) סביב אותו אתר.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- H TAB -->
+    <div class="tabPanel" id="tab-H">
+      <div class="cardBody">
+
+        <div class="box dynamic" data-box-id="H0box">
+          <div class="boxHead">
+            <h3><span class="chev">▾</span> המילטוניאן מוצע (ייצוג אפקטיבי) 🧠</h3>
+            <div class="boxTools">
+              <button class="boxToolBtn copyBtn" data-copy-target="H0" type="button">📋 העתק</button>
+              <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+            </div>
+          </div>
+          <div class="boxBody">
+            <div class="katexBlock" id="H0" data-latex="
+H \;=\; H_{\text{phonon}} \;+\; H_{\text{spin}} \;+\; H_{\text{coupling}} \;+\; H_{\Phi}
+"></div>
+            <div class="hint">
+              זה ניסוח “אפקטיבי” כדי לאחד את שלושת השדות באותו פורמליזם בדיד. אפשר להקשיח/להכליל לפי הצורך.
+            </div>
+          </div>
+        </div>
+
+        <div class="formulaGrid">
+
+          <div class="box dynamic" data-box-id="H1box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> \(H_{\text{phonon}}\) — תנודות גביש 🧊</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="H1" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="H1" data-latex="
+H_{\text{phonon}}
+=
+\sum_{i\in\Lambda}
+\left(
+\frac{p_i^2}{2m}
++\frac{k}{2}u_i^2
+\right)
++\frac{\kappa}{2}\sum_{\langle i,j\rangle}(u_i-u_j)^2
+"></div>
+              <p>
+                \(p_i\) הוא התנע הקנוני של \(u_i\). האיבר \(\sum_{\langle i,j\rangle}(u_i-u_j)^2\) הוא אלסטיות/קישור שכנים.
+              </p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="H2box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> \(H_{\text{spin}}\) — שרשרת/סריג ספינים 🧲</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="H2" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="H2" data-latex="
+H_{\text{spin}}
+=
+- J \sum_{\langle i,j\rangle}\sigma_i^z\sigma_j^z
+- h \sum_i \sigma_i^z
+"></div>
+              <p>
+                זה מודל Ising מינימלי. אפשר להרחיב ל-\(\sigma^x,\sigma^y\) (XXZ) אם רוצים דינמיקה קוונטית עמוקה יותר.
+              </p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="H3box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> \(H_{\text{coupling}}\) — צימוד ספין–תנודה 🔗</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="H3" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="H3" data-latex="
+H_{\text{coupling}}
+=
+\lambda \sum_i \sigma_i^z\,u_i
+\quad \text{or} \quad
+\lambda \sum_i \sigma_i^z\,f(u_i,\nabla u_i)
+"></div>
+              <p>
+                זה מאפשר לספין לשנות “אנרגיה מקומית” דרך התנודה, ומכאן להשפיע על המקור \(\varepsilon_i\) של פואסון.
+              </p>
+            </div>
+          </div>
+
+          <div class="box dynamic" data-box-id="H4box">
+            <div class="boxHead">
+              <h3><span class="chev">▾</span> \(H_{\Phi}\) — שדה פוטנציאל אפקטיבי 🌌</h3>
+              <div class="boxTools">
+                <button class="boxToolBtn copyBtn" data-copy-target="H4" type="button">📋 העתק</button>
+                <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+              </div>
+            </div>
+            <div class="boxBody">
+              <div class="katexBlock" id="H4" data-latex="
+H_{\Phi}
+=
+\sum_{i\in\Lambda}
+\left(
+\frac{1}{8\pi G_{\text{eff}}}\|\nabla_\Lambda\Phi\|_i^2
++\Phi_i\,\varepsilon_i
+\right)
+\;\Rightarrow\;
+\Delta_\Lambda\Phi_i=4\pi G_{\text{eff}}\varepsilon_i
+"></div>
+              <p>
+                טריק פורמלי: מינימיזציה לפי \(\Phi\) נותנת פואסון. כך “כבידה אפקטיבית” נכנסת דרך פונקציונל אנרגיה.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="box dynamic" data-box-id="connectBox">
+          <div class="boxHead">
+            <h3><span class="chev">▾</span> איך זה מתחבר לסימולטור? 🔩</h3>
+            <div class="boxTools">
+              <button class="boxToolBtn jsToggle" type="button">⤵︎ סגור</button>
+            </div>
+          </div>
+          <div class="boxBody">
+            <div class="hint">
+              בסימולטור מחשבים \(\varepsilon_i\) (מהירות, גרדיאנט, ספין), פותרים פואסון עבור \(\Phi\),
+              ומציירים \(\mathbf{g}=-\nabla \Phi\).
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div class="toast" id="toast">הועתק 📋</div>
+
+<footer>
+  <div class="smallNote">
+    כל הזכויות שמורות , אין לשכפל אלא באישור מ RA - Raftn4@gmail.com<br>
+    הערה: זהו מודל המחשה/סימולציה אפקטיבי (לא הצהרה על כבידה פיזיקלית מלאה של GR).
+  </div>
+</footer>
+
+<script>
+(() => {
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const $ = (id)=>document.getElementById(id);
+
+  // ===== KaTeX rendering (robust) =====
+  function cleanLatex(s){
+    if(!s) return '';
+    s = s.trim();
+    if(s.startsWith('[') && s.endsWith(']')) s = s.slice(1,-1).trim();
+    s = s.replace(/^\s*\\\[\s*/,'').replace(/\s*\\\]\s*$/,'');
+    s = s.replace(/^\s*\$\$\s*/,'').replace(/\s*\$\$\s*$/,'');
+    return s.trim();
+  }
+  function renderMathAuto(scopeEl){
+    if(typeof renderMathInElement !== "function") return;
+    const root = scopeEl || document.body;
+    renderMathInElement(root, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+  function renderKatexBlocks(scopeEl){
+    if(typeof katex === "undefined" || typeof katex.render !== "function") return;
+    const root = scopeEl || document;
+    root.querySelectorAll?.('.katexBlock[data-latex]')?.forEach(el=>{
+      const src = cleanLatex(el.getAttribute('data-latex'));
+      if(!src) return;
+      try{
+        katex.render(src, el, {
+          displayMode: true,
+          throwOnError: false,
+          strict: "ignore"
+        });
+      }catch(e){
+        el.textContent = src;
+      }
+    });
+  }
+  function renderAllMath(scopeEl){
+    renderKatexBlocks(scopeEl);
+    renderMathAuto(scopeEl);
+  }
+
+  // ===== Tabs =====
+  const tabBtns = Array.from(document.querySelectorAll('.tabBtn'));
+  const panels = {
+    sim: $('tab-sim'),
+    math: $('tab-math'),
+    H: $('tab-H'),
+  };
+  function setTab(key){
+    tabBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===key));
+    Object.entries(panels).forEach(([k,el])=> el.classList.toggle('active', k===key));
+    renderAllMath(panels[key] || document.body);
+    draw();
+  }
+  tabBtns.forEach(btn=> btn.addEventListener('click', ()=>setTab(btn.dataset.tab)));
+
+  // ===== Toast =====
+  const toast = $('toast');
+  let toastTimer = null;
+  function showToast(msg="הועתק 📋"){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 900);
+  }
+
+  // ===== Copy =====
+  function getLatexFromEl(el){ return el?.getAttribute('data-latex') || ''; }
+  async function copyLatexFrom(targetId){
+    const el = document.getElementById(targetId);
+    const latex = cleanLatex(getLatexFromEl(el));
+    if(!latex){ showToast("אין טקסט להעתקה"); return; }
+    try{
+      await navigator.clipboard.writeText(latex);
+      showToast("נוסחה הועתקה 📋");
+    }catch{
+      const ta = document.createElement('textarea');
+      ta.value = latex;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      showToast("נוסחה הועתקה 📋");
+    }
+  }
+  document.querySelectorAll('.copyBtn').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      const targetId = btn.getAttribute('data-copy-target');
+      if(targetId) copyLatexFrom(targetId);
+    });
+  });
+
+  // ===== Dynamic boxes: collapse + persist height =====
+  const LS_KEY = "SGVT_BOX_STATE_V1";
+  const readState = ()=>{
+    try{ return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); }catch{ return {}; }
+  };
+  const writeState = (obj)=>{
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(obj)); }catch{}
+  };
+  const state = readState();
+
+  function setBoxCollapsed(box, collapsed){
+    box.classList.toggle('collapsed', collapsed);
+    const btn = box.querySelector('.jsToggle');
+    if(btn) btn.textContent = collapsed ? "⤴︎ פתח" : "⤵︎ סגור";
+  }
+
+  document.querySelectorAll('.box.dynamic').forEach(box=>{
+    const id = box.getAttribute('data-box-id') || ("box_" + Math.random().toString(36).slice(2));
+    box.setAttribute('data-box-id', id);
+
+    const head = box.querySelector('.boxHead');
+    const body = box.querySelector('.boxBody');
+    const toggleBtn = box.querySelector('.jsToggle');
+
+    // restore state
+    const s = state[id] || {};
+    if(body && typeof s.h === "number" && isFinite(s.h)){
+      body.style.maxHeight = Math.max(80, Math.min(1200, s.h)) + "px";
+    }
+    setBoxCollapsed(box, !!s.collapsed);
+
+    // toggle by clicking header (but ignore clicks on buttons)
+    if(head){
+      head.addEventListener('click', (ev)=>{
+        const isButton = ev.target.closest('button');
+        if(isButton) return;
+        const now = !box.classList.contains('collapsed');
+        setBoxCollapsed(box, now);
+        state[id] = state[id] || {};
+        state[id].collapsed = now;
+        writeState(state);
+        // re-render math after open (helps when KaTeX rendered while hidden)
+        if(!now) setTimeout(()=>renderAllMath(box), 0);
+      });
+    }
+    if(toggleBtn){
+      toggleBtn.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const now = !box.classList.contains('collapsed');
+        setBoxCollapsed(box, now);
+        state[id] = state[id] || {};
+        state[id].collapsed = now;
+        writeState(state);
+        if(!now) setTimeout(()=>renderAllMath(box), 0);
+      });
+    }
+
+    // persist height on resize end
+    if(body){
+      let resizeTimer = null;
+      const ro = new ResizeObserver(()=>{
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(()=>{
+          const h = body.getBoundingClientRect().height;
+          state[id] = state[id] || {};
+          state[id].h = Math.round(h);
+          writeState(state);
+        }, 120);
+      });
+      ro.observe(body);
+    }
+  });
+
+  // ===== Canvas + model =====
+  const cv = $('cv');
+  const ctx = cv.getContext('2d');
+
+  const ui = {
+    N: $('N'),
+    A: $('A'),
+    W: $('W'),
+    alpha: $('alpha'),
+    beta: $('beta'),
+    lambda: $('lambda'),
+    Geff: $('Geff'),
+    iter: $('iter'),
+    path: $('path'),
+    pathGain: $('pathGain'),
+
+    vN: $('vN'), vA: $('vA'), vW: $('vW'),
+    vAlpha: $('vAlpha'), vBeta: $('vBeta'), vLambda: $('vLambda'),
+    vGeff: $('vGeff'), vIter: $('vIter'),
+    vPath: $('vPath'), vPathGain: $('vPathGain'),
+    pathHint: $('pathHint'),
+
+    btnPlay: $('btnPlay'),
+    btnStep: $('btnStep'),
+    btnReset: $('btnReset'),
+    btnRandom: $('btnRandom'),
+    btnZeroU: $('btnZeroU'),
+    btnCenter: $('btnCenter'),
+
+    liveA: $('liveA'),
+    liveB: $('liveB'),
+    liveL: $('liveL'),
+    epsLiveBox: $('epsLiveBox'),
+  };
+
+  let running = false;
+  let t = 0;
+  let dt = 1/60;
+
+  let N = parseInt(ui.N.value,10);
+  let center = {x: Math.floor(N/2), y: Math.floor(N/2)};
+
+  let spin, u, uPrev, phi, eps, gx, gy, wPath;
+
+  function idx(x,y){ return y*N + x; }
+
+  function allocFields(){
+    spin = new Float32Array(N*N);
+    u = new Float32Array(N*N);
+    uPrev = new Float32Array(N*N);
+    phi = new Float32Array(N*N);
+    eps = new Float32Array(N*N);
+    gx = new Float32Array(N*N);
+    gy = new Float32Array(N*N);
+    wPath = new Float32Array(N*N);
+    randomizeSpin();
+    buildPathWeights();
+  }
+
+  function randomizeSpin(){
+    for(let i=0;i<N*N;i++) spin[i] = Math.random() < 0.5 ? 1 : -1;
+  }
+  function zeroU(){ u.fill(0); uPrev.fill(0); }
+
+  function resetAll(){
+    t = 0;
+    center = {x: Math.floor(N/2), y: Math.floor(N/2)};
+    phi.fill(0);
+    buildPathWeights();
+    zeroU();
+    randomizeSpin();
+  }
+
+  function buildPathWeights(){
+    const mode = parseInt(ui.path.value,10);
+    wPath.fill(0);
+    const cx = center.x, cy = center.y;
+
+    if(mode === 0){
+      const s2 = Math.max(2, (N*0.10)**2);
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const dx = x - cx, dy = y - cy;
+        wPath[idx(x,y)] = Math.exp(-(dx*dx+dy*dy)/s2);
+      }
+    } else if(mode === 1){
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d = Math.abs(x - y);
+        wPath[idx(x,y)] = Math.exp(-(d*d)/(Math.max(2,(N*0.06)**2)));
+      }
+    } else if(mode === 2){
+      const R = N*0.28;
+      const s = Math.max(1.5, N*0.05);
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const dx = x - cx, dy = y - cy;
+        const r = Math.sqrt(dx*dx+dy*dy);
+        wPath[idx(x,y)] = Math.exp(-((r - R)*(r - R))/(2*s*s));
+      }
+    } else {
+      const s = Math.max(1.2, N*0.06);
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d = Math.abs(x - cx);
+        wPath[idx(x,y)] = Math.exp(-(d*d)/(2*s*s));
+      }
+    }
+
+    let sum = 0;
+    for(let i=0;i<N*N;i++) sum += wPath[i];
+    if(sum > 0){
+      for(let i=0;i<N*N;i++) wPath[i] = (wPath[i]/sum);
+    }
+  }
+
+  function pathLabel(mode){
+    if(mode===0) return "0 • מקור מרכזי (Gaussian)";
+    if(mode===1) return "1 • אלכסון (Diagonal)";
+    if(mode===2) return "2 • טבעת (Ring)";
+    return "3 • מסדרון אנכי (Corridor)";
+  }
+  function pathDescription(mode){
+    if(mode===0) return "משקל אנרגיה גבוה סביב המרכז—שדה סביב מקור יחיד 🎯";
+    if(mode===1) return "מיקוד אנרגיה לאורך מסלול אלכסוני ↘️";
+    if(mode===2) return "מיקוד לאורך טבעת סביב המרכז 🌗";
+    return "מיקוד לאורך מסדרון אנכי 📡";
+  }
+
+  function updateFields(){
+    const A = parseFloat(ui.A.value);
+    const W = parseFloat(ui.W.value);
+    const alpha = parseFloat(ui.alpha.value);
+    const beta  = parseFloat(ui.beta.value);
+    const lambda= parseFloat(ui.lambda.value);
+    const Geff  = parseFloat(ui.Geff.value);
+    const pathGain = parseFloat(ui.pathGain.value);
+
+    const k = 3.2;
+    const c = 0.55;
+    const damp = 0.10;
+
+    const uNew = new Float32Array(N*N);
+    const drive = A * Math.sin(W * t);
+
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+        const u0 = u[i];
+
+        const xm = (x>0)? x-1 : x;
+        const xp = (x<N-1)? x+1 : x;
+        const ym = (y>0)? y-1 : y;
+        const yp = (y<N-1)? y+1 : y;
+
+        const lap = (u[idx(xp,y)] + u[idx(xm,y)] + u[idx(x,yp)] + u[idx(x,ym)] - 4*u0);
+        const accel = (-k*u0 + c*lap + drive * (1 + pathGain * wPath[i]));
+
+        const a = (2 - damp*dt) * u0;
+        const b = (1 - damp*dt) * uPrev[i];
+        uNew[i] = a - b + (dt*dt)*accel;
+      }
+    }
+
+    uPrev = u;
+    u = uNew;
+
+    const invdt = 1/dt;
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+        const du = (u[i] - uPrev[i]) * invdt;
+
+        const xm = (x>0)? x-1 : x;
+        const xp = (x<N-1)? x+1 : x;
+        const ym = (y>0)? y-1 : y;
+        const yp = (y<N-1)? y+1 : y;
+
+        const ux = (u[idx(xp,y)] - u[idx(xm,y)]) * 0.5;
+        const uy = (u[idx(x,yp)] - u[idx(x,ym)]) * 0.5;
+        const grad2 = ux*ux + uy*uy;
+
+        eps[i] = alpha*(du*du) + beta*grad2 + lambda*spin[i];
+      }
+    }
+
+    const iters = parseInt(ui.iter.value,10);
+    const rhsScale = 4*Math.PI*Geff;
+
+    let phiNew = new Float32Array(N*N);
+    for(let iter=0; iter<iters; iter++){
+      for(let y=0;y<N;y++){
+        for(let x=0;x<N;x++){
+          const i = idx(x,y);
+
+          const xm = (x>0)? x-1 : x;
+          const xp = (x<N-1)? x+1 : x;
+          const ym = (y>0)? y-1 : y;
+          const yp = (y<N-1)? y+1 : y;
+
+          const sumN = phi[idx(xp,y)] + phi[idx(xm,y)] + phi[idx(x,yp)] + phi[idx(x,ym)];
+          phiNew[i] = (sumN - rhsScale*eps[i]) * 0.25;
+        }
+      }
+      const tmp = phi; phi = phiNew; phiNew = tmp;
+    }
+
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+
+        const xm = (x>0)? x-1 : x;
+        const xp = (x<N-1)? x+1 : x;
+        const ym = (y>0)? y-1 : y;
+        const yp = (y<N-1)? y+1 : y;
+
+        const dphix = (phi[idx(xp,y)] - phi[idx(xm,y)]) * 0.5;
+        const dphiy = (phi[idx(x,yp)] - phi[idx(x,ym)]) * 0.5;
+
+        gx[i] = -dphix;
+        gy[i] = -dphiy;
+      }
+    }
+  }
+
+  function draw(){
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    const Wpx = Math.round(rect.width * dpr);
+    const Hpx = Math.round((rect.width * 0.78) * dpr);
+    if(cv.width !== Wpx || cv.height !== Hpx){ cv.width = Wpx; cv.height = Hpx; }
+
+    const w = cv.width, h = cv.height;
+    ctx.clearRect(0,0,w,h);
+
+    const pad = 18*dpr;
+    const gridW = w - 2*pad;
+    const gridH = h - 2*pad;
+    const cell = Math.min(gridW, gridH) / (N + 1);
+    const r = cell * 0.28;
+    const ox = pad + cell;
+    const oy = pad + cell;
+
+    let gmax = 1e-9;
+    let pmin = +1e9, pmax = -1e9;
+    for(let i=0;i<N*N;i++){
+      const gm = Math.hypot(gx[i],gy[i]);
+      if(gm > gmax) gmax = gm;
+      const p = phi[i];
+      if(p < pmin) pmin = p;
+      if(p > pmax) pmax = p;
+    }
+    const pr = Math.max(1e-9, (pmax-pmin));
+
+    // potential shading
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+        const px = ox + x*cell;
+        const py = oy + y*cell;
+
+        const norm = (phi[i] - pmin) / pr;
+        ctx.save();
+        ctx.globalAlpha = 0.14;
+        const g = Math.floor(lerp(20, 220, norm));
+        ctx.fillStyle = `rgb(${g},${g},${g})`;
+        ctx.fillRect(px - cell*0.46, py - cell*0.46, cell*0.92, cell*0.92);
+        ctx.restore();
+      }
+    }
+
+    // arrows
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+        const px = ox + x*cell;
+        const py = oy + y*cell;
+
+        const gxv = gx[i], gyv = gy[i];
+        const gm = Math.hypot(gxv,gyv);
+        const s = gm/(gmax+1e-9);
+        const L = (cell*0.75) * s;
+        if(L < 1.5*dpr) continue;
+
+        const ux = gxv/(gm+1e-9);
+        const uy = gyv/(gm+1e-9);
+
+        const x2 = px + ux*L;
+        const y2 = py + uy*L;
+
+        ctx.save();
+        ctx.globalAlpha = 0.78;
+        ctx.lineWidth = Math.max(1, 1.4*dpr);
+        ctx.strokeStyle = "rgba(34,197,94,0.85)";
+        ctx.beginPath();
+        ctx.moveTo(px,py);
+        ctx.lineTo(x2,y2);
+        ctx.stroke();
+
+        const ah = 6*dpr + 6*dpr*s;
+        const ang = Math.atan2(uy,ux);
+        ctx.beginPath();
+        ctx.moveTo(x2,y2);
+        ctx.lineTo(x2 - ah*Math.cos(ang-0.45), y2 - ah*Math.sin(ang-0.45));
+        ctx.lineTo(x2 - ah*Math.cos(ang+0.45), y2 - ah*Math.sin(ang+0.45));
+        ctx.closePath();
+        ctx.fillStyle = "rgba(34,197,94,0.85)";
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // nodes
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i = idx(x,y);
+        const px = ox + x*cell;
+        const py = oy + y*cell;
+        const s = spin[i];
+
+        ctx.save();
+        ctx.lineWidth = Math.max(1, 1.5*dpr);
+        ctx.strokeStyle = "rgba(148,163,184,0.55)";
+        ctx.fillStyle = (s>0) ? "rgba(99,102,241,0.22)" : "rgba(239,68,68,0.20)";
+        ctx.beginPath();
+        ctx.arc(px,py,r,0,Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+
+        const amp = clamp(Math.abs(u[i]) * 0.9, 0, 1.2);
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = (s>0) ? "rgba(99,102,241,0.85)" : "rgba(239,68,68,0.80)";
+        ctx.beginPath();
+        ctx.arc(px,py, r*0.35 + r*0.25*amp, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.font = `${Math.max(10, Math.floor(r*1.55))}px system-ui`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(s>0 ? "↑" : "↓", px, py);
+
+        if(x===center.x && y===center.y){
+          ctx.globalAlpha = 0.95;
+          ctx.strokeStyle = "rgba(245,158,11,0.90)";
+          ctx.lineWidth = Math.max(1, 2.2*dpr);
+          ctx.beginPath();
+          ctx.arc(px,py,r*1.45,0,Math.PI*2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    // HUD
+    ctx.save();
+    ctx.globalAlpha = 0.92;
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillRect(12*dpr, 12*dpr, 285*dpr, 74*dpr);
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.font = `${12*dpr}px ui-monospace, Menlo, Consolas, monospace`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    const mode = parseInt(ui.path.value,10);
+    ctx.fillText(`t=${t.toFixed(2)}  N=${N}  path=${pathLabel(mode)}`, 18*dpr, 18*dpr);
+    ctx.fillText(`max|g|=${(gmax).toExponential(2)}   Φ∈[${pmin.toExponential(1)}, ${pmax.toExponential(1)}]`, 18*dpr, 38*dpr);
+    ctx.fillText(`click: flip spin | center: 🎯`, 18*dpr, 58*dpr);
+    ctx.restore();
+  }
+
+  function fmt(n, d=2){ return Number(n).toFixed(d); }
+
+  function updateLiveEpsilonBox(){
+    const a = parseFloat(ui.alpha.value);
+    const b = parseFloat(ui.beta.value);
+    const l = parseFloat(ui.lambda.value);
+
+    ui.liveA.textContent = fmt(a,2);
+    ui.liveB.textContent = fmt(b,2);
+    ui.liveL.textContent = fmt(l,2);
+
+    const src = `
+\\varepsilon_i=
+${fmt(a,2)}\\left|\\frac{du_i}{dt}\\right|^2
++${fmt(b,2)}\\,\\|\\nabla_\\Lambda u\\|_i^2
++${fmt(l,2)}\\,\\sigma_i^z
+`.trim();
+
+    ui.epsLiveBox.setAttribute('data-latex', src);
+    renderAllMath(ui.epsLiveBox);
+  }
+
+  function refreshUI(){
+    N = parseInt(ui.N.value,10);
+    $('vN').textContent = `${N}×${N}`;
+    $('vA').textContent = fmt(ui.A.value,2);
+    $('vW').textContent = fmt(ui.W.value,2);
+    $('vAlpha').textContent = fmt(ui.alpha.value,2);
+    $('vBeta').textContent = fmt(ui.beta.value,2);
+    $('vLambda').textContent = fmt(ui.lambda.value,2);
+    $('vGeff').textContent = fmt(ui.Geff.value,2);
+    $('vIter').textContent = `${ui.iter.value}`;
+    $('vPath').textContent = pathLabel(parseInt(ui.path.value,10));
+    $('vPathGain').textContent = fmt(ui.pathGain.value,2);
+    const pm = parseInt(ui.path.value,10);
+    $('pathHint').textContent = pathDescription(pm);
+
+    updateLiveEpsilonBox();
+  }
+
+  function rebuildIfNChanged(){
+    const newN = parseInt(ui.N.value,10);
+    if(newN !== N){
+      N = newN;
+      center = {x: Math.floor(N/2), y: Math.floor(N/2)};
+      allocFields();
+      phi.fill(0);
+      refreshUI();
+    }
+  }
+
+  // click flip
+  cv.addEventListener('click', (ev)=>{
+    const rect = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const mx = (ev.clientX - rect.left) * dpr;
+    const my = (ev.clientY - rect.top) * dpr;
+
+    const pad = 18*dpr;
+    const w = cv.width, h = cv.height;
+    const gridW = w - 2*pad;
+    const gridH = h - 2*pad;
+    const cell = Math.min(gridW, gridH) / (N + 1);
+    const rr = cell * 0.32;
+    const ox = pad + cell;
+    const oy = pad + cell;
+
+    let best = -1, bestD = 1e18;
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const px = ox + x*cell;
+        const py = oy + y*cell;
+        const dx = mx - px, dy = my - py;
+        const d2 = dx*dx + dy*dy;
+        if(d2 < bestD){ bestD = d2; best = idx(x,y); }
+      }
+    }
+    if(best >= 0 && bestD <= (rr*rr)){
+      spin[best] *= -1;
+      updateFields();
+      draw();
+    }
+  });
+
+  // buttons
+  ui.btnPlay.addEventListener('click', ()=>{
+    running = !running;
+    ui.btnPlay.textContent = running ? "⏸️ עצירה" : "▶️ הפעלה";
+  });
+  ui.btnStep.addEventListener('click', ()=>{
+    rebuildIfNChanged();
+    updateFields();
+    t += dt;
+    draw();
+  });
+  ui.btnReset.addEventListener('click', ()=>{
+    resetAll();
+    draw();
+  });
+  ui.btnRandom.addEventListener('click', ()=>{
+    randomizeSpin();
+    draw();
+  });
+  ui.btnZeroU.addEventListener('click', ()=>{
+    zeroU();
+    draw();
+  });
+  ui.btnCenter.addEventListener('click', ()=>{
+    center = {x: Math.floor(N/2), y: Math.floor(N/2)};
+    buildPathWeights();
+    draw();
+  });
+
+  // slider listeners
+  ui.N.addEventListener('input', ()=>rebuildIfNChanged());
+  [ui.path, ui.pathGain].forEach(el => el.addEventListener('input', ()=>{
+    buildPathWeights();
+    refreshUI();
+  }));
+  [ui.A, ui.W, ui.alpha, ui.beta, ui.lambda, ui.Geff, ui.iter].forEach(el => el.addEventListener('input', refreshUI));
+
+  // loop
+  function frame(){
+    rebuildIfNChanged();
+    if(running){
+      updateFields();
+      t += dt;
+    }
+    if(panels.sim.classList.contains('active') || running) draw();
+    requestAnimationFrame(frame);
+  }
+
+  // init
+  allocFields();
+  refreshUI();
+  updateFields();
+  draw();
+  requestAnimationFrame(frame);
+
+  window.addEventListener('resize', draw);
+
+  // render math after load (CDN scripts are defer)
+  window.addEventListener('load', ()=>{
+    renderAllMath(document.body);
+    updateLiveEpsilonBox();
+  });
+
+})();
+</script>
+</body>
+</html>
