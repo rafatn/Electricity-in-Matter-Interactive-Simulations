@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎈💡 מסיכות ספקטרליות למנורה — המנורה כמפתח לכל אורכי הגל</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --bg2:#ecfeff;
+
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.58);
+      --cardSolid:#ffffff;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+
+      --head:#0b1220;
+      --link:#2563eb;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --accent2:#06b6d4;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#071022;
+        --bg1:#0b1530;
+        --bg2:#04202a;
+
+        --card:rgba(16,24,40,.62);
+        --card2:rgba(16,24,40,.42);
+        --cardSolid:#0b1220;
+
+        --text:#e6edf7;
+        --muted:#9aa6bd;
+        --line:rgba(148,163,184,.22);
+
+        --head:#f1f5ff;
+        --link:#7aa2ff;
+
+        --shadow: 0 22px 60px rgba(0,0,0,.45);
+        --accent:#8b8cff;
+        --accent2:#37d3ff;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 90% 15%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #0000 35%),
+        var(--bg0);
+      min-height:100vh;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1180px; margin:0 auto; padding:18px}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:16px 18px;
+      background:linear-gradient(135deg, rgba(99,102,241,.18), rgba(6,182,212,.14));
+      border:1px solid var(--line);
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .hTitle{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .hTitle h1{
+      margin:0;
+      font-size:clamp(18px, 2.2vw, 28px);
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .hTitle .sub{
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.4;
+    }
+    .pillRow{display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-start}
+    .pill{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.20);
+      color:var(--text);
+      font-size:12.5px;
+      display:inline-flex; align-items:center; gap:8px;
+      user-select:none;
+    }
+    .pill b{font-family:var(--mono); font-weight:700; font-size:12px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14.5px;
+      color:var(--head);
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .card .bd{padding:14px}
+    .note{
+      padding:12px 12px;
+      border:1px dashed rgba(99,102,241,.55);
+      background:rgba(99,102,241,.08);
+      border-radius:14px;
+      color:var(--text);
+      line-height:1.55;
+      font-size:13.5px;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .controls{grid-template-columns:1fr}
+    }
+    label{
+      display:flex; flex-direction:column; gap:7px;
+      font-size:12.5px;
+      color:var(--muted);
+    }
+    label .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      color:var(--text);
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: var(--accent);
+      cursor:pointer;
+    }
+    select, button, input[type="number"]{
+      font:inherit;
+    }
+    select, input[type="number"]{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.14);
+      color:var(--text);
+      outline:none;
+    }
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(99,102,241,.35), rgba(6,182,212,.22));
+      color:var(--head);
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 10px 30px rgba(2,6,23,.12);
+      transition: transform .06s ease, filter .2s ease;
+    }
+    button:hover{filter:brightness(1.08)}
+    button:active{transform: translateY(1px)}
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+    .btnGhost{
+      background:rgba(255,255,255,.10);
+      font-weight:700;
+    }
+    .kpiGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 540px){
+      .kpiGrid{grid-template-columns:1fr}
+    }
+    .kpi{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .kpi .t{font-size:12px; color:var(--muted)}
+    .kpi .v{font-size:16px; font-weight:800; margin-top:4px; color:var(--head); font-family:var(--mono)}
+    .kpi .s{font-size:12px; margin-top:5px; color:var(--muted)}
+    canvas{
+      width:100%;
+      height:360px;
+      display:block;
+      background:rgba(255,255,255,.06);
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+    .legend{
+      display:flex; gap:12px; flex-wrap:wrap;
+      font-size:12px; color:var(--muted);
+      margin-top:10px;
+      align-items:center;
+    }
+    .sw{
+      width:10px; height:10px; border-radius:3px; display:inline-block;
+      border:1px solid var(--line);
+      background: currentColor;
+      opacity:.9;
+    }
+    .legend span{display:flex; gap:8px; align-items:center}
+    .hr{height:1px; background:var(--line); margin:12px 0}
+    .mono{font-family:var(--mono)}
+    .small{font-size:12.5px; color:var(--muted); line-height:1.55}
+    .callout{
+      border-left: 4px solid var(--accent2);
+      padding:10px 12px;
+      background:rgba(6,182,212,.08);
+      border-radius:14px;
+      margin-top:10px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      font-size:12px;
+      color:var(--text);
+    }
+    .bad{border-color:rgba(239,68,68,.5); background:rgba(239,68,68,.10)}
+    .warn{border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.10)}
+    .ok{border-color:rgba(34,197,94,.5); background:rgba(34,197,94,.10)}
+    footer{
+      margin-top:14px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:12.5px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hTitle">
+        <h1>🎈💡 מסיכות ספקטרליות למנורה — “בלון” שקובע את הקרינה</h1>
+        <div class="sub">
+          מנורה אחת = מקור אנרגיה. המסיכה (כיסוי/בלון) = “מנוע ספקטרלי” שמסנן/ממיר/מערבב את האור לתחום יעד:
+          UV ☀️, Visible 🌈, NIR/IR 🔥 ועוד.
+        </div>
+      </div>
+      <div class="pillRow" aria-label="מדדים מהירים">
+        <div class="pill">מצב: <b id="modePill">המרה</b></div>
+        <div class="pill">יעד: <b id="targetPill">NIR</b></div>
+        <div class="pill">בטיחות: <b id="safetyPill">זהירות</b></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: plot -->
+      <section class="card">
+        <div class="hd">
+          <h2>📈 גרף ספקטרום (קלט/פלט)</h2>
+          <div class="btnRow">
+            <button id="btnRandom" title="יצירת מסיכה דוגמתית">🎲 דוגמה</button>
+            <button class="btnGhost" id="btnReset" title="איפוס פרמטרים">↩️ איפוס</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="note">
+            <b>איך לקרוא את הגרף?</b><br>
+            הקו “קלט” מדמה מנורה לבנה/כחולה בסיסית. הקו “פלט” הוא אחרי המסיכה (הבלון).
+            אפשר לשנות סוג מסיכה, עובי, תחום יעד, עוצמה ויחס כחול—ולראות מיד את התוצאה.
+          </div>
+          <div class="hr"></div>
+          <canvas id="spec" width="1100" height="420" aria-label="גרף ספקטרלי"></canvas>
+          <div class="legend">
+            <span style="color:#2563eb"><i class="sw"></i>קלט (מנורה)</span>
+            <span style="color:#ef4444"><i class="sw"></i>פלט (אחרי מסיכה)</span>
+            <span class="badge" id="bandBadge">טווח: <span class="mono" id="bandText">200–2500 nm</span></span>
+          </div>
+
+          <div class="kpiGrid" aria-label="מדדים">
+            <div class="kpi">
+              <div class="t">עוצמה משוערת (פוטונית) ביציאה</div>
+              <div class="v" id="kpiOut">—</div>
+              <div class="s">יחידות יחסיות (לשינוי דינמי)</div>
+            </div>
+            <div class="kpi">
+              <div class="t">אורך גל דומיננטי ביציאה</div>
+              <div class="v" id="kpiPeak">—</div>
+              <div class="s">מצביע על “מרכז אנרגטי” של הפלט</div>
+            </div>
+          </div>
+
+          <div class="callout small">
+            ✅ <b>הגדרה חדה:</b> המנורה היא <u>מקור אנרגיה</u>. המסיכה היא <u>קובעת הקרינה</u>.  
+            כלומר: 💡 → 🎈 → 🌈/☀️/🔥
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: controls -->
+      <aside class="card">
+        <div class="hd">
+          <h2>🎛️ שליטה במסיכה ובמנורה</h2>
+          <span class="badge" id="liveBadge">LIVE • בזמן אמת</span>
+        </div>
+        <div class="bd">
+          <div class="controls">
+            <label>
+              <div class="row"><span>סוג מסיכה (בלון)</span><span class="mono" id="maskName">FILTER</span></div>
+              <select id="maskType" aria-label="סוג מסיכה">
+                <option value="filter">🧊 Filter — סינון תחום</option>
+                <option value="phosphor">✨ Phosphor — המרה (Down‑conversion)</option>
+                <option value="upconv">🚀 Up‑conversion — המרה כלפי מעלה (מודל)</option>
+                <option value="mixer">🧩 Spectrum Mixer — ערבוב/עיצוב ספקטרום</option>
+              </select>
+            </label>
+
+            <label>
+              <div class="row"><span>תחום יעד</span><span class="mono" id="domainName">NIR</span></div>
+              <select id="domain" aria-label="תחום יעד">
+                <option value="uv">☀️ UV (200–400nm)</option>
+                <option value="vis" selected>🌈 Visible (400–700nm)</option>
+                <option value="nir">🔥 NIR (700–1100nm)</option>
+                <option value="ir">♨️ IR (1100–2500nm)</option>
+              </select>
+            </label>
+
+            <label>
+              <div class="row"><span>אורך גל יעד (nm)</span><span class="mono" id="wlVal">850</span></div>
+              <input id="wl" type="range" min="220" max="2200" step="1" value="850" />
+              <div class="small">מרכז המסיכה: איפה הבלון “דוחף” את האנרגיה.</div>
+            </label>
+
+            <label>
+              <div class="row"><span>רוחב פס (nm)</span><span class="mono" id="bwVal">120</span></div>
+              <input id="bw" type="range" min="10" max="500" step="1" value="120" />
+              <div class="small">קטן = קרינה “חדה”; גדול = ספקטרום רחב.</div>
+            </label>
+
+            <label>
+              <div class="row"><span>עובי/צפיפות מסיכה</span><span class="mono" id="thVal">0.65</span></div>
+              <input id="th" type="range" min="0.05" max="1.5" step="0.01" value="0.65" />
+              <div class="small">משפיע על בליעה/המרה והפסדים.</div>
+            </label>
+
+            <label>
+              <div class="row"><span>עוצמת מנורה</span><span class="mono" id="pwrVal">0.80</span></div>
+              <input id="pwr" type="range" min="0" max="1" step="0.01" value="0.80" />
+              <div class="small">דימר בסיסי (יחסי).</div>
+            </label>
+
+            <label>
+              <div class="row"><span>יחס “כחול” במקור</span><span class="mono" id="blueVal">0.55</span></div>
+              <input id="blue" type="range" min="0" max="1" step="0.01" value="0.55" />
+              <div class="small">מקור LED טיפוסי: פיק כחול + “לבן” מפוספור.</div>
+            </label>
+
+            <label>
+              <div class="row"><span>מוד כיול “אמיתי”</span><span class="mono" id="calVal">ON</span></div>
+              <select id="calMode" aria-label="מוד כיול">
+                <option value="on" selected>ON — הצג חישובי כיול</option>
+                <option value="off">OFF — תצוגה פשוטה</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="hr"></div>
+
+          <div id="calPanel">
+            <div class="note">
+              <b>🎯 כיול אמיתי (מוערך):</b><br>
+              החישובים כאן הם <u>מודל הנדסי-חישובי</u> כדי להמחיש תכנון מסיכה.
+              בעולם אמיתי צריך למדוד בעזרת ספקטרומטר ולכוון תערובות חומר/עובי.
+            </div>
+
+            <div class="kpiGrid">
+              <div class="kpi">
+                <div class="t">יעילות המרה משוערת</div>
+                <div class="v" id="kpiEff">—</div>
+                <div class="s">כולל בליעה + פליטה מחדש + הפסדי פיזור</div>
+              </div>
+              <div class="kpi">
+                <div class="t">רמת סיכון משוערת</div>
+                <div class="v" id="kpiRisk">—</div>
+                <div class="s">UV/IR בעוצמות גבוהות דורשים זהירות</div>
+              </div>
+            </div>
+
+            <div class="callout small" id="safetyBox">
+              <b>⚠️ בטיחות:</b> UV עלול להזיק לעיניים ולעור; IR חזק עלול לחמם.
+              אם מיישמים בפועל — השתמשו במסנן תקני, מיגון, וניטור עוצמה.
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="note small">
+            <b>מה אתה בונה בפועל?</b><br>
+            סט “בלונים” מודולריים:
+            <span class="mono">Filter / Phosphor / Up‑conversion / Mixer</span>
+            שמולבשים על גוף המנורה (כמו דיפיוזר), וכל אחד “מוציא” קרינה בתחום אחר. 🎈
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      נבנה כקובץ HTML יחיד (Offline) — עובד בלי אינטרנט. • 💡🎈🌈🔬🧪⚙️
+    </footer>
+  </div>
+
+<script>
+/* ========= Helpers ========= */
+const $ = (id)=>document.getElementById(id);
+
+function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+function gauss(x, mu, sigma){
+  const z=(x-mu)/sigma;
+  return Math.exp(-0.5*z*z);
+}
+function lerp(a,b,t){ return a+(b-a)*t; }
+
+/* ========= Spectrum model =========
+We simulate an LED source:
+- Blue peak around 450nm
+- Broad "phosphor white" hump around 560nm
+Then apply mask transformation.
+All units are relative (for interactive design).
+*/
+const WL_MIN = 200, WL_MAX = 2500, STEP = 2;
+
+function sourceSpectrum(params){
+  const {power, blueRatio} = params;
+  const arr = [];
+  for(let wl=WL_MIN; wl<=WL_MAX; wl+=STEP){
+    const blue = 1.25*gauss(wl, 450, 18);
+    const white = 0.85*gauss(wl, 560, 95) + 0.25*gauss(wl, 610, 140);
+    const v = power*(blueRatio*blue + (1-blueRatio)*white);
+    arr.push([wl, v]);
+  }
+  return arr;
+}
+
+function domainBounds(domain){
+  switch(domain){
+    case 'uv': return [200, 400];
+    case 'vis': return [400, 700];
+    case 'nir': return [700, 1100];
+    case 'ir': return [1100, 2500];
+  }
+  return [WL_MIN, WL_MAX];
+}
+
+function maskTransform(src, params){
+  const {type, domain, target, bw, thickness} = params;
+
+  // attenuation baseline: thicker mask loses more light
+  const loss = Math.exp(-0.85*thickness);            // 0..1
+  const scatter = 0.06 + 0.10*thickness;             // adds a small broad background
+
+  const [d0,d1] = domainBounds(domain);
+
+  // filter centered at target, with bw
+  const filter = (wl)=> gauss(wl, target, bw/2.355); // FWHM ~ bw
+
+  // conversion kernels:
+  // phosphor: absorb mostly in blue/uv, re-emit near target
+  const absorbBlue = (wl)=> gauss(wl, 445, 30) + 0.35*gauss(wl, 365, 45);
+  const emitTarget = (wl)=> gauss(wl, target, (bw*0.75)/2.355);
+
+  // upconversion: (model) absorb in NIR and emit shorter (towards UV/VIS) around target.
+  const absorbNIR = (wl)=> gauss(wl, 980, 70) + 0.45*gauss(wl, 808, 60);
+  const emitShort = (wl)=> gauss(wl, target, (bw*0.65)/2.355);
+
+  // mixer: blend multiple lobes around domain
+  const mixer = (wl)=>{
+    const mid = (d0+d1)/2;
+    return 0.75*gauss(wl, target, (bw)/2.355) +
+           0.35*gauss(wl, lerp(d0, mid, 0.55), (bw*1.2)/2.355) +
+           0.25*gauss(wl, lerp(mid, d1, 0.65), (bw*1.35)/2.355);
+  };
+
+  // prepare output
+  const out = [];
+  let absorbed = 0;
+  let srcEnergy = 0;
+
+  for(const [wl, v] of src){
+    srcEnergy += v;
+
+    let y = 0;
+
+    if(type === 'filter'){
+      y = v * filter(wl);
+      // keep mostly inside domain for clean interpretation
+      y *= (wl>=d0 && wl<=d1) ? 1 : 0.25;
+      y = y * (0.9*loss + 0.1);
+    }
+    else if(type === 'phosphor'){
+      // absorb part (mostly blue/uv), then re-emit near target
+      const a = clamp(thickness*0.9*absorbBlue(wl), 0, 0.85);
+      absorbed += v*a;
+      const transmitted = v*(1-a);
+      // emitted distribution
+      const emitted = absorbed * (0.32 + 0.38*(1-Math.exp(-0.9*thickness))) * emitTarget(wl);
+      y = transmitted*loss*0.55 + emitted;
+      // encourage target domain
+      y *= (wl>=d0 && wl<=d1) ? 1.0 : 0.18;
+    }
+    else if(type === 'upconv'){
+      // model: absorb NIR, re-emit shorter around target
+      const a = clamp(thickness*0.75*absorbNIR(wl), 0, 0.60);
+      absorbed += v*a;
+      const transmitted = v*(1-a);
+      const emitted = absorbed * (0.08 + 0.12*(1-Math.exp(-1.0*thickness))) * emitShort(wl);
+      y = transmitted*loss*0.60 + emitted;
+      y *= (wl>=d0 && wl<=d1) ? 1.0 : 0.12;
+    }
+    else if(type === 'mixer'){
+      // reshape: compress energy into domain with multi-lobe blend
+      const shape = mixer(wl);
+      y = v * (0.55*shape + 0.15*filter(wl)) * (0.85*loss + 0.15);
+      y *= (wl>=d0 && wl<=d1) ? 1.0 : 0.22;
+    }
+
+    // add small scatter background
+    y += scatter * loss * 0.02 * srcEnergy/( (WL_MAX-WL_MIN)/STEP + 1 );
+
+    out.push([wl, y]);
+  }
+
+  // compute approximate efficiency
+  let outEnergy = 0;
+  for(const [,y] of out) outEnergy += y;
+
+  const eff = (srcEnergy>0) ? (outEnergy/srcEnergy) : 0;
+
+  return {out, eff, srcEnergy, outEnergy};
+}
+
+/* ========= Plot ========= */
+function drawSpectrum(canvas, src, out, domain){
+  const ctx = canvas.getContext('2d');
+
+  // scale for device pixel ratio
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const cssW = canvas.clientWidth || 900;
+  const cssH = canvas.clientHeight || 360;
+  canvas.width = Math.floor(cssW*dpr);
+  canvas.height = Math.floor(cssH*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const W = cssW, H = cssH;
+  const padL = 54, padR = 18, padT = 18, padB = 44;
+  const x0 = padL, x1 = W-padR, y0 = padT, y1 = H-padB;
+
+  // background
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = 'rgba(255,255,255,.02)';
+  ctx.fillRect(0,0,W,H);
+
+  // find max
+  let maxY = 0;
+  for(const [,v] of src) maxY = Math.max(maxY, v);
+  for(const [,v] of out) maxY = Math.max(maxY, v);
+  maxY = maxY*1.18 + 1e-9;
+
+  // mapping
+  const xMap = (wl)=> x0 + (wl-WL_MIN)/(WL_MAX-WL_MIN)*(x1-x0);
+  const yMap = (v)=> y1 - (v/maxY)*(y1-y0);
+
+  // grid
+  ctx.strokeStyle = 'rgba(148,163,184,.25)';
+  ctx.lineWidth = 1;
+
+  // vertical grid at 200,400,700,1100,2500
+  const ticksX = [200,400,700,1100,1500,2000,2500];
+  for(const t of ticksX){
+    const x = xMap(t);
+    ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y1); ctx.stroke();
+  }
+  // horizontal grid
+  for(let i=0;i<=4;i++){
+    const y = y0 + (i/4)*(y1-y0);
+    ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+  }
+
+  // domain highlight
+  const [d0,d1] = domainBounds(domain);
+  const dx0 = xMap(d0), dx1 = xMap(d1);
+  ctx.fillStyle = 'rgba(6,182,212,.08)';
+  ctx.fillRect(dx0, y0, dx1-dx0, y1-y0);
+  ctx.strokeStyle = 'rgba(6,182,212,.35)';
+  ctx.strokeRect(dx0, y0, dx1-dx0, y1-y0);
+
+  // axes
+  ctx.strokeStyle = 'rgba(148,163,184,.55)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.lineTo(x1,y1); ctx.stroke();
+
+  // labels
+  ctx.fillStyle = 'rgba(100,116,139,1)';
+  ctx.font = '12px ui-monospace, Menlo, Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for(const t of ticksX){
+    const x = xMap(t);
+    ctx.fillText(String(t), x, y1+8);
+  }
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for(let i=0;i<=4;i++){
+    const val = (maxY*(1-i/4));
+    const y = y0 + (i/4)*(y1-y0);
+    ctx.fillText((val/maxY).toFixed(2), x0-8, y);
+  }
+  ctx.save();
+  ctx.translate(12, (y0+y1)/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('Intensity (relative)', 0, 0);
+  ctx.restore();
+  ctx.textAlign='center';
+  ctx.fillText('Wavelength (nm)', (x0+x1)/2, H-18);
+
+  function pathLine(data){
+    ctx.beginPath();
+    let first=true;
+    for(const [wl, v] of data){
+      const x=xMap(wl), y=yMap(v);
+      if(first){ ctx.moveTo(x,y); first=false; }
+      else ctx.lineTo(x,y);
+    }
+  }
+
+  // source line
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#2563eb';
+  pathLine(src); ctx.stroke();
+
+  // output line
+  ctx.lineWidth = 2.4;
+  ctx.strokeStyle = '#ef4444';
+  pathLine(out); ctx.stroke();
+
+  // small glow
+  ctx.globalAlpha = 0.08;
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = '#ef4444';
+  pathLine(out); ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* ========= KPIs ========= */
+function peakWavelength(out){
+  let best = {wl:WL_MIN, v:-1};
+  for(const [wl,v] of out){
+    if(v > best.v){ best = {wl, v}; }
+  }
+  return best.wl;
+}
+
+function riskLabel(domain, power){
+  // heuristic: UV risky, IR risky with high power
+  let score = 0;
+  if(domain === 'uv') score += 0.75;
+  if(domain === 'ir') score += 0.45;
+  if(domain === 'nir') score += 0.20;
+  score += 0.35*power;
+
+  if(score >= 0.9) return {txt:'HIGH', cls:'bad'};
+  if(score >= 0.55) return {txt:'MED', cls:'warn'};
+  return {txt:'LOW', cls:'ok'};
+}
+
+/* ========= UI wiring ========= */
+const state = {
+  maskType: 'filter',
+  domain: 'vis',
+  target: 850,
+  bw: 120,
+  thickness: 0.65,
+  power: 0.80,
+  blueRatio: 0.55,
+  calMode: 'on'
+};
+
+function syncUI(){
+  $('maskType').value = state.maskType;
+  $('domain').value = state.domain;
+  $('wl').value = state.target;
+  $('bw').value = state.bw;
+  $('th').value = state.thickness;
+  $('pwr').value = state.power;
+  $('blue').value = state.blueRatio;
+  $('calMode').value = state.calMode;
+
+  $('maskName').textContent = state.maskType.toUpperCase();
+  $('domainName').textContent = state.domain.toUpperCase();
+  $('wlVal').textContent = String(state.target);
+  $('bwVal').textContent = String(state.bw);
+  $('thVal').textContent = state.thickness.toFixed(2);
+  $('pwrVal').textContent = state.power.toFixed(2);
+  $('blueVal').textContent = state.blueRatio.toFixed(2);
+  $('calVal').textContent = (state.calMode === 'on') ? 'ON' : 'OFF';
+
+  $('modePill').textContent =
+    state.maskType === 'filter' ? 'סינון' :
+    state.maskType === 'phosphor' ? 'Down‑conversion' :
+    state.maskType === 'upconv' ? 'Up‑conversion' : 'Mixer';
+
+  $('targetPill').textContent =
+    state.domain === 'uv' ? 'UV' :
+    state.domain === 'vis' ? 'VIS' :
+    state.domain === 'nir' ? 'NIR' : 'IR';
+
+  const r = riskLabel(state.domain, state.power);
+  $('safetyPill').textContent = r.txt;
+  $('safetyPill').style.color =
+    r.cls==='bad' ? 'var(--bad)' :
+    r.cls==='warn' ? 'var(--warn)' : 'var(--ok)';
+
+  $('calPanel').style.display = (state.calMode === 'on') ? 'block' : 'none';
+}
+
+function enforceDomainTarget(){
+  const [d0,d1] = domainBounds(state.domain);
+  state.target = clamp(state.target, d0, d1);
+  $('wl').min = d0;
+  $('wl').max = d1;
+  $('bandText').textContent = `${WL_MIN}–${WL_MAX} nm`;
+  $('bandBadge').style.borderColor = 'rgba(6,182,212,.35)';
+}
+
+function update(){
+  enforceDomainTarget();
+  syncUI();
+
+  const src = sourceSpectrum({power:state.power, blueRatio:state.blueRatio});
+  const {out, eff, srcEnergy, outEnergy} = maskTransform(src, {
+    type: state.maskType,
+    domain: state.domain,
+    target: state.target,
+    bw: state.bw,
+    thickness: state.thickness
+  });
+
+  drawSpectrum($('spec'), src, out, state.domain);
+
+  const peak = peakWavelength(out);
+  $('kpiPeak').textContent = `${Math.round(peak)} nm`;
+  $('kpiOut').textContent = (outEnergy).toFixed(3);
+
+  if(state.calMode === 'on'){
+    $('kpiEff').textContent = `${(eff*100).toFixed(1)}%`;
+    const r = riskLabel(state.domain, state.power);
+    $('kpiRisk').textContent = r.txt;
+
+    const box = $('safetyBox');
+    box.classList.remove('bad','warn','ok');
+    box.classList.add(r.cls);
+    box.innerHTML =
+      (r.cls==='bad' ? '⛔ ' : r.cls==='warn' ? '⚠️ ' : '✅ ') +
+      `<b>בטיחות:</b> ${state.domain.toUpperCase()} בעוצמה ${(state.power*100).toFixed(0)}% → סיכון <b>${r.txt}</b>. ` +
+      `ביישום אמיתי השתמשו במסננים תקניים, מיגון עיניים, ומדידה עם ספקטרומטר.`;
+  }
+}
+
+function bind(){
+  const on = (id, ev, fn)=> $(id).addEventListener(ev, fn);
+
+  on('maskType','change', e=>{ state.maskType=e.target.value; update(); });
+  on('domain','change', e=>{ state.domain=e.target.value; update(); });
+
+  on('wl','input', e=>{ state.target=+e.target.value; $('wlVal').textContent=String(state.target); update(); });
+  on('bw','input', e=>{ state.bw=+e.target.value; $('bwVal').textContent=String(state.bw); update(); });
+  on('th','input', e=>{ state.thickness=+e.target.value; $('thVal').textContent=state.thickness.toFixed(2); update(); });
+  on('pwr','input', e=>{ state.power=+e.target.value; $('pwrVal').textContent=state.power.toFixed(2); update(); });
+  on('blue','input', e=>{ state.blueRatio=+e.target.value; $('blueVal').textContent=state.blueRatio.toFixed(2); update(); });
+  on('calMode','change', e=>{ state.calMode=e.target.value; update(); });
+
+  on('btnReset','click', ()=>{
+    state.maskType='filter';
+    state.domain='vis';
+    state.target=550;
+    state.bw=140;
+    state.thickness=0.65;
+    state.power=0.80;
+    state.blueRatio=0.55;
+    state.calMode='on';
+    update();
+  });
+
+  on('btnRandom','click', ()=>{
+    const types=['filter','phosphor','upconv','mixer'];
+    const doms=['uv','vis','nir','ir'];
+    state.maskType = types[Math.floor(Math.random()*types.length)];
+    state.domain = doms[Math.floor(Math.random()*doms.length)];
+    const [d0,d1]=domainBounds(state.domain);
+    state.target = Math.round(lerp(d0, d1, Math.random()));
+    state.bw = Math.round(lerp(40, 260, Math.random()));
+    state.thickness = +(lerp(0.10, 1.25, Math.random())).toFixed(2);
+    state.power = +(lerp(0.35, 1.00, Math.random())).toFixed(2);
+    state.blueRatio = +(lerp(0.15, 0.85, Math.random())).toFixed(2);
+    update();
+  });
+
+  window.addEventListener('resize', ()=>update());
+}
+
+bind();
+update();
+</script>
+</body>
+</html>
