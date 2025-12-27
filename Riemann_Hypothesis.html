@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nyquist + סנדוויץ׳ + רושה — מסגרות גאומטריות לאפסי ξ(s) (מלבן/אליפסה)</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.62);
+      --solid:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --accent2:#06b6d4;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a13; --bg1:#0b1022; --bg2:#071a1f;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --solid:#0b1220;
+        --text:#e5e7eb;
+        --muted:#a8b3cf;
+        --line:rgba(148,163,184,.22);
+        --shadow:0 18px 50px rgba(0,0,0,.50);
+        --accent:#8b5cf6;
+        --accent2:#22d3ee;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 10% 10%, var(--bg2), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:24px 18px 80px;}
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(99,102,241,.16), rgba(34,211,238,.12));
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      padding:22px 20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 240px at 20% 0%, rgba(99,102,241,.30), transparent 60%),
+        radial-gradient(600px 260px at 80% 0%, rgba(34,211,238,.22), transparent 65%);
+      pointer-events:none;
+    }
+    .hero > *{position:relative}
+    h1{
+      margin:0 0 10px;
+      font-size:1.6rem;
+      line-height:1.25;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:1.0rem;
+      max-width:75ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      padding:16px;
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:1.15rem;
+    }
+    .card h3{
+      margin:14px 0 8px;
+      font-size:1.0rem;
+    }
+    .muted{color:var(--muted)}
+    .pillrow{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin:10px 0 0;
+    }
+    .pill{
+      font-size:.88rem;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.25);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      backdrop-filter: blur(8px);
+    }
+    @media (prefers-color-scheme: dark){
+      .pill{background:rgba(15,23,42,.32);}
+    }
+    .dot{width:9px; height:9px; border-radius:50%;}
+    .dot.acc{background:var(--accent)}
+    .dot.cya{background:var(--accent2)}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    .kbox{
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:var(--card2);
+      overflow:auto;
+    }
+    .kbox .katex-display{margin:.4rem 0}
+    .note{
+      border-right:4px solid var(--accent2);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(34,211,238,.10);
+      margin:10px 0;
+    }
+    .warnbox{
+      border-right:4px solid var(--warn);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(245,158,11,.10);
+      margin:10px 0;
+    }
+    .okbox{
+      border-right:4px solid var(--ok);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(34,197,94,.10);
+      margin:10px 0;
+    }
+
+    .steps{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+    .step{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.20);
+      padding:12px;
+    }
+    @media (prefers-color-scheme: dark){
+      .step{background:rgba(15,23,42,.28);}
+    }
+    .stephead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:6px;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:.82rem;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.16);
+      white-space:nowrap;
+    }
+    .hr{
+      height:1px; background:var(--line);
+      margin:14px 0;
+    }
+    ul{margin:8px 0 0 0; padding:0 18px 0 0}
+    li{margin:6px 0; line-height:1.7}
+    .mono{font-family:var(--mono)}
+    .footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+      text-align:center;
+    }
+    .mini{
+      font-size:.92rem;
+      line-height:1.75;
+    }
+    .toc{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top:12px;
+    }
+    .toc a{
+      text-decoration:none;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.18);
+    }
+    @media (prefers-color-scheme: dark){
+      .toc a{background:rgba(15,23,42,.28);}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Nyquist במישור התדר + “סנדוויץ׳” + רושה — מסגרות גאומטריות לאפסי \(\xi(s)\) (מלבן/אליפסה)</h1>
+      <p class="sub">
+        המסמך מציג שתי אסטרטגיות נפרדות (כל אחת עם שני תחומים: מלבן ואליפסה):
+        <span class="mono">1) Nyquist/Argument Sandwich</span> (ספירת אפסים דרך הקפות ושינוי־טיעון),
+        ו־<span class="mono">2) Rouché</span> (השוואת \(\xi\) לפונקציה דומיננטית על הגבול).
+        הכל בנוי כך שהרעיון “שני מסלולים חוסמים + דגימה של הקו הקריטי” יהיה מדויק ומתמטי.
+      </p>
+
+      <div class="toc">
+        <a href="#defs">הגדרות בסיס</a>
+        <a href="#nyq">אפשרות 1: Nyquist / סנדוויץ׳</a>
+        <a href="#nyq-rect">Nyquist — מלבן</a>
+        <a href="#nyq-ell">Nyquist — אליפסה</a>
+        <a href="#rouche">אפשרות 2: רושה</a>
+        <a href="#rouche-rect">רושה — מלבן</a>
+        <a href="#rouche-ell">רושה — אליפסה</a>
+        <a href="#algo">אלגוריתם (תיאורטי) להקפות + דגימה</a>
+      </div>
+
+      <div class="pillrow">
+        <span class="pill"><span class="dot acc"></span> \(\xi(s)\) שלמה (ללא קטבים)</span>
+        <span class="pill"><span class="dot cya"></span> Nyquist = ספירת הקפות סביב \(0\)</span>
+        <span class="pill"><span class="dot ok"></span> “סנדוויץ׳” = שוויון ספירות</span>
+        <span class="pill"><span class="dot warn"></span> רושה דורש חסם נקודתי על הגבול</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="defs">
+        <h2>1) הגדרות בסיס</h2>
+        <p class="mini muted">
+          נבחר לעבוד עם \(\xi(s)\) (הכי “נקי”): אין קטבים, ולכן Nyquist/Argument סופר ישירות אפסים בלבד.
+        </p>
+
+        <div class="kbox" data-katex>
+          \[
+            \xi(s)=\tfrac12\,s(s-1)\,\pi^{-s/2}\Gamma\!\left(\frac{s}{2}\right)\zeta(s),
+            \qquad \xi \text{ שלמה.}
+          \]
+          \[
+            \xi(s)=\xi(1-s) \quad\text{(סימטריה סביב }\Re(s)=\tfrac12\text{).}
+          \]
+        </div>
+
+        <h3>הקו הקריטי והפונקציה הממשית עליו</h3>
+        <div class="kbox" data-katex>
+          \[
+            L=\left\{\tfrac12+it:\ t\in\mathbb R\right\},\qquad
+            \Xi(t)=\xi\!\left(\tfrac12+it\right).
+          \]
+        </div>
+
+        <div class="note">
+          <b>אינטואיציה:</b> “מישור תדר” כאן הוא \(t\) (או \(\omega\)) לאורך הישר \(s=\sigma+i\omega\).
+          הקו הקריטי הוא \(\sigma=\tfrac12\).
+        </div>
+
+        <div class="warnbox">
+          <b>דגש מתמטי:</b> עקום סגור יחיד לא יכול להכיל את כל האפסים (האפסים עולים ל־\(|t|\to\infty\)).
+          לכן עובדים עם תחומים \(D_T\) שתלויים ב־\(T\).
+        </div>
+      </section>
+
+      <section class="card" id="nyq">
+        <h2>2) אפשרות 1 — Nyquist / Argument Sandwich</h2>
+        <p class="mini muted">
+          Nyquist הוא ניסוח גאומטרי של עקרון הארגומנט: מספר ההקפות של התמונה \(\xi(\Gamma)\) סביב \(0\) שווה למספר האפסים של \(\xi\) בתוך \(\Gamma\).
+        </p>
+
+        <h3>עקרון הארגומנט (ל־\(\xi\))</h3>
+        <div class="kbox" data-katex>
+          \[
+            \text{אם } \xi(s)\neq 0 \text{ על } \Gamma=\partial D,
+            \quad
+            N_D(\xi)=\frac{1}{2\pi}\Delta_{\Gamma}\arg \xi(s)
+            =\frac{1}{2\pi i}\oint_{\Gamma}\frac{\xi'(s)}{\xi(s)}\,ds.
+          \]
+        </div>
+
+        <h3>נייקוויסט (במישור הערכים)</h3>
+        <div class="kbox" data-katex>
+          \[
+            N_D(\xi)=\mathrm{Wind}(\xi(\Gamma),0).
+          \]
+        </div>
+
+        <div class="okbox">
+          <b>“סנדוויץ׳” בספירה:</b>
+          תמיד מתקיים \(\;N_{\text{crit}}(T)\le N_D(\xi)\;\) כי אפסים על הקו הקריטי הם תת־קבוצה.
+          אם מצליחים להוכיח גם \(\;N_{\text{crit}}(T)\ge N_D(\xi)\;\) לכל \(T\),
+          מקבלים שוויון ⇒ כל האפסים עד גובה \(T\) נמצאים על הקו ⇒ RH.
+        </div>
+
+        <div class="kbox" data-katex>
+          \[
+            N_{\text{crit}}(T)\le N_D(\xi)\le N_{\text{crit}}(T)
+            \quad\Rightarrow\quad
+            N_D(\xi)=N_{\text{crit}}(T).
+          \]
+        </div>
+      </section>
+    </div>
+
+    <section class="card" id="nyq-rect">
+      <h2>3) Nyquist / Sandwich — מימוש במלבן \(\Gamma_T\)</h2>
+
+      <h3>תחום וגבול</h3>
+      <div class="kbox" data-katex>
+        \[
+          D_T^{\text{rect}}=\{s=\sigma+it:\ 0\le\sigma\le 1,\ -T\le t\le T\},\qquad
+          \Gamma_T=\partial D_T^{\text{rect}}.
+        \]
+      </div>
+
+      <h3>פירוק שינוי־טיעון ל־4 צלעות</h3>
+      <div class="kbox" data-katex>
+        \[
+          \Delta_{\Gamma_T}\arg\xi
+          =
+          \Delta_{\text{bottom}}+\Delta_{\text{right}}+\Delta_{\text{top}}+\Delta_{\text{left}},
+        \]
+        \[
+          N_{\text{rect}}(T)=\frac{1}{2\pi}\Delta_{\Gamma_T}\arg\xi(s).
+        \]
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R1 — ספירה מהגבול (Nyquist)</b>
+            <span class="tag">Goal: \(N_{\text{rect}}(T)\)</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              N_{\text{rect}}(T)=\mathrm{Wind}(\xi(\Gamma_T),0)
+              =\frac{1}{2\pi i}\oint_{\Gamma_T}\frac{\xi'(s)}{\xi(s)}\,ds.
+            \]
+          </div>
+          <ul class="mini">
+            <li>זה מספר האפסים של \(\xi\) בתוך המלבן (אין קטבים).</li>
+            <li>במישור הערכים: מציירים \(w=\xi(s)\) כש-\(s\) הולך סביב \(\Gamma_T\), וסופרים הקפות סביב \(0\).</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R2 — דגימה על הקו הקריטי</b>
+            <span class="tag">Goal: \(N_{\text{crit}}(T)\)</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              \Xi(t)=\xi\!\left(\tfrac12+it\right),\qquad t\in[-T,T].
+            \]
+          </div>
+          <ul class="mini">
+            <li>דגימה צפופה + שינויי סימן של \(\Xi(t)\) ⇒ קיום אפסים (ערך־ביניים).</li>
+            <li>אפסים ממכפלתיות זוגית עלולים לא לשנות סימן — דורשים בדיקה נוספת (“התקרבות ל־0”).</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R3 — סנדוויץ׳: נעילת ההקפות לקו</b>
+            <span class="tag">Hard part</span>
+          </div>
+          <p class="mini muted">
+            כאן מופיע הרעיון שלך “שני מסלולים חוסמים”: מוכיחים שהצלעות/הקצוות אינם יכולים לייצר מספיק שינוי־טיעון
+            כדי “להסתיר” אפסים מחוץ לקו הקריטי.
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              |\Delta_{\text{top}}|+|\Delta_{\text{bottom}}|\le C_1,\qquad
+              |\Delta_{\text{left}}+\Delta_{\text{right}}|\le C_2,
+            \]
+            \[
+              \Rightarrow\quad
+              \Delta_{\Gamma_T}\arg\xi \text{ נשלט בעיקר ע"י התנהגות סביב המרכז.}
+            \]
+          </div>
+          <div class="note mini">
+            טכניקת חסימה נפוצה: אם לאורך קטע מתקיים \(|\xi|\ge m>0\) וגם \(\left|\xi'/\xi\right|\le M\),
+            אז
+            \[
+              |\Delta \arg \xi|\le \int \left|\frac{\xi'}{\xi}\right|\,|ds|
+              \le M\cdot \mathrm{length}.
+            \]
+            זה מגביל “תקציב טיעון” ולכן מגביל הקפות.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="nyq-ell">
+      <h2>4) Nyquist / Sandwich — מימוש באליפסה \(\Gamma_{T,a}\)</h2>
+
+      <h3>תחום וגבול (אליפסה סימטרית סביב \(\Re(s)=1/2\))</h3>
+      <div class="kbox" data-katex>
+        \[
+          D_{T,a}^{\text{ell}}=\left\{s:\left(\frac{\Re(s)-\tfrac12}{a}\right)^2+\left(\frac{\Im(s)}{T}\right)^2\le 1\right\},
+          \qquad \Gamma_{T,a}=\partial D_{T,a}^{\text{ell}}.
+        \]
+      </div>
+
+      <h3>פרמטריזציה חלקה</h3>
+      <div class="kbox" data-katex>
+        \[
+          s(\theta)=\tfrac12+a\cos\theta+iT\sin\theta,\qquad \theta\in[0,2\pi].
+        \]
+        \[
+          N_{\text{ell}}(T,a)=\mathrm{Wind}(\xi(\Gamma_{T,a}),0)
+          =\frac{1}{2\pi}\Delta_{\theta\in[0,2\pi]}\arg \xi(s(\theta)).
+        \]
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>שלב E1 — הקפות ע״י \(\theta\)</b>
+            <span class="tag">Smooth boundary</span>
+          </div>
+          <p class="mini muted">
+            היתרון: אין פינות, ולכן קל יותר לבנות חסמים אחידים על \(|\xi|\) ועל \(|\xi'/\xi|\) לאורך כל \(\theta\).
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              \Delta_{\Gamma_{T,a}}\arg\xi
+              =
+              \Im\int_0^{2\pi}\frac{\xi'(s(\theta))}{\xi(s(\theta))}\,s'(\theta)\,d\theta.
+            \]
+            \[
+              s'(\theta)=-a\sin\theta+iT\cos\theta,\qquad |s'(\theta)|\le a+T.
+            \]
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב E2 — סנדוויץ׳ על שתי קשתות (ימין/שמאל)</b>
+            <span class="tag">Symmetry</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              \Gamma_{T,a}=\Gamma_{\text{right}}\cup\Gamma_{\text{left}},
+              \qquad
+              \Delta_{\Gamma_{T,a}}\arg\xi=\Delta_{\text{right}}+\Delta_{\text{left}}.
+            \]
+          </div>
+          <p class="mini">
+            הסימטריה \(\xi(s)=\xi(1-s)\) מחברת את שתי הקשתות דרך \(s\mapsto 1-s\), ומאפשרת אומדנים “מאוזנים”
+            סביב \(\Re(s)=1/2\).
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב E3 — חיבור לדגימה על הקו הקריטי</b>
+            <span class="tag">Same goal</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              \text{אם מצליחים להראות } N_{\text{crit}}(T)\ge N_{\text{ell}}(T,a),
+              \text{ אז } N_{\text{crit}}(T)=N_{\text{ell}}(T,a).
+            \]
+          </div>
+          <p class="mini muted">
+            בדיוק כמו במלבן — רק שהגבול “חלק” ולכן לעיתים נוח יותר לבקר את שינוי־הטיעון.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="rouche">
+        <h2>5) אפשרות 2 — משפט רושה (Rouché)</h2>
+        <p class="mini muted">
+          רושה הוא “נעילה חזקה” של Nyquist: אם על הגבול פונקציה \(g\) דומיננטית ביחס להפרש \(f-g\),
+          אז מספר האפסים בתוך התחום זהה.
+        </p>
+
+        <h3>משפט רושה (צורה שימושית)</h3>
+        <div class="kbox" data-katex>
+          \[
+            \text{אם } f,g \text{ אנליטיות בתוך ועל } \Gamma=\partial D,
+            \text{ ו- } |f(s)-g(s)|<|g(s)| \ \forall s\in\Gamma,
+          \]
+          \[
+            \Rightarrow\quad N_D(f)=N_D(g).
+          \]
+        </div>
+
+        <div class="note">
+          <b>פרשנות Nyquist:</b> התנאי \(|f-g|<|g|\) מבטיח שהמעבר מ-\(g(\Gamma)\) ל-\(f(\Gamma)\) לא חוצה את \(0\),
+          ולכן מספר ההקפות סביב \(0\) נשמר ⇒ מספר האפסים בפנים נשמר.
+        </div>
+
+        <div class="warnbox">
+          <b>הקושי:</b> זה תנאי נקודתי על <u>כל</u> הגבול, לא “בערך”. כדי להפעיל רושה צריך
+          לבחור \(g\) כך ש-\(|g|\) יהיה מופרד מ-0 על הגבול, ולחסום את השארית.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>6) תבנית רושה עבור \(\xi\)</h2>
+        <p class="mini muted">
+          נכתוב \(\xi=g+h\) (עם \(h=\xi-g\)). אם נצליח להבטיח על \(\Gamma\):
+          \(|h|<|g|\), אז \(N_D(\xi)=N_D(g)\).
+        </p>
+
+        <div class="kbox" data-katex>
+          \[
+            \xi(s)=g(s)+h(s),\qquad |h(s)|<|g(s)| \ \forall s\in\Gamma
+            \quad\Rightarrow\quad N_D(\xi)=N_D(g).
+          \]
+        </div>
+
+        <div class="okbox">
+          <b>אסטרטגיה:</b> לבחור \(g\) כך שמספר האפסים שלו בתוך \(D\) “ידוע/נשלט”
+          (למשל, אפסים על הקו הקריטי בלבד, או בלי אפסים באזור מסוים). ואז רושה “מעביר” את הספירה ל-\(\xi\).
+        </div>
+
+        <ul class="mini">
+          <li><b>דרך עבודה כללית:</b> לבנות \(g\) כקירוב דומיננטי של \(\xi\) על הגבול (אסימפטוטי/אינטגרלי/סדרה מקוצרת), ו-\(h\) כשארית.</li>
+          <li><b>תנאי נוח:</b> אם \(\min_{\Gamma}|g|\ge m\) ו-\(\max_{\Gamma}|h|\le m/2\), אז \(|h|<|g|\) מיד.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" id="rouche-rect">
+      <h2>7) רושה — מימוש במלבן \(\Gamma_T\)</h2>
+
+      <div class="kbox" data-katex>
+        \[
+          \Gamma_T=\partial\{0\le\Re(s)\le 1,\ |\Im(s)|\le T\}.
+        \]
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RR1 — פירוק: \(\xi=g_T+h_T\)</b>
+            <span class="tag">Design \(g_T\)</span>
+          </div>
+          <p class="mini muted">
+            בוחרים \(g_T\) כקירוב דומיננטי של \(\xi\) על צלעות הגבול (לעיתים נדרש קירוב שונה לצלעות שונות),
+            כך ש-\(|g_T|\) יישאר מופרד מ-0 על \(\Gamma_T\).
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              \xi(s)=g_T(s)+h_T(s),\qquad
+              m_T:=\min_{s\in\Gamma_T}|g_T(s)|>0,\qquad
+              \max_{s\in\Gamma_T}|h_T(s)|<m_T.
+            \]
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RR2 — רושה על כל הגבול ⇒ ספירה זהה</b>
+            <span class="tag">Rouché</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              |h_T(s)|<|g_T(s)| \ \forall s\in\Gamma_T
+              \quad\Rightarrow\quad
+              N_{D_T^{\text{rect}}}(\xi)=N_{D_T^{\text{rect}}}(g_T).
+            \]
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RR3 — קשר לקו הקריטי (כדי לנעול RH)</b>
+            <span class="tag">Need structure</span>
+          </div>
+          <p class="mini muted">
+            כדי שהרושה יעזור ל־RH, צריך ש-\(g_T\) יהיה כזה שמספר האפסים שלו בתוך המלבן ידוע,
+            ובאידאל — האפסים שלו יושבים על \(\Re(s)=1/2\) בלבד (או שאין לו אפסים מחוץ לקו).
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              \text{אם } N_{D_T^{\text{rect}}}(g_T)=N_{\text{crit}}(T)
+              \text{ (או מקביל), אז }
+              N_{D_T^{\text{rect}}}(\xi)=N_{\text{crit}}(T).
+            \]
+          </div>
+        </div>
+      </div>
+
+      <div class="warnbox">
+        <b>תזכורת:</b> רושה דורש אי־שוויון נקודתי על כל צלע.
+        זה לרוב המקום שבו נדרשים אומדנים עמוקים/מדויקים.
+      </div>
+    </section>
+
+    <section class="card" id="rouche-ell">
+      <h2>8) רושה — מימוש באליפסה \(\Gamma_{T,a}\)</h2>
+
+      <div class="kbox" data-katex>
+        \[
+          s(\theta)=\tfrac12+a\cos\theta+iT\sin\theta,\ \theta\in[0,2\pi],\qquad
+          \Gamma_{T,a}=\partial D_{T,a}^{\text{ell}}.
+        \]
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RE1 — פירוק אחיד על גבול חלק</b>
+            <span class="tag">Uniform control</span>
+          </div>
+          <p class="mini muted">
+            היתרון באליפסה: הגבול חלק, ולכן אפשר לנסות לבנות \(g_{T,a}\) קירוב אחיד לכל \(\theta\).
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              \xi(s(\theta))=g_{T,a}(s(\theta))+h_{T,a}(s(\theta)),
+              \quad
+              \min_{\theta}|g_{T,a}(s(\theta))|=m_{T,a}>0,
+              \quad
+              \max_{\theta}|h_{T,a}(s(\theta))|<m_{T,a}.
+            \]
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RE2 — רושה ⇒ ספירה זהה בתוך האליפסה</b>
+            <span class="tag">Rouché</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              |h_{T,a}(s)|<|g_{T,a}(s)|\ \forall s\in\Gamma_{T,a}
+              \quad\Rightarrow\quad
+              N_{D_{T,a}^{\text{ell}}}(\xi)=N_{D_{T,a}^{\text{ell}}}(g_{T,a}).
+            \]
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב RE3 — נעילה לקו הקריטי</b>
+            <span class="tag">Need structure</span>
+          </div>
+          <p class="mini muted">
+            שוב: כדי להגיע לרימן, נדרש ש-\(g_{T,a}\) יהיה עם מבנה אפסים נשלט (אפסים על הקו הקריטי בלבד, או היעדר אפסים מחוץ לקו).
+          </p>
+          <div class="kbox" data-katex>
+            \[
+              \text{אם } N_{D_{T,a}^{\text{ell}}}(g_{T,a})=N_{\text{crit}}(T)
+              \text{ (או מקביל), אז }
+              N_{D_{T,a}^{\text{ell}}}(\xi)=N_{\text{crit}}(T).
+            \]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="algo">
+      <h2>9) אלגוריתם תיאורטי: Nyquist-Counting + דגימה על הקו (מלבן/אליפסה)</h2>
+      <p class="mini muted">
+        זהו אלגוריתם “הנדסי־תיאורטי” (בלי חישובים בפועל) שמתאר איך עובדים:
+        1) סופרים אפסים בתחום באמצעות הקפות של \(\xi(\Gamma)\) סביב \(0\),
+        2) דוגמים את הקו הקריטי כדי לספור אפסים עליו,
+        3) משווים בסנדוויץ׳.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>A — בחר תחום וסגור לולאה \(\Gamma\)</b>
+            <span class="tag">Rect / Ellipse</span>
+          </div>
+          <ul class="mini">
+            <li><b>מלבן:</b> \(\Gamma_T\) סביב \(0\le\sigma\le 1, |t|\le T\).</li>
+            <li><b>אליפסה:</b> \(\Gamma_{T,a}\) עם פרמטריזציה \(s(\theta)\).</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>B — Nyquist plot: \(w=\xi(s)\) לאורך \(\Gamma\)</b>
+            <span class="tag">Wind around 0</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              N_D(\xi)=\mathrm{Wind}(\xi(\Gamma),0)
+              =\frac{1}{2\pi}\Delta_{\Gamma}\arg \xi(s).
+            \]
+          </div>
+          <ul class="mini">
+            <li>מדגמים את \(\Gamma\) בנקודות \(s_k\), מחשבים \(w_k=\xi(s_k)\), ועושים <span class="mono">unwrap</span> לזוויות \(\arg(w_k)\).</li>
+            <li>אם \(|w_k|\) קטן, מגדילים צפיפות דגימה אדפטיבית כדי לא לפספס קפיצות בזווית.</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>C — דגימה על הקו הקריטי: \(\Xi(t)\)</b>
+            <span class="tag">Frequency line</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              \Xi(t)=\xi\!\left(\tfrac12+it\right),\quad t\in[-T,T].
+            \]
+          </div>
+          <ul class="mini">
+            <li>שינויי סימן של \(\Xi(t)\) בין דגימות ⇒ קיום אפס (ערך־ביניים).</li>
+            <li>כדי לא לפספס אפסים בלי שינוי סימן, מוסיפים בדיקות סביב ערכים קטנים של \(|\Xi(t)|\) ומפצלים מקומית.</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>D — “סנדוויץ׳” מסכם</b>
+            <span class="tag">Locking</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              N_{\text{crit}}(T)\le N_D(\xi)
+              \quad\text{(תמיד)}
+              \qquad\text{ויש לשאוף ל-}\qquad
+              N_{\text{crit}}(T)\ge N_D(\xi).
+            \]
+            \[
+              \Rightarrow\quad N_{\text{crit}}(T)=N_D(\xi)\ \ \forall T
+              \quad\Longrightarrow\quad
+              \text{כל האפסים עד }T\text{ על }\Re(s)=\tfrac12.
+            \]
+          </div>
+        </div>
+      </div>
+
+      <div class="warnbox">
+        <b>שקיפות:</b> המסמך בונה את המסגרת (Nyquist/Argument + רושה + סנדוויץ׳) באופן מדויק.
+        כדי להפוך זאת להוכחת RH צריך עוד “לב אנליטי” שמספק אומדנים חזקים/אחידים על \(\xi\) או על פירוק \(\xi=g+h\).
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>📌 מסמך HTML אקדמי־יישומי • KaTeX פעיל • כולל: Nyquist/Sandwich + Rouché • מלבן + אליפסה</div>
+      <div class="muted">אם תרצה, אפשר להוסיף תרשימים אינטראקטיביים (Nyquist-plot סכמטי + דגימת \(\Xi(t)\)) בלי לפגוע בתוכן המתמטי.</div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

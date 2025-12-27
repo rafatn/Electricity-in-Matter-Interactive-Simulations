@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nyquist + סנדוויץ׳ + רושה — וגם חיבור לתקשורת ספרתית (QAM/PSK/AM) ומעבר ים↔יבשת</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.62);
+      --solid:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --accent2:#06b6d4;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a13; --bg1:#0b1022; --bg2:#071a1f;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --solid:#0b1220;
+        --text:#e5e7eb;
+        --muted:#a8b3cf;
+        --line:rgba(148,163,184,.22);
+        --shadow:0 18px 50px rgba(0,0,0,.50);
+        --accent:#8b5cf6;
+        --accent2:#22d3ee;
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 10% 10%, var(--bg2), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1180px; margin:0 auto; padding:24px 18px 80px;}
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(99,102,241,.16), rgba(34,211,238,.12));
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      padding:22px 20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 240px at 20% 0%, rgba(99,102,241,.30), transparent 60%),
+        radial-gradient(600px 260px at 80% 0%, rgba(34,211,238,.22), transparent 65%);
+      pointer-events:none;
+    }
+    .hero > *{position:relative}
+    h1{
+      margin:0 0 10px;
+      font-size:1.6rem;
+      line-height:1.25;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:1.0rem;
+      max-width:85ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      padding:16px;
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 10px; font-size:1.15rem;}
+    .card h3{margin:14px 0 8px; font-size:1.0rem;}
+    .muted{color:var(--muted)}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0;}
+    .pill{
+      font-size:.88rem;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.25);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      backdrop-filter: blur(8px);
+    }
+    @media (prefers-color-scheme: dark){
+      .pill{background:rgba(15,23,42,.32);}
+    }
+    .dot{width:9px; height:9px; border-radius:50%;}
+    .dot.acc{background:var(--accent)}
+    .dot.cya{background:var(--accent2)}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    .kbox{
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:var(--card2);
+      overflow:auto;
+    }
+    .kbox .katex-display{margin:.4rem 0}
+    .note{
+      border-right:4px solid var(--accent2);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(34,211,238,.10);
+      margin:10px 0;
+    }
+    .warnbox{
+      border-right:4px solid var(--warn);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(245,158,11,.10);
+      margin:10px 0;
+    }
+    .okbox{
+      border-right:4px solid var(--ok);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(34,197,94,.10);
+      margin:10px 0;
+    }
+
+    .steps{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+    .step{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.20);
+      padding:12px;
+    }
+    @media (prefers-color-scheme: dark){
+      .step{background:rgba(15,23,42,.28);}
+    }
+    .stephead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:6px;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:.82rem;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.16);
+      white-space:nowrap;
+    }
+    @media (prefers-color-scheme: dark){
+      .tag{background:rgba(15,23,42,.32);}
+    }
+    .hr{height:1px; background:var(--line); margin:14px 0;}
+    ul{margin:8px 0 0 0; padding:0 18px 0 0}
+    li{margin:6px 0; line-height:1.7}
+    .mono{font-family:var(--mono)}
+    .mini{font-size:.92rem; line-height:1.75;}
+    .toc{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+    .toc a{
+      text-decoration:none;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.18);
+    }
+    @media (prefers-color-scheme: dark){
+      .toc a{background:rgba(15,23,42,.28);}
+    }
+
+    /* ===== Interactive comms ===== */
+    .commsGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      align-items:start;
+      margin-top:10px;
+    }
+    @media (max-width: 980px){
+      .commsGrid{grid-template-columns:1fr}
+    }
+    .panel{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.18);
+      padding:12px;
+    }
+    @media (prefers-color-scheme: dark){
+      .panel{background:rgba(15,23,42,.28);}
+    }
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px 12px;
+      margin-top:8px;
+    }
+    @media (max-width: 600px){
+      .controls{grid-template-columns:1fr}
+    }
+    label{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+    select, input[type="range"]{
+      width:100%;
+    }
+    .val{
+      font-family:var(--mono);
+      color:var(--text);
+      font-size:.86rem;
+      opacity:.9;
+    }
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.22);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      color:var(--text);
+      font-size:.9rem;
+    }
+    @media (prefers-color-scheme: dark){
+      .btn{background:rgba(15,23,42,.32);}
+    }
+    .btn[aria-pressed="true"]{
+      border-color: rgba(99,102,241,.55);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+    }
+    canvas{
+      width:100%;
+      height:auto;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.15);
+      display:block;
+    }
+    @media (prefers-color-scheme: dark){
+      canvas{background: rgba(15,23,42,.22);}
+    }
+    .statline{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top:10px;
+    }
+    .stat{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px 10px;
+      background:rgba(255,255,255,.16);
+      font-size:.9rem;
+    }
+    @media (prefers-color-scheme: dark){
+      .stat{background:rgba(15,23,42,.28);}
+    }
+    .footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Nyquist + סנדוויץ׳ + רושה — וגם חיבור לתקשורת ספרתית (QAM/PSK/AM) ומעבר ים↔יבשת</h1>
+      <p class="sub">
+        כאן יש שתי שכבות: (1) המסגרת האנליטית: \(\xi(s)\), עקרון הארגומנט, Nyquist, סנדוויץ׳, רושה.
+        (2) שכבת ההנדסה: “מיפוי בעיגולים/טבעות” בתקשורת ספרתית, אפנון אמפליטודה/פאזה, עיוות ערוץ (ים↔יבשת),
+        והקבלה טופולוגית: <span class="mono">מספר הקפות סביב נקודה</span> כמידע דיסקרטי.
+      </p>
+
+      <div class="toc">
+        <a href="#defs">הגדרות בסיס</a>
+        <a href="#comms">חיבור לתקשורת ספרתית + הדגמה</a>
+        <a href="#nyq">אפשרות 1: Nyquist / סנדוויץ׳</a>
+        <a href="#nyq-rect">Nyquist — מלבן</a>
+        <a href="#nyq-ell">Nyquist — אליפסה</a>
+        <a href="#rouche">אפשרות 2: רושה</a>
+        <a href="#rouche-rect">רושה — מלבן</a>
+        <a href="#rouche-ell">רושה — אליפסה</a>
+        <a href="#algo">אלגוריתם (תיאורטי) להקפות + דגימה</a>
+      </div>
+
+      <div class="pillrow">
+        <span class="pill"><span class="dot acc"></span> \(\xi(s)\) שלמה</span>
+        <span class="pill"><span class="dot cya"></span> Nyquist: \(\mathrm{Wind}(\xi(\Gamma),0)\)</span>
+        <span class="pill"><span class="dot ok"></span> סנדוויץ׳: ספירה מהגבול מול הקו</span>
+        <span class="pill"><span class="dot warn"></span> רושה: \(|h|<|g|\) על הגבול</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="defs">
+        <h2>1) הגדרות בסיס</h2>
+        <p class="mini muted">
+          עובדים עם \(\xi(s)\) (ללא קטבים) כדי שנייקוויסט/עקרון הארגומנט יתייחסו ישירות למספר האפסים.
+        </p>
+
+        <div class="kbox" data-katex>
+          \[
+            \xi(s)=\tfrac12\,s(s-1)\,\pi^{-s/2}\Gamma\!\left(\frac{s}{2}\right)\zeta(s),
+            \qquad \xi \text{ שלמה.}
+          \]
+          \[
+            \xi(s)=\xi(1-s) \quad\text{(סימטריה סביב }\Re(s)=\tfrac12\text{).}
+          \]
+          \[
+            L=\left\{\tfrac12+it:\ t\in\mathbb R\right\},\qquad
+            \Xi(t)=\xi\!\left(\tfrac12+it\right).
+          \]
+        </div>
+
+        <div class="note mini">
+          <b>מישור תדר:</b> בקרה/תקשורת רגילות משתמשות ב-\(s=i\omega\). כאן “הקו הבעייתי” הוא
+          \(s=\tfrac12+i\omega\). לכן \(\omega=t\) משחק את תפקיד התדר.
+        </div>
+
+        <div class="warnbox mini">
+          <b>דגש:</b> אין “עקום סגור יחיד” לכל האפסים (כי \(|t|\to\infty\)). לכן עובדים עם תחומים \(D_T\) לפי גובה \(T\).
+        </div>
+      </section>
+
+      <section class="card" id="nyq">
+        <h2>2) אפשרות 1 — Nyquist / Argument Sandwich</h2>
+        <p class="mini muted">
+          Nyquist הוא ניסוח גאומטרי של עקרון הארגומנט: מספר ההקפות של \(\xi(\Gamma)\) סביב \(0\) שווה למספר האפסים של \(\xi\) בתוך \(\Gamma\).
+        </p>
+
+        <div class="kbox" data-katex>
+          \[
+            \text{אם } \xi(s)\neq 0 \text{ על } \Gamma=\partial D,
+            \quad
+            N_D(\xi)=\frac{1}{2\pi}\Delta_{\Gamma}\arg \xi(s)
+            =\frac{1}{2\pi i}\oint_{\Gamma}\frac{\xi'(s)}{\xi(s)}\,ds
+            =\mathrm{Wind}(\xi(\Gamma),0).
+          \]
+        </div>
+
+        <div class="okbox mini">
+          <b>סנדוויץ׳ בספירה:</b>
+          תמיד \(N_{\text{crit}}(T)\le N_D(\xi)\). אם משיגים גם \(N_{\text{crit}}(T)\ge N_D(\xi)\) לכל \(T\),
+          מתקבל שוויון ⇒ “כל האפסים עד \(T\)” על הקו הקריטי.
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== NEW SECTION: Comms bridge + interactive demo ===================== -->
+    <section class="card" id="comms">
+      <h2>3) חיבור לתקשורת ספרתית: מיפוי בעיגולים/טבעות, AM/QAM/PSK, וים↔יבשת כ“ערוץ”</h2>
+
+      <div class="kbox" data-katex>
+        \[
+          \textbf{א. קונסטלציה (מיפוי ספרתי):}\quad x\in\mathbb C,\qquad x=I+iQ.
+        \]
+        \[
+          \textbf{PSK:}\ \ |x|=R \ (\text{עיגול אחד}),\qquad
+          \textbf{QAM/APSK:}\ \ x \text{ על רשת/טבעות מרובות } |x|.
+        \]
+        \[
+          \textbf{ערוץ:}\quad y=h\,x+n,\qquad h=|h|e^{i\theta}.
+        \]
+        \[
+          \textbf{AM/מעטפת:}\quad x(t)=A(t)e^{i\phi(t)},\qquad A(t)=|x(t)|.
+        \]
+        \[
+          \textbf{Nyquist (טופולוגיה):}\quad N=\mathrm{Wind}(\xi(\Gamma),0)=\frac{1}{2\pi}\Delta_\Gamma \arg \xi(s).
+        \]
+      </div>
+
+      <div class="note mini">
+        <b>הקבלה מרכזית:</b>
+        כמו שמודולטור ממפה ביטים לנקודה במישור \(I/Q\), כאן המיפוי הוא
+        \(\Gamma \subset \mathbb C_s \mapsto w=\xi(s)\subset \mathbb C_w\).
+        התוצאה הדיסקרטית היא מספר שלם \(\mathrm{Wind}(w,0)\) — ממש “החלטה ספרתית” מסוג חדש.
+      </div>
+
+      <div class="okbox mini">
+        <b>רושה כ־Noise Margin:</b> אם \(\xi=g+h\) ועל הגבול \(|h|<|g|\),
+        אז \(g(\Gamma)\) יכול “להתעוות” ל-\(\xi(\Gamma)\) בלי לחצות את \(0\) ⇒ מספר ההקפות נשמר.
+        זה אנלוגי לכך שרעש לא חוצה גבול החלטה בקונסטלציה.
+      </div>
+
+      <h3>3.1 הדגמה אינטראקטיבית: קונסטלציה + ערוץ (ים↔יבשת) + “לולאת Nyquist” והקפות</h3>
+      <p class="mini muted">
+        ההדגמה אינה מחשבת \(\xi(s)\) (זה כבד), אלא מדגימה את אותו עקרון טופולוגי:
+        לולאה במישור מרוכב שמוכפלת ב-\(h=|h|e^{i\theta}\) (“ערוץ”) — מספר ההקפות סביב 0 נשמר
+        כל עוד הלולאה לא עוברת דרך 0. זה בדיוק הרעיון של Nyquist/Rouché כ“מרווח רעש”.
+      </p>
+
+      <div class="commsGrid">
+        <div class="panel">
+          <h3 style="margin:0 0 8px;">שליטה</h3>
+          <div class="row">
+            <button class="btn" id="modeLand" aria-pressed="true">יבשת (ערוץ יציב)</button>
+            <button class="btn" id="modeSea" aria-pressed="false">ים (ערוץ קשה)</button>
+          </div>
+
+          <div class="controls">
+            <label>
+              סוג קונסטלציה
+              <select id="modSel">
+                <option value="psk8">8-PSK (מעגל)</option>
+                <option value="qam16">16-QAM (רשת)</option>
+                <option value="apsk16">16-APSK (טבעות)</option>
+              </select>
+            </label>
+
+            <label>
+              לולאת Nyquist (בסיס) — סוג
+              <select id="loopSel">
+                <option value="circle">מעגל סביב 0</option>
+                <option value="limacon">לימאסון (יכול להתקרב ל-0)</option>
+                <option value="offsetCircle">מעגל מוזז (יכול לשנות הקפה)</option>
+              </select>
+            </label>
+
+            <label>
+              |h| (רווח ערוץ)
+              <input id="gain" type="range" min="0.20" max="2.00" step="0.01" value="1.00">
+              <span class="val" id="gainV"></span>
+            </label>
+
+            <label>
+              θ (פאזה, מעלות)
+              <input id="phase" type="range" min="-180" max="180" step="1" value="0">
+              <span class="val" id="phaseV"></span>
+            </label>
+
+            <label>
+              רעש (רדיוס ענן סביב נקודות)
+              <input id="noise" type="range" min="0.00" max="0.80" step="0.01" value="0.10">
+              <span class="val" id="noiseV"></span>
+            </label>
+
+            <label>
+              “מרווח אפס” (סף אזהרה למעבר ליד 0)
+              <input id="margin" type="range" min="0.02" max="0.60" step="0.01" value="0.12">
+              <span class="val" id="marginV"></span>
+            </label>
+          </div>
+
+          <div class="statline" id="stats">
+            <div class="stat"><b>Wind</b>: <span class="mono" id="windN">—</span></div>
+            <div class="stat"><b>min |loop|</b>: <span class="mono" id="minR">—</span></div>
+            <div class="stat"><b>מצב</b>: <span class="mono" id="statusTxt">—</span></div>
+          </div>
+
+          <div class="warnbox mini" id="warnNear0" style="display:none;">
+            הלולאה התקרבה מאוד ל־\(0\). זה בדיוק “נקודת סכנה” שבה ההקפה יכולה להשתנות (בדומה לחציית גבול החלטה).
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin:0 0 8px;">מישור I/Q + לולאת Nyquist</h3>
+          <canvas id="cv" width="900" height="620" aria-label="constellation and nyquist loop"></canvas>
+          <p class="mini muted" style="margin:10px 0 0;">
+            קווים מקווקווים: צירים. נקודות: קונסטלציה. עננים: רעש. לולאה: “Nyquist plot”.
+            אם הלולאה לא חוצה את 0 — מספר ההקפות נשמר גם תחת עיוות (הכפלה ב-\(h\)).
+          </p>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>3.2 “ים↔יבשת” כשינוי תווך</h3>
+      <div class="kbox" data-katex>
+        \[
+          \text{יבשת: } h \text{ יציב (מעט רעש/סחיפה),}\qquad
+          \text{ים: } h \text{ משתנה יותר (fading/פאזה/רעש).}
+        \]
+        \[
+          \text{כל עוד } 0\notin \xi(\Gamma)\ \ (\text{או } \min_{s\in\Gamma}|\xi(s)|>\text{Margin}),
+          \ \ \mathrm{Wind}(\xi(\Gamma),0)\ \text{יציב}.
+        \]
+      </div>
+
+      <div class="note mini">
+        זו בדיוק האנלוגיה: קונסטלציה יכולה להסתובב/להימתח בערוץ, אך כל עוד לא חוצה גבול החלטה — הדקוד נשאר נכון.
+        אצלנו: הלולאה יכולה להתעוות, אך כל עוד לא עוברת דרך \(0\) — מספר ההקפות (ולכן ספירת האפסים) נשמר.
+      </div>
+    </section>
+    <!-- ===================== END NEW SECTION ===================== -->
+
+    <section class="card" id="nyq-rect">
+      <h2>4) Nyquist / Sandwich — מימוש במלבן \(\Gamma_T\)</h2>
+
+      <div class="kbox" data-katex>
+        \[
+          D_T^{\text{rect}}=\{s=\sigma+it:\ 0\le\sigma\le 1,\ -T\le t\le T\},\qquad
+          \Gamma_T=\partial D_T^{\text{rect}}.
+        \]
+        \[
+          N_{\text{rect}}(T)=\mathrm{Wind}(\xi(\Gamma_T),0)=\frac{1}{2\pi i}\oint_{\Gamma_T}\frac{\xi'(s)}{\xi(s)}\,ds.
+        \]
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R1 — ספירה מהגבול (Nyquist)</b>
+            <span class="tag">Goal: \(N_{\text{rect}}(T)\)</span>
+          </div>
+          <ul class="mini">
+            <li>מציירים \(w=\xi(s)\) כש-\(s\) הולך סביב \(\Gamma_T\), וסופרים הקפות סביב \(0\).</li>
+            <li>מכיוון של-\(\xi\) אין קטבים: מספר ההקפות = מספר האפסים בפנים.</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R2 — דגימה על הקו הקריטי</b>
+            <span class="tag">Goal: \(N_{\text{crit}}(T)\)</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              \Xi(t)=\xi\!\left(\tfrac12+it\right),\qquad t\in[-T,T].
+            \]
+          </div>
+          <ul class="mini">
+            <li>שינויי סימן של \(\Xi(t)\) ⇒ קיום אפס (ערך־ביניים).</li>
+            <li>אפסים ממכפלתיות זוגית דורשים בדיקה נוספת סביב \(|\Xi(t)|\) קטן.</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <div class="stephead">
+            <b>שלב R3 — סנדוויץ׳: נעילת ההקפות לקו</b>
+            <span class="tag">Hard part</span>
+          </div>
+          <div class="kbox" data-katex>
+            \[
+              |\Delta \arg \xi|\ \text{על צלעות מסוימות נשלט ע״י}\ \int \left|\frac{\xi'}{\xi}\right||ds|.
+            \]
+          </div>
+          <p class="mini muted">
+            אם מראים שצלעות/קשתות רחוקות מ-0 במישור הערכים ועם “תקציב טיעון” קטן, אז ההקפות מוכרחות להגיע
+            מהתנהגות המרכז — כלומר מהאפסים על הקו הקריטי.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="nyq-ell">
+      <h2>5) Nyquist / Sandwich — מימוש באליפסה \(\Gamma_{T,a}\)</h2>
+
+      <div class="kbox" data-katex>
+        \[
+          D_{T,a}^{\text{ell}}=\left\{s:\left(\frac{\Re(s)-\tfrac12}{a}\right)^2+\left(\frac{\Im(s)}{T}\right)^2\le 1\right\},
+          \qquad \Gamma_{T,a}=\partial D_{T,a}^{\text{ell}}.
+        \]
+        \[
+          s(\theta)=\tfrac12+a\cos\theta+iT\sin\theta,\qquad \theta\in[0,2\pi].
+        \]
+        \[
+          N_{\text{ell}}(T,a)=\mathrm{Wind}(\xi(\Gamma_{T,a}),0)
+          =\frac{1}{2\pi}\Delta_{\theta\in[0,2\pi]}\arg \xi(s(\theta)).
+        \]
+      </div>
+
+      <div class="note mini">
+        באליפסה הגבול חלק (אין פינות), ולכן לעיתים קל יותר לבנות אומדנים אחידים על \(|\xi|\) ועל \(|\xi'/\xi|\).
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="rouche">
+        <h2>6) אפשרות 2 — משפט רושה (Rouché)</h2>
+        <div class="kbox" data-katex>
+          \[
+            \text{אם } f,g \text{ אנליטיות בתוך ועל } \Gamma=\partial D,
+            \text{ ו- } |f(s)-g(s)|<|g(s)| \ \forall s\in\Gamma,
+            \Rightarrow N_D(f)=N_D(g).
+          \]
+        </div>
+        <div class="note mini">
+          רושה הוא “Noise Margin” טופולוגי: המעבר מ-\(g(\Gamma)\) ל-\(f(\Gamma)\) לא חוצה את \(0\),
+          ולכן מספר ההקפות סביב \(0\) (ומספר האפסים בפנים) נשמר.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>7) תבנית רושה עבור \(\xi\)</h2>
+        <div class="kbox" data-katex>
+          \[
+            \xi(s)=g(s)+h(s),\qquad |h(s)|<|g(s)| \ \forall s\in\Gamma
+            \Rightarrow N_D(\xi)=N_D(g).
+          \]
+        </div>
+        <ul class="mini">
+          <li>אם \(\min_{\Gamma}|g|\ge m\) ו-\(\max_{\Gamma}|h|\le m/2\), אז \(|h|<|g|\) מיד.</li>
+          <li>כדי לנעול לקו הקריטי צריך לבחור \(g\) עם מבנה אפסים נשלט (אפסים על הקו בלבד/היעדר אפסים מחוץ לקו באזור נתון).</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" id="rouche-rect">
+      <h2>8) רושה — מימוש במלבן \(\Gamma_T\)</h2>
+      <div class="kbox" data-katex>
+        \[
+          \xi(s)=g_T(s)+h_T(s),\qquad |h_T(s)|<|g_T(s)|\ \forall s\in\Gamma_T
+          \Rightarrow N_{D_T^{\text{rect}}}(\xi)=N_{D_T^{\text{rect}}}(g_T).
+        \]
+      </div>
+      <div class="warnbox mini">
+        רושה דורש אי־שוויון נקודתי על כל הגבול — זה המקום שבו נדרשים אומדנים חזקים/אחידים.
+      </div>
+    </section>
+
+    <section class="card" id="rouche-ell">
+      <h2>9) רושה — מימוש באליפסה \(\Gamma_{T,a}\)</h2>
+      <div class="kbox" data-katex>
+        \[
+          \xi(s(\theta))=g_{T,a}(s(\theta))+h_{T,a}(s(\theta)),
+          \quad
+          |h_{T,a}(s(\theta))|<|g_{T,a}(s(\theta))|\ \forall\theta
+          \Rightarrow N_{D_{T,a}^{\text{ell}}}(\xi)=N_{D_{T,a}^{\text{ell}}}(g_{T,a}).
+        \]
+      </div>
+    </section>
+
+    <section class="card" id="algo">
+      <h2>10) אלגוריתם תיאורטי: Nyquist-Counting + דגימה על הקו</h2>
+      <div class="kbox" data-katex>
+        \[
+          N_D(\xi)=\mathrm{Wind}(\xi(\Gamma),0)=\frac{1}{2\pi}\Delta_{\Gamma}\arg\xi(s),
+          \qquad
+          \Xi(t)=\xi\!\left(\tfrac12+it\right).
+        \]
+      </div>
+      <ul class="mini">
+        <li><b>א.</b> סוגרים לולאה \(\Gamma\) (מלבן/אליפסה) וסופרים הקפות של \(\xi(\Gamma)\) סביב 0.</li>
+        <li><b>ב.</b> דוגמים את \(\Xi(t)\) על \([-T,T]\) כדי לקבל אפסים על הקו (שינויי סימן + בדיקות סביב ערכים קטנים).</li>
+        <li><b>ג.</b> “סנדוויץ׳”: תמיד \(N_{\text{crit}}(T)\le N_D(\xi)\); אם מוכיחים גם \(N_{\text{crit}}(T)\ge N_D(\xi)\) ⇒ שוויון ⇒ נעילה לקו.</li>
+      </ul>
+    </section>
+
+    <div class="footer">
+      <div>📌 HTML מעוצב + KaTeX • כולל חיבור לתקשורת ספרתית והדגמה אינטראקטיבית • מלבן + אליפסה</div>
+    </div>
+  </div>
+
+  <script>
+    // ====== KaTeX render ======
+    window.addEventListener("DOMContentLoaded", () => {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    });
+
+    // ====== Interactive comms demo ======
+    (function(){
+      const cv = document.getElementById("cv");
+      const ctx = cv.getContext("2d");
+
+      const modSel = document.getElementById("modSel");
+      const loopSel = document.getElementById("loopSel");
+      const gain = document.getElementById("gain");
+      const phase = document.getElementById("phase");
+      const noise = document.getElementById("noise");
+      const margin = document.getElementById("margin");
+
+      const gainV = document.getElementById("gainV");
+      const phaseV = document.getElementById("phaseV");
+      const noiseV = document.getElementById("noiseV");
+      const marginV = document.getElementById("marginV");
+
+      const windN = document.getElementById("windN");
+      const minR = document.getElementById("minR");
+      const statusTxt = document.getElementById("statusTxt");
+      const warnNear0 = document.getElementById("warnNear0");
+
+      const modeLand = document.getElementById("modeLand");
+      const modeSea  = document.getElementById("modeSea");
+
+      let channelMode = "land"; // land|sea
+      let seaJitter = 0;
+
+      function setMode(m){
+        channelMode = m;
+        modeLand.setAttribute("aria-pressed", m==="land");
+        modeSea.setAttribute("aria-pressed",  m==="sea");
+        if(m==="land"){
+          // calmer defaults
+          noise.value = Math.min(parseFloat(noise.value), 0.18).toFixed(2);
+        } else {
+          noise.value = Math.max(parseFloat(noise.value), 0.22).toFixed(2);
+        }
+        draw();
+      }
+      modeLand.addEventListener("click", ()=>setMode("land"));
+      modeSea.addEventListener("click", ()=>setMode("sea"));
+
+      function complex(re, im){ return {re, im}; }
+      function cMul(a,b){ return complex(a.re*b.re - a.im*b.im, a.re*b.im + a.im*b.re); }
+      function cAdd(a,b){ return complex(a.re+b.re, a.im+b.im); }
+      function cAbs(a){ return Math.hypot(a.re, a.im); }
+      function cArg(a){ return Math.atan2(a.im, a.re); }
+      function fromPolar(r, th){ return complex(r*Math.cos(th), r*Math.sin(th)); }
+
+      function getH(){
+        const g = parseFloat(gain.value);
+        let th = parseFloat(phase.value) * Math.PI/180;
+
+        // sea mode: add slow jitter (phase drift)
+        if(channelMode==="sea"){
+          seaJitter = (seaJitter*0.92) + (Math.random()*2-1)*0.06;
+          th += seaJitter;
+        } else {
+          seaJitter *= 0.75;
+        }
+        return fromPolar(g, th);
+      }
+
+      function constellation(type){
+        const pts = [];
+        if(type==="psk8"){
+          const R = 1.2;
+          for(let k=0;k<8;k++){
+            const th = (2*Math.PI*k)/8;
+            pts.push(fromPolar(R, th));
+          }
+        } else if(type==="qam16"){
+          // levels -3,-1,1,3 normalized
+          const levels = [-3,-1,1,3];
+          const s = 0.55;
+          for(const I of levels){
+            for(const Q of levels){
+              pts.push(complex(I*s, Q*s));
+            }
+          }
+        } else { // apsk16: 4 inner + 12 outer
+          const Rin = 0.75, Rout = 1.45;
+          for(let k=0;k<4;k++){
+            pts.push(fromPolar(Rin, (2*Math.PI*k)/4 + Math.PI/4));
+          }
+          for(let k=0;k<12;k++){
+            pts.push(fromPolar(Rout, (2*Math.PI*k)/12));
+          }
+        }
+        return pts;
+      }
+
+      function baseLoop(type, n=800){
+        const pts = [];
+        for(let i=0;i<=n;i++){
+          const t = (2*Math.PI*i)/n;
+          let w;
+          if(type==="circle"){
+            w = fromPolar(1.15, t);
+          } else if(type==="limacon"){
+            // r = a + b cos t ; can approach 0 depending on b
+            const a = 0.85, b = 0.55;
+            const r = a + b*Math.cos(t);
+            w = fromPolar(r, t);
+          } else { // offsetCircle
+            // circle shifted right: can change winding if shift big
+            const R = 0.95;
+            const center = complex(0.55, 0.0);
+            w = cAdd(center, fromPolar(R, t));
+          }
+          pts.push(w);
+        }
+        return pts;
+      }
+
+      function windingNumber(loop){
+        // compute winding around 0 using angle unwrapping
+        let total = 0;
+        let prev = cArg(loop[0]);
+        let minDist = cAbs(loop[0]);
+        for(let i=1;i<loop.length;i++){
+          const a = loop[i];
+          const ang = cArg(a);
+          let d = ang - prev;
+          // unwrap to (-pi, pi]
+          while(d <= -Math.PI) d += 2*Math.PI;
+          while(d > Math.PI) d -= 2*Math.PI;
+          total += d;
+          prev = ang;
+          const r = cAbs(a);
+          if(r < minDist) minDist = r;
+        }
+        return {wind: Math.round(total/(2*Math.PI)), total, minDist};
+      }
+
+      function nice(n, d=2){ return Number(n).toFixed(d); }
+
+      function resizeCanvasToCSS(){
+        // keep drawing in intrinsic resolution but match device ratio for crispness
+        const rect = cv.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const w = Math.round(rect.width * dpr);
+        const h = Math.round((rect.width * 0.68) * dpr);
+        if(cv.width !== w || cv.height !== h){
+          cv.width = w;
+          cv.height = h;
+        }
+      }
+
+      function drawGrid(worldToPx){
+        const {W,H} = worldToPx.meta;
+        ctx.save();
+        ctx.globalAlpha = 0.9;
+
+        // axes
+        ctx.setLineDash([6,6]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line');
+        // x-axis
+        ctx.beginPath();
+        ctx.moveTo(0, worldToPx(0,0).y);
+        ctx.lineTo(W, worldToPx(0,0).y);
+        ctx.stroke();
+        // y-axis
+        ctx.beginPath();
+        ctx.moveTo(worldToPx(0,0).x, 0);
+        ctx.lineTo(worldToPx(0,0).x, H);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      function draw(){
+        if(!cv) return;
+        resizeCanvasToCSS();
+
+        const W = cv.width, H = cv.height;
+        ctx.clearRect(0,0,W,H);
+
+        // update labels
+        gainV.textContent = nice(gain.value,2);
+        phaseV.textContent = `${phase.value}°`;
+        noiseV.textContent = nice(noise.value,2);
+        marginV.textContent = nice(margin.value,2);
+
+        const pts = constellation(modSel.value);
+        const base = baseLoop(loopSel.value);
+        const h = getH();
+
+        // distort points and loop by channel h
+        const rx = pts.map(p => cMul(h, p));
+        const loop = base.map(p => cMul(h, p));
+
+        const wn = windingNumber(loop);
+        const eps = parseFloat(margin.value);
+        const near0 = wn.minDist < eps;
+
+        windN.textContent = String(wn.wind);
+        minR.textContent = nice(wn.minDist, 3);
+
+        if(near0){
+          statusTxt.textContent = "סכנה: קרוב ל-0";
+          warnNear0.style.display = "block";
+        } else {
+          statusTxt.textContent = "יציב: לא חוצה 0";
+          warnNear0.style.display = "none";
+        }
+
+        // choose world scale
+        // compute bounds from points+loop
+        const all = rx.concat(loop);
+        let maxR = 1.0;
+        for(const z of all){
+          maxR = Math.max(maxR, cAbs(z));
+        }
+        maxR = Math.max(maxR, 1.6);
+        const pad = maxR * 0.25;
+        const span = (maxR + pad);
+
+        const worldToPx = (x,y)=>{
+          const sx = (x/ span) * (W*0.44) + W*0.5;
+          const sy = (-(y)/ span) * (H*0.44) + H*0.52;
+          return {x:sx, y:sy, meta:{W,H}};
+        };
+        worldToPx.meta = {W,H};
+
+        drawGrid(worldToPx);
+
+        // origin
+        const origin = worldToPx(0,0);
+        ctx.save();
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text');
+        ctx.globalAlpha = 0.95;
+        ctx.beginPath();
+        ctx.arc(origin.x, origin.y, 3.5, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+
+        // draw "margin" circle around 0
+        ctx.save();
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--warn');
+        ctx.globalAlpha = 0.5;
+        ctx.setLineDash([4,6]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        const mpx = worldToPx(eps,0).x - origin.x;
+        ctx.arc(origin.x, origin.y, Math.abs(mpx), 0, Math.PI*2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        // draw loop
+        ctx.save();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent2');
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        for(let i=0;i<loop.length;i++){
+          const p = worldToPx(loop[i].re, loop[i].im);
+          if(i===0) ctx.moveTo(p.x,p.y);
+          else ctx.lineTo(p.x,p.y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // arrow on loop direction
+        (function(){
+          const idx = Math.floor(loop.length*0.22);
+          const p0 = worldToPx(loop[idx].re, loop[idx].im);
+          const p1 = worldToPx(loop[idx+5].re, loop[idx+5].im);
+          const ang = Math.atan2(p1.y-p0.y, p1.x-p0.x);
+          ctx.save();
+          ctx.translate(p1.x, p1.y);
+          ctx.rotate(ang);
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent2');
+          ctx.globalAlpha = 0.9;
+          ctx.beginPath();
+          ctx.moveTo(0,0);
+          ctx.lineTo(-10, 5);
+          ctx.lineTo(-10, -5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        })();
+
+        // draw constellation points and noise circles
+        const noiseR = parseFloat(noise.value) * (channelMode==="sea" ? 1.25 : 1.0);
+        const lineCol = getComputedStyle(document.documentElement).getPropertyValue('--line');
+        const accCol  = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+        const okCol   = getComputedStyle(document.documentElement).getPropertyValue('--ok');
+
+        for(const p of rx){
+          const q = worldToPx(p.re, p.im);
+
+          // noise circle
+          ctx.save();
+          ctx.strokeStyle = lineCol;
+          ctx.globalAlpha = 0.65;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          const rr = Math.abs(worldToPx(noiseR,0).x - origin.x);
+          ctx.arc(q.x, q.y, rr, 0, Math.PI*2);
+          ctx.stroke();
+          ctx.restore();
+
+          // point
+          ctx.save();
+          ctx.fillStyle = accCol;
+          ctx.globalAlpha = 0.92;
+          ctx.beginPath();
+          ctx.arc(q.x, q.y, 4.3, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // annotate
+        ctx.save();
+        ctx.fillStyle = okCol;
+        ctx.globalAlpha = 0.95;
+        ctx.font = `${Math.round(W*0.020)}px ${getComputedStyle(document.body).fontFamily}`;
+        ctx.fillText(`Wind(loop,0) = ${wn.wind}`, 18, 32);
+        ctx.restore();
+
+        // hint: if offset circle, show how winding changes when crossing 0
+        if(loopSel.value==="offsetCircle"){
+          ctx.save();
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+          ctx.globalAlpha = 0.95;
+          ctx.font = `${Math.round(W*0.016)}px ${getComputedStyle(document.body).fontFamily}`;
+          ctx.fillText(`טיפ: ב"מעגל מוזז" שינוי רווח/פאזה יכול לקרב את הלולאה ל-0 ולשנות Wind`, 18, 56);
+          ctx.restore();
+        }
+      }
+
+      // listeners
+      [modSel, loopSel, gain, phase, noise, margin].forEach(el => el.addEventListener("input", draw));
+      window.addEventListener("resize", draw);
+
+      // init values and first draw
+      function initVals(){
+        gainV.textContent = nice(gain.value,2);
+        phaseV.textContent = `${phase.value}°`;
+        noiseV.textContent = nice(noise.value,2);
+        marginV.textContent = nice(margin.value,2);
+      }
+      initVals();
+      draw();
+    })();
+  </script>
+</body>
+</html>
