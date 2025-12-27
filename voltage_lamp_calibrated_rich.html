@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מנורה לפי רמות מתח • עשיר + כיול LUT אמיתי</title>
+  <meta name="color-scheme" content="light dark" />
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff;
+      --card:rgba(255,255,255,.84); --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow:0 18px 55px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0b1224;
+        --card:rgba(17,24,39,.80); --card2:rgba(17,24,39,.60);
+        --text:#e5e7eb; --muted:#9ca3af;
+        --line:rgba(148,163,184,.18);
+        --shadow:0 18px 60px rgba(0,0,0,.40);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 14% 10%, rgba(99,102,241,.20), transparent 55%),
+        radial-gradient(900px 600px at 85% 18%, rgba(14,165,233,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    header{max-width:1200px; margin:0 auto; padding:26px 16px 8px;}
+    .topbar{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+    .brand{display:flex; gap:12px; align-items:center; min-width:320px;}
+    .logo{
+      width:46px;height:46px;border-radius:16px;border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      background: conic-gradient(from 30deg, #ef4444, #f59e0b, #22c55e, #3b82f6, #a855f7, #ef4444);
+    }
+    h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .subtitle{margin-top:4px;color:var(--muted);font-size:13px;line-height:1.6;max-width:880px}
+
+    main{
+      max-width:1200px; margin:0 auto; padding:12px 16px 36px;
+      display:grid; grid-template-columns: 440px 1fr; gap:16px;
+    }
+    @media (max-width: 980px){ main{grid-template-columns:1fr} }
+
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+      box-shadow:var(--shadow); padding:14px; overflow:hidden;
+    }
+    .card h2{margin:0 0 10px;font-size:16px}
+    .card h3{margin:12px 0 8px;font-size:14px}
+    p,li{color:var(--muted);font-size:13px;line-height:1.75}
+    ul{margin:8px 0 0 20px}
+
+    .grid{display:grid; gap:10px}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .three{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    @media (max-width:520px){ .two,.three{grid-template-columns:1fr} }
+
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+    select, input[type="number"], textarea{
+      width:100%; padding:10px 10px; border-radius:14px;
+      border:1px solid var(--line); background:rgba(255,255,255,.70);
+      color:var(--text); outline:none;
+      font-family:var(--sans);
+    }
+    textarea{min-height:86px; font-family:var(--mono); font-size:12px; line-height:1.45}
+    input[type="range"]{width:100%}
+    @media (prefers-color-scheme: dark){
+      select, input[type="number"], textarea{background:rgba(15,23,42,.55)}
+    }
+
+    .btnRow{display:flex; gap:8px; flex-wrap:wrap}
+    button{
+      cursor:pointer; border:1px solid var(--line); background:var(--card2);
+      color:var(--text); padding:10px 12px; border-radius:14px; font-size:12px;
+      transition:.15s ease;
+      position:relative; z-index:2;
+      pointer-events:auto;
+    }
+    button:hover{transform: translateY(-1px)}
+    .btnAccent{background:rgba(99,102,241,.14); border-color: rgba(99,102,241,.45);}
+
+    .kv{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      padding:9px 10px; border-radius:14px; border:1px solid var(--line);
+      background:var(--card2); font-size:12px;
+    }
+    .kv span{color:var(--muted)}
+    .kv b{font-family:var(--mono)}
+
+    .previewWrap{display:flex; gap:12px; align-items:stretch; flex-wrap:wrap; margin-top:8px;}
+    .lamp{
+      flex: 1 1 260px; min-height:150px;
+      border-radius:18px; border:1px solid var(--line);
+      background:#111; position:relative; overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .lamp .glow{position:absolute; inset:-40%; filter: blur(28px); opacity:.55; pointer-events:none;}
+    .lamp .screen{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.15));
+      mix-blend-mode: overlay; pointer-events:none;
+    }
+    .lamp .label{
+      position:absolute; left:12px; bottom:10px;
+      font-size:12px; color:rgba(255,255,255,.88);
+      background: rgba(0,0,0,.28);
+      padding:6px 9px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      pointer-events:none;
+    }
+    .meta{flex:1 1 240px; display:grid; gap:8px; align-content:start; min-width:240px;}
+
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+    .tab{
+      cursor:pointer; user-select:none; padding:8px 10px; border-radius:999px;
+      border:1px solid var(--line); background:var(--card2);
+      font-size:12px; color:var(--muted); transition:.15s ease;
+    }
+    .tab.active{background:rgba(99,102,241,.14); border-color:rgba(99,102,241,.45); color:var(--text);}
+    canvas{
+      width:100%; height:280px; border-radius:16px; border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+    }
+    @media (prefers-color-scheme: dark){ canvas{background: rgba(15,23,42,.45);} }
+
+    .note{
+      border-left:3px solid rgba(99,102,241,.60);
+      background:rgba(99,102,241,.08);
+      border-radius:14px; padding:10px 12px;
+      color:var(--muted); font-size:13px; line-height:1.7;
+    }
+    .note.warn{border-left-color: rgba(245,158,11,.70); background: rgba(245,158,11,.10);}
+    .mini{display:flex; justify-content:space-between; gap:10px; font-size:12px; color:var(--muted)}
+    .mini b{color:var(--text); font-family:var(--mono)}
+    .hr{height:1px; background:var(--line); margin:10px 0;}
+
+    .status{
+      margin-top:10px; padding:10px 12px; border-radius:14px;
+      border:1px dashed var(--line);
+      background: rgba(34,197,94,.06);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+    .status.err{background: rgba(239,68,68,.08); border-style:solid;}
+    .status b{color:var(--text)}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>מנורה לפי רמות מתח — עשיר + כיול LUT אמיתי</h1>
+        <div class="subtitle">
+          “טלוויזיה לא לצפייה”: מתח/בקרה → עוצמת אור/צבע. כולל מודלים LCD/CRT/Plasma,
+          ו-LUT כיול אמיתי לכל ערוץ (Command→Measured Luminance).
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT -->
+  <section class="card">
+    <h2>בקרה וקלטים</h2>
+
+    <div class="grid">
+      <div class="two">
+        <div>
+          <label>טכנולוגיה (מודל בסיס)</label>
+          <select id="tech">
+            <option value="lcd">LCD (מומלץ לזול ובטוח)</option>
+            <option value="crt">CRT (מודל עיוני)</option>
+            <option value="plasma">Plasma (מודל עיוני)</option>
+          </select>
+        </div>
+        <div>
+          <label>מצב שליטה</label>
+          <select id="mode">
+            <option value="single">מתח אחד u (0–1) → קשת צבע</option>
+            <option value="rgb">3 מתחים (R,G,B) (0–1)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label>Gamma (רק לצורך תצוגה)</label>
+          <input id="gamma" type="range" min="1.2" max="3.0" step="0.05" value="2.2" />
+          <div class="mini"><span>γ</span><b id="gammaVal">2.20</b></div>
+        </div>
+        <div>
+          <label>Brightness (עוצמה כללית)</label>
+          <input id="brightness" type="range" min="0" max="1" step="0.01" value="0.92" />
+          <div class="mini"><span>B</span><b id="briVal">0.92</b></div>
+        </div>
+      </div>
+
+      <div id="singleBox">
+        <label>u (0–1)</label>
+        <input id="u" type="range" min="0" max="1" step="0.001" value="0.35" />
+        <div class="mini"><span>u</span><b id="uVal">0.350</b></div>
+      </div>
+
+      <div id="rgbBox" style="display:none">
+        <div class="three">
+          <div>
+            <label>R</label>
+            <input id="r" type="range" min="0" max="1" step="0.001" value="0.70" />
+            <div class="mini"><span>R</span><b id="rVal">0.700</b></div>
+          </div>
+          <div>
+            <label>G</label>
+            <input id="g" type="range" min="0" max="1" step="0.001" value="0.35" />
+            <div class="mini"><span>G</span><b id="gVal">0.350</b></div>
+          </div>
+          <div>
+            <label>B</label>
+            <input id="b" type="range" min="0" max="1" step="0.001" value="0.20" />
+            <div class="mini"><span>B</span><b id="bVal">0.200</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>כיול אמיתי (LUT) — Command → Measured Luminance</h3>
+      <p>
+        כאן אתה מזין נקודות מדידה לכל ערוץ. כל שורה היא:
+        <span class="mono">command,luminance</span> כאשר שניהם בין 0–1.
+        המערכת עושה אינטרפולציה ליניארית ביניהן.
+      </p>
+
+      <div class="two">
+        <div>
+          <label>מצב כיול</label>
+          <select id="calMode">
+            <option value="none">ללא LUT (מודל בלבד)</option>
+            <option value="lut">LUT אמיתי (מדידות)</option>
+          </select>
+        </div>
+        <div>
+          <label>מה משמש כ-Luminance?</label>
+          <select id="lumMeaning">
+            <option value="relative">יחסי (נורמליזציה 0–1)</option>
+            <option value="absolute">מוחלט (ימופה ל-0–1 פנימית)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="three">
+        <div>
+          <label>נקודות LUT — R</label>
+          <textarea id="lutR">0,0
+0.10,0.01
+0.25,0.06
+0.50,0.20
+0.75,0.55
+1.00,1.00</textarea>
+        </div>
+        <div>
+          <label>נקודות LUT — G</label>
+          <textarea id="lutG">0,0
+0.10,0.02
+0.25,0.08
+0.50,0.26
+0.75,0.60
+1.00,1.00</textarea>
+        </div>
+        <div>
+          <label>נקודות LUT — B</label>
+          <textarea id="lutB">0,0
+0.10,0.01
+0.25,0.05
+0.50,0.18
+0.75,0.50
+1.00,1.00</textarea>
+        </div>
+      </div>
+
+      <div class="btnRow">
+        <button class="btnAccent" id="applyLUT">החל כיול LUT</button>
+        <button id="loadLinear">LUT ליניארי</button>
+        <button id="exportJSON">ייצוא JSON</button>
+        <button id="resetAll">איפוס</button>
+      </div>
+
+      <div class="note warn">
+        ⚠️ אם הכפתורים לא עובדים אצלך: פתח DevTools → Console. הדף הזה מציג גם “סטטוס” שגיאות למטה.
+      </div>
+
+      <div id="status" class="status">סטטוס: <b>מוכן</b></div>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <section class="card">
+    <h2>תוצאה + גרפים</h2>
+
+    <div class="previewWrap">
+      <div class="lamp" id="lamp">
+        <div class="glow" id="glow"></div>
+        <div class="screen"></div>
+        <div class="label" id="lampLabel">VOLTS → COLOR</div>
+      </div>
+
+      <div class="meta">
+        <div class="kv"><span>RGB (אחרי Gamma)</span><b id="rgbOut">—</b></div>
+        <div class="kv"><span>Hex</span><b id="hexOut">—</b></div>
+        <div class="kv"><span>L (אחרי מודל+כיול)</span><b id="Lout">—</b></div>
+        <div class="kv"><span>מודל / כיול</span><b id="modelOut">—</b></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="transfer">V→L (מודל+LUT)</div>
+      <div class="tab" data-tab="lut">גרף LUT (מדידות)</div>
+      <div class="tab" data-tab="gamma">Gamma</div>
+      <div class="tab" data-tab="sweep">סוויפ u (פס צבע)</div>
+    </div>
+
+    <div style="margin-top:10px">
+      <canvas id="plot" width="1200" height="560"></canvas>
+      <div class="mini" style="margin-top:8px">
+        <span class="muted">טיפ:</span>
+        <b class="mono">הפעל LUT</b>
+        <span class="muted">כדי לראות הבדל “אמיתי” בין ערך פקודה לבין luminance נמדד.</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (id)=>document.getElementById(id);
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const sigmoid = x => 1/(1+Math.exp(-x));
+
+  function setStatus(msg, isErr=false){
+    const s = $('status');
+    s.classList.toggle('err', !!isErr);
+    s.innerHTML = msg;
+  }
+
+  // HSV -> RGB
+  function hsvToRgb(h, s, v){
+    h = (h%1 + 1)%1;
+    const i = Math.floor(h*6);
+    const f = h*6 - i;
+    const p = v*(1-s);
+    const q = v*(1-f*s);
+    const t = v*(1-(1-f)*s);
+    let r,g,b;
+    switch(i%6){
+      case 0: r=v; g=t; b=p; break;
+      case 1: r=q; g=v; b=p; break;
+      case 2: r=p; g=v; b=t; break;
+      case 3: r=p; g=q; b=v; break;
+      case 4: r=t; g=p; b=v; break;
+      case 5: r=v; g=p; b=q; break;
+    }
+    return [r,g,b];
+  }
+
+  function rgbToHex(r,g,b){
+    const to255 = x => Math.round(clamp01(x)*255);
+    const hh = n => n.toString(16).padStart(2,'0');
+    return `#${hh(to255(r))}${hh(to255(g))}${hh(to255(b))}`.toUpperCase();
+  }
+
+  function applyGamma(L, gamma){
+    const g = Math.max(0.6, gamma);
+    return L.map(li => Math.pow(clamp01(li), 1/g));
+  }
+
+  // -------------------------
+  // Tech models
+  // -------------------------
+  function modelLCD(p){
+    const a = 9.0, V0 = 0.45;
+    const T = p.map(pi => 0.02 + 0.98*sigmoid(a*(pi - V0)));
+    const B = p.map(pi => 0.04 + 0.96*pi);
+    const L = [0,1,2].map(i => clamp01(B[i]*T[i]));
+    return {L, detail:'LCD בסיס: Lᵢ = Bᵢ·Tᵢ(Vᵢ)'};
+  }
+  function modelCRT(p){
+    const Vcut = 0.12, n = 2.2;
+    const eta = [1.00, 0.95, 1.05];
+    const I = p.map(pi => (pi<=Vcut)?0: Math.pow((pi-Vcut)/(1-Vcut), n));
+    let L = [0,1,2].map(i => clamp01(eta[i]*I[i]));
+    const m = Math.max(1e-9, ...L);
+    L = L.map(x => clamp01(x/m));
+    return {L, detail:'CRT בסיס: Iᵢ≈(V−Vcut)^n ואז Lᵢ≈ηᵢ·Iᵢ'};
+  }
+  function modelPlasma(p){
+    const Vignite = 0.18;
+    const eta = [1.0, 0.9, 1.05];
+    const Lraw = p.map((pi,i)=>{
+      if(pi < Vignite) return 0;
+      const duty = (pi - Vignite)/(1 - Vignite);
+      const discharge = Math.sqrt(duty);
+      return clamp01(eta[i]*discharge);
+    });
+    const m = Math.max(1e-9, ...Lraw);
+    const L = Lraw.map(x => clamp01(x/m));
+    return {L, detail:'Plasma בסיס: סף הצתה + duty'};
+  }
+  function Ftech(tech, p){
+    if(tech==='lcd') return modelLCD(p);
+    if(tech==='crt') return modelCRT(p);
+    return modelPlasma(p);
+  }
+
+  // -------------------------
+  // LUT parsing + interpolation
+  // -------------------------
+  function parseLUT(text){
+    const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const pts = [];
+    for(const ln of lines){
+      const m = ln.split(',').map(x=>x.trim());
+      if(m.length<2) continue;
+      const x = parseFloat(m[0]);
+      const y = parseFloat(m[1]);
+      if(!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      pts.push([x,y]);
+    }
+    // sort by x
+    pts.sort((a,b)=>a[0]-b[0]);
+    // clamp to [0..1] for command; y may be absolute or relative (we normalize later if asked)
+    return pts;
+  }
+
+  function normalizeY(pts){
+    if(pts.length===0) return pts;
+    let ymin = Infinity, ymax = -Infinity;
+    for(const [,y] of pts){ ymin = Math.min(ymin,y); ymax = Math.max(ymax,y); }
+    const denom = Math.max(1e-9, ymax - ymin);
+    return pts.map(([x,y])=>[clamp01(x), clamp01((y - ymin)/denom)]);
+  }
+
+  function interp1(pts, x){
+    // piecewise linear; assumes pts sorted by x
+    if(!pts || pts.length===0) return clamp01(x);
+    x = clamp01(x);
+    if(x <= pts[0][0]) return clamp01(pts[0][1]);
+    if(x >= pts[pts.length-1][0]) return clamp01(pts[pts.length-1][1]);
+    for(let i=0;i<pts.length-1;i++){
+      const [x0,y0] = pts[i];
+      const [x1,y1] = pts[i+1];
+      if(x >= x0 && x <= x1){
+        const t = (x - x0)/Math.max(1e-9, (x1 - x0));
+        return clamp01(y0 + (y1 - y0)*t);
+      }
+    }
+    return clamp01(pts[pts.length-1][1]);
+  }
+
+  const state = {
+    tech:'lcd',
+    mode:'single',
+    u:0.35,
+    p:[0.70,0.35,0.20],
+    gamma:2.2,
+    brightness:0.92,
+    calMode:'none',
+    lumMeaning:'relative',
+    tab:'transfer',
+    lutR: parseLUT($('lutR').value),
+    lutG: parseLUT($('lutG').value),
+    lutB: parseLUT($('lutB').value),
+  };
+
+  function mapSingleUtoP(u){
+    const h = clamp01(u);
+    const s = 0.92;
+    const v = 0.92;
+    return hsvToRgb(h,s,v);
+  }
+
+  function readUI(){
+    state.tech = $('tech').value;
+    state.mode = $('mode').value;
+    state.u = parseFloat($('u').value);
+    state.p = [parseFloat($('r').value), parseFloat($('g').value), parseFloat($('b').value)];
+    state.gamma = parseFloat($('gamma').value);
+    state.brightness = parseFloat($('brightness').value);
+    state.calMode = $('calMode').value;
+    state.lumMeaning = $('lumMeaning').value;
+  }
+
+  function writeUI(){
+    $('gammaVal').textContent = state.gamma.toFixed(2);
+    $('briVal').textContent = state.brightness.toFixed(2);
+    $('uVal').textContent = state.u.toFixed(3);
+    $('rVal').textContent = state.p[0].toFixed(3);
+    $('gVal').textContent = state.p[1].toFixed(3);
+    $('bVal').textContent = state.p[2].toFixed(3);
+
+    $('singleBox').style.display = (state.mode==='single')?'block':'none';
+    $('rgbBox').style.display = (state.mode==='rgb')?'block':'none';
+    $('lampLabel').textContent = (state.mode==='single') ? 'u → Hue → RGB' : 'RGB Direct';
+
+    // disable/enable LUT inputs
+    const on = (state.calMode==='lut');
+    ['lutR','lutG','lutB'].forEach(id => $(id).disabled = !on);
+    $('applyLUT').disabled = !on;
+  }
+
+  function getActiveLUT(){
+    let r = parseLUT($('lutR').value);
+    let g = parseLUT($('lutG').value);
+    let b = parseLUT($('lutB').value);
+
+    if(state.lumMeaning === 'absolute'){
+      // normalize y to [0..1] per channel
+      r = normalizeY(r);
+      g = normalizeY(g);
+      b = normalizeY(b);
+    }else{
+      // clamp directly (assume already 0..1)
+      r = r.map(([x,y])=>[clamp01(x), clamp01(y)]);
+      g = g.map(([x,y])=>[clamp01(x), clamp01(y)]);
+      b = b.map(([x,y])=>[clamp01(x), clamp01(y)]);
+    }
+    return {r,g,b};
+  }
+
+  function applyCalibration(commandRGB){
+    // commandRGB: [0..1]^3
+    if(state.calMode !== 'lut') return commandRGB;
+
+    const {r,g,b} = getActiveLUT();
+    const out = [
+      interp1(r, commandRGB[0]),
+      interp1(g, commandRGB[1]),
+      interp1(b, commandRGB[2]),
+    ];
+    return out;
+  }
+
+  // -------------------------
+  // Rendering
+  // -------------------------
+  function updateOutput(){
+    const pCmd = (state.mode==='single') ? mapSingleUtoP(state.u) : state.p.slice();
+
+    // baseline tech response: command -> L_base
+    const base = Ftech(state.tech, pCmd);
+    let L = base.L.slice();
+
+    // apply LUT calibration as a realistic correction stage:
+    // We treat LUT as "command->measured luminance" and blend it with model.
+    // Option: replace model entirely by LUT output (more "real"); here we do:
+    // L := LUT(command) * brightness  (and ignore model), BUT keep tech info text.
+    const L_lut = applyCalibration(pCmd);
+    if(state.calMode === 'lut'){
+      L = L_lut.slice();
+    }
+
+    // brightness
+    L = L.map(x => clamp01(x * state.brightness));
+
+    // gamma for display only
+    const C = applyGamma(L, state.gamma);
+    const hex = rgbToHex(C[0],C[1],C[2]);
+
+    $('lamp').style.background =
+      `linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.14)), ${hex}`;
+    $('glow').style.background =
+      `radial-gradient(circle at 30% 20%, ${hex}, transparent 55%)`;
+
+    $('rgbOut').textContent = `${C.map(x=>x.toFixed(3)).join(', ')}`;
+    $('hexOut').textContent = hex;
+    $('Lout').textContent = `${L.map(x=>x.toFixed(3)).join(', ')}`;
+
+    const calTxt = (state.calMode==='lut')
+      ? ` + LUT (${state.lumMeaning})`
+      : ' (ללא LUT)';
+    $('modelOut').textContent = base.detail + calTxt;
+
+    drawPlot(pCmd, base);
+  }
+
+  // -------------------------
+  // Plot
+  // -------------------------
+  function clearCanvas(ctx,w,h){
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    ctx.globalAlpha = 0.14;
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line') || '#94a3b8';
+    for(let i=0;i<=10;i++){
+      const x = (w*0.08) + (w*0.86)*(i/10);
+      ctx.beginPath(); ctx.moveTo(x, h*0.10); ctx.lineTo(x, h*0.92); ctx.stroke();
+      const y = (h*0.92) - (h*0.82)*(i/10);
+      ctx.beginPath(); ctx.moveTo(w*0.08, y); ctx.lineTo(w*0.94, y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function axes(ctx,w,h,xlab,ylab){
+    const x0=w*0.08, x1=w*0.94, y0=h*0.92, y1=h*0.10;
+    ctx.save();
+    ctx.strokeStyle = getComputedStyle(document.body).color;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.stroke();
+    ctx.globalAlpha = 0.82;
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+    ctx.fillText(xlab, x1-180, y0+28);
+    ctx.save();
+    ctx.translate(x0-40, (y0+y1)/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText(ylab, 0, 0);
+    ctx.restore();
+    ctx.restore();
+    return {x0,x1,y0,y1};
+  }
+  function plotLine(ctx,A,xs,ys,color,alpha=0.95,lw=2.8){
+    const {x0,x1,y0,y1}=A;
+    ctx.save();
+    ctx.strokeStyle=color;
+    ctx.globalAlpha=alpha;
+    ctx.lineWidth=lw;
+    ctx.beginPath();
+    for(let i=0;i<xs.length;i++){
+      const x = x0 + (x1-x0)*xs[i];
+      const y = y0 - (y0-y1)*ys[i];
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  function legend(ctx,w,h,items){
+    ctx.save();
+    ctx.globalAlpha=0.85;
+    const x = w*0.08, y = h*0.05;
+    ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+    items.forEach((it,idx)=>{
+      const yy = y + idx*18;
+      ctx.fillStyle = it.c;
+      ctx.fillRect(x, yy-10, 12, 12);
+      ctx.fillStyle = getComputedStyle(document.body).color;
+      ctx.fillText(it.t, x+18, yy);
+    });
+    ctx.restore();
+  }
+
+  function drawPlot(pCmd, base){
+    const c = $('plot');
+    const ctx = c.getContext('2d');
+    const w = c.width, h = c.height;
+    clearCanvas(ctx,w,h);
+
+    const tab = state.tab;
+
+    if(tab === 'transfer'){
+      const A = axes(ctx,w,h,'Command (0→1)','L (0→1) אחרי מודל+LUT');
+      const xs=[], yR=[], yG=[], yB=[];
+      for(let k=0;k<=320;k++){
+        const x = k/320;
+        xs.push(x);
+
+        // For transfer curve: vary each channel command separately
+        const pr = [x, pCmd[1], pCmd[2]];
+        const pg = [pCmd[0], x, pCmd[2]];
+        const pb = [pCmd[0], pCmd[1], x];
+
+        // If LUT on => show LUT result, else show model result
+        const Lr = (state.calMode==='lut') ? applyCalibration(pr)[0] : Ftech(state.tech, pr).L[0];
+        const Lg = (state.calMode==='lut') ? applyCalibration(pg)[1] : Ftech(state.tech, pg).L[1];
+        const Lb = (state.calMode==='lut') ? applyCalibration(pb)[2] : Ftech(state.tech, pb).L[2];
+
+        yR.push(clamp01(Lr * state.brightness));
+        yG.push(clamp01(Lg * state.brightness));
+        yB.push(clamp01(Lb * state.brightness));
+      }
+      plotLine(ctx,A,xs,yR,'#ef4444');
+      plotLine(ctx,A,xs,yG,'#22c55e');
+      plotLine(ctx,A,xs,yB,'#3b82f6');
+      legend(ctx,w,h,[
+        {t:'R: L_R(x)', c:'#ef4444'},
+        {t:'G: L_G(x)', c:'#22c55e'},
+        {t:'B: L_B(x)', c:'#3b82f6'},
+      ]);
+    }
+
+    if(tab === 'lut'){
+      const A = axes(ctx,w,h,'Command (0→1)','Measured Luminance (0→1)');
+      const {r,g,b} = getActiveLUT();
+
+      // draw as points+lines using dense interpolation
+      const xs=[], yR=[], yG=[], yB=[];
+      for(let k=0;k<=320;k++){
+        const x = k/320;
+        xs.push(x);
+        yR.push(interp1(r, x));
+        yG.push(interp1(g, x));
+        yB.push(interp1(b, x));
+      }
+      plotLine(ctx,A,xs,yR,'#ef4444',0.95,3.0);
+      plotLine(ctx,A,xs,yG,'#22c55e',0.95,3.0);
+      plotLine(ctx,A,xs,yB,'#3b82f6',0.95,3.0);
+      legend(ctx,w,h,[
+        {t:'LUT_R', c:'#ef4444'},
+        {t:'LUT_G', c:'#22c55e'},
+        {t:'LUT_B', c:'#3b82f6'},
+      ]);
+    }
+
+    if(tab === 'gamma'){
+      const A = axes(ctx,w,h,'L (0→1)','C אחרי Gamma (0→1)');
+      const xs=[], y1=[], y2=[], y3=[];
+      const g = state.gamma;
+      const gA = Math.max(1.2, g-0.5);
+      const gB = g;
+      const gC = Math.min(3.0, g+0.5);
+      for(let k=0;k<=320;k++){
+        const x = k/320;
+        xs.push(x);
+        y1.push(Math.pow(x, 1/gA));
+        y2.push(Math.pow(x, 1/gB));
+        y3.push(Math.pow(x, 1/gC));
+      }
+      plotLine(ctx,A,xs,y1,'#64748b',0.65,2.2);
+      plotLine(ctx,A,xs,y2,'#6366f1',0.95,3.1);
+      plotLine(ctx,A,xs,y3,'#64748b',0.65,2.2);
+      legend(ctx,w,h,[
+        {t:`γ=${gA.toFixed(2)}`, c:'#64748b'},
+        {t:`γ=${gB.toFixed(2)} (נוכחי)`, c:'#6366f1'},
+        {t:`γ=${gC.toFixed(2)}`, c:'#64748b'},
+      ]);
+    }
+
+    if(tab === 'sweep'){
+      // color strip
+      const x0=w*0.08, x1=w*0.94;
+      const stripTop=h*0.10, stripBot=h*0.36;
+
+      for(let i=0;i<720;i++){
+        const u = i/719;
+        const p = mapSingleUtoP(u);
+        const Lraw = (state.calMode==='lut') ? applyCalibration(p) : Ftech(state.tech, p).L;
+        const L = Lraw.map(x => clamp01(x * state.brightness));
+        const C = applyGamma(L, state.gamma);
+        ctx.fillStyle = rgbToHex(C[0],C[1],C[2]);
+        const xx = x0 + (x1-x0)*u;
+        ctx.fillRect(xx, stripTop, Math.max(1,(x1-x0)/720), stripBot-stripTop);
+      }
+      // outline
+      ctx.save();
+      ctx.globalAlpha=0.55;
+      ctx.strokeStyle=getComputedStyle(document.body).color;
+      ctx.strokeRect(x0, stripTop, x1-x0, stripBot-stripTop);
+      ctx.restore();
+
+      // axes below
+      const A = {x0,x1, y0:h*0.92, y1:h*0.42};
+
+      // grid
+      ctx.save();
+      ctx.globalAlpha = 0.14;
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line') || '#94a3b8';
+      for(let i=0;i<=10;i++){
+        const xx = x0 + (x1-x0)*(i/10);
+        ctx.beginPath(); ctx.moveTo(xx, A.y1); ctx.lineTo(xx, A.y0); ctx.stroke();
+        const yy = A.y0 - (A.y0-A.y1)*(i/10);
+        ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke();
+      }
+      ctx.restore();
+
+      // curves
+      const xs=[], yR=[], yG=[], yB=[];
+      for(let k=0;k<=320;k++){
+        const u = k/320;
+        xs.push(u);
+        const p = mapSingleUtoP(u);
+        const Lraw = (state.calMode==='lut') ? applyCalibration(p) : Ftech(state.tech, p).L;
+        const L = Lraw.map(x => clamp01(x * state.brightness));
+        yR.push(L[0]); yG.push(L[1]); yB.push(L[2]);
+      }
+      plotLine(ctx,A,xs,yR,'#ef4444');
+      plotLine(ctx,A,xs,yG,'#22c55e');
+      plotLine(ctx,A,xs,yB,'#3b82f6');
+      legend(ctx,w,h,[
+        {t:'L_R(u)', c:'#ef4444'},
+        {t:'L_G(u)', c:'#22c55e'},
+        {t:'L_B(u)', c:'#3b82f6'},
+      ]);
+    }
+  }
+
+  // -------------------------
+  // Tabs
+  // -------------------------
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      state.tab = t.getAttribute('data-tab');
+      update();
+    });
+  });
+
+  // -------------------------
+  // Buttons / actions
+  // -------------------------
+  $('applyLUT').addEventListener('click', ()=>{
+    try{
+      state.lutR = parseLUT($('lutR').value);
+      state.lutG = parseLUT($('lutG').value);
+      state.lutB = parseLUT($('lutB').value);
+      setStatus('סטטוס: <b>כיול LUT נטען</b> ✅');
+      update();
+    }catch(e){
+      setStatus('שגיאה בטעינת LUT: <b>'+String(e)+'</b>', true);
+    }
+  });
+
+  $('loadLinear').addEventListener('click', ()=>{
+    const linear = `0,0
+0.25,0.25
+0.50,0.50
+0.75,0.75
+1.00,1.00`;
+    $('lutR').value = linear;
+    $('lutG').value = linear;
+    $('lutB').value = linear;
+    setStatus('סטטוס: <b>LUT ליניארי נטען</b> ✅');
+    update();
+  });
+
+  $('exportJSON').addEventListener('click', ()=>{
+    try{
+      const obj = {
+        mode: $('lumMeaning').value,
+        R: parseLUT($('lutR').value),
+        G: parseLUT($('lutG').value),
+        B: parseLUT($('lutB').value),
+      };
+      const txt = JSON.stringify(obj, null, 2);
+      navigator.clipboard?.writeText(txt).catch(()=>{});
+      setStatus('סטטוס: <b>JSON הועתק ללוח (אם הדפדפן מאפשר)</b> ✅<br><span class="mono">'+txt.replace(/</g,'&lt;')+'</span>');
+    }catch(e){
+      setStatus('שגיאה בייצוא JSON: <b>'+String(e)+'</b>', true);
+    }
+  });
+
+  $('resetAll').addEventListener('click', ()=>{
+    $('tech').value='lcd';
+    $('mode').value='single';
+    $('u').value=0.35;
+    $('r').value=0.70; $('g').value=0.35; $('b').value=0.20;
+    $('gamma').value=2.2;
+    $('brightness').value=0.92;
+    $('calMode').value='none';
+    $('lumMeaning').value='relative';
+    setStatus('סטטוס: <b>איפוס בוצע</b> ✅');
+    update();
+  });
+
+  // -------------------------
+  // Inputs live update
+  // -------------------------
+  ['tech','mode','u','r','g','b','gamma','brightness','calMode','lumMeaning','lutR','lutG','lutB'].forEach(id=>{
+    $(id).addEventListener('input', ()=>update());
+  });
+
+  // -------------------------
+  // Main update with guard
+  // -------------------------
+  function update(){
+    try{
+      readUI();
+      writeUI();
+      updateOutput();
+    }catch(e){
+      console.error(e);
+      setStatus('שגיאה: <b>'+String(e)+'</b><br>פתח Console כדי לראות פרטים.', true);
+    }
+  }
+
+  // Init
+  setStatus('סטטוס: <b>מוכן</b> ✅ (אם משהו לא מגיב — זה יוצג כאן כשגיאה)');
+  update();
+});
+</script>
+
+</body>
+</html>
