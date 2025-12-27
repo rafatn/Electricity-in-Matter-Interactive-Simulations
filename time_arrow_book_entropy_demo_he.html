@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>חץ הזמן כספר: צורות, אנטרופיה ואי־הפיכות</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.58);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a13; --bg1:#0b1022; --bg2:#0b1220;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.55);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.20);
+        --head:#f8fafc; --link:#93c5fd;
+        --shadow:0 20px 60px rgba(0,0,0,.45);
+      }
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans Hebrew", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 80% -10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 10% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    .wrap{ max-width:1100px; margin:0 auto; padding:20px; }
+    header{
+      background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(14,165,233,.12));
+      border:1px solid var(--line);
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      padding:18px 18px;
+    }
+    h1{ margin:0 0 6px 0; font-size: 20px; color:var(--head); }
+    .sub{ color:var(--muted); font-size:13px; line-height:1.55; }
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr; }
+    }
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:14px;
+      backdrop-filter: blur(10px);
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size: 15px;
+      color:var(--head);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap:10px;
+    }
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background: var(--card2);
+      padding:4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    label{ font-size:12px; color:var(--muted); }
+    select, input[type="range"], button{
+      font: inherit;
+    }
+    select{
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      color:var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      select{ background: rgba(17,24,39,.75); }
+    }
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .controls{ grid-template-columns:1fr; }
+    }
+    .control{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px;
+      background: var(--card2);
+    }
+    .control .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .control .val{ font-size:12px; color:var(--head); font-weight:600; }
+    input[type="range"]{ width:100%; margin-top:8px; }
+    canvas{
+      width:100%;
+      height:420px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.35);
+      display:block;
+    }
+    @media (prefers-color-scheme: dark){
+      canvas{ background: rgba(0,0,0,.18); }
+    }
+    .katexBox{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px;
+      background: var(--card2);
+      overflow:auto;
+    }
+    .note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+    .stats{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .stats{ grid-template-columns:1fr; }
+    }
+    .stat{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background: var(--card2);
+    }
+    .stat .k{ font-size:12px; color:var(--muted); }
+    .stat .v{ font-size:16px; font-weight:800; color:var(--head); margin-top:4px; }
+    .bar{
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(148,163,184,.18);
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(99,102,241,.85), rgba(14,165,233,.75));
+    }
+    .btns{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    button{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      color:var(--text);
+      cursor:pointer;
+    }
+    @media (prefers-color-scheme: dark){
+      button{ background: rgba(17,24,39,.75); }
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: translateY(0px); }
+    .footer{
+      margin-top:12px;
+      border-top:1px dashed var(--line);
+      padding-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .copyright{
+      user-select:none;
+      opacity:.95;
+    }
+    .mini{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background: rgba(148,163,184,.12);
+      color: var(--head);
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📘 חץ הזמן כספר: צורות משתנות, אנטרופיה, ואי־הפיכות</h1>
+    <div class="sub">
+      מודל אינטואיטיבי: לכל “עמוד” עומק מרכזי \(T\). בתוך כל עמוד יש ייצוגי זמן/ציר מקומיים,
+      אבל הדפדוף לאחור דורש שחזור מידע שנמחק — ולכן מתקבלת אי־הפיכות ואנטרופיה לא־יורדת.
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>
+        הדמיה (Canvas)
+        <span class="pill">טייל בין עמודים: \(T\)</span>
+      </h2>
+
+      <canvas id="cv" width="1100" height="700" aria-label="shape canvas"></canvas>
+
+      <div class="btns">
+        <button id="btnPrev" title="עמוד קודם">⬅️ עמוד קודם</button>
+        <button id="btnNext" title="עמוד הבא">עמוד הבא ➡️</button>
+        <button id="btnPlay" title="נגן/עצור">▶️ נגן</button>
+        <button id="btnReset" title="אפס את הספר">🔄 אפס</button>
+      </div>
+
+      <div class="note">
+        *הצורה כאן היא “מצב”. בכל עמוד \(T\) מבוצע ערבוב/גסות-מידע שמגדיל מורכבות ו”אנטרופיה” (מדד הדגמתי).
+        לכן המדד עולה מונוטונית לאורך \(T\) — גם אם משנים ייצוגים מקומיים.
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>
+        הגדרות ומשפט פורמלי
+        <span class="pill">KaTeX</span>
+      </h2>
+
+      <div class="katexBox" id="math">
+        <div>
+          נגדיר רצף מצבים \(\rho_T\) במרחב הסתברויות:
+          \[
+            \rho_{T+1}=\mathcal{E}_T(\rho_T)
+          \]
+          כאשר \(\mathcal{E}_T\) היא העתקה שומרת הסתברות “מאבדת מידע” (למשל מרקובית).
+          נגדיר פונקציונל אנטרופיה \(S\) שמונוטוני תחת גסות-מידע:
+          \[
+            S(\mathcal{E}(\rho))\ge S(\rho)
+          \]
+          אז מתקבל חץ זמן בעומק \(T\):
+          \[
+            S(\rho_{T+1})\ge S(\rho_T)\quad \forall T
+          \]
+          ובמקרה של אי־חד־חד־ערכיות של \(\mathcal{E}_T\), לא קיימת דינמיקה הפוכה חד-ערכית שמחזירה תמיד עמוד קודם.
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control">
+          <div class="top">
+            <label>עמוד מרכזי \(T\)</label>
+            <div class="val"><span id="Tval">0</span></div>
+          </div>
+          <input id="T" type="range" min="0" max="120" step="1" value="0">
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>סוג צורה (ייצוג מצב)</label>
+            <div class="val"><span class="mini" id="shapeName">עקומה</span></div>
+          </div>
+          <select id="shape">
+            <option value="circle">עיגול → אליפסה</option>
+            <option value="rose">רוזטה (ורד) → מורכבות</option>
+            <option value="lissajous">ליסז׳ו → ערבוב</option>
+            <option value="poly">פוליגון → עיוות</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>עוצמת “ערבוב” (גסות־מידע)</label>
+            <div class="val"><span id="mixVal">0.35</span></div>
+          </div>
+          <input id="mix" type="range" min="0" max="1" step="0.01" value="0.35">
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>רעש מדידה (מקומי)</label>
+            <div class="val"><span id="noiseVal">0.15</span></div>
+          </div>
+          <input id="noise" type="range" min="0" max="1" step="0.01" value="0.15">
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">מדד אנטרופיה (הדגמתי)</div>
+          <div class="v"><span id="Sval">0.000</span></div>
+          <div class="bar"><div class="fill" id="Sbar"></div></div>
+          <div class="note">
+            כאן \(S_T\) מוגדר כמדד מורכבות/פיזור שמצטבר מונוטונית עם \(T\).
+            זה מדגים את “עובי הדפים”.
+          </div>
+        </div>
+        <div class="stat">
+          <div class="k">אי־הפיכות (מבחן הפיכות)</div>
+          <div class="v"><span id="Rval">—</span></div>
+          <div class="bar"><div class="fill" id="Rbar"></div></div>
+          <div class="note">
+            אם גסות־מידע גבוהה: קשה יותר לשחזר עמוד קודם ⇒ אי־הפיכות עולה.
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="copyright">כל הזכויות שמורות, אין לשכפל אלא באישור.</div>
+        <div class="mini">©</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function fmt(n, d=3){ return Number(n).toFixed(d); }
+
+/* ---------- render KaTeX ---------- */
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+});
+
+/* ---------- state ---------- */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+const elT = document.getElementById('T');
+const elTval = document.getElementById('Tval');
+const elShape = document.getElementById('shape');
+const elShapeName = document.getElementById('shapeName');
+const elMix = document.getElementById('mix');
+const elMixVal = document.getElementById('mixVal');
+const elNoise = document.getElementById('noise');
+const elNoiseVal = document.getElementById('noiseVal');
+
+const elSval = document.getElementById('Sval');
+const elSbar = document.getElementById('Sbar');
+const elRval = document.getElementById('Rval');
+const elRbar = document.getElementById('Rbar');
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnPlay = document.getElementById('btnPlay');
+const btnReset = document.getElementById('btnReset');
+
+let playing = false;
+let raf = null;
+
+/**
+ * "Entropy" model:
+ * We enforce monotonic growth by definition:
+ *   S(T) = 1 - exp(-k * A(T))
+ * where A(T) is accumulated mixing "amount" (depends on mix slider) + small local noise.
+ * This mimics information loss accumulation per page.
+ */
+function entropyAt(T, mix, noise){
+  const k = 0.06 + 0.18 * mix;               // growth rate controlled by mix
+  const local = (0.02 + 0.06*noise) * Math.sqrt(T+1);
+  const A = (T+1) * (0.25 + 1.25*mix) + local;
+  const S = 1 - Math.exp(-k * A);
+  return clamp(S, 0, 1);
+}
+
+/**
+ * "Irreversibility score" R(T):
+ * grows with mix and entropy, meant to show difficulty of reconstructing previous page.
+ */
+function irreversibilityAt(T, mix, noise){
+  const S = entropyAt(T, mix, noise);
+  // more mix => more many-to-one mapping, more irreversibility
+  const R = clamp(0.15 + 0.85*(0.55*mix + 0.45*S), 0, 1);
+  return R;
+}
+
+/* ---------- shape generators ---------- */
+function shapePoints(kind, T, mix, noise, N=900){
+  // normalized time in [0,1]
+  const t = clamp(T / 120, 0, 1);
+
+  // parameters that evolve with page depth
+  // mixing induces increasing "warp" and phase jitter
+  const warp = lerp(0.0, 0.85, t) * (0.35 + 0.65*mix);
+  const jitter = (0.002 + 0.02*noise) * (0.3 + 0.7*t);
+
+  const pts = [];
+  for (let i=0;i<N;i++){
+    const a0 = (i/(N-1))*Math.PI*2;
+    // deterministic pseudo "noise" without RNG:
+    const n = Math.sin(97.13*a0 + 13.7*T) * Math.cos(41.9*a0 - 7.1*T);
+    const a = a0 + jitter * n;
+
+    let x=0,y=0;
+
+    if (kind === 'circle'){
+      // circle -> ellipse + gentle warp
+      const rx = 1.0 + 0.85*t;
+      const ry = 1.0 - 0.35*t;
+      let r = 1.0 + 0.10*Math.sin(3*a + 0.7*T) * warp;
+      x = rx * r * Math.cos(a);
+      y = ry * r * Math.sin(a);
+
+    } else if (kind === 'rose'){
+      // rose curve complexity increases with t
+      const k = 3 + Math.floor(5*t); // petals increase
+      const r = 0.85 + 0.25*Math.cos(k*a + 0.4*T) + 0.18*Math.sin((k+2)*a - 0.2*T)*warp;
+      x = r*Math.cos(a);
+      y = r*Math.sin(a);
+
+    } else if (kind === 'lissajous'){
+      // lissajous with evolving frequencies + mixing phase
+      const ax = 2 + Math.floor(3*t);
+      const ay = 3 + Math.floor(4*t);
+      const ph = (0.4 + 2.4*mix)*t*Math.PI;
+      x = 0.95*Math.sin(ax*a + ph) + 0.12*Math.sin((ax+ay)*a - 0.1*T)*warp;
+      y = 0.95*Math.sin(ay*a) + 0.12*Math.cos((ay+1)*a + 0.2*T)*warp;
+
+    } else if (kind === 'poly'){
+      // polygon-like via radius modulation; more sides and warp over time
+      const sides = 3 + Math.floor(9*t);
+      const ang = a;
+      const sector = (2*Math.PI)/sides;
+      const d = Math.cos(Math.PI/sides) / Math.cos((ang % sector) - sector/2);
+      let r = 0.85*d;
+      r *= 1.0 + 0.22*Math.sin((sides+2)*a + 0.6*T)*warp;
+      x = r*Math.cos(a);
+      y = r*Math.sin(a);
+    } else {
+      x = Math.cos(a); y = Math.sin(a);
+    }
+
+    // global swirl (mixing) acts like page-wise non-invertible coarse effect
+    // We simulate coarse-graining by progressively "smoothing" points later in draw,
+    // but here add slight nonlinear shear as well:
+    const s = warp;
+    const xs = x + s*(0.35*y*y - 0.15*x);
+    const ys = y + s*(0.25*x*x - 0.10*y);
+
+    pts.push([xs, ys]);
+  }
+  return pts;
+}
+
+/* ---------- drawing ---------- */
+function draw(){
+  const T = Number(elT.value);
+  const mix = Number(elMix.value);
+  const noise = Number(elNoise.value);
+  const kind = elShape.value;
+
+  elTval.textContent = String(T);
+  elMixVal.textContent = fmt(mix, 2);
+  elNoiseVal.textContent = fmt(noise, 2);
+
+  const shapeLabel = ({
+    circle:"עיגול → אליפסה",
+    rose:"רוזטה (ורד)",
+    lissajous:"ליסז׳ו",
+    poly:"פוליגון"
+  })[kind] || "עקומה";
+  elShapeName.textContent = shapeLabel;
+
+  // stats
+  const S = entropyAt(T, mix, noise);
+  const R = irreversibilityAt(T, mix, noise);
+
+  elSval.textContent = fmt(S, 3);
+  elSbar.style.width = (S*100).toFixed(1) + "%";
+
+  elRval.textContent = fmt(R, 3);
+  elRbar.style.width = (R*100).toFixed(1) + "%";
+  elRbar.style.background = `linear-gradient(90deg, rgba(239,68,68,.85), rgba(245,158,11,.75))`;
+
+  // canvas sizing aware of CSS scaling
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  // background grid
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(148,163,184,.35)";
+  const step = 80;
+  for (let x=0;x<=W;x+=step){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+  for (let y=0;y<=H;y+=step){
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  ctx.restore();
+
+  // axes
+  ctx.save();
+  ctx.globalAlpha = 0.8;
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(100,116,139,.55)";
+  ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  ctx.restore();
+
+  // title overlay
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  ctx.fillStyle = "rgba(15,23,42,.85)";
+  ctx.font = "700 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+  const title = `עמוד מרכזי T = ${T}  •  S(T)≈${fmt(S,3)}  •  אי־הפיכות≈${fmt(R,3)}`;
+  ctx.fillText(title, 24, 46);
+  ctx.restore();
+
+  // draw shape
+  const pts = shapePoints(kind, T, mix, noise, 900);
+
+  // simulate coarse-graining / smoothing strength grows with T and mix
+  const smooth = clamp(0.02 + 0.55*mix*(T/120), 0, 0.75);
+  let drawPts = pts;
+
+  if (smooth > 0.001){
+    // one-pass smoothing (many-to-one feel)
+    const sm = [];
+    const win = 1 + Math.floor(18*smooth);
+    const m = Math.floor(win/2);
+    for (let i=0;i<pts.length;i++){
+      let sx=0, sy=0, c=0;
+      for (let j=-m;j<=m;j++){
+        const k = (i+j+pts.length) % pts.length;
+        sx += pts[k][0];
+        sy += pts[k][1];
+        c++;
+      }
+      sm.push([sx/c, sy/c]);
+    }
+    drawPts = sm;
+  }
+
+  // map to canvas
+  const scale = Math.min(W,H)*0.33;
+  const cx = W/2, cy = H/2;
+
+  // trail / previous page hint
+  if (T > 0){
+    const ptsPrev = shapePoints(kind, T-1, mix, noise, 420);
+    ctx.save();
+    ctx.globalAlpha = 0.20;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(99,102,241,.65)";
+    ctx.beginPath();
+    for (let i=0;i<ptsPrev.length;i++){
+      const x = cx + ptsPrev[i][0]*scale;
+      const y = cy - ptsPrev[i][1]*scale;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // main curve
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "rgba(14,165,233,.85)";
+  ctx.beginPath();
+  for (let i=0;i<drawPts.length;i++){
+    const x = cx + drawPts[i][0]*scale;
+    const y = cy - drawPts[i][1]*scale;
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+
+  // annotation about local times vs central time
+  ctx.save();
+  ctx.globalAlpha = 0.92;
+  ctx.fillStyle = "rgba(2,6,23,.75)";
+  ctx.font = "600 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+  ctx.fillText("הדפדוף בעומק T הוא חץ הזמן (ספר). ייצוגים מקומיים יכולים להשתנות — אבל S(T) לא יורד.", 24, H-28);
+  ctx.restore();
+}
+
+/* ---------- interactions ---------- */
+function setT(v){
+  elT.value = String(clamp(v, Number(elT.min), Number(elT.max)));
+  draw();
+}
+elT.addEventListener('input', draw);
+elShape.addEventListener('change', draw);
+elMix.addEventListener('input', draw);
+elNoise.addEventListener('input', draw);
+
+btnPrev.addEventListener('click', () => setT(Number(elT.value)-1));
+btnNext.addEventListener('click', () => setT(Number(elT.value)+1));
+btnReset.addEventListener('click', () => { playing=false; btnPlay.textContent="▶️ נגן"; setT(0); });
+
+btnPlay.addEventListener('click', () => {
+  playing = !playing;
+  btnPlay.textContent = playing ? "⏸️ עצור" : "▶️ נגן";
+  if (playing) loop();
+  else if (raf) cancelAnimationFrame(raf);
+});
+
+function loop(){
+  if (!playing) return;
+  const t = Number(elT.value);
+  if (t >= Number(elT.max)){
+    playing = false;
+    btnPlay.textContent = "▶️ נגן";
+    return;
+  }
+  setT(t+1);
+  raf = requestAnimationFrame(() => {
+    // small delay feel
+    setTimeout(loop, 35);
+  });
+}
+
+// initial
+draw();
+</script>
+</body>
+</html>

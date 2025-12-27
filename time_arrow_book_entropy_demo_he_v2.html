@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>חץ הזמן כספר — הוכחה + דפדוף עמודים</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.58);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a13; --bg1:#0b1022; --bg2:#0b1220;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.55);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.20);
+        --head:#f8fafc; --link:#93c5fd;
+        --shadow:0 20px 60px rgba(0,0,0,.45);
+      }
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans Hebrew", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 80% -10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 10% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    .wrap{ max-width:1200px; margin:0 auto; padding:20px; }
+
+    header{
+      background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(14,165,233,.12));
+      border:1px solid var(--line);
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      padding:18px 18px;
+    }
+    h1{ margin:0 0 6px 0; font-size: 20px; color:var(--head); }
+    .sub{ color:var(--muted); font-size:13px; line-height:1.55; }
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:14px;
+      backdrop-filter: blur(10px);
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size: 15px;
+      color:var(--head);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap:10px;
+    }
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background: var(--card2);
+      padding:4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 560px){
+      .controls{ grid-template-columns:1fr; }
+    }
+    .control{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px;
+      background: var(--card2);
+    }
+    .control .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    label{ font-size:12px; color:var(--muted); }
+    .val{ font-size:12px; color:var(--head); font-weight:700; }
+    input[type="range"]{ width:100%; margin-top:8px; }
+
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      color:var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      select{ background: rgba(17,24,39,.75); }
+    }
+
+    .btns{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    button{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .12s ease;
+    }
+    @media (prefers-color-scheme: dark){
+      button{ background: rgba(17,24,39,.75); }
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: translateY(0px); }
+
+    canvas#cv{
+      width:100%;
+      height:430px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.35);
+      display:block;
+    }
+    @media (prefers-color-scheme: dark){
+      canvas#cv{ background: rgba(0,0,0,.18); }
+    }
+
+    /* --- Book strip thumbnails --- */
+    .stripWrap{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card2);
+      padding:10px;
+    }
+    .stripTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+    }
+    .stripHint{ color:var(--muted); font-size:12px; line-height:1.5; }
+    .strip{
+      display:flex;
+      gap:10px;
+      overflow:auto;
+      padding-bottom:6px;
+      scroll-snap-type: x mandatory;
+    }
+    .thumb{
+      flex: 0 0 auto;
+      width: 98px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.45);
+      padding:8px;
+      cursor:pointer;
+      scroll-snap-align: start;
+      position: relative;
+      transition: transform .12s ease, box-shadow .12s ease;
+      user-select:none;
+    }
+    @media (prefers-color-scheme: dark){
+      .thumb{ background: rgba(0,0,0,.14); }
+    }
+    .thumb:hover{ transform: translateY(-1px); }
+    .thumb.active{
+      outline: 2px solid rgba(99,102,241,.7);
+      box-shadow: 0 10px 30px rgba(99,102,241,.18);
+    }
+    .thumb canvas{
+      width:100%;
+      height:64px;
+      display:block;
+      border-radius: 10px;
+      border:1px solid rgba(148,163,184,.25);
+      background: rgba(255,255,255,.18);
+    }
+    @media (prefers-color-scheme: dark){
+      .thumb canvas{ background: rgba(0,0,0,.12); }
+    }
+    .thumbMeta{
+      margin-top:6px;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .tag{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+      padding:1px 6px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(148,163,184,.12);
+      color: var(--head);
+      white-space:nowrap;
+    }
+
+    .katexBox{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px;
+      background: var(--card2);
+      overflow:auto;
+    }
+
+    .stats{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 560px){
+      .stats{ grid-template-columns:1fr; }
+    }
+    .stat{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background: var(--card2);
+    }
+    .stat .k{ font-size:12px; color:var(--muted); }
+    .stat .v{ font-size:16px; font-weight:900; color:var(--head); margin-top:4px; }
+    .bar{
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(148,163,184,.18);
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .fill{ height:100%; width:0%; background: linear-gradient(90deg, rgba(99,102,241,.85), rgba(14,165,233,.75)); }
+
+    .note{ margin-top:10px; color:var(--muted); font-size:12px; line-height:1.6; }
+
+    details{
+      margin-top:10px;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px;
+      background: rgba(148,163,184,.08);
+    }
+    summary{
+      cursor:pointer;
+      font-weight:800;
+      color:var(--head);
+      font-size:13px;
+    }
+    .footer{
+      margin-top:12px;
+      border-top:1px dashed var(--line);
+      padding-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📘 חץ הזמן כספר — ניסוח פורמלי + דפדוף עמודים</h1>
+    <div class="sub">
+      “עמוד” הוא \(T\in\mathbb{N}\) (זמן מרכזי). בתוך כל עמוד יש ייצוגים/זמנים מקומיים ושינוי צורה.
+      הדפדוף קדימה מצטבר עם גסות־מידע ⇒ אנטרופיה לא־יורדת ואי־הפיכות.
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: Simulation + Book Strip -->
+    <section class="card">
+      <h2>
+        הדמיה ראשית (Canvas)
+        <span class="pill">קפיצה לעמוד עם thumbnails</span>
+      </h2>
+
+      <canvas id="cv" width="1200" height="760"></canvas>
+
+      <div class="btns">
+        <button id="btnPrev">⬅️ עמוד קודם</button>
+        <button id="btnNext">עמוד הבא ➡️</button>
+        <button id="btnPlay">▶️ נגן</button>
+        <button id="btnReset">🔄 אפס</button>
+        <button id="btnCenter">🎯 מרכז לעמוד</button>
+      </div>
+
+      <div class="stripWrap">
+        <div class="stripTop">
+          <div class="stripHint">
+            זהו “פס הספר”: כל כרטיס הוא עמוד \(T\). לחץ על עמוד כדי לדפדף אליו.
+          </div>
+          <div class="tag" id="stripRangeTag">T: 0..120</div>
+        </div>
+        <div class="strip" id="strip" aria-label="book strip thumbnails"></div>
+      </div>
+
+      <div class="note">
+        🧠 רעיון מפתח: אפשר לשנות “ייצוג” (סוג צורה, רעש מקומי), אך \(T\) הוא עומק גלובלי.
+        מדד האנטרופיה כאן מוגדר כך שיהיה מונוטוני ב-\(T\) כדי לדמות הצטברות איבוד־מידע בעמודים.
+      </div>
+    </section>
+
+    <!-- RIGHT: Formal theorem + proof + controls + stats -->
+    <aside class="card">
+      <h2>
+        משפט פורמלי + הוכחה
+        <span class="pill">KaTeX</span>
+      </h2>
+
+      <div class="katexBox" id="math">
+        <div>
+          <b>הגדרות.</b>
+          יהי \((\Omega,\mathcal{F},\mu)\) מרחב מדידה ו-\(\mathcal{P}(\Omega)\) צפיפויות \(\rho\ge0\),
+          \(\int_\Omega \rho\,d\mu=1\). נגדיר זמן מרכזי \(T\in\mathbb{N}\) ורצף מצבים:
+          \[
+            \rho_{T+1}=\mathcal{E}_T(\rho_T),
+          \]
+          כאשר כל \(\mathcal{E}_T\) היא העתקה שומרת הסתברות (למשל אופרטור מרקובי/ערוץ סטוכסטי).
+          נגדיר “אנטרופיה” כללית \(S:\mathcal{P}(\Omega)\to\mathbb{R}\) שהיא
+          \emph{מונוטונית תחת גסות־מידע}:
+          \[
+            S(\mathcal{E}(\rho))\ge S(\rho)\quad \forall \rho,\ \forall \mathcal{E}\ \text{כמו לעיל}.
+          \]
+
+          <hr style="border:none;border-top:1px dashed rgba(148,163,184,.35);margin:10px 0;">
+
+          <b>משפט (חץ זמן ואי־הפיכות).</b>
+          אם קיים \(T_0\) כך ש-\(\mathcal{E}_{T_0}\) אינה חד-חד-ערכית (לא injective),
+          אז:
+          \[
+            S(\rho_{T+1})\ge S(\rho_T)\ \ \forall T,
+          \]
+          ובנוסף לא קיימת משפחת מפענחים \(\mathcal{R}_T\) שמחזירה תמיד עמוד קודם:
+          \[
+            \mathcal{R}_T(\rho_{T+1})=\rho_T\ \ \forall T.
+          \]
+
+          <details open>
+            <summary>הוכחה (קצרה אך פורמלית)</summary>
+            <div style="margin-top:8px;line-height:1.75;color:var(--text);font-size:13px;">
+              <b>חלק 1 — מונוטוניות האנטרופיה.</b><br>
+              לפי ההנחה על \(S\) (מונוטוניות תחת \(\mathcal{E}\)):
+              \[
+                S(\rho_{T+1}) = S(\mathcal{E}_T(\rho_T)) \ge S(\rho_T).
+              \]
+              לכן \(S(\rho_T)\) לא־יורדת ב-\(T\).<br><br>
+
+              <b>חלק 2 — אי־קיום היפוך חד-ערכי.</b><br>
+              נניח בשלילה שקיימים \(\mathcal{R}_T\) כך ש-\(\mathcal{R}_T(\rho_{T+1})=\rho_T\) לכל \(T\).
+              בפרט עבור \(T_0\):
+              \[
+                \mathcal{R}_{T_0}\circ \mathcal{E}_{T_0}(\rho)=\rho\quad \forall \rho \ \text{במסלול}.
+              \]
+              אך אם \(\mathcal{E}_{T_0}\) אינה injective, קיימים \(\rho\neq\sigma\) כך ש
+              \(\mathcal{E}_{T_0}(\rho)=\mathcal{E}_{T_0}(\sigma)\). ואז מפעילים \(\mathcal{R}_{T_0}\):
+              \[
+                \rho=\mathcal{R}_{T_0}(\mathcal{E}_{T_0}(\rho))
+                =\mathcal{R}_{T_0}(\mathcal{E}_{T_0}(\sigma))=\sigma,
+              \]
+              סתירה. לכן לא יתכן מפענח חד-ערכי שמחזיר תמיד עמוד קודם.<br><br>
+
+              <b>פירוש.</b> “דפדוף קדימה” מכיל איבוד־מידע (many-to-one) לפחות בעמוד אחד,
+              ולכן עומק \(T\) מגדיר חץ זמן אמיתי.
+            </div>
+          </details>
+
+          <details>
+            <summary>חיבור לרעיון שלך: “צירים מקומיים” מול “ציר מרכזי”</summary>
+            <div style="margin-top:8px;line-height:1.75;color:var(--text);font-size:13px;">
+              אפשר לבצע טרנספורמציות מקומיות (קואורדינטות/פרמטרים, כמו \(t_x,t_y,t_z\)) שמחליפות “ייצוג”.
+              אבל אם מעבר העמודים \(T\to T+1\) מבצע גסות־מידע (ערבוב), אז גם עם שינוי ייצוג —
+              לא ניתן לשחזר מידע שנמחק. לכן: <b>הייצוגים ניידים, העומק \(T\) בלתי הפיך</b>.
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control">
+          <div class="top">
+            <label>עמוד מרכזי \(T\)</label>
+            <div class="val"><span id="Tval">0</span></div>
+          </div>
+          <input id="T" type="range" min="0" max="120" step="1" value="0">
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>סוג צורה (ייצוג מצב)</label>
+            <div class="val"><span id="shapeName">—</span></div>
+          </div>
+          <select id="shape">
+            <option value="circle">עיגול → אליפסה</option>
+            <option value="rose">רוזטה (ורד) → מורכבות</option>
+            <option value="lissajous">ליסז׳ו → ערבוב</option>
+            <option value="poly">פוליגון → עיוות</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>עוצמת גסות־מידע (Mix)</label>
+            <div class="val"><span id="mixVal">0.35</span></div>
+          </div>
+          <input id="mix" type="range" min="0" max="1" step="0.01" value="0.35">
+        </div>
+
+        <div class="control">
+          <div class="top">
+            <label>רעש מקומי (מדידה)</label>
+            <div class="val"><span id="noiseVal">0.15</span></div>
+          </div>
+          <input id="noise" type="range" min="0" max="1" step="0.01" value="0.15">
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">אנטרופיה (מדד הדגמתי) \(S(T)\)</div>
+          <div class="v"><span id="Sval">0.000</span></div>
+          <div class="bar"><div class="fill" id="Sbar"></div></div>
+          <div class="note">מוגדר כך שיצטבר עם \(T\) (דימוי “עובי הדפים”).</div>
+        </div>
+
+        <div class="stat">
+          <div class="k">אי־הפיכות \(R(T)\)</div>
+          <div class="v"><span id="Rval">0.000</span></div>
+          <div class="bar"><div class="fill" id="Rbar"></div></div>
+          <div class="note">מושפע מ-Mix ומ-\(S\): יותר ערבוב ⇒ קשה לשחזר ⇒ \(R\) עולה.</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>כל הזכויות שמורות. אין לשכפל/להפיץ ללא אישור.</div>
+        <div>📘⏳🔁</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ---------- KaTeX auto-render ---------- */
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+});
+
+/* ---------- helpers ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(n,d=3)=>Number(n).toFixed(d);
+
+/* ---------- elements ---------- */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+const elT = document.getElementById('T');
+const elTval = document.getElementById('Tval');
+const elShape = document.getElementById('shape');
+const elShapeName = document.getElementById('shapeName');
+const elMix = document.getElementById('mix');
+const elMixVal = document.getElementById('mixVal');
+const elNoise = document.getElementById('noise');
+const elNoiseVal = document.getElementById('noiseVal');
+
+const elSval = document.getElementById('Sval');
+const elSbar = document.getElementById('Sbar');
+const elRval = document.getElementById('Rval');
+const elRbar = document.getElementById('Rbar');
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnPlay = document.getElementById('btnPlay');
+const btnReset = document.getElementById('btnReset');
+const btnCenter = document.getElementById('btnCenter');
+
+const strip = document.getElementById('strip');
+const stripRangeTag = document.getElementById('stripRangeTag');
+
+let playing = false;
+let raf = null;
+
+/* ---------- model: monotone S(T), irreversible R(T) ---------- */
+function entropyAt(T, mix, noise){
+  // enforced monotonic accumulation
+  const k = 0.06 + 0.18 * mix;
+  const local = (0.02 + 0.06*noise) * Math.sqrt(T+1);
+  const A = (T+1) * (0.25 + 1.25*mix) + local;
+  const S = 1 - Math.exp(-k * A);
+  return clamp(S, 0, 1);
+}
+function irreversibilityAt(T, mix, noise){
+  const S = entropyAt(T, mix, noise);
+  const R = clamp(0.15 + 0.85*(0.55*mix + 0.45*S), 0, 1);
+  return R;
+}
+
+/* ---------- shape points ---------- */
+function shapePoints(kind, T, mix, noise, N=900){
+  const t = clamp(T / Number(elT.max), 0, 1);
+  const warp = lerp(0.0, 0.85, t) * (0.35 + 0.65*mix);
+  const jitter = (0.002 + 0.02*noise) * (0.3 + 0.7*t);
+  const pts = [];
+
+  for (let i=0;i<N;i++){
+    const a0 = (i/(N-1))*Math.PI*2;
+    const n = Math.sin(97.13*a0 + 13.7*T) * Math.cos(41.9*a0 - 7.1*T);
+    const a = a0 + jitter * n;
+
+    let x=0,y=0;
+    if (kind === 'circle'){
+      const rx = 1.0 + 0.85*t;
+      const ry = 1.0 - 0.35*t;
+      let r = 1.0 + 0.10*Math.sin(3*a + 0.7*T) * warp;
+      x = rx * r * Math.cos(a);
+      y = ry * r * Math.sin(a);
+    } else if (kind === 'rose'){
+      const k = 3 + Math.floor(5*t);
+      const r = 0.85 + 0.25*Math.cos(k*a + 0.4*T) + 0.18*Math.sin((k+2)*a - 0.2*T)*warp;
+      x = r*Math.cos(a);
+      y = r*Math.sin(a);
+    } else if (kind === 'lissajous'){
+      const ax = 2 + Math.floor(3*t);
+      const ay = 3 + Math.floor(4*t);
+      const ph = (0.4 + 2.4*mix)*t*Math.PI;
+      x = 0.95*Math.sin(ax*a + ph) + 0.12*Math.sin((ax+ay)*a - 0.1*T)*warp;
+      y = 0.95*Math.sin(ay*a) + 0.12*Math.cos((ay+1)*a + 0.2*T)*warp;
+    } else if (kind === 'poly'){
+      const sides = 3 + Math.floor(9*t);
+      const sector = (2*Math.PI)/sides;
+      const d = Math.cos(Math.PI/sides) / Math.cos((a % sector) - sector/2);
+      let r = 0.85*d;
+      r *= 1.0 + 0.22*Math.sin((sides+2)*a + 0.6*T)*warp;
+      x = r*Math.cos(a);
+      y = r*Math.sin(a);
+    } else {
+      x = Math.cos(a); y = Math.sin(a);
+    }
+
+    const s = warp;
+    const xs = x + s*(0.35*y*y - 0.15*x);
+    const ys = y + s*(0.25*x*x - 0.10*y);
+    pts.push([xs, ys]);
+  }
+  return pts;
+}
+
+function smoothPoints(pts, amount){
+  const smooth = clamp(amount, 0, 0.75);
+  if (smooth <= 0.001) return pts;
+  const win = 1 + Math.floor(18*smooth);
+  const m = Math.floor(win/2);
+  const sm = [];
+  for (let i=0;i<pts.length;i++){
+    let sx=0, sy=0, c=0;
+    for (let j=-m;j<=m;j++){
+      const k = (i+j+pts.length) % pts.length;
+      sx += pts[k][0];
+      sy += pts[k][1];
+      c++;
+    }
+    sm.push([sx/c, sy/c]);
+  }
+  return sm;
+}
+
+/* ---------- main draw ---------- */
+function draw(){
+  const T = Number(elT.value);
+  const mix = Number(elMix.value);
+  const noise = Number(elNoise.value);
+  const kind = elShape.value;
+
+  elTval.textContent = String(T);
+  elMixVal.textContent = fmt(mix, 2);
+  elNoiseVal.textContent = fmt(noise, 2);
+
+  const shapeLabel = ({
+    circle:"עיגול → אליפסה",
+    rose:"רוזטה (ורד)",
+    lissajous:"ליסז׳ו",
+    poly:"פוליגון"
+  })[kind] || "עקומה";
+  elShapeName.textContent = shapeLabel;
+
+  const S = entropyAt(T, mix, noise);
+  const R = irreversibilityAt(T, mix, noise);
+
+  elSval.textContent = fmt(S, 3);
+  elSbar.style.width = (S*100).toFixed(1) + "%";
+
+  elRval.textContent = fmt(R, 3);
+  elRbar.style.width = (R*100).toFixed(1) + "%";
+  elRbar.style.background = `linear-gradient(90deg, rgba(239,68,68,.85), rgba(245,158,11,.75))`;
+
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(148,163,184,.35)";
+  const step = 90;
+  for (let x=0;x<=W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y=0;y<=H;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  ctx.restore();
+
+  // axes
+  ctx.save();
+  ctx.globalAlpha = 0.8;
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(100,116,139,.55)";
+  ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  ctx.restore();
+
+  // title
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  ctx.fillStyle = "rgba(15,23,42,.85)";
+  ctx.font = "800 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+  const title = `עמוד T=${T} • S(T)≈${fmt(S,3)} • אי־הפיכות≈${fmt(R,3)}`;
+  ctx.fillText(title, 24, 46);
+  ctx.restore();
+
+  // previous page hint
+  if (T > 0){
+    const prev = shapePoints(kind, T-1, mix, noise, 420);
+    ctx.save();
+    ctx.globalAlpha = 0.20;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(99,102,241,.65)";
+    const scale = Math.min(W,H)*0.33, cx=W/2, cy=H/2;
+    ctx.beginPath();
+    for (let i=0;i<prev.length;i++){
+      const x = cx + prev[i][0]*scale;
+      const y = cy - prev[i][1]*scale;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // main curve with coarse-graining
+  const pts = shapePoints(kind, T, mix, noise, 900);
+  const smooth = clamp(0.02 + 0.55*mix*(T/Number(elT.max)), 0, 0.75);
+  const drawPts = smoothPoints(pts, smooth);
+
+  const scale = Math.min(W,H)*0.33, cx=W/2, cy=H/2;
+
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "rgba(14,165,233,.85)";
+  ctx.beginPath();
+  for (let i=0;i<drawPts.length;i++){
+    const x = cx + drawPts[i][0]*scale;
+    const y = cy - drawPts[i][1]*scale;
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+
+  // footer annotation
+  ctx.save();
+  ctx.globalAlpha = 0.92;
+  ctx.fillStyle = "rgba(2,6,23,.75)";
+  ctx.font = "700 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+  ctx.fillText("הייצוג יכול להשתנות; העומק T מצטבר (גסות־מידע) ⇒ S(T) לא יורד.", 24, H-28);
+  ctx.restore();
+
+  // update book strip UI
+  highlightActiveThumb(T);
+}
+
+/* ---------- book strip (thumbnails) ---------- */
+function thumbShapePreview(thumbCanvas, kind, T, mix, noise){
+  const tctx = thumbCanvas.getContext('2d');
+  const W = thumbCanvas.width, H = thumbCanvas.height;
+  tctx.clearRect(0,0,W,H);
+
+  // simple background
+  tctx.save();
+  tctx.globalAlpha = 0.25;
+  tctx.strokeStyle = "rgba(148,163,184,.35)";
+  tctx.lineWidth = 1;
+  tctx.beginPath();
+  tctx.moveTo(W/2,0); tctx.lineTo(W/2,H);
+  tctx.moveTo(0,H/2); tctx.lineTo(W,H/2);
+  tctx.stroke();
+  tctx.restore();
+
+  const pts = shapePoints(kind, T, mix, noise, 240);
+  const smooth = clamp(0.02 + 0.55*mix*(T/Number(elT.max)), 0, 0.75);
+  const p = smoothPoints(pts, smooth);
+
+  const scale = Math.min(W,H)*0.38, cx=W/2, cy=H/2;
+  tctx.save();
+  tctx.globalAlpha = 0.95;
+  tctx.lineWidth = 2.8;
+  tctx.strokeStyle = "rgba(14,165,233,.85)";
+  tctx.beginPath();
+  for (let i=0;i<p.length;i++){
+    const x = cx + p[i][0]*scale;
+    const y = cy - p[i][1]*scale;
+    if (i===0) tctx.moveTo(x,y); else tctx.lineTo(x,y);
+  }
+  tctx.closePath();
+  tctx.stroke();
+  tctx.restore();
+}
+
+let thumbEls = []; // {root, canvas, t, sTag, rTag}
+
+function buildStrip(){
+  strip.innerHTML = "";
+  thumbEls = [];
+
+  const maxT = Number(elT.max);
+  stripRangeTag.textContent = `T: 0..${maxT}`;
+
+  // Create a manageable number of thumbnails (sample pages)
+  // If maxT=120 => 25 thumbs feels good.
+  const thumbCount = 25;
+  for (let i=0;i<thumbCount;i++){
+    const t = Math.round(i*(maxT/(thumbCount-1)));
+
+    const root = document.createElement('div');
+    root.className = 'thumb';
+    root.setAttribute('role','button');
+    root.setAttribute('aria-label', `עמוד T=${t}`);
+
+    const c = document.createElement('canvas');
+    c.width = 160;
+    c.height = 110;
+
+    const meta = document.createElement('div');
+    meta.className = 'thumbMeta';
+
+    const left = document.createElement('span');
+    left.textContent = `T=${t}`;
+
+    const sTag = document.createElement('span');
+    sTag.className = 'tag';
+    sTag.textContent = 'S…';
+
+    const rTag = document.createElement('span');
+    rTag.className = 'tag';
+    rTag.textContent = 'R…';
+
+    meta.appendChild(left);
+    meta.appendChild(sTag);
+    meta.appendChild(rTag);
+
+    root.appendChild(c);
+    root.appendChild(meta);
+
+    root.addEventListener('click', () => setT(t, true));
+
+    strip.appendChild(root);
+    thumbEls.push({root, canvas:c, t, sTag, rTag});
+  }
+
+  refreshStripPreviews();
+  highlightActiveThumb(Number(elT.value));
+}
+
+function refreshStripPreviews(){
+  const kind = elShape.value;
+  const mix = Number(elMix.value);
+  const noise = Number(elNoise.value);
+
+  for (const th of thumbEls){
+    thumbShapePreview(th.canvas, kind, th.t, mix, noise);
+
+    const S = entropyAt(th.t, mix, noise);
+    const R = irreversibilityAt(th.t, mix, noise);
+    th.sTag.textContent = `S=${fmt(S,2)}`;
+    th.rTag.textContent = `R=${fmt(R,2)}`;
+  }
+}
+
+function highlightActiveThumb(T){
+  // find nearest thumb
+  let best = null;
+  let bestD = 1e9;
+  for (const th of thumbEls){
+    const d = Math.abs(th.t - T);
+    if (d < bestD){ bestD = d; best = th; }
+  }
+  for (const th of thumbEls){
+    th.root.classList.toggle('active', th === best);
+  }
+}
+
+function centerActiveThumb(){
+  const T = Number(elT.value);
+  let best = null;
+  let bestD = 1e9;
+  for (const th of thumbEls){
+    const d = Math.abs(th.t - T);
+    if (d < bestD){ bestD = d; best = th; }
+  }
+  if (best){
+    best.root.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }
+}
+
+/* ---------- interactions ---------- */
+function setT(v, center=false){
+  const nv = clamp(v, Number(elT.min), Number(elT.max));
+  elT.value = String(nv);
+  draw();
+  if (center) centerActiveThumb();
+}
+
+elT.addEventListener('input', () => draw());
+
+elShape.addEventListener('change', () => {
+  draw();
+  refreshStripPreviews();
+});
+elMix.addEventListener('input', () => {
+  draw();
+  refreshStripPreviews();
+});
+elNoise.addEventListener('input', () => {
+  draw();
+  refreshStripPreviews();
+});
+
+btnPrev.addEventListener('click', () => setT(Number(elT.value)-1, true));
+btnNext.addEventListener('click', () => setT(Number(elT.value)+1, true));
+btnCenter.addEventListener('click', () => centerActiveThumb());
+
+btnReset.addEventListener('click', () => {
+  playing = false;
+  btnPlay.textContent = "▶️ נגן";
+  setT(0, true);
+});
+
+btnPlay.addEventListener('click', () => {
+  playing = !playing;
+  btnPlay.textContent = playing ? "⏸️ עצור" : "▶️ נגן";
+  if (playing) loop();
+  else if (raf) cancelAnimationFrame(raf);
+});
+
+function loop(){
+  if (!playing) return;
+  const t = Number(elT.value);
+  if (t >= Number(elT.max)){
+    playing = false;
+    btnPlay.textContent = "▶️ נגן";
+    return;
+  }
+  setT(t+1, false);
+  raf = requestAnimationFrame(() => setTimeout(loop, 35));
+}
+
+/* ---------- init ---------- */
+buildStrip();
+draw();
+</script>
+</body>
+</html>
