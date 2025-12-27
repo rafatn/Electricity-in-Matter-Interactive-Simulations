@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MGF/CGF למרחב פתרונות — מומנטים, LN (דציבלים), ודלתא של קרוניקר</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb; --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --accent:#6366f1;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0b1430; --bg2:#061a22;
+        --card:rgba(17,24,39,.66);
+        --card2:rgba(17,24,39,.44);
+        --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.20);
+        --head:#f8fafc; --link:#93c5fd; --shadow:0 18px 50px rgba(0,0,0,.35);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 60%),
+        radial-gradient(1200px 800px at 90% 0%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #ffffff00 60%),
+        var(--bg0);
+      line-height:1.6;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      padding:28px 18px 8px;
+      max-width:1100px; margin:0 auto;
+    }
+    .title{
+      display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;
+    }
+    .badge{
+      padding:6px 10px; border-radius:999px;
+      background:linear-gradient(135deg, rgba(99,102,241,.18), rgba(14,165,233,.12));
+      border:1px solid var(--line);
+      font-weight:650;
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .h1{
+      font-size:clamp(22px, 3vw, 34px);
+      margin:0;
+      color:var(--head);
+    }
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width:80ch;
+    }
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px 50px;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+    }
+    @media (prefers-color-scheme: dark){
+      .card .hd{background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,0));}
+    }
+    .card .hd h2{
+      margin:0; font-size:16px; color:var(--head);
+    }
+    .card .bd{padding:14px 16px}
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid transparent;
+      color:var(--text);
+      background:transparent;
+    }
+    .nav a:hover{
+      background:var(--card2);
+      border-color:var(--line);
+      text-decoration:none;
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      font-size:12px; color:var(--muted);
+      margin:4px 6px 0 0;
+    }
+    .kbox{
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px dashed var(--line);
+      background:rgba(99,102,241,.07);
+      overflow:auto;
+    }
+    .note{
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--muted);
+    }
+    .callout{
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(22,163,74,.10), rgba(99,102,241,.07));
+    }
+    .callout.bad{
+      background:linear-gradient(135deg, rgba(239,68,68,.10), rgba(245,158,11,.08));
+    }
+    .callout h3{margin:0 0 6px; font-size:14px; color:var(--head)}
+    .mono{font-family:var(--mono)}
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 900px){
+      .grid2{grid-template-columns:1fr}
+    }
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:10px 18px 24px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .sep{height:1px; background:var(--line); margin:12px 0}
+    .small{font-size:12px; color:var(--muted)}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:650;
+    }
+    button:hover{filter:brightness(1.03)}
+    input[type="number"]{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.5);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      input[type="number"]{background:rgba(17,24,39,.55)}
+    }
+    .mini{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="title">
+    <span class="badge">LN • MGF/CGF • מומנטים</span>
+    <h1 class="h1">פונקציה יוצרת מומנטים למרחב פתרונות (SAT) + דציבלים + דלתא של קרוניקר</h1>
+  </div>
+  <p class="sub">
+    המטרה: להציג מנגנון “ריכוך אנליטי” שמייצר מומנטים (MGF/CGF) מההתפלגות המשוקללת על פתרונות,
+    ולהראות איפה הוא עובד (פרופיל שכבות/ריבוי פתרונות) ואיפה הוא נשבר באופן עקרוני (דלתא של קרוניקר — פתרון יחיד).
+  </p>
+</header>
+
+<main>
+  <!-- Sidebar -->
+  <aside class="card">
+    <div class="hd"><h2>ניווט</h2><span class="pill">תמצית</span></div>
+    <div class="bd nav">
+      <a href="#setup">1) הגדרות: פתרונות, שכבות מרחק, משקל</a>
+      <a href="#mgf">2) MGF/CGF: פונקציה יוצרת מומנטים</a>
+      <a href="#derivatives">3) נגזרות: תוחלת/שונות (מומנטים/קומולנטים)</a>
+      <a href="#ln-db">4) LN כ־דציבלים: LogSumExp</a>
+      <a href="#kronecker">5) המקרה הבעייתי: דלתא של קרוניקר</a>
+      <a href="#useful">6) מתי זה כן מועיל: תנאי פרופיל “חלק”</a>
+      <a href="#mini">7) דוגמה מינימלית אינטואיטיבית</a>
+    </div>
+    <div class="sep"></div>
+    <div class="bd">
+      <div class="note">
+        <div style="font-weight:800; color:var(--head); margin-bottom:6px;">רעיון מרכזי</div>
+        עובדים בלוגרתמים (\(\ln\)) כי סכומים אקספוננציאליים נעשים יציבים:
+        \[
+          \ln\sum_k e^{A_k} \approx \max_k A_k \;+\; \text{תיקון קטן}
+        \]
+        בדיוק כמו “חיבור הספקים” בדציבלים.
+      </div>
+      <div class="sep"></div>
+
+      <div class="callout">
+        <h3>🧩 מה נבנה כאן?</h3>
+        <div class="small">
+          פונקציה יוצרת מומנטים למרחק \(d(a,c)\) בתוך קבוצת הפתרונות \(S(\varphi)\) במשקל בולצמן,
+          ואז LN (CGF) שמחזיר תוחלת/שונות וכו׳ ע״י נגזרות.
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <section class="card">
+    <div class="hd"><h2>מסמך אנליטי קצר ומדויק</h2><span class="pill mono">KaTeX</span></div>
+    <div class="bd">
+
+      <!-- 1) Setup -->
+      <h2 id="setup">1) הגדרות: פתרונות, שכבות מרחק, משקל</h2>
+      <p>
+        נתונה נוסחת CNF \(\varphi(x_1,\dots,x_n)\). קבוצת הפתרונות:
+        \[
+          S(\varphi)=\{a\in\{0,1\}^n:\ \varphi(a)=1\}.
+        \]
+        בוחרים “מרכז” \(c\in\{0,1\}^n\) (יכול להיות גרידי/הגדרה אחרת),
+        ומרחק האמינג:
+        \[
+          d(a,c)=\sum_{i=1}^n \mathbf{1}[a_i\ne c_i].
+        \]
+      </p>
+
+      <div class="grid2">
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">שכבות מרחק</div>
+          נסמן:
+          \[
+            N_k(\varphi;c)=|\{a\in S(\varphi): d(a,c)=k\}|.
+          \]
+          ואז כל סכום משוקלל על פתרונות מתפרק לשכבות:
+          \[
+            \sum_{a\in S(\varphi)} f(d(a,c))=\sum_{k=0}^n N_k(\varphi;c)\,f(k).
+          \]
+        </div>
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">משקל בולצמן (אקספוננציאלי)</div>
+          נגדיר משקל:
+          \[
+            w_\beta(a)=e^{-\beta d(a,c)}\quad (\beta>0).
+          \]
+          והסכום המשוקלל (״מסה״):
+          \[
+            M_\beta(\varphi;c)=\sum_{a\in S(\varphi)} e^{-\beta d(a,c)}
+            =\sum_{k=0}^n N_k(\varphi;c)e^{-\beta k}.
+          \]
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px;">
+        <b>הערה חשובה:</b> על <u>כל</u> \(\{0,1\}^n\) (בלי אילוץ SAT) מתקיים בינום ניוטון:
+        \[
+          \sum_{k=0}^n \binom{n}{k}e^{-\beta k}=(1+e^{-\beta})^n.
+        \]
+        אבל אצלנו המקדמים הם \(N_k(\varphi;c)\) (תלויים בפתרונות) — ולכן זה המקום שבו הכוח/הקושי נמצא.
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 2) MGF/CGF -->
+      <h2 id="mgf">2) MGF/CGF: פונקציה יוצרת מומנטים</h2>
+      <p>
+        כדי לקבל “פונקציה יוצרת מומנטים” למרחק \(d\) בתוך פתרונות,
+        נבנה התפלגות משוקללת על הפתרונות:
+      </p>
+
+      <div class="kbox">
+        \[
+          \Pr_\beta(a)=\frac{\mathbf{1}[\varphi(a)=1]\;e^{-\beta d(a,c)}}{M_\beta(\varphi;c)}
+          \quad,\quad a\in\{0,1\}^n.
+        \]
+        כך ש-\(M_\beta\) הוא הנורמליזציה (״פונקציית חלוקה על פתרונות״).
+      </div>
+
+      <p>
+        עכשיו נגדיר פונקציה יוצרת מומנטים (MGF) של המשתנה האקראי
+        \(D:=d(A,c)\) כאשר \(A\sim\Pr_\beta\):
+      </p>
+
+      <div class="kbox">
+        <div style="font-weight:800; margin-bottom:6px;">MGF (Moment Generating Function)</div>
+        \[
+          \mathrm{MGF}_D(t)=\mathbb{E}_\beta[e^{tD}]
+          =\sum_{a\in S(\varphi)} \Pr_\beta(a)\,e^{t d(a,c)}
+          =\frac{\sum_{a\in S(\varphi)} e^{-(\beta-t)d(a,c)}}{\sum_{a\in S(\varphi)} e^{-\beta d(a,c)}}
+          =\frac{M_{\beta-t}(\varphi;c)}{M_{\beta}(\varphi;c)}.
+        \]
+      </div>
+
+      <p>
+        ולצד זה נגדיר את הפונקציה היוצרת קומולנטים (CGF) בעזרת LN:
+      </p>
+
+      <div class="kbox">
+        <div style="font-weight:800; margin-bottom:6px;">CGF (Cumulant Generating Function)</div>
+        \[
+          \mathrm{CGF}_D(t)=\ln \mathrm{MGF}_D(t)
+          =\ln M_{\beta-t}(\varphi;c)-\ln M_{\beta}(\varphi;c).
+        \]
+      </div>
+
+      <div class="callout" style="margin-top:12px;">
+        <h3>✅ מה הרווח?</h3>
+        אם אתה יודע לחשב (או להעריך) \(\ln M_\beta\) כתלות ב-\(\beta\),
+        אתה מקבל מומנטים/קומולנטים של \(D\) ע״י נגזרות — בדיוק כמו באותות: LN הופך מכפלה/סכום לאדיטיבי.
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 3) Derivatives -->
+      <h2 id="derivatives">3) נגזרות: תוחלת/שונות (מומנטים וקומולנטים)</h2>
+
+      <p>
+        נגזרות לוגרתמיות של \(M_\beta\) מחזירות מומנטים (או קומולנטים) של מרחק האמינג תחת \(\Pr_\beta\):
+      </p>
+
+      <div class="grid2">
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">תוחלת מרחק</div>
+          \[
+            \frac{d}{d\beta}\ln M_\beta(\varphi;c)
+            =\frac{1}{M_\beta}\frac{dM_\beta}{d\beta}
+            =\frac{1}{M_\beta}\sum_{a\in S(\varphi)}(-d(a,c))e^{-\beta d(a,c)}
+            =-\mathbb{E}_\beta[D].
+          \]
+          כלומר:
+          \[
+            \boxed{\mathbb{E}_\beta[D]=-\frac{d}{d\beta}\ln M_\beta.}
+          \]
+        </div>
+
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">שונות מרחק (קומולנט שני)</div>
+          \[
+            \frac{d^2}{d\beta^2}\ln M_\beta
+            =\mathrm{Var}_\beta(D)\ \ge 0.
+          \]
+          לכן \(\ln M_\beta\) היא פונקציה קמורה ב-\(\beta\) (יציבות אנליטית).
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px;">
+        אותו רעיון עובד גם על מרג’ינלים של ביט \(x_i\) דרך סכומים מותנים
+        \(M_\beta^{(i,1)}\), \(M_\beta^{(i,0)}\),
+        ואז:
+        \[
+          p_i(\beta)=\Pr_\beta[A_i=1]=\frac{M_\beta^{(i,1)}}{M_\beta^{(i,1)}+M_\beta^{(i,0)}}.
+        \]
+        אבל כדי להשתמש בזה אלגוריתמית צריך דרך לחשב/להעריך את הסכומים האלה בפולינום זמן.
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 4) LN & dB -->
+      <h2 id="ln-db">4) LN כ־דציבלים: LogSumExp וה״איבר הדומיננטי״</h2>
+      <p>
+        כתוב את המסה לפי שכבות:
+        \[
+          M_\beta=\sum_{k=0}^n N_k e^{-\beta k}.
+        \]
+        נעבור ל־LN:
+        \[
+          \ln M_\beta=\ln\sum_{k=0}^n \exp(\ln N_k-\beta k).
+        \]
+        זהו בדיוק <span class="mono">LogSumExp</span>.
+      </p>
+
+      <div class="kbox">
+        נסמן \(A_k=\ln N_k-\beta k\). אז:
+        \[
+          \max_k A_k \le \ln\sum_k e^{A_k}\le \max_k A_k + \ln(n+1).
+        \]
+        כלומר “המצב החזק” שולט, ושאר האיברים מוסיפים תיקון לוגרתמי קטן — כמו חיבור מקורות בדציבלים.
+      </div>
+
+      <div class="callout" style="margin-top:12px;">
+        <h3>📶 אנלוגיית אותות (SNR)</h3>
+        אם יש פער \(\Delta\) בין \(A_{k^\*}\) לבין כל האחרים,
+        אז התיקון קטן מאוד:
+        \[
+          \ln\sum_k e^{A_k} = A_{k^\*} + \ln\!\Big(1+\sum_{k\ne k^\*}e^{A_k-A_{k^\*}}\Big),
+        \]
+        ואם \(A_k\le A_{k^\*}-\Delta\) אז:
+        \[
+          \ln\sum_k e^{A_k}\le A_{k^\*}+\ln(1+n e^{-\Delta}).
+        \]
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 5) Kronecker delta -->
+      <h2 id="kronecker">5) המקרה הבעייתי: דלתא של קרוניקר (פתרון יחיד)</h2>
+      <p>
+        אם לקבוצה \(S(\varphi)\) יש פתרון יחיד, אז עבור כל מרכז \(c\) יש \(k^\*=d(a^\*,c)\),
+        והתפלגות שכבות הופכת ל״אימפולס״:
+        \[
+          N_k(\varphi;c)=\delta_{k,k^\*}.
+        \]
+      </p>
+
+      <div class="kbox">
+        אז:
+        \[
+          M_\beta=\sum_k \delta_{k,k^\*}e^{-\beta k}=e^{-\beta k^\*},
+          \qquad
+          \ln M_\beta=-\beta k^\*.
+        \]
+        אין סכום אמיתי, אין זנב, אין ריכוז סטטיסטי “רציף”.
+      </div>
+
+      <div class="callout bad" style="margin-top:12px;">
+        <h3>⛔ למה זה חוסם “ריכוך אנליטי”?</h3>
+        כל השיטות הרציפות (LN, מומנטים, אינטגרלים, טור טיילור, Integration by Parts)
+        מנצלות פרופיל “חלק” של \(N_k\).
+        כאשר \(N_k\) הוא דלתא של קרוניקר, אין נגזרת/פרופיל/פער סטטיסטי שאפשר לחלץ ממנו כיוון חיפוש.
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 6) When useful -->
+      <h2 id="useful">6) מתי זה כן מועיל: תנאי פרופיל “חלק” (ואז מומנטים באמת נותנים מידע)</h2>
+      <p>
+        כדי שה־MGF/CGF יהיו “אינפורמטיביים” צריך שלשכבות תהיה התפלגות לא־אימפולסיבית, למשל:
+      </p>
+
+      <div class="grid2">
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">תנאי פרופיל שכבות (סגנון אנטרופי)</div>
+          נניח שקיים \(f(x)\) כך ש:
+          \[
+            N_{nx}(\varphi;c)\approx \exp(n f(x)) \quad (x\in[0,1]).
+          \]
+          ואז:
+          \[
+            \ln M_\beta \approx \ln\int_0^1 \exp(n(f(x)-\beta x))\,dx
+          \]
+          ומתאפשר ניתוח “מקסימום + תיקון”.
+        </div>
+        <div class="kbox">
+          <div style="font-weight:800; margin-bottom:6px;">תוצאה פרקטית</div>
+          אם \(f(x)\) חלק/קעור ויש מקסימום יחיד,
+          אז \(\ln M_\beta\) נשלט ע״י שכבה דומיננטית, והנגזרות מחזירות תוחלת/שונות יציבות.
+          זה תומך במנגנון “בחר ביט” דרך מרג’ינלים — <i>אבל</i> לרוב רק במשפחות עם מבנה (כגון treewidth קטן).
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px;">
+        <b>מסקנה:</b>
+        “פונקציה יוצרת מומנטים” היא כלי אנליטי חזק,
+        אבל כדי להפוך אותה למנגנון חישובי כללי צריך גישה ל-\(M_\beta\) (או ל-\(\ln M_\beta\)) בצורה יעילה,
+        או להניח/להוכיח פרופיל שכבות מתאים. במקרה הדלתא (פתרון יחיד) אין פרופיל רציף שאפשר לנצל.
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 7) Mini example -->
+      <h2 id="mini">7) דוגמה מינימלית אינטואיטיבית</h2>
+      <p class="small">
+        כאן רק “מחשבון אינטואיטיבי” שמראה מה קורה ל-\(\ln M_\beta\) כאשר \(N_k\) הוא (א) אימפולס, (ב) שכבה רחבה.
+        לא מתיימר לפתור SAT — רק להמחיש את ההבדל בין דלתא לפרופיל מפוזר.
+      </p>
+
+      <div class="grid2">
+        <div class="card" style="box-shadow:none;">
+          <div class="hd"><h2>מודל A: דלתא (פתרון יחיד)</h2><span class="pill">Kronecker</span></div>
+          <div class="bd">
+            <label class="small">בחר \(k^\*\) (מרחק הפתרון מהמרכז)</label>
+            <input id="kstar" type="number" min="0" value="20" />
+            <div class="mini">במודל זה: \(N_k=\delta_{k,k^\*}\) ולכן \(M_\beta=e^{-\beta k^\*}\).</div>
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;">
+          <div class="hd"><h2>מודל B: שכבה רחבה</h2><span class="pill">Wide profile</span></div>
+          <div class="bd">
+            <label class="small">בחר פרמטר “רוחב” \(\sigma\) (גדול = מפוזר)</label>
+            <input id="sigma" type="number" min="1" value="6" />
+            <div class="mini">
+              כאן נשתמש בפרופיל “דמוי גאוס” על \(k\): \(N_k\propto e^{-\frac{(k-\mu)^2}{2\sigma^2}}\) (להמחשה בלבד).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px; box-shadow:none;">
+        <div class="hd"><h2>חשב \(\ln M_\beta\) על פני \(\beta\)</h2><span class="pill mono">demo</span></div>
+        <div class="bd">
+          <div class="grid2">
+            <div>
+              <label class="small">בחר \(n\) (מס׳ שכבות \(0..n\))</label>
+              <input id="nval" type="number" min="5" value="60" />
+              <div class="mini">זה רק לציור/סכימה, לא קשור ל־SAT אמיתי כאן.</div>
+            </div>
+            <div>
+              <label class="small">בחר \(\mu\) למודל הרחב</label>
+              <input id="mu" type="number" min="0" value="25" />
+              <div class="mini">מרכז שכבות של מודל B.</div>
+            </div>
+          </div>
+
+          <div class="btnrow" style="margin-top:10px;">
+            <button id="run">חשב</button>
+            <button id="copyEq">העתק נוסחאות מרכזיות</button>
+          </div>
+
+          <div class="sep"></div>
+          <div id="out" class="kbox" aria-live="polite"></div>
+          <div class="mini">
+            שים לב: במודל הדלתא \(\ln M_\beta\) ליניארי ב-\(\beta\), אין “תיקון”. במודל הרחב \(\ln M_\beta\) מראה התנהגות “LogSumExp”.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="sep"></div>
+  <div>כל הזכויות שמורות. אין לשכפל אלא באישור מראש. (לשימוש פרטי/לימודי: התאמה והרחבה לפי הצורך)</div>
+</footer>
+
+<script>
+  // KaTeX auto-render
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ]
+      });
+    }
+  });
+
+  function lnSumExp(arr){
+    // stable log-sum-exp
+    let m = -Infinity;
+    for (const x of arr) if (x > m) m = x;
+    if (!isFinite(m)) return -Infinity;
+    let s = 0;
+    for (const x of arr) s += Math.exp(x - m);
+    return m + Math.log(s);
+  }
+
+  function compute(){
+    const n = Math.max(5, Math.floor(Number(document.getElementById('nval').value || 60)));
+    const kstar = Math.max(0, Math.min(n, Math.floor(Number(document.getElementById('kstar').value || 20))));
+    const sigma = Math.max(1, Number(document.getElementById('sigma').value || 6));
+    const mu = Math.max(0, Math.min(n, Number(document.getElementById('mu').value || 25)));
+
+    // define a few beta points
+    const betas = [0, 0.02, 0.05, 0.10, 0.20, 0.35, 0.50, 0.75, 1.0];
+
+    // Model A: delta profile N_k = delta_{k,k*}
+    // ln M_beta = ln(e^{-beta k*}) = -beta k*
+    const rowsA = betas.map(b => ({beta:b, lnM: -b * kstar}));
+
+    // Model B: wide gaussian-ish profile on k (illustration)
+    // N_k ∝ exp(-(k-mu)^2 / (2 sigma^2)). We'll compute lnN_k up to constant.
+    // ln M_beta = ln sum_k exp(lnN_k - beta k) ; constant cancels, ok for shape.
+    function lnN(k){
+      const z = (k - mu) / sigma;
+      return -0.5 * z * z;
+    }
+
+    const rowsB = betas.map(b => {
+      const Ak = [];
+      for (let k=0;k<=n;k++){
+        Ak.push(lnN(k) - b * k);
+      }
+      return {beta:b, lnM: lnSumExp(Ak)};
+    });
+
+    // show results
+    let html = '';
+    html += '<div style="font-weight:900; margin-bottom:6px;">תוצאות (המחשה):</div>';
+    html += '<div class="small">מודל A = דלתא (פתרון יחיד), מודל B = פרופיל שכבות רחב (דמוי גאוס).</div>';
+    html += '<div class="sep"></div>';
+
+    html += '<div class="grid2">';
+    html += '<div><div style="font-weight:800; margin-bottom:6px;">מודל A: \\(\\ln M_\\beta = -\\beta k^*\\)</div>';
+    html += '<div class="kbox mono">';
+    html += 'beta\tlnM\n';
+    rowsA.forEach(r => { html += `${r.beta.toFixed(2)}\t${r.lnM.toFixed(4)}\n`; });
+    html += '</div></div>';
+
+    html += '<div><div style="font-weight:800; margin-bottom:6px;">מודל B: \\(\\ln M_\\beta=\\ln\\sum_k e^{\\ln N_k-\\beta k}\\)</div>';
+    html += '<div class="kbox mono">';
+    html += 'beta\tlnM\n';
+    rowsB.forEach(r => { html += `${r.beta.toFixed(2)}\t${r.lnM.toFixed(4)}\n`; });
+    html += '</div></div>';
+    html += '</div>';
+
+    html += '<div class="sep"></div>';
+    html += '<div class="note"><b>פירוש:</b> במודל A אין “ריכוז + תיקון” — זו בדיוק דלתא של קרוניקר. במודל B, \\(\\ln M_\\beta\\) הוא LogSumExp ולכן נשלט ע״י איבר דומיננטי עם תיקון קטן.</div>';
+
+    document.getElementById('out').innerHTML = html;
+
+    // re-render math inside out
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('out'), {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ]
+      });
+    }
+  }
+
+  document.getElementById('run').addEventListener('click', compute);
+  document.getElementById('copyEq').addEventListener('click', async () => {
+    const txt =
+`נוסחאות מרכזיות:
+
+S(φ) = { a in {0,1}^n : φ(a)=1 }
+d(a,c) = Hamming(a,c)
+
+N_k(φ;c) = |{ a in S(φ) : d(a,c)=k }|
+
+M_β(φ;c) = Σ_{a in S(φ)} e^{-β d(a,c)} = Σ_{k=0}^n N_k e^{-β k}
+
+התפלגות משוקללת:
+P_β(a) = 1[φ(a)=1] e^{-β d(a,c)} / M_β(φ;c)
+
+MGF של D=d(A,c):
+MGF_D(t) = E_β[e^{tD}] = M_{β-t}(φ;c) / M_β(φ;c)
+
+CGF:
+CGF_D(t) = ln M_{β-t}(φ;c) - ln M_β(φ;c)
+
+נגזרות לוגרתמיות:
+E_β[D] = - d/dβ ln M_β
+Var_β(D) = d^2/dβ^2 ln M_β ≥ 0
+
+מקרה דלתא (פתרון יחיד):
+N_k = δ_{k,k*} ⇒ M_β = e^{-β k*}, ln M_β = -β k*`;
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert("הועתק ללוח.");
+    }catch(e){
+      alert("לא הצלחתי להעתיק (ייתכן שהדפדפן חסם). אפשר לבחור ולהעתיק ידנית מהקוד.");
+    }
+  });
+
+  // run once by default
+  compute();
+</script>
+</body>
+</html>
