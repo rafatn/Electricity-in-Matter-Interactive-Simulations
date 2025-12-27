@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מודל “טבע החומר האפל” — מרחבי מסלולים, צבירים כ“דג טורף”, ועדשות כבידה</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- (אופציונלי) KaTeX להצגת נוסחאות יפה -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --head:#0b1220;
+      --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", "Noto Sans", sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0f172a; --bg2:#0b1220;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.52);
+        --text:#e5e7eb; --muted:#9ca3af; --head:#f9fafb;
+        --line:rgba(148,163,184,.18);
+        --shadow: 0 18px 55px rgba(0,0,0,.55);
+        --accent:#a5b4fc;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 650px at 90% 0%, var(--bg2), transparent 60%),
+        radial-gradient(1000px 600px at 10% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      padding:22px 16px 10px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .topRow{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+    }
+    .title{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(20px, 2.4vw, 34px);
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      max-width:820px;
+      line-height:1.45;
+      font-size:14px;
+    }
+    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow:var(--shadow);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    main{max-width:1200px; margin:0 auto; padding:12px 16px 90px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:18px;
+      color:var(--head);
+      display:flex; gap:10px; align-items:center;
+    }
+    .card p{margin:8px 0; color:var(--text); line-height:1.6}
+    .muted{color:var(--muted)}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .hr{height:1px; background:var(--line); margin:12px 0}
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 560px){ .controls{grid-template-columns:1fr} }
+    label{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    select, input[type="range"], input[type="number"], button{
+      font-family:var(--font);
+    }
+    select, input[type="number"]{
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.55);
+      color:var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: dark){
+      select, input[type="number"]{ background:rgba(17,24,39,.45) }
+    }
+    input[type="range"]{ width:100% }
+    .btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(99,102,241,.18), rgba(99,102,241,.08));
+      color:var(--text);
+      cursor:pointer;
+      transition:transform .05s ease, filter .2s ease;
+      user-select:none;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{
+      background:linear-gradient(180deg, rgba(148,163,184,.20), rgba(148,163,184,.08));
+    }
+    .btn.ok{
+      background:linear-gradient(180deg, rgba(22,163,74,.18), rgba(22,163,74,.08));
+    }
+
+    .canvasWrap{
+      position:relative;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.35);
+      overflow:hidden;
+      min-height:320px;
+    }
+    @media (prefers-color-scheme: dark){ .canvasWrap{ background:rgba(17,24,39,.35) } }
+    canvas{ display:block; width:100%; height:360px; }
+    .badge{
+      position:absolute;
+      top:10px; inset-inline-end:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.65);
+      font-size:12px;
+      color:var(--muted);
+      backdrop-filter: blur(8px);
+    }
+    @media (prefers-color-scheme: dark){ .badge{ background:rgba(17,24,39,.55) } }
+
+    .katexBox{
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.28);
+    }
+    @media (prefers-color-scheme: dark){ .katexBox{ background:rgba(17,24,39,.28) } }
+    pre{
+      margin:10px 0 0;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.05);
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      direction:ltr;
+      text-align:left;
+    }
+    @media (prefers-color-scheme: dark){ pre{ background:rgba(0,0,0,.25) } }
+
+    footer{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:10px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.00), rgba(255,255,255,.70));
+      border-top:1px solid rgba(148,163,184,.18);
+      backdrop-filter: blur(10px);
+    }
+    @media (prefers-color-scheme: dark){
+      footer{ background:linear-gradient(180deg, rgba(15,23,42,.00), rgba(15,23,42,.70)); }
+    }
+    .footInner{max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:12px}
+    .warnNote{color:var(--muted); font-size:12.5px; line-height:1.55}
+    .mini{
+      font-size:12px; color:var(--muted);
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .dot{width:6px; height:6px; border-radius:999px; background:var(--accent); display:inline-block}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topRow">
+    <div class="title">
+      <h1>טבע החומר האפל — מודל “מרחבי מסלולים” (Loop Spaces)</h1>
+      <p class="subtitle">
+        אתה הגדרת את עקומות הסיבוב כשלוש קטגוריות בסיסיות: <b>עיגול</b>, <b>אליפסה</b>, ו-<b>מסלול כללי</b> (כולל נקודות/קטעים) שמוגדר כ״סיבוב״ אם נקודת ההתחלה זהה לנקודת הסוף.
+        כאן זה מנוסח כמודל מאוחד שמחבר גם <b>צבירי גלקסיות</b> (כ״דג טורף״ השוחה במדיום) וגם <b>עדשות כבידה</b> (כטרנספורמציה על מסלולים).
+      </p>
+    </div>
+
+    <div class="chips">
+      <span class="chip">🌀 עקומות סיבוב סגורות</span>
+      <span class="chip">🧩 3 מרחבים וקטוריים</span>
+      <span class="chip">🐟 צבירים כ״שחייה״</span>
+      <span class="chip">🔍 עדשת כבידה = עיוות מסלול</span>
+      <span class="chip">✈️ כבידה אפקטיבית + סביבה</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+
+    <!-- LEFT: Interactive demo -->
+    <section class="card">
+      <h2>הדגמה אינטראקטיבית: מסלולים + עקומת סיבוב + עדשה</h2>
+      <p class="muted">
+        בחר סוג מסלול (עיגול/אליפסה/מסלול כללי), ואז שחק עם הפרמטרים:
+        <b>“עוצמת חומר אפל”</b> משפיעה על עקומת הסיבוב המתקבלת (קונספטואלית),
+        ו-<b>“עדשת כבידה”</b> מעוותת את המרחב ולכן גם את המסלול ואת “התמונה” הנצפית.
+      </p>
+
+      <div class="controls">
+        <label>
+          סוג מסלול (המרחב הווקטורי)
+          <select id="orbitType">
+            <option value="circle">V∘ — מסלולים מעגליים</option>
+            <option value="ellipse">Vellipse — מסלולים אליפטיים</option>
+            <option value="loop">Vloop — מסלול כללי/מקוטע (לולאה)</option>
+          </select>
+        </label>
+
+        <label>
+          רדיוס בסיס r
+          <input id="radius" type="range" min="40" max="150" value="95" />
+        </label>
+
+        <label>
+          אקסצנטריות (רק אליפסה) e
+          <input id="ecc" type="range" min="0" max="85" value="35" />
+        </label>
+
+        <label>
+          מורכבות (רק לולאה כללית)
+          <input id="complex" type="range" min="1" max="10" value="5" />
+        </label>
+
+        <label>
+          “עוצמת חומר אפל” (DM gain)
+          <input id="dm" type="range" min="0" max="100" value="55" />
+        </label>
+
+        <label>
+          “עדשת כבידה” (עוצמת עיוות)
+          <input id="lens" type="range" min="0" max="100" value="25" />
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn ok" id="btnPlay">▶︎ הפעל/עצור</button>
+        <button class="btn secondary" id="btnReseed">🎲 מסלול חדש (לולאה)</button>
+        <button class="btn secondary" id="btnReset">↺ איפוס פרמטרים</button>
+        <span class="mini"><span class="dot"></span>טיפ: הגדל DM כדי לדמות “עקומה שטוחה” יותר</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="canvasWrap">
+        <div class="badge" id="badge">מצב: ריצה</div>
+        <canvas id="cv" width="1100" height="360"></canvas>
+      </div>
+
+      <p class="warnNote" style="margin-top:10px;">
+        ⚠️ ההדגמה כאן היא <b>מודל רעיוני</b> שממחיש את הגאומטריה/טופולוגיה ואת רעיון “המרחבים”.
+        היא לא מחליפה חישוב אסטרופיזי מלא (N-body / GR lensing).
+      </p>
+    </section>
+
+    <!-- RIGHT: Explanation from start -->
+    <section class="card">
+      <h2>הסבר מלא מהתחלה: הנחות, הגדרות, ומה “חומר אפל” אומר במודל</h2>
+
+      <p>
+        <b>רעיון יסוד:</b> במקום להתחיל מ“מסה חסרה”, אתה מתחיל ממה שנמדד בפועל:
+        <b>מסלולי סיבוב</b> ועקומות \(v(r)\) בגלקסיות.
+        אתה מציע לתאר את “טבע החומר האפל” כחבורה/מרחב של <b>מסלולים סגורים</b> (Loops),
+        שבתוכה יש <b>שלושה מרחבים וקטוריים</b> המייצגים טיפוסי מסלולים שונים.
+      </p>
+
+      <div class="katexBox">
+        <p style="margin:0 0 8px;"><b>1) הגדרת סיבוב כלולאה (Loop)</b></p>
+        <p style="margin:0">
+          עקומה \(\gamma\) היא “סיבוב” אם היא מתחילה ומסתיימת באותה נקודה:
+          <span class="math">
+            \[
+              \gamma:[0,1]\to \mathbb{R}^3,\qquad \gamma(0)=\gamma(1)
+            \]
+          </span>
+          לכן אוסף כל “הסיבובים” הוא:
+          <span class="math">
+            \[
+              \mathcal{G}_{DM}=\{\gamma\mid \gamma(0)=\gamma(1)\}
+            \]
+          </span>
+          (אפשר לחשוב על זה כחבורה תחת חיבור מסלולים/הדבקה.)
+        </p>
+      </div>
+
+      <div class="hr"></div>
+
+      <p style="margin-top:0"><b>2) שלושת המרחבים הווקטוריים בתוך \(\mathcal{G}_{DM}\)</b></p>
+      <p class="muted" style="margin-top:0">
+        כאן “מרחב וקטורי” הוא דרך לסווג/לפרמט משפחות מסלולים — בהתאם לגיאומטריה ולפרמטרים שנוחים לתיאור.
+      </p>
+
+      <p>
+        <b>V∘ — מעגלים (קואורדינטות כדוריות):</b>
+        אוסף מסלולים עם רדיוס קבוע במישור המשווה (בקירוב):
+        <span class="math">\[
+          V_{\circ}=\{\gamma\in\mathcal{G}_{DM}\mid r=\text{const}\}
+        \]</span>
+      </p>
+
+      <p>
+        <b>Vellipse — אליפסות (קואורדינטות אליפטיות):</b>
+        אוסף מסלולים עם צירי \(a\neq b\), כלומר אי-סימטריה גאומטרית:
+        <span class="math">\[
+          V_{\text{ellipse}}=\{\gamma\in\mathcal{G}_{DM}\mid a\neq b\}
+        \]</span>
+      </p>
+
+      <p>
+        <b>Vloop — מסלולים כלליים/בדידים:</b>
+        נקודות/קטעים/מסלולים מקוטעים שניתנים לחיבור לעקומה סגורה:
+        <span class="math">\[
+          V_{\text{loop}}=\{\gamma=\cup_i p_i \ \mid\ \exists\ \text{חיבור}\Rightarrow \gamma(0)=\gamma(1)\}
+        \]</span>
+        זהו “מרחב הסיבובים הכללי”, והוא מאפשר גם דינמיקה “דמוית-רעש”, סטיות, מקטעים, ותנועה מורכבת.
+      </p>
+
+      <div class="hr"></div>
+
+      <p>
+        <b>3) צבירי גלקסיות כ“דג טורף” (שחייה במדיום):</b><br>
+        במודל שלך — שדה החומר האפל הוא כמו “ים”,
+        וצביר הוא כמו “דג” שמותר לו לשחות בו.
+        כלומר המסלול של צביר אינו חייב להיות עיגול/אליפסה פשוטים,
+        אלא תנועה אדפטיבית בתוך שדה:
+        <span class="math">\[
+          \dot{\mathbf{x}}=\nabla\Phi_{DM}+\mathbf{v}_{\text{active}}
+        \]</span>
+      </p>
+
+      <p>
+        <b>4) עדשות כבידה:</b><br>
+        עדשה היא לא “שבירה” רגילה — אלא <b>עיוות של המטריקה/המרחב</b>.
+        לכן, במונחי מסלולים: היא מפעילה טרנספורמציה על \(\gamma\) ונותנת \(\gamma'\).
+        בהדגמה, “Lens strength” עושה בדיוק את זה: מעוות את המרחב ואז מצייר מחדש.
+      </p>
+
+      <div class="hr"></div>
+
+      <p>
+        <b>5) הערת האדם באטמוספרה וכבידה אפקטיבית:</b><br>
+        אתה מצביע על רעיון “מקדם כבידה אפקטיבי” שתלוי בסביבה.
+        בפיזיקה יש שני רכיבים משמעותיים בגובה: ירידה קלה ב-\(g\) עם הגובה, וירידה חדה בצפיפות האוויר (שמשנה גרר/נשימה/תנאי ריחוף).
+        במודל רעיוני אפשר לכתוב:
+        <span class="math">\[
+          g_{\text{eff}}(h)\approx g(h)\cdot f(\rho(h))
+        \]</span>
+        כלומר: מה שנראה כ“שינוי יכולת” (נשימה/תנועה/ריחוף) הוא שילוב של שדה+מדיום.
+      </p>
+
+      <p class="muted">
+        בשורה התחתונה: אתה מציע ש“חומר אפל” הוא לא רק “מסה חסרה”,
+        אלא <b>מבנה שמגדיר אילו סיבובים/מסלולים יציבים/מותרים</b> בעולם האסטרונומי,
+        ושאותו רעיון (“תנועה במדיום”) יכול לשמש אנלוגיה גם בסקאלה של אוויר/טיסה.
+      </p>
+    </section>
+
+    <!-- Additional card: How to read the plots -->
+    <section class="card">
+      <h2>איך לקרוא את ההדגמה</h2>
+      <p>
+        <b>בציור:</b>
+        הקו הלבן הוא המסלול, והנקודה היא הגוף הנע עליו.
+        <b>בגרף הפנימי (ימין-למטה):</b>
+        מוצגת “עקומת סיבוב” רעיונית \(v(r)\).
+      </p>
+      <p class="muted">
+        בדגם זה: הגדלת DM גורמת לרכיב שמדמה “תרומה נוספת” למהירות סיבוב,
+        ולכן לעיתים מתקבל קטע “שטוח יותר” — כפי שמדברים על עקומות סיבוב בגלקסיות (בהקשר הקלאסי של חומר אפל).
+      </p>
+      <pre><b>הערה טכנית</b>
+- Circle: r קבוע.
+- Ellipse: r משתנה לפי זווית (באופן אליפטי).
+- Loop: מסלול מורכב מהרמוניות + “נקודות עזר” (reseeding).
+- Lens: מבצע מיפוי (x,y)→(x',y') המדמה עיוות מרחב.</pre>
+    </section>
+
+    <!-- Extra: cluster fish demo -->
+    <section class="card">
+      <h2>הדגמה נוספת: צביר כ“דג” (שחייה בים החומר האפל)</h2>
+      <p class="muted">
+        כאן אנחנו מציירים מסלול “אקטיבי”: הגוף משנה כיוון כאילו הוא “שוחה” בתוך שדה.
+        זה ממחיש את הרעיון שלך שצבירים לא חייבים מסלול אלגנטי אחד (עיגול/אליפסה).
+      </p>
+
+      <div class="controls">
+        <label>
+          דרגת “שחייה” (Active)
+          <input id="swim" type="range" min="0" max="100" value="55" />
+        </label>
+        <label>
+          חוזק זרם שדה (∇ΦDM)
+          <input id="field" type="range" min="0" max="100" value="45" />
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn ok" id="btnFish">🐟 הפעל/עצור דג</button>
+        <button class="btn secondary" id="btnFishReset">↺ איפוס מסלול דג</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="canvasWrap">
+        <div class="badge" id="badgeFish">מצב: ריצה</div>
+        <canvas id="cvFish" width="1100" height="360"></canvas>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footInner">
+    <div>כל הזכויות שמורות © | אין לשכפל אלא באישור מ־RA — <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a></div>
+    <div>גרסה: v1.0 | HTML יחיד + הדגמות Canvas + KaTeX (אופציונלי)</div>
+  </div>
+</footer>
+
+<script>
+/* =========================
+   Utilities
+========================= */
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+function rand(a,b){ return a + Math.random()*(b-a); }
+function hypot(x,y){ return Math.sqrt(x*x+y*y); }
+function now(){ return performance.now(); }
+
+/* High-DPI canvas helper */
+function setupCanvas(canvas){
+  const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.round(rect.width * dpr);
+  const h = Math.round(rect.height * dpr);
+  if(canvas.width !== w || canvas.height !== h){
+    canvas.width = w; canvas.height = h;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return ctx;
+}
+
+function themeColors(){
+  const cs = getComputedStyle(document.documentElement);
+  return {
+    text: cs.getPropertyValue('--text').trim(),
+    muted: cs.getPropertyValue('--muted').trim(),
+    head: cs.getPropertyValue('--head').trim(),
+    line: cs.getPropertyValue('--line').trim(),
+    accent: cs.getPropertyValue('--accent').trim(),
+    ok: cs.getPropertyValue('--ok').trim(),
+    warn: cs.getPropertyValue('--warn').trim(),
+    danger: cs.getPropertyValue('--danger').trim(),
+    bg: cs.getPropertyValue('--card').trim(),
+  };
+}
+
+function drawGrid(ctx, w, h){
+  const c = themeColors();
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  ctx.strokeStyle = c.line;
+  ctx.lineWidth = 1;
+  const step = 40;
+  for(let x=0; x<=w; x+=step){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+  }
+  for(let y=0; y<=h; y+=step){
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* =========================
+   Orbit demo
+========================= */
+const cv = document.getElementById('cv');
+const badge = document.getElementById('badge');
+
+const elType = document.getElementById('orbitType');
+const elR = document.getElementById('radius');
+const elE = document.getElementById('ecc');
+const elC = document.getElementById('complex');
+const elDM = document.getElementById('dm');
+const elLens = document.getElementById('lens');
+
+const btnPlay = document.getElementById('btnPlay');
+const btnReseed = document.getElementById('btnReseed');
+const btnReset = document.getElementById('btnReset');
+
+let running = true;
+let t0 = now();
+let loopSeed = 1;
+let loopPts = [];
+
+function reseedLoop(){
+  loopSeed++;
+  const n = 14 + Math.floor(Number(elC.value))*2;
+  loopPts = [];
+  for(let i=0;i<n;i++){
+    // points on a noisy ring; later interpolated
+    const ang = (i/n)*Math.PI*2;
+    const rr = Number(elR.value) * (0.65 + 0.55*Math.random());
+    loopPts.push({
+      a: ang,
+      r: rr,
+      j: rand(-0.35,0.35)
+    });
+  }
+  // ensure closure: copy first point style at end (implicit)
+}
+
+reseedLoop();
+
+function lensMap(x,y, strength){
+  // strength: 0..1
+  // A simple “gravitational lens” mapping: radial squeeze + swirl near center
+  const r = hypot(x,y);
+  const k = 0.0009 * (strength*strength) * 900; // scaled
+  const s = 1 - k / (1 + r*r/90000);            // squeeze
+  const swirl = (strength*0.9) * (1/(1 + r*r/70000));
+  const ang = Math.atan2(y,x) + swirl;
+  const rr = r * s;
+  return { x: rr*Math.cos(ang), y: rr*Math.sin(ang) };
+}
+
+function orbitPoint(type, theta){
+  const R = Number(elR.value);
+  const e = Number(elE.value)/100; // 0..0.85
+  const comp = Number(elC.value);
+
+  if(type === 'circle'){
+    return { x: R*Math.cos(theta), y: R*Math.sin(theta), r: R };
+  }
+  if(type === 'ellipse'){
+    // ellipse param: a=R, b=R*(1-e)
+    const a = R;
+    const b = R*(1 - e);
+    const x = a*Math.cos(theta);
+    const y = b*Math.sin(theta);
+    return { x, y, r: hypot(x,y) };
+  }
+  // loop: build from harmonics + control points
+  const h1 = 0.18*comp, h2 = 0.10*comp, h3 = 0.06*comp;
+  let rr = R*(0.78
+    + h1*Math.sin(theta + 0.7*loopSeed)
+    + h2*Math.sin(2*theta + 1.3*loopSeed)
+    + h3*Math.sin(3*theta - 0.9*loopSeed)
+  );
+
+  // add “piecewise” bumps from loopPts
+  if(loopPts.length){
+    const u = (theta%(Math.PI*2)) / (Math.PI*2);
+    const idx = Math.floor(u * loopPts.length);
+    const p = loopPts[idx];
+    rr *= (1 + 0.22*p.j);
+  }
+  return { x: rr*Math.cos(theta), y: rr*Math.sin(theta), r: rr };
+}
+
+function rotationCurve(r, dmGain){
+  // A conceptual curve: baryonic rises then decays; DM term flattens.
+  // r: 0..Rmax
+  const Rmax = 220;
+  const x = r / Rmax;
+
+  // baryonic: rises quickly, then slowly decays
+  const vB = 0.95*(1 - Math.exp(-6*x)) * Math.exp(-0.35*x);
+
+  // DM: saturating term that increases at large r to flatten
+  const g = dmGain; // 0..1
+  const vDM = g * (1 - Math.exp(-2.8*x));
+
+  // combine (not physically exact): v = sqrt(vB^2 + vDM^2)
+  const v = Math.sqrt(vB*vB + vDM*vDM);
+  return v;
+}
+
+function drawOrbitScene(){
+  const ctx = setupCanvas(cv);
+  const rect = cv.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx, W, H);
+
+  const c = themeColors();
+  const cx = W*0.38, cy = H*0.52;
+  const type = elType.value;
+  const dmGain = Number(elDM.value)/100;
+  const lensStrength = Number(elLens.value)/100;
+
+  // axes / center
+  ctx.save();
+  ctx.strokeStyle = c.line;
+  ctx.globalAlpha = 0.55;
+  ctx.beginPath(); ctx.moveTo(cx-220, cy); ctx.lineTo(cx+220, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy-220); ctx.lineTo(cx, cy+220); ctx.stroke();
+  ctx.restore();
+
+  // orbit path
+  ctx.save();
+  ctx.lineWidth = 2.25;
+  ctx.strokeStyle = c.text;
+  ctx.globalAlpha = 0.92;
+  ctx.beginPath();
+  const N = 700;
+  for(let i=0;i<=N;i++){
+    const th = (i/N)*Math.PI*2;
+    const p0 = orbitPoint(type, th);
+
+    // lens mapping around center
+    const L = lensMap(p0.x, p0.y, lensStrength);
+    const X = cx + L.x;
+    const Y = cy + L.y;
+
+    if(i===0) ctx.moveTo(X,Y);
+    else ctx.lineTo(X,Y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // moving point
+  const tt = running ? ((now()-t0)/1000) : ((tFreeze - t0)/1000);
+  const speed = 0.8 + 1.4*dmGain; // conceptual: DM increases stable speed
+  const th = (tt*speed)%(Math.PI*2);
+  const p = orbitPoint(type, th);
+  const Lp = lensMap(p.x, p.y, lensStrength);
+  const Xp = cx + Lp.x, Yp = cy + Lp.y;
+
+  ctx.save();
+  ctx.fillStyle = c.accent;
+  ctx.beginPath();
+  ctx.arc(Xp, Yp, 6, 0, Math.PI*2);
+  ctx.fill();
+
+  // “tail”
+  ctx.globalAlpha = 0.35;
+  ctx.beginPath();
+  ctx.arc(Xp, Yp, 14, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // small legend
+  ctx.save();
+  ctx.fillStyle = c.muted;
+  ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillText(
+    `מסלול: ${type==='circle'?'V∘ (מעגל)': type==='ellipse'?'Vellipse (אליפסה)':'Vloop (כללי)'}  |  DM=${Math.round(dmGain*100)}%  |  Lens=${Math.round(lensStrength*100)}%`,
+    14, 18
+  );
+  ctx.restore();
+
+  // rotation curve panel
+  const px = W*0.70, py = H*0.12, pw = W*0.27, ph = H*0.76;
+  drawRotationPanel(ctx, px, py, pw, ph, dmGain);
+}
+
+function drawRotationPanel(ctx, x, y, w, h, dmGain){
+  const c = themeColors();
+  // panel background
+  ctx.save();
+  ctx.globalAlpha = 0.85;
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  if(matchMedia('(prefers-color-scheme: dark)').matches){
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  }
+  roundRect(ctx, x, y, w, h, 14, true, false);
+  ctx.restore();
+
+  // axes
+  ctx.save();
+  ctx.strokeStyle = c.line;
+  ctx.globalAlpha = 0.7;
+  ctx.lineWidth = 1;
+  // y-axis
+  ctx.beginPath(); ctx.moveTo(x+44, y+10); ctx.lineTo(x+44, y+h-36); ctx.stroke();
+  // x-axis
+  ctx.beginPath(); ctx.moveTo(x+44, y+h-36); ctx.lineTo(x+w-14, y+h-36); ctx.stroke();
+
+  ctx.fillStyle = c.muted;
+  ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillText('v(r)', x+10, y+18);
+  ctx.fillText('r', x+w-18, y+h-18);
+  ctx.restore();
+
+  // curve
+  ctx.save();
+  ctx.strokeStyle = c.text;
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.95;
+
+  const Rmax = 220;
+  const N = 180;
+  ctx.beginPath();
+  for(let i=0;i<=N;i++){
+    const r = (i/N)*Rmax;
+    const v = rotationCurve(r, dmGain); // 0..~1.2
+    const X = x+44 + (i/N)*(w-64);
+    const Y = (y+h-36) - v*(h-70);
+    if(i===0) ctx.moveTo(X,Y);
+    else ctx.lineTo(X,Y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // dm bar
+  ctx.save();
+  ctx.fillStyle = c.accent;
+  ctx.globalAlpha = 0.22;
+  const bx = x+10, by = y+h-30, bw = w-20, bh = 10;
+  ctx.fillRect(bx, by, bw*dmGain, bh);
+  ctx.globalAlpha = 0.55;
+  ctx.strokeStyle = c.line;
+  ctx.strokeRect(bx, by, bw, bh);
+  ctx.globalAlpha = 0.9;
+  ctx.fillStyle = c.muted;
+  ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillText(`DM “flatness”: ${Math.round(dmGain*100)}%`, x+10, y+h-42);
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke){
+  const rr = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr, y);
+  ctx.arcTo(x+w, y, x+w, y+h, rr);
+  ctx.arcTo(x+w, y+h, x, y+h, rr);
+  ctx.arcTo(x, y+h, x, y, rr);
+  ctx.arcTo(x, y, x+w, y, rr);
+  ctx.closePath();
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
+}
+
+/* Play/Pause logic */
+let tFreeze = now();
+function setRunning(v){
+  if(running === v) return;
+  if(!v){
+    tFreeze = now();
+    badge.textContent = 'מצב: עצירה';
+  }else{
+    // shift t0 so time continues from freeze point
+    const dt = now() - tFreeze;
+    t0 += dt;
+    badge.textContent = 'מצב: ריצה';
+  }
+  running = v;
+}
+
+btnPlay.addEventListener('click', () => setRunning(!running));
+btnReseed.addEventListener('click', () => { reseedLoop(); });
+btnReset.addEventListener('click', () => {
+  elType.value = 'circle';
+  elR.value = 95;
+  elE.value = 35;
+  elC.value = 5;
+  elDM.value = 55;
+  elLens.value = 25;
+  reseedLoop();
+});
+
+function updateUIVisibility(){
+  const type = elType.value;
+  elE.parentElement.style.opacity = (type==='ellipse') ? '1' : '0.45';
+  elE.parentElement.style.pointerEvents = (type==='ellipse') ? 'auto' : 'none';
+
+  elC.parentElement.style.opacity = (type==='loop') ? '1' : '0.45';
+  elC.parentElement.style.pointerEvents = (type==='loop') ? 'auto' : 'none';
+}
+['change','input'].forEach(evt=>{
+  elType.addEventListener(evt, updateUIVisibility);
+  elR.addEventListener(evt, ()=>{});
+  elE.addEventListener(evt, ()=>{});
+  elC.addEventListener(evt, ()=>{});
+  elDM.addEventListener(evt, ()=>{});
+  elLens.addEventListener(evt, ()=>{});
+});
+updateUIVisibility();
+
+/* =========================
+   Fish / Cluster demo
+========================= */
+const cvFish = document.getElementById('cvFish');
+const badgeFish = document.getElementById('badgeFish');
+const elSwim = document.getElementById('swim');
+const elField = document.getElementById('field');
+const btnFish = document.getElementById('btnFish');
+const btnFishReset = document.getElementById('btnFishReset');
+
+let fishRun = true;
+let fish = { x:0, y:0, vx:0.9, vy:0.2, path:[] };
+let fishT0 = now();
+
+function resetFish(){
+  fish = { x:0, y:0, vx: rand(-1,1), vy: rand(-1,1), path:[] };
+  fishT0 = now();
+}
+resetFish();
+
+function setFishRun(v){
+  fishRun = v;
+  badgeFish.textContent = v ? 'מצב: ריצה' : 'מצב: עצירה';
+}
+btnFish.addEventListener('click', ()=> setFishRun(!fishRun));
+btnFishReset.addEventListener('click', ()=> resetFish());
+
+function fieldFlow(x,y, strength){
+  // a smooth “current”: combination of vortices
+  const s = strength; // 0..1
+  const a = Math.sin(y/90) * Math.cos(x/120);
+  const b = Math.cos(y/120) * Math.sin(x/95);
+  // curl-like flow
+  return { fx: s*( 0.9*a - 0.4*b), fy: s*( 0.9*b + 0.4*a) };
+}
+
+function drawFishScene(dt){
+  const ctx = setupCanvas(cvFish);
+  const rect = cvFish.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx, W, H);
+
+  const c = themeColors();
+  const cx = W*0.50, cy = H*0.52;
+
+  const swim = Number(elSwim.value)/100;   // active drive
+  const fld  = Number(elField.value)/100;  // field current
+
+  // update motion
+  if(fishRun){
+    const flow = fieldFlow(fish.x, fish.y, fld);
+    // active steering: “predator” style — tends to curve and explore
+    const steer = {
+      ax: swim*(0.9*Math.sin((now()-fishT0)/600) + 0.3*Math.sin(fish.y/60)),
+      ay: swim*(0.9*Math.cos((now()-fishT0)/750) + 0.3*Math.sin(fish.x/70))
+    };
+
+    fish.vx += (flow.fx + steer.ax) * dt*0.8;
+    fish.vy += (flow.fy + steer.ay) * dt*0.8;
+
+    // speed limit
+    const sp = hypot(fish.vx, fish.vy);
+    const maxSp = 2.2 + 2.4*swim;
+    if(sp > maxSp){
+      fish.vx *= maxSp/sp; fish.vy *= maxSp/sp;
+    }
+
+    fish.x += fish.vx * dt*60;
+    fish.y += fish.vy * dt*60;
+
+    // boundaries bounce
+    const boundX = 0.42*W, boundY = 0.42*H;
+    if(fish.x < -boundX || fish.x > boundX) fish.vx *= -0.95;
+    if(fish.y < -boundY || fish.y > boundY) fish.vy *= -0.95;
+    fish.x = clamp(fish.x, -boundX, boundX);
+    fish.y = clamp(fish.y, -boundY, boundY);
+
+    fish.path.push({x:fish.x, y:fish.y});
+    if(fish.path.length > 420) fish.path.shift();
+  }
+
+  // draw flow hints
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = c.accent;
+  for(let gx=-4; gx<=4; gx++){
+    for(let gy=-3; gy<=3; gy++){
+      const x = gx*90, y = gy*90;
+      const f = fieldFlow(x,y, fld);
+      const X = cx + x, Y = cy + y;
+      ctx.beginPath();
+      ctx.moveTo(X,Y);
+      ctx.lineTo(X + f.fx*70, Y + f.fy*70);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  // draw path
+  ctx.save();
+  ctx.strokeStyle = c.text;
+  ctx.globalAlpha = 0.85;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  fish.path.forEach((p,i)=>{
+    const X = cx + p.x;
+    const Y = cy + p.y;
+    if(i===0) ctx.moveTo(X,Y);
+    else ctx.lineTo(X,Y);
+  });
+  ctx.stroke();
+  ctx.restore();
+
+  // draw “fish”
+  const X = cx + fish.x, Y = cy + fish.y;
+  const ang = Math.atan2(fish.vy, fish.vx);
+
+  ctx.save();
+  ctx.translate(X,Y);
+  ctx.rotate(ang);
+  ctx.fillStyle = c.accent;
+  ctx.globalAlpha = 0.95;
+
+  // body
+  ctx.beginPath();
+  ctx.ellipse(0,0, 14, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // tail
+  ctx.globalAlpha = 0.75;
+  ctx.beginPath();
+  ctx.moveTo(-14,0);
+  ctx.lineTo(-25,7);
+  ctx.lineTo(-25,-7);
+  ctx.closePath();
+  ctx.fill();
+
+  // eye
+  ctx.globalAlpha = 0.95;
+  ctx.fillStyle = c.head;
+  ctx.beginPath();
+  ctx.arc(6,-2, 1.8, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+
+  // label
+  ctx.save();
+  ctx.fillStyle = c.muted;
+  ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillText(`🐟 Active=${Math.round(swim*100)}% | Field=${Math.round(fld*100)}% — “צביר כשחייה במדיום”`, 14, 18);
+  ctx.restore();
+}
+
+/* =========================
+   Animation loop
+========================= */
+let last = now();
+function tick(){
+  const t = now();
+  const dt = Math.min(0.05, (t - last)/1000);
+  last = t;
+
+  drawOrbitScene();
+  drawFishScene(dt);
+
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* =========================
+   KaTeX auto-render if available
+========================= */
+window.addEventListener('load', () => {
+  try{
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    }
+  }catch(e){}
+});
+
+/* Re-render on resize */
+let resizeTimer = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{ /* next tick redraw will adapt */ }, 120);
+});
+</script>
+</body>
+</html>
