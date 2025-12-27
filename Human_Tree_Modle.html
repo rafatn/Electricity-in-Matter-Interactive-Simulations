@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>עץ ואדם • שורשים, גדילה וזמן</title>
+  <meta name="color-scheme" content="light dark" />
+
+  <style>
+    :root{
+      --bg0:#f4f6fb;
+      --bg1:#eef2ff;
+      --bg2:#ecfeff;
+
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --cardSolid:#ffffff;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+
+      --head:#0b1220;
+      --link:#2563eb;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --accent:#6366f1;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020;
+        --bg1:#0a122a;
+        --bg2:#071b22;
+
+        --card:rgba(17,24,39,.66);
+        --card2:rgba(17,24,39,.50);
+        --cardSolid:rgba(17,24,39,.92);
+
+        --text:#e5e7eb;
+        --muted:#9aa4b2;
+        --line:rgba(148,163,184,.18);
+
+        --head:#f3f4f6;
+        --link:#93c5fd;
+
+        --shadow: 0 18px 55px rgba(0,0,0,.35);
+
+        --accent:#8b5cf6;
+        --accent2:#34d399;
+        --warn:#fbbf24;
+        --danger:#fb7185;
+      }
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 85% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 15% 15%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px 16px 56px;
+    }
+
+    header{
+      position:relative;
+      margin-top:10px;
+      padding:22px 18px;
+      border-radius:calc(var(--r) + 6px);
+      background:linear-gradient(135deg, rgba(99,102,241,.16), rgba(34,197,94,.14));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:220px; height:220px;
+      background:radial-gradient(circle at 30% 30%, rgba(99,102,241,.45), transparent 60%);
+      filter:blur(2px);
+      transform:rotate(20deg);
+      opacity:.6;
+      pointer-events:none;
+    }
+
+    .title{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(22px, 2.6vw, 34px);
+      letter-spacing:.2px;
+      color:var(--head);
+      line-height:1.15;
+    }
+    .subtitle{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width:70ch;
+      line-height:1.55;
+      font-size:clamp(14px, 1.6vw, 16px);
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--cardSolid), var(--card));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      box-shadow:0 10px 26px rgba(2,6,23,.08);
+      cursor:pointer;
+      user-select:none;
+      font-weight:650;
+      transition:transform .15s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px); filter:brightness(1.02)}
+    .btn:active{transform:translateY(0px)}
+    .btn small{font-weight:600; color:var(--muted)}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 14px 10px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:16px;
+      color:var(--head);
+      letter-spacing:.2px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .card .bd{
+      padding:14px;
+      line-height:1.7;
+      color:var(--text);
+    }
+
+    .k{
+      font-family:var(--mono);
+      font-size:12.5px;
+      padding:.18rem .42rem;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(2,6,23,.06);
+    }
+
+    .note{
+      border:1px dashed var(--line);
+      background:rgba(34,197,94,.08);
+      border-radius:16px;
+      padding:12px 12px;
+      margin:12px 0 0;
+      color:var(--text);
+    }
+
+    .quote{
+      border-right:4px solid var(--accent);
+      padding:10px 12px;
+      margin:12px 0 0;
+      border-radius:14px;
+      background:rgba(99,102,241,.08);
+      color:var(--text);
+    }
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      margin-top:10px;
+    }
+    .table th, .table td{
+      padding:10px 12px;
+      text-align:right;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+    .table th{
+      background:rgba(255,255,255,.07);
+      color:var(--head);
+      font-weight:750;
+    }
+    .table tr:last-child td{border-bottom:none}
+
+    .split{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 740px){
+      .split{grid-template-columns:1fr}
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:650;
+      margin:6px 6px 0 0;
+    }
+    .tag b{color:var(--head)}
+    .tag i{color:var(--muted); font-style:normal; font-weight:600}
+
+    /* Diagram */
+    .svgWrap{
+      padding:12px;
+    }
+    .legend{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px; display:inline-block;
+      border:1px solid var(--line);
+    }
+
+    /* Collapsible */
+    details{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer;
+      padding:12px 12px;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--head);
+      font-weight:800;
+    }
+    summary::-webkit-details-marker{display:none}
+    details[open] summary{
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+    }
+    .detailsBody{padding:12px; color:var(--text); line-height:1.7}
+
+    /* Footer */
+    footer{
+      margin-top:14px;
+      padding:14px 16px;
+      color:var(--muted);
+      font-size:13px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+    }
+    .copy{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; align-items:center;
+    }
+
+    /* Accessibility focus */
+    :focus-visible{
+      outline:3px solid rgba(99,102,241,.45);
+      outline-offset:2px;
+      border-radius:12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <div>
+          <h1>עץ 🌳 ואדם 🧍‍♂️ — גדילה למעלה, למטה, ובזמן</h1>
+          <p class="subtitle">
+            דף מסכם שמחבר בין <b>הביולוגיה</b> (איך באמת גדלים), לבין <b>המשמעות האנושית</b>:
+            “שורשים” כמשפחה, עבר וזיכרון — גם כשהם <span class="k">מתחת לאדמה</span>.
+          </p>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="toggleTheme" type="button" aria-label="החלף מצב צבע">
+            🌗 <span>מצב</span> <small id="themeLabel">אוטומטי</small>
+          </button>
+
+          <button class="btn" id="toggleMode" type="button" aria-label="החלף מצב הצגה">
+            🧬 <span>מצב</span> <small id="modeLabel">משולב</small>
+          </button>
+
+          <span class="pill" title="סיכום מהיר">✨ מסקנה: אדם גדל “למעלה” בגוף — ו“למטה” בזהות</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left big: Summary -->
+      <section class="card" id="cardSummary">
+        <div class="hd">
+          <h2>🧠 ליבת הרעיון — שילוב מלא</h2>
+          <span class="pill" id="activeBadge">מצב: משולב</span>
+        </div>
+        <div class="bd" id="summaryText">
+          <p>
+            <b>עץ</b> גדל <b>למעלה</b> (ענפים/עלים/אור) וגם <b>למטה</b> (שורשים/מים/יציבות) —
+            כי הוא <b>מקובע למקום</b> וחייב “להתפרס” לשני הכיוונים במרחב.
+          </p>
+          <p>
+            <b>אדם</b> גדל פיזית בעיקר בכיוון אחד (גובה/עצמות/עמוד שדרה) —
+            כי הוא יצור <b>נייד</b>, והשלד שלו מותאם להליכה, שיווי משקל ותנועה.
+          </p>
+
+          <div class="quote">
+            אבל כאן מגיע החיבור העמוק: <b>האדם כן “גדל למטה”</b> — לא בגוף, אלא ב<b>זהות</b>.<br/>
+            השורשים של האדם הם <b>המשפחה, העבר, השפה, הערכים והזיכרון</b> — גם אם חלקם כבר “מתחת לאדמה” (נפטרו). 🕯️
+          </div>
+
+          <div class="note">
+            🌱 <b>משפט מאחד:</b> העץ עומד בזכות שורשיו באדמה — האדם עומד בזכות שורשיו באנשים.
+          </div>
+
+          <div class="split">
+            <div>
+              <h3 style="margin:10px 0 6px; color:var(--head)">למה העץ דו־כיווני במרחב?</h3>
+              <div class="tag">☀️ <b>למעלה</b> <i>אור, פוטוסינתזה, פרי</i></div>
+              <div class="tag">💧 <b>למטה</b> <i>מים, מינרלים, עיגון</i></div>
+              <div class="tag">📌 <b>מקובע</b> <i>חייב יציבות והזנה במקום</i></div>
+            </div>
+            <div>
+              <h3 style="margin:10px 0 6px; color:var(--head)">למה האדם חד־כיווני בגוף?</h3>
+              <div class="tag">🦴 <b>לוחות גדילה</b> <i>בעצמות (בעיקר בילדות)</i></div>
+              <div class="tag">🚶 <b>ניידות</b> <i>שיווי משקל ותנועה</i></div>
+              <div class="tag">⚙️ <b>פיזיקה</b> <i>מרכז כובד, לחץ על מפרקים</i></div>
+            </div>
+          </div>
+
+          <details>
+            <summary>
+              <span>🤔 מה היה קורה אם אדם היה גדל “גם למטה” פיזית?</span>
+              <span aria-hidden="true">▾</span>
+            </summary>
+            <div class="detailsBody">
+              <ul style="margin:0; padding-right:18px">
+                <li><b>תנועה נפגעת</b> — היה צורך במבנה חדש מתחת לכף הרגל, והליכה הייתה מסתבכת.</li>
+                <li><b>שיווי משקל</b> — מרכז הכובד היה משתנה, והעומס על מפרקים/עמוד שדרה היה גדל.</li>
+                <li><b>אבולוציה אחרת</b> — כדי “לגדול למטה” כמו עץ, היינו צריכים כמעט להפוך לישות דמוית-צמח (פחות ניידות, יותר קיבוע).</li>
+              </ul>
+              <div class="note">📌 לכן: הגוף של האדם “בוחר” ניידות; השורשים עוברים למקום אחר — לזיכרון ולמשפחה.</div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Right: Diagram + table -->
+      <aside class="card">
+        <div class="hd">
+          <h2>📈 דיאגרמה: מרחב מול זמן</h2>
+          <span class="pill">SVG אינטראקטיבי</span>
+        </div>
+        <div class="bd">
+          <p style="margin:0 0 10px; color:var(--muted)">
+            רעיון מאחד: <b>עץ</b> סימטרי במרחב (למעלה/למטה), <b>אדם</b> סימטרי בזמן (קדימה/אחורה).
+          </p>
+
+          <div class="svgWrap" role="img" aria-label="דיאגרמה של עץ ואדם">
+            <svg viewBox="0 0 520 360" width="100%" height="auto" style="border-radius:16px; border:1px solid var(--line); background:rgba(255,255,255,.04)">
+              <!-- Axes -->
+              <line x1="60" y1="300" x2="480" y2="300" stroke="rgba(148,163,184,.55)" stroke-width="2"/>
+              <line x1="260" y1="40"  x2="260" y2="330" stroke="rgba(148,163,184,.55)" stroke-width="2"/>
+
+              <text x="476" y="320" text-anchor="end" fill="rgba(148,163,184,.9)" font-size="12">מרחב (Y)</text>
+              <text x="275" y="52" fill="rgba(148,163,184,.9)" font-size="12">זמן (T)</text>
+
+              <!-- Ground -->
+              <rect x="60" y="298" width="420" height="10" fill="rgba(99,102,241,.10)"/>
+              <text x="70" y="292" fill="rgba(148,163,184,.9)" font-size="12">“קו אדמה” — פיזי/סמלי</text>
+
+              <!-- Tree (left) -->
+              <!-- trunk -->
+              <rect x="125" y="150" width="26" height="150" rx="10" fill="rgba(34,197,94,.35)" stroke="rgba(34,197,94,.55)"/>
+              <!-- canopy -->
+              <circle cx="138" cy="125" r="52" fill="rgba(34,197,94,.22)" stroke="rgba(34,197,94,.55)" stroke-width="2"/>
+              <circle cx="108" cy="130" r="35" fill="rgba(34,197,94,.18)" stroke="rgba(34,197,94,.45)" stroke-width="2"/>
+              <circle cx="170" cy="132" r="35" fill="rgba(34,197,94,.18)" stroke="rgba(34,197,94,.45)" stroke-width="2"/>
+
+              <!-- roots -->
+              <path d="M138 300 C120 310, 110 325, 96 336" fill="none" stroke="rgba(34,197,94,.65)" stroke-width="3"/>
+              <path d="M138 300 C148 312, 160 326, 178 338" fill="none" stroke="rgba(34,197,94,.65)" stroke-width="3"/>
+              <path d="M138 300 C132 316, 126 328, 122 342" fill="none" stroke="rgba(34,197,94,.55)" stroke-width="3"/>
+
+              <text x="138" y="78" text-anchor="middle" fill="rgba(34,197,94,.95)" font-size="13" font-weight="700">עץ 🌳</text>
+              <text x="138" y="98" text-anchor="middle" fill="rgba(148,163,184,.95)" font-size="11">גדילה במרחב: למעלה+למטה</text>
+
+              <!-- Human (right) -->
+              <!-- body -->
+              <circle cx="380" cy="128" r="16" fill="rgba(99,102,241,.30)" stroke="rgba(99,102,241,.65)" stroke-width="2"/>
+              <line x1="380" y1="145" x2="380" y2="230" stroke="rgba(99,102,241,.65)" stroke-width="6" stroke-linecap="round"/>
+              <line x1="380" y1="172" x2="342" y2="210" stroke="rgba(99,102,241,.60)" stroke-width="5" stroke-linecap="round"/>
+              <line x1="380" y1="172" x2="418" y2="210" stroke="rgba(99,102,241,.60)" stroke-width="5" stroke-linecap="round"/>
+              <line x1="380" y1="230" x2="356" y2="292" stroke="rgba(99,102,241,.60)" stroke-width="5" stroke-linecap="round"/>
+              <line x1="380" y1="230" x2="404" y2="292" stroke="rgba(99,102,241,.60)" stroke-width="5" stroke-linecap="round"/>
+
+              <!-- "roots in time" -->
+              <path d="M380 300 C360 292, 342 282, 320 270" fill="none" stroke="rgba(245,158,11,.75)" stroke-width="3"/>
+              <path d="M380 300 C398 292, 416 282, 440 268" fill="none" stroke="rgba(245,158,11,.75)" stroke-width="3"/>
+              <circle cx="320" cy="270" r="6" fill="rgba(245,158,11,.40)" stroke="rgba(245,158,11,.9)" />
+              <circle cx="440" cy="268" r="6" fill="rgba(245,158,11,.40)" stroke="rgba(245,158,11,.9)" />
+
+              <text x="380" y="78" text-anchor="middle" fill="rgba(99,102,241,.95)" font-size="13" font-weight="700">אדם 🧍‍♂️</text>
+              <text x="380" y="98" text-anchor="middle" fill="rgba(148,163,184,.95)" font-size="11">גדילה בגוף: בעיקר “למעלה”</text>
+              <text x="380" y="318" text-anchor="middle" fill="rgba(245,158,11,.95)" font-size="11">“שורשים” בזמן: משפחה/עבר</text>
+
+              <!-- labels -->
+              <text x="86" y="164" fill="rgba(34,197,94,.95)" font-size="11">☀️ ענפים</text>
+              <text x="86" y="332" fill="rgba(34,197,94,.95)" font-size="11">💧 שורשים</text>
+
+              <text x="422" y="158" fill="rgba(99,102,241,.95)" font-size="11">🦴 שלד</text>
+              <text x="425" y="286" fill="rgba(245,158,11,.95)" font-size="11">🕯️ זיכרון</text>
+            </svg>
+
+            <div class="legend">
+              <span><span class="dot" style="background:rgba(34,197,94,.35)"></span> עץ: שורשים+ענפים במרחב</span>
+              <span><span class="dot" style="background:rgba(99,102,241,.30)"></span> אדם: גדילה פיזית למעלה</span>
+              <span><span class="dot" style="background:rgba(245,158,11,.35)"></span> אדם: “שורשים” בזמן/זהות</span>
+            </div>
+          </div>
+
+          <table class="table" aria-label="טבלת התאמה עץ מול אדם">
+            <thead>
+              <tr>
+                <th style="width:34%">עץ 🌳</th>
+                <th>אדם 🧍‍♂️</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>שורשים נסתרים</b><br><span style="color:var(--muted)">מים, מינרלים, עיגון</span></td>
+                <td><b>שורשים אנושיים</b><br><span style="color:var(--muted)">משפחה, עבר, שפה, ערכים, זיכרון</span></td>
+              </tr>
+              <tr>
+                <td><b>ענפים ועלים</b><br><span style="color:var(--muted)">אור, צמיחה, פרי</span></td>
+                <td><b>ענפים אנושיים</b><br><span style="color:var(--muted)">מעשים, יצירה, ילדים/השפעה</span></td>
+              </tr>
+              <tr>
+                <td><b>מקובע למקום</b></td>
+                <td><b>נייד במרחב</b></td>
+              </tr>
+              <tr>
+                <td><b>סימטריה במרחב</b><br><span style="color:var(--muted)">למעלה+למטה</span></td>
+                <td><b>סימטריה בזמן</b><br><span style="color:var(--muted)">קדימה בחיים, אחורה בשורשים</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <details>
+            <summary>
+              <span>✨ סיכום קצר וחזק (לשיתוף)</span>
+              <span aria-hidden="true">▾</span>
+            </summary>
+            <div class="detailsBody">
+              <p style="margin:0 0 8px">
+                <b>עץ עומד בזכות שורשיו באדמה.</b><br/>
+                <b>אדם עומד בזכות שורשיו באנשים.</b><br/>
+                הגוף גדל למעלה — והזהות מעמיקה למטה, גם אם “מתחת לאדמה”. 🌿🕯️
+              </p>
+            </div>
+          </details>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>🧩 “מצבי צפייה” — ביולוגי / אנושי / משולב</h2>
+        <span class="pill">לחץ על כפתור “מצב” למעלה</span>
+      </div>
+      <div class="bd" id="modeExplainer">
+        <p style="margin:0">
+          <b>משולב</b> מציג את שני המישורים יחד: הביולוגיה מסבירה את הגוף, והפילוסופיה מסבירה את השורשים האנושיים.
+          אם תבחר <span class="k">ביולוגי</span> תראה רק את ההסבר הפיזי; אם תבחר <span class="k">אנושי</span> תראה רק את המודל הסמלי.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="copy">
+        <div>
+          © כל הזכויות שמורות. אין לשכפל אלא באישור מ־RA — <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a>
+        </div>
+        <div>
+          נוצר כדף HTML מסכם • 🌳🧍‍♂️✨
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const root = document.documentElement;
+
+      // --- THEME ---
+      const themeBtn = document.getElementById("toggleTheme");
+      const themeLabel = document.getElementById("themeLabel");
+
+      // states: auto -> light -> dark -> auto
+      const themeCycle = ["auto","light","dark"];
+      const themeNames = {auto:"אוטומטי", light:"בהיר", dark:"כהה"};
+
+      function applyTheme(state){
+        if(state === "auto"){
+          root.removeAttribute("data-theme");
+        } else {
+          root.setAttribute("data-theme", state);
+        }
+        themeLabel.textContent = themeNames[state] || state;
+        localStorage.setItem("page_theme_state", state);
+      }
+
+      const savedTheme = localStorage.getItem("page_theme_state") || "auto";
+      applyTheme(savedTheme);
+
+      themeBtn.addEventListener("click", () => {
+        const cur = localStorage.getItem("page_theme_state") || "auto";
+        const idx = themeCycle.indexOf(cur);
+        const next = themeCycle[(idx + 1) % themeCycle.length];
+        applyTheme(next);
+      });
+
+      // --- MODE (biological / human / mixed) ---
+      const modeBtn = document.getElementById("toggleMode");
+      const modeLabel = document.getElementById("modeLabel");
+      const activeBadge = document.getElementById("activeBadge");
+      const summaryText = document.getElementById("summaryText");
+
+      const modeCycle = ["mixed","bio","human"];
+      const modeNames = {mixed:"משולב", bio:"ביולוגי", human:"אנושי"};
+
+      const content = {
+        mixed: summaryText.innerHTML,
+        bio: `
+          <p><b>הסבר ביולוגי בלבד 🧬</b></p>
+          <p>
+            <b>עץ</b> גדל לשני כיוונים במרחב כי הוא <b>מקובע</b> וחייב גם קליטת אור למעלה וגם קליטת מים/מינרלים למטה.
+            השורשים מספקים <b>עיגון</b> והזנה, והענפים מספקים <b>אור ופוטוסינתזה</b>.
+          </p>
+          <p>
+            <b>אדם</b> גדל פיזית בעיקר בכיוון אחד (גובה) דרך <b>לוחות גדילה</b> בעצמות בילדות.
+            גדילה “גם למטה” פיזית הייתה פוגעת בתנועה, שיווי משקל ומבנה השלד.
+          </p>
+          <div class="note">📌 מסקנה ביולוגית: עץ = דו־כיווני במרחב; אדם = חד־כיווני בגוף.</div>
+        `,
+        human: `
+          <p><b>הסבר אנושי–סמלי בלבד 🌱🕯️</b></p>
+          <p>
+            האדם כן “גדל למטה” — לא בגוף, אלא בזהות: <b>משפחה, עבר, זיכרון, שפה וערכים</b>.
+            גם אם חלק מהשורשים <b>מתחת לאדמה</b> (נפטרו), הם ממשיכים להזין את האדם דרך מה שהשאירו.
+          </p>
+          <div class="quote">
+            <b>עץ</b> עומד בזכות שורשיו באדמה.<br>
+            <b>אדם</b> עומד בזכות שורשיו באנשים.
+          </div>
+          <div class="note">✨ מסקנה אנושית: הגוף נייד — השורשים נישאים בלב ובזמן.</div>
+        `
+      };
+
+      function applyMode(mode){
+        summaryText.innerHTML = content[mode] || content.mixed;
+        modeLabel.textContent = modeNames[mode] || mode;
+        activeBadge.textContent = "מצב: " + (modeNames[mode] || mode);
+        localStorage.setItem("page_mode_state", mode);
+      }
+
+      const savedMode = localStorage.getItem("page_mode_state") || "mixed";
+      applyMode(savedMode);
+
+      modeBtn.addEventListener("click", () => {
+        const cur = localStorage.getItem("page_mode_state") || "mixed";
+        const idx = modeCycle.indexOf(cur);
+        const next = modeCycle[(idx + 1) % modeCycle.length];
+        applyMode(next);
+      });
+    })();
+  </script>
+</body>
+</html>
+-
