@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quantum Amp — מודל מתמטי למחיצה נעה + סיכום שלבי ההצעה</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX (online) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1020; --bg2:#06131a;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.18);
+        --head:#f8fafc; --link:#93c5fd;
+        --shadow:0 18px 50px rgba(0,0,0,.45);
+      }
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% 5%, var(--bg2), transparent 60%),
+                  radial-gradient(900px 600px at 80% 10%, var(--bg1), transparent 60%),
+                  linear-gradient(180deg, var(--bg0), transparent 55%);
+      color:var(--text);
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      padding:28px 18px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(99,102,241,.95), rgba(34,211,238,.85));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 45%);
+      transform: rotate(18deg);
+    }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.2vw, 30px);
+      color:var(--head);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:4px 0 0;
+      color:var(--muted);
+      line-height:1.35;
+      max-width:78ch;
+      font-size: 14px;
+    }
+
+    .pillbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      padding:8px 10px;
+      border-radius: 999px;
+      box-shadow: 0 10px 25px rgba(2,6,23,.06);
+      display:flex; gap:10px; align-items:center;
+      font-size: 13px;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      padding:8px 10px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(2,6,23,.06);
+      cursor:pointer;
+      color:var(--text);
+      font-weight:600;
+      font-size: 13px;
+      transition: transform .08s ease, border-color .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(99,102,241,.55)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      border-color: rgba(99,102,241,.55);
+      background: linear-gradient(180deg, rgba(99,102,241,.20), rgba(34,211,238,.10));
+    }
+
+    main{max-width:1100px; margin:0 auto; padding: 8px 18px 40px;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 14px 14px;
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size: 18px;
+      color:var(--head);
+      display:flex; align-items:center; gap:8px;
+    }
+    .card h3{
+      margin: 14px 0 6px;
+      font-size: 15px;
+      color:var(--head);
+    }
+    .muted{color:var(--muted)}
+    .k{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      border:1px dashed var(--line);
+      background: rgba(2,6,23,.04);
+      padding: 10px;
+      border-radius: 14px;
+      overflow:auto;
+    }
+    @media (prefers-color-scheme: dark){
+      .k{background: rgba(255,255,255,.04)}
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){ .two-col{grid-template-columns:1fr} }
+
+    .steps{
+      display:grid;
+      gap:10px;
+      margin-top: 8px;
+    }
+    .step{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 10px;
+      background: rgba(255,255,255,.06);
+    }
+    .step .title{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      font-weight:800; color:var(--head); margin-bottom:4px;
+    }
+    .badge{
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      color: var(--muted);
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .badge.ok{border-color: rgba(22,163,74,.40); color: rgba(22,163,74,.95)}
+    .badge.warn{border-color: rgba(245,158,11,.50); color: rgba(245,158,11,.95)}
+    .badge.info{border-color: rgba(99,102,241,.45); color: rgba(99,102,241,.95)}
+
+    .controls{
+      display:grid;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 150px;
+      gap:10px;
+      align-items:center;
+    }
+    @media (max-width: 520px){ .row{grid-template-columns:1fr} }
+    input[type="range"]{width:100%}
+    .val{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      text-align:left;
+      direction:ltr;
+    }
+
+    canvas{
+      width:100%;
+      height:260px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.05);
+      display:block;
+    }
+    @media (prefers-color-scheme: dark){
+      canvas{background: rgba(255,255,255,.05)}
+    }
+
+    .langwrap{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    .langbtn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      padding:6px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:800;
+      font-size: 12.5px;
+      color: var(--text);
+    }
+    .langbtn.active{border-color: rgba(99,102,241,.55); box-shadow: 0 10px 25px rgba(99,102,241,.10)}
+    footer{
+      max-width:1100px;
+      margin: 0 auto;
+      padding: 0 18px 28px;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+    .legal{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.04);
+    }
+    .note{
+      border-inline-start: 4px solid rgba(99,102,241,.65);
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(99,102,241,.08);
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1><span data-i18n="title">Quantum Amp — מודל מתמטי למחיצה נעה (Relativistic Piston)</span> ⚛️🌊</h1>
+        <div class="subtitle" data-i18n="subtitle">
+          מסמך טכני: ניסוח משתנים, משוואות תנועה למחיצה, צימוד שדה/מדידה, וסיכום שלבי ההצעה לפתרון בעיית המדידה.
+        </div>
+      </div>
+    </div>
+
+    <div class="pillbar">
+      <div class="pill">
+        <span>🌐</span>
+        <div class="langwrap" aria-label="Language">
+          <button class="langbtn active" data-lang="he">עברית</button>
+          <button class="langbtn" data-lang="en">English</button>
+        </div>
+      </div>
+      <button class="btn" id="btnTheme" title="Toggle theme">🌓 <span data-i18n="theme">מצב תצוגה</span></button>
+      <button class="btn primary" id="btnRun">▶ <span data-i18n="run">הרץ סימולציה</span></button>
+      <button class="btn" id="btnReset">↺ <span data-i18n="reset">איפוס</span></button>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+
+  <section class="card">
+    <h2>🧭 <span data-i18n="sec1">1) הגדרת המערכת והמשתנים</span></h2>
+    <div class="two-col">
+      <div>
+        <p data-i18n="s1p1">
+          "אמפט קוונטי" מוגדר כאן כנפח מדידה סגור שבו מחיצה פנימית נעה במהירות גבוהה מאוד. המחיצה מפרידה בין שני תאי גז
+          (שמאל/ימין) ויוצרת מודולציה בזמן אמת של תנאי השפה לשדה/גל בתוך האמפט — לפני הצימוד הישיר לגלאי.
+        </p>
+
+        <h3 data-i18n="vars">משתנים בסיסיים</h3>
+        <div class="k" id="varsBlock"></div>
+
+        <div class="note" data-i18n="note1">
+          רעיון הליבה: לא "לבטל" מדידה קוונטית, אלא לבנות שכבת ביניים (Amp) שממירה מידע קוונטי לדפוס מרחבי (pattern)
+          לפני דקו־הרנטיות חזקה של גלאי קלאסי.
+        </div>
+      </div>
+
+      <div>
+        <h3 data-i18n="geo">גיאומטריה מינימלית</h3>
+        <div class="k" id="geoBlock"></div>
+
+        <h3 data-i18n="assump">הנחות עבודה (מינימליות)</h3>
+        <ul class="muted" id="assumptions"></ul>
+      </div>
+    </div>
+
+    <h2 style="margin-top:14px">🧮 <span data-i18n="sec2">2) משוואות תנועה למחיצה (Relativistic EOM)</span></h2>
+
+    <p data-i18n="s2p1">
+      כדי להכניס "מחיצה שרצה מהר", משתמשים בדינמיקה יחסותית של גוף בעל מסה m הנע לאורך ציר x תחת כוח לחץ (הפרש לחצים).
+      אין צורך לטעון שהמחיצה באמת מגיעה ל־c; המודל מגדיר גבול פיזיקלי: v תמיד קטן מ־c, ומתקרב אליה אסימפטוטית.
+    </p>
+
+    <div class="two-col">
+      <div>
+        <h3 data-i18n="rel1">2.1 יחסות: תנע וגורם לורנץ</h3>
+        <div class="k" id="relBlock1"></div>
+
+        <h3 data-i18n="rel2">2.2 כוח לחץ + חיכוך/דמפינג</h3>
+        <div class="k" id="relBlock2"></div>
+
+        <p class="muted" data-i18n="s2p2">
+          כאן β הוא חיכוך אפקטיבי (כולל אטמים, מערבולות גז, והפסדי חום). ניתן להוסיף גם כוח בקרה חיצוני u(t) (אקטואטור)
+          כדי לקבע תדר/פרופיל תנועה.
+        </p>
+      </div>
+
+      <div>
+        <h3 data-i18n="gas">2.3 מודל לחץ מינימלי לגז הדחוס</h3>
+        <div class="k" id="gasBlock"></div>
+
+        <h3 data-i18n="stable">2.4 תנאי יציבות / אי־חריגה</h3>
+        <div class="k" id="stabilityBlock"></div>
+
+        <div class="note" data-i18n="note2">
+          הסימולציה למטה משתמשת במודל לחץ אדיאבטי פשוט כדי להדגים את האפקט. בפועל אפשר להחליף למודל CFD/תרמודינמי מפורט.
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:14px">🧲 <span data-i18n="sec3">3) צימוד קוונטי־מדידה: "Amp" כשכבת ביניים</span></h2>
+    <p data-i18n="s3p1">
+      כדי לנסח זאת מתמטית בלי להפר את הקוונטים: מגדירים המילטוניאן כולל מחיצה כמשתנה קלאסי/חצי־קלאסי X(t),
+      ואז השדה/המערכת הקוונטית חווה תנאי שפה תלויי־זמן. המדידה (הגלאי) מצומדת ליציאה של האמפט ולא ישירות למערכת.
+    </p>
+
+    <div class="two-col">
+      <div>
+        <h3 data-i18n="ham">3.1 ניסוח המילטוניאני (חצי־קלאסי)</h3>
+        <div class="k" id="hamBlock"></div>
+      </div>
+      <div>
+        <h3 data-i18n="obs">3.2 מה "נמדד" בפועל?</h3>
+        <div class="k" id="obsBlock"></div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:14px">🗺️ <span data-i18n="sec4">4) סיכום כל שלב בהצעה שלך (Pipeline)</span></h2>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <aside class="card">
+    <h2>📈 <span data-i18n="sim">סימולציה מהירה למחיצה</span></h2>
+    <p class="muted" data-i18n="simp">
+      הדגמה נומרית: מחיצה בין שני תאי גז עם לחץ אדיאבטי. המטרה כאן היא להמחיש תנועה מוגבלת־c, לא "להוכיח" ניסוי.
+    </p>
+
+    <div class="controls">
+      <div class="row">
+        <label for="m" data-i18n="m">m — מסה (ק״ג)</label>
+        <input id="m" type="range" min="0.1" max="50" step="0.1" value="5">
+        <div class="val" id="mVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="A" data-i18n="A">A — שטח מחיצה (מ״ר)</label>
+        <input id="A" type="range" min="0.001" max="0.2" step="0.001" value="0.02">
+        <div class="val" id="AVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="beta" data-i18n="beta">β — דמפינג</label>
+        <input id="beta" type="range" min="0" max="50" step="0.1" value="2">
+        <div class="val" id="betaVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="P0L" data-i18n="P0L">P₀L — לחץ התחלתי שמאל (Pa)</label>
+        <input id="P0L" type="range" min="50000" max="2000000" step="10000" value="400000">
+        <div class="val" id="P0LVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="P0R" data-i18n="P0R">P₀R — לחץ התחלתי ימין (Pa)</label>
+        <input id="P0R" type="range" min="50000" max="2000000" step="10000" value="120000">
+        <div class="val" id="P0RVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="L" data-i18n="L">L — אורך אמפט (מ׳)</label>
+        <input id="L" type="range" min="0.1" max="5" step="0.01" value="1.2">
+        <div class="val" id="LVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="x0" data-i18n="x0">x(0) — מיקום התחלתי (מ׳)</label>
+        <input id="x0" type="range" min="0.01" max="1.19" step="0.01" value="0.6">
+        <div class="val" id="x0Val"></div>
+      </div>
+
+      <div class="row">
+        <label for="v0" data-i18n="v0">v(0) — מהירות התחלתית (יחסית ל־c)</label>
+        <input id="v0" type="range" min="-0.95" max="0.95" step="0.01" value="0">
+        <div class="val" id="v0Val"></div>
+      </div>
+
+      <div class="row">
+        <label for="T" data-i18n="T">זמן סימולציה (ש׳)</label>
+        <input id="T" type="range" min="0.02" max="2.0" step="0.01" value="0.25">
+        <div class="val" id="TVal"></div>
+      </div>
+
+      <div class="row">
+        <label for="dt" data-i18n="dt">Δt צעד (ש׳)</label>
+        <input id="dt" type="range" min="0.00005" max="0.01" step="0.00005" value="0.0005">
+        <div class="val" id="dtVal"></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:12px" data-i18n="plot">גרף מיקום ומהירות</h3>
+    <canvas id="plot" width="900" height="520"></canvas>
+
+    <div class="k" id="simOut" style="margin-top:10px"></div>
+
+    <div class="note" data-i18n="note3">
+      טיפ ניסויי: אם רוצים "דפוס תמונה" (pattern), צריך למדוד יציאה מהאמפט:
+      ספקטרום, פאזה, או אינטנסיביות אחרי האמפט — לא “בתוך” המערכת הקוונטית.
+    </div>
+  </aside>
+
+</main>
+
+<footer>
+  <div class="legal" data-i18n="legal">
+    כל הזכויות שמורות. אין לשכפל אלא באישור מ־RA — Raftn4@gmail.com
+  </div>
+</footer>
+
+<script>
+/* =========================
+   i18n (HE/EN)
+========================= */
+const I18N = {
+  he: {
+    title: "Quantum Amp — מודל מתמטי למחיצה נעה (Relativistic Piston)",
+    subtitle: "מסמך טכני: ניסוח משתנים, משוואות תנועה למחיצה, צימוד שדה/מדידה, וסיכום שלבי ההצעה לפתרון בעיית המדידה.",
+    theme: "מצב תצוגה",
+    run: "הרץ סימולציה",
+    reset: "איפוס",
+    sec1: "1) הגדרת המערכת והמשתנים",
+    s1p1: "\"אמפט קוונטי\" מוגדר כאן כנפח מדידה סגור שבו מחיצה פנימית נעה במהירות גבוהה מאוד. המחיצה מפרידה בין שני תאי גז (שמאל/ימין) ויוצרת מודולציה בזמן אמת של תנאי השפה לשדה/גל בתוך האמפט — לפני הצימוד הישיר לגלאי.",
+    vars: "משתנים בסיסיים",
+    geo: "גיאומטריה מינימלית",
+    assump: "הנחות עבודה (מינימליות)",
+    note1: "רעיון הליבה: לא \"לבטל\" מדידה קוונטית, אלא לבנות שכבת ביניים (Amp) שממירה מידע קוונטי לדפוס מרחבי (pattern) לפני דקו־הרנטיות חזקה של גלאי קלאסי.",
+    sec2: "2) משוואות תנועה למחיצה (Relativistic EOM)",
+    s2p1: "כדי להכניס \"מחיצה שרצה מהר\", משתמשים בדינמיקה יחסותית של גוף בעל מסה m הנע לאורך ציר x תחת כוח לחץ (הפרש לחצים). אין צורך לטעון שהמחיצה באמת מגיעה ל־c; המודל מגדיר גבול פיזיקלי: v תמיד קטן מ־c, ומתקרב אליה אסימפטוטית.",
+    rel1: "2.1 יחסות: תנע וגורם לורנץ",
+    rel2: "2.2 כוח לחץ + חיכוך/דמפינג",
+    s2p2: "כאן β הוא חיכוך אפקטיבי (כולל אטמים, מערבולות גז, והפסדי חום). ניתן להוסיף גם כוח בקרה חיצוני u(t) (אקטואטור) כדי לקבע תדר/פרופיל תנועה.",
+    gas: "2.3 מודל לחץ מינימלי לגז הדחוס",
+    stable: "2.4 תנאי יציבות / אי־חריגה",
+    note2: "הסימולציה למטה משתמשת במודל לחץ אדיאבטי פשוט כדי להדגים את האפקט. בפועל אפשר להחליף למודל CFD/תרמודינמי מפורט.",
+    sec3: "3) צימוד קוונטי־מדידה: \"Amp\" כשכבת ביניים",
+    s3p1: "כדי לנסח זאת מתמטית בלי להפר את הקוונטים: מגדירים המילטוניאן כולל מחיצה כמשתנה קלאסי/חצי־קלאסי X(t), ואז השדה/המערכת הקוונטית חווה תנאי שפה תלויי־זמן. המדידה (הגלאי) מצומדת ליציאה של האמפט ולא ישירות למערכת.",
+    ham: "3.1 ניסוח המילטוניאני (חצי־קלאסי)",
+    obs: "3.2 מה \"נמדד\" בפועל?",
+    sec4: "4) סיכום כל שלב בהצעה שלך (Pipeline)",
+    sim: "סימולציה מהירה למחיצה",
+    simp: "הדגמה נומרית: מחיצה בין שני תאי גז עם לחץ אדיאבטי. המטרה כאן היא להמחיש תנועה מוגבלת־c, לא \"להוכיח\" ניסוי.",
+    m: "m — מסה (ק״ג)",
+    A: "A — שטח מחיצה (מ״ר)",
+    beta: "β — דמפינג",
+    P0L: "P₀L — לחץ התחלתי שמאל (Pa)",
+    P0R: "P₀R — לחץ התחלתי ימין (Pa)",
+    L: "L — אורך אמפט (מ׳)",
+    x0: "x(0) — מיקום התחלתי (מ׳)",
+    v0: "v(0) — מהירות התחלתית (יחסית ל־c)",
+    T: "זמן סימולציה (ש׳)",
+    dt: "Δt צעד (ש׳)",
+    plot: "גרף מיקום ומהירות",
+    note3: "טיפ ניסויי: אם רוצים \"דפוס תמונה\" (pattern), צריך למדוד יציאה מהאמפט: ספקטרום, פאזה, או אינטנסיביות אחרי האמפט — לא “בתוך” המערכת הקוונטית.",
+    legal: "כל הזכויות שמורות. אין לשכפל אלא באישור מ־RA — Raftn4@gmail.com"
+  },
+  en: {
+    title: "Quantum Amp — Mathematical model for a moving partition (Relativistic piston)",
+    subtitle: "Technical note: variables, partition equations of motion, field/measurement coupling, and a step-by-step pipeline for the proposed measurement workaround.",
+    theme: "Theme",
+    run: "Run simulation",
+    reset: "Reset",
+    sec1: "1) System definition and variables",
+    s1p1: "Here, a “Quantum Amp” is a closed measurement volume with an internal fast-moving partition. The partition separates two gas chambers (left/right) and imposes real-time time-dependent boundary modulation on the field/wave inside the amp—before any direct coupling to a classical detector.",
+    vars: "Core variables",
+    geo: "Minimal geometry",
+    assump: "Working assumptions (minimal)",
+    note1: "Core idea: not to “cancel” quantum measurement, but to insert an intermediate layer (Amp) that converts quantum information into a spatial pattern before strong detector-driven decoherence.",
+    sec2: "2) Partition equations of motion (Relativistic EOM)",
+    s2p1: "To model a “very fast partition”, use relativistic dynamics for a body of mass m moving along x under a pressure-force (pressure difference). No need to claim the partition reaches c; the model enforces the physical limit: v < c, approaching it asymptotically.",
+    rel1: "2.1 Relativity: momentum and Lorentz factor",
+    rel2: "2.2 Pressure force + friction/damping",
+    s2p2: "Here β is an effective damping (seals, turbulence, thermal losses). You may add an external control force u(t) (actuator) to lock a desired frequency/profile.",
+    gas: "2.3 Minimal compressed-gas pressure model",
+    stable: "2.4 Stability / non-escape constraints",
+    note2: "The demo below uses a simple adiabatic pressure model. In practice you can replace it with a detailed CFD/thermo model.",
+    sec3: "3) Quantum–measurement coupling: the Amp as an intermediate layer",
+    s3p1: "To write this without violating QM: treat the partition as a classical/semi-classical variable X(t). Then the quantum field/system experiences time-dependent boundary conditions. The detector couples to the amp output, not directly to the quantum system.",
+    ham: "3.1 Hamiltonian formulation (semi-classical)",
+    obs: "3.2 What is actually measured?",
+    sec4: "4) Step-by-step pipeline (your proposal)",
+    sim: "Quick partition simulation",
+    simp: "Numerical demo: a partition between two gas chambers with adiabatic pressure. Goal: illustrate the c-limited dynamics, not to “prove” the experiment.",
+    m: "m — mass (kg)",
+    A: "A — partition area (m²)",
+    beta: "β — damping",
+    P0L: "P₀L — initial left pressure (Pa)",
+    P0R: "P₀R — initial right pressure (Pa)",
+    L: "L — amp length (m)",
+    x0: "x(0) — initial position (m)",
+    v0: "v(0) — initial velocity (fraction of c)",
+    T: "Simulation time (s)",
+    dt: "Δt step (s)",
+    plot: "Position & velocity plot",
+    note3: "Experimental tip: if you want a visible “pattern”, measure the amp output (spectrum/phase/intensity after the amp), not “inside” the quantum system.",
+    legal: "All rights reserved. No copying without permission from RA — Raftn4@gmail.com"
+  }
+};
+
+let LANG = "he";
+
+function setLang(lang){
+  LANG = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === "he") ? "rtl" : "ltr";
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n");
+    if(I18N[lang][k]) el.textContent = I18N[lang][k];
+  });
+
+  document.querySelectorAll(".langbtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+
+  // rebuild blocks + steps in selected language
+  fillBlocks();
+  fillSteps();
+  renderMath();
+}
+
+/* =========================
+   Static content blocks
+========================= */
+function fillBlocks(){
+  const he = (LANG==="he");
+
+  const vars = he
+    ? String.raw`
+\(c\) — מהירות האור, \(\;c \approx 3\times 10^8 \text{ m/s}\)  
+\(x(t)\) — מיקום המחיצה לאורך האמפט, \(\;0<x<L\)  
+\(v(t)=\dot{x}(t)\) — מהירות המחיצה  
+\(\gamma(v)=\dfrac{1}{\sqrt{1-(v/c)^2}}\) — גורם לורנץ  
+\(m\) — מסה אפקטיבית של המחיצה  
+\(A\) — שטח המחיצה  
+\(P_L(t),P_R(t)\) — לחצים בתאים שמאל/ימין  
+\(\beta\) — דמפינג אפקטיבי (חיכוך/טורבולנציה/הפסדים)  
+\(u(t)\) — כוח בקרה אופציונלי (אקטואטור)  
+\(\Psi\) — פונקציית גל/שדה קוונטי בתוך האמפט  
+`
+    : String.raw`
+\(c\) — speed of light, \(\;c \approx 3\times 10^8 \text{ m/s}\)  
+\(x(t)\) — partition position along the amp, \(\;0<x<L\)  
+\(v(t)=\dot{x}(t)\) — partition velocity  
+\(\gamma(v)=\dfrac{1}{\sqrt{1-(v/c)^2}}\) — Lorentz factor  
+\(m\) — effective partition mass  
+\(A\) — partition area  
+\(P_L(t),P_R(t)\) — left/right chamber pressures  
+\(\beta\) — effective damping (friction/turbulence/losses)  
+\(u(t)\) — optional control force (actuator)  
+\(\Psi\) — quantum wavefunction/field in the amp
+`;
+  document.getElementById("varsBlock").innerHTML = vars;
+
+  const geo = he
+    ? String.raw`
+אמפט חד־ממדי (ליבה): \([0,L]\)  
+המחיצה במיקום \(x(t)\) מחלקת לשני נפחים:  
+\[
+V_L(t)=A\,x(t),\qquad V_R(t)=A\,(L-x(t))
+\]
+במימוש תלת־ממדי: צינור/חלל שקוף, מחיצה אטומה/חצי־שקופה, וחלונות מדידה ביציאה.
+`
+    : String.raw`
+1D core amp: \([0,L]\)  
+Partition at \(x(t)\) splits two volumes:
+\[
+V_L(t)=A\,x(t),\qquad V_R(t)=A\,(L-x(t))
+\]
+In 3D: a transparent tube/cavity, opaque/semi-transparent partition, and measurement windows at the output.
+`;
+  document.getElementById("geoBlock").innerHTML = geo;
+
+  const assumptions = [
+    he ? "המחיצה נעה לאורך ציר אחד, ללא סיבוב (אפשר להרחיב)." : "1D motion (no rotation), extensible later.",
+    he ? "אין חדירת גז משמעותית דרך המחיצה (איטום אפקטיבי)." : "Negligible gas leakage through the partition (effective seal).",
+    he ? "לחץ הגז מתואר מודל אדיאבטי/איזותרמי לפי צורך." : "Gas pressure modeled as adiabatic/isothermal as needed.",
+    he ? "המדידה בפועל נעשית ביציאת האמפט (אינטנסיביות/פאזה/ספקטרום)." : "Actual readout is at the amp output (intensity/phase/spectrum).",
+    he ? "המחיצה יכולה להיות נשלטת חיצונית כדי לייצר מודולציה מתוכננת." : "External control can shape the partition modulation profile."
+  ];
+  const ul = document.getElementById("assumptions");
+  ul.innerHTML = "";
+  assumptions.forEach(t=>{
+    const li = document.createElement("li");
+    li.textContent = t;
+    ul.appendChild(li);
+  });
+
+  const rel1 = he
+    ? String.raw`
+תנע יחסותי:
+\[
+p(t)=\gamma(v)\,m\,v
+\]
+משוואת תנועה כללית:
+\[
+\frac{dp}{dt}=F(x,v,t)
+\]
+כאשר \(v<c\) תמיד, ו-\(\gamma\to\infty\) כשה-\(v\to c\) (מונע מעבר).
+`
+    : String.raw`
+Relativistic momentum:
+\[
+p(t)=\gamma(v)\,m\,v
+\]
+General equation of motion:
+\[
+\frac{dp}{dt}=F(x,v,t)
+\]
+with \(v<c\) always, and \(\gamma\to\infty\) as \(v\to c\) (prevents crossing).
+`;
+  document.getElementById("relBlock1").innerHTML = rel1;
+
+  const rel2 = he
+    ? String.raw`
+כוח לחץ (הפרש לחצים) + דמפינג:
+\[
+F_{\Delta P}(t)=A\,[P_L(t)-P_R(t)]
+\]
+\[
+F_{\text{damp}}(t)= -\beta\,v(t)
+\]
+ואם יש בקרה:
+\[
+F(t)=F_{\Delta P}+F_{\text{damp}}+u(t)
+\]
+לכן:
+\[
+\frac{d}{dt}\big(\gamma m v\big)=A\,[P_L-P_R]-\beta v+u(t)
+\]
+בנוסף:
+\[
+\dot{x}=v
+\]
+`
+    : String.raw`
+Pressure-difference force + damping:
+\[
+F_{\Delta P}(t)=A\,[P_L(t)-P_R(t)]
+\]
+\[
+F_{\text{damp}}(t)= -\beta\,v(t)
+\]
+Optional control:
+\[
+F(t)=F_{\Delta P}+F_{\text{damp}}+u(t)
+\]
+Thus:
+\[
+\frac{d}{dt}\big(\gamma m v\big)=A\,[P_L-P_R]-\beta v+u(t)
+\]
+And:
+\[
+\dot{x}=v
+\]
+`;
+  document.getElementById("relBlock2").innerHTML = rel2;
+
+  const gas = he
+    ? String.raw`
+מודל לחץ אדיאבטי פשוט (לכל תא):
+\[
+P_L(t)=P_{0L}\left(\frac{V_{0L}}{V_L(t)}\right)^{\kappa},\quad
+P_R(t)=P_{0R}\left(\frac{V_{0R}}{V_R(t)}\right)^{\kappa}
+\]
+כאשר \(\kappa\approx 1.4\) לאוויר (גז דיאטומי אידיאלי בקירוב).
+
+אם רוצים מודל איזותרמי (פשוט יותר):
+\[
+P_L(t)=P_{0L}\frac{V_{0L}}{V_L(t)},\quad P_R(t)=P_{0R}\frac{V_{0R}}{V_R(t)}
+\]
+`
+    : String.raw`
+Simple adiabatic pressure model (each chamber):
+\[
+P_L(t)=P_{0L}\left(\frac{V_{0L}}{V_L(t)}\right)^{\kappa},\quad
+P_R(t)=P_{0R}\left(\frac{V_{0R}}{V_R(t)}\right)^{\kappa}
+\]
+with \(\kappa\approx 1.4\) for air (approx.).
+
+Isothermal (simpler) alternative:
+\[
+P_L(t)=P_{0L}\frac{V_{0L}}{V_L(t)},\quad P_R(t)=P_{0R}\frac{V_{0R}}{V_R(t)}
+\]
+`;
+  document.getElementById("gasBlock").innerHTML = gas;
+
+  const stable = he
+    ? String.raw`
+מגבלות פיזיקליות:
+\[
+0<x(t)<L \quad \Rightarrow \quad V_L,V_R>0
+\]
+הגבלת מהירות מובנית ע"י יחסות:
+\[
+|v(t)|<c
+\]
+במודל נומרי, כדי למנוע קריסה כש-\(V\to 0\), משתמשים במחסום קטן \(\epsilon\):
+\[
+V_L=\max(Ax,\epsilon),\quad V_R=\max(A(L-x),\epsilon)
+\]
+`
+    : String.raw`
+Physical constraints:
+\[
+0<x(t)<L \quad \Rightarrow \quad V_L,V_R>0
+\]
+Speed limit enforced by relativity:
+\[
+|v(t)|<c
+\]
+Numerically, avoid blow-up as \(V\to 0\) via a small barrier \(\epsilon\):
+\[
+V_L=\max(Ax,\epsilon),\quad V_R=\max(A(L-x),\epsilon)
+\]
+`;
+  document.getElementById("stabilityBlock").innerHTML = stable;
+
+  const ham = he
+    ? String.raw`
+נסמן את מיקום המחיצה \(X(t)\) כפרמטר קלאסי (או אופרטור כבד מאוד).
+
+המילטוניאן כולל שלושה חלקים:
+\[
+H(t)=H_{\text{sys}} + H_{\text{amp}}(X,\dot X) + H_{\text{int}}(X)
+\]
+
+דוגמה קונספטואלית לשדה סקלרי \(\Psi\) באמפט עם תנאי שפה תלויי־זמן:
+\[
+\Psi(0,t)=0,\quad \Psi(X(t),t)=0,\quad \Psi(L,t)=0
+\]
+או (במקרה מחיצה חצי־שקופה) תנאי קפיצה:
+\[
+\partial_x \Psi|_{X^+}-\partial_x \Psi|_{X^-}=\lambda\,\Psi(X,t)
+\]
+כך שהמחיצה "ממודלת" את הספקטרום/פאזה של המצבים בתוך האמפט לאורך זמן.
+`
+    : String.raw`
+Let the partition position \(X(t)\) be a classical (or very heavy) parameter.
+
+Hamiltonian split:
+\[
+H(t)=H_{\text{sys}} + H_{\text{amp}}(X,\dot X) + H_{\text{int}}(X)
+\]
+
+Conceptual scalar field \(\Psi\) in the amp with time-dependent boundary conditions:
+\[
+\Psi(0,t)=0,\quad \Psi(X(t),t)=0,\quad \Psi(L,t)=0
+\]
+Or (semi-transparent partition) a jump condition:
+\[
+\partial_x \Psi|_{X^+}-\partial_x \Psi|_{X^-}=\lambda\,\Psi(X,t)
+\]
+So the moving partition modulates spectrum/phase of amp modes over time.
+`;
+  document.getElementById("hamBlock").innerHTML = ham;
+
+  const obs = he
+    ? String.raw`
+במקום למדוד ישירות אופרטור על המערכת \(\hat O\), מודדים פונקציונל ביציאה:
+
+\[
+I(\omega,t)=\left|\mathcal{F}\{s(t)\}\right|^2
+\]
+כאשר \(s(t)\) הוא אות נמדד (אינטנסיביות/פאזה/זרם פוטו) אחרי האמפט.
+
+קונספט: האמפט מבצע "קידוד" של תכונות קוונטיות לדפוס זמן־תדר,
+ואז המדידה הקלאסית קוראת את הדפוס ולא מתערבת ישירות במערכת.
+`
+    : String.raw`
+Instead of directly measuring an operator \(\hat O\) on the system, measure an output functional:
+
+\[
+I(\omega,t)=\left|\mathcal{F}\{s(t)\}\right|^2
+\]
+where \(s(t)\) is the measured signal (intensity/phase/photocurrent) after the amp.
+
+Concept: the amp “encodes” quantum features into a time–frequency pattern; the classical readout reads the pattern rather than directly disturbing the system.
+`;
+  document.getElementById("obsBlock").innerHTML = obs;
+}
+
+function fillSteps(){
+  const he = (LANG==="he");
+  const steps = [
+    {
+      n: 1,
+      badge: he ? "הגדרה" : "Define",
+      kind: "info",
+      title: he ? "מגדירים נפח סגור (“Amp”) בין המערכת לגלאי" : "Define a closed volume (“Amp”) between system and detector",
+      body: he
+        ? "האמפט הוא אזור ביניים פיזיקלי: חלל שקוף/מוגדר, עם יציאה למדידה. המערכת הקוונטית לא מצומדת ישירות לגלאי."
+        : "The amp is a physical intermediate region with an output port. The quantum system is not directly coupled to the detector."
+    },
+    {
+      n: 2,
+      badge: he ? "מכניקה" : "Mechanics",
+      kind: "info",
+      title: he ? "מכניסים מחיצה נעה + גז דחוס כדי ליצור מודולציה" : "Add a moving partition + compressed gas to create modulation",
+      body: he
+        ? "המחיצה מייצרת תנאי שפה תלויי־זמן לשדה/גל באמפט. תנועה מהירה נותנת סריקה/קידוד של מידע למבנה מרחבי."
+        : "The partition imposes time-dependent boundary conditions. Fast motion produces scanning/encoding into a spatial-temporal structure."
+    },
+    {
+      n: 3,
+      badge: he ? "משוואות" : "Equations",
+      kind: "ok",
+      title: he ? "משוואות תנועה יחסותיות מבטיחות v<c" : "Relativistic EOM enforce v<c",
+      body: he
+        ? "משתמשים ב־ d/dt(γmv)=A(PL−PR)−βv+u(t). גורם לורנץ מונע מעבר ל־c באופן טבעי."
+        : "Use d/dt(γmv)=A(PL−PR)−βv+u(t). Lorentz factor naturally prevents exceeding c."
+    },
+    {
+      n: 4,
+      badge: he ? "קוונטים" : "QM",
+      kind: "ok",
+      title: he ? "מנסחים את המחיצה כ־X(t) שמגדיר תנאי שפה לשדה" : "Treat the partition as X(t) defining boundary conditions for the field",
+      body: he
+        ? "המערכת הקוונטית חווה H(t) עם תנאי שפה תלויי־זמן. זה לא סותר QM — זו מערכת מונעת בזמן (driven)."
+        : "The quantum system sees H(t) with time-dependent boundaries. This does not violate QM—it's a driven system."
+    },
+    {
+      n: 5,
+      badge: he ? "מדידה" : "Readout",
+      kind: "warn",
+      title: he ? "מודדים ביציאת האמפט דפוס זמן־תדר במקום מדידה ישירה" : "Measure time–frequency patterns at the amp output rather than direct measurement",
+      body: he
+        ? "הגלאי קורא s(t) אחרי האמפט: אינטנסיביות/פאזה/ספקטרום. הדקו־הרנטיות מתרחשת על האות המקודד, לא על המערכת."
+        : "Detector reads s(t) after the amp: intensity/phase/spectrum. Decoherence acts on the encoded signal, not directly on the system."
+    },
+    {
+      n: 6,
+      badge: he ? "סביבה" : "Environment",
+      kind: "info",
+      title: he ? "תנאים מעל הים: הורדת רעש ושדות מפריעים" : "Over-ocean conditions: reduce noise and disturbances",
+      body: he
+        ? "הצדקה פרקטית: פחות הפרעות אלקטרומגנטיות/מבניות ורעש סביבתי → פחות דקו־הרנטיות לא רצויה."
+        : "Practical motivation: lower EM/structural noise → less unwanted decoherence."
+    },
+    {
+      n: 7,
+      badge: he ? "תוצאה" : "Outcome",
+      kind: "ok",
+      title: he ? "מקבלים “תמונה” = דפוס מדיד שמייצג תכונות קוונטיות" : "You get a “picture” = a measurable pattern representing quantum features",
+      body: he
+        ? "הדפוס יכול להיות התאבכות/פאזה/ספקטרום שממפה מצבים או פרמטרים של המערכת."
+        : "Pattern can be interference/phase/spectrum that maps states or parameters of the system."
+    }
+  ];
+
+  const box = document.getElementById("steps");
+  box.innerHTML = "";
+  steps.forEach(s=>{
+    const d = document.createElement("div");
+    d.className = "step";
+    const badgeClass = s.kind === "ok" ? "ok" : (s.kind === "warn" ? "warn" : "info");
+    d.innerHTML = `
+      <div class="title">
+        <div>Step ${s.n}. ${escapeHtml(s.title)}</div>
+        <div class="badge ${badgeClass}">${escapeHtml(s.badge)}</div>
+      </div>
+      <div class="muted">${escapeHtml(s.body)}</div>
+    `;
+    box.appendChild(d);
+  });
+}
+
+/* =========================
+   Theme toggle
+========================= */
+let THEME = "auto";
+function toggleTheme(){
+  const isDark = document.documentElement.getAttribute("data-theme")==="dark";
+  document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+}
+
+/* =========================
+   Relativistic simulation
+========================= */
+const c = 299792458; // m/s
+const kappa = 1.4;
+const eps = 1e-9;
+
+function gammaFromV(v){
+  const b = v/c;
+  const bb = b*b;
+  return 1/Math.sqrt(Math.max(1e-15, 1-bb));
+}
+
+// Force based on adiabatic pressures
+function pressures(x, A, L, P0L, P0R, V0L, V0R){
+  const VL = Math.max(A*x, eps);
+  const VR = Math.max(A*(L-x), eps);
+  const PL = P0L * Math.pow(V0L/VL, kappa);
+  const PR = P0R * Math.pow(V0R/VR, kappa);
+  return {PL, PR, VL, VR};
+}
+
+// Convert state (x,v) -> derivatives (dx/dt, dv/dt) using dp/dt = F
+function deriv(t, state, params){
+  const {m, A, beta, L, P0L, P0R, V0L, V0R, u0, omegaU} = params;
+  const x = state.x;
+  const v = state.v;
+
+  const {PL, PR, VL, VR} = pressures(x, A, L, P0L, P0R, V0L, V0R);
+  const Fp = A*(PL - PR);
+
+  // Optional control force (small sinusoid just to show capability)
+  const u = u0 * Math.sin(omegaU*t);
+
+  const F = Fp - beta*v + u;
+
+  // dp/dt = F ; p = gamma m v
+  // dp/dt = d/dt(gamma m v) = m gamma^3 a (in 1D)
+  // => a = F / (m gamma^3)
+  const g = gammaFromV(v);
+  const a = F / (m * Math.pow(g,3));
+
+  // Safety: keep within amp bounds by soft wall force (numerical)
+  let wall = 0;
+  const margin = 1e-4 * Math.max(1, L);
+  if(x < margin) wall += (margin - x) * 1e6;
+  if(x > L - margin) wall -= (x - (L - margin)) * 1e6;
+
+  const a2 = a + wall/(m*Math.pow(g,3));
+
+  return { dx: v, dv: a2, PL, PR, VL, VR, F };
+}
+
+// RK4 integrator
+function rk4Step(t, state, dt, params){
+  const k1 = deriv(t, state, params);
+  const s2 = { x: state.x + 0.5*dt*k1.dx, v: state.v + 0.5*dt*k1.dv };
+  const k2 = deriv(t+0.5*dt, s2, params);
+  const s3 = { x: state.x + 0.5*dt*k2.dx, v: state.v + 0.5*dt*k2.dv };
+  const k3 = deriv(t+0.5*dt, s3, params);
+  const s4 = { x: state.x + dt*k3.dx, v: state.v + dt*k3.dv };
+  const k4 = deriv(t+dt, s4, params);
+
+  const x = state.x + (dt/6)*(k1.dx + 2*k2.dx + 2*k3.dx + k4.dx);
+  let v = state.v + (dt/6)*(k1.dv + 2*k2.dv + 2*k3.dv + k4.dv);
+
+  // clamp v softly to < c (numerical)
+  const vmax = 0.999999*c;
+  if(v > vmax) v = vmax;
+  if(v < -vmax) v = -vmax;
+
+  return { x, v, meta: k4 };
+}
+
+/* =========================
+   Plotting
+========================= */
+function drawPlot(canvas, data, L){
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // axes frame
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(148,163,184,.55)";
+  ctx.strokeRect(40, 20, W-60, H-60);
+
+  // find ranges
+  const tMax = data[data.length-1].t;
+  let xMin=Infinity, xMax=-Infinity, vMin=Infinity, vMax=-Infinity;
+  data.forEach(p=>{
+    xMin = Math.min(xMin, p.x);
+    xMax = Math.max(xMax, p.x);
+    vMin = Math.min(vMin, p.v);
+    vMax = Math.max(vMax, p.v);
+  });
+
+  // Expand ranges a bit
+  const pad = 1e-9;
+  xMin = Math.min(xMin, 0);
+  xMax = Math.max(xMax, L);
+  vMin -= Math.abs(vMin)*0.05 + pad;
+  vMax += Math.abs(vMax)*0.05 + pad;
+
+  const plotX0=40, plotY0=20, plotW=W-60, plotH=H-60;
+  const mapX = (t)=> plotX0 + (t/tMax)*plotW;
+  const mapYx = (x)=> plotY0 + plotH - ((x - xMin)/(xMax-xMin))*plotH;
+  const mapYv = (v)=> plotY0 + plotH - ((v - vMin)/(vMax-vMin))*plotH;
+
+  // draw x(t)
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = "rgba(99,102,241,.95)";
+  ctx.beginPath();
+  data.forEach((p,i)=>{
+    const X = mapX(p.t);
+    const Y = mapYx(p.x);
+    if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+  });
+  ctx.stroke();
+
+  // draw v(t)
+  ctx.lineWidth = 2.0;
+  ctx.strokeStyle = "rgba(34,211,238,.95)";
+  ctx.beginPath();
+  data.forEach((p,i)=>{
+    const X = mapX(p.t);
+    const Y = mapYv(p.v);
+    if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+  });
+  ctx.stroke();
+
+  // legend
+  ctx.font = "14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+  ctx.fillStyle = "rgba(99,102,241,.95)";
+  ctx.fillText("x(t)", 52, 42);
+  ctx.fillStyle = "rgba(34,211,238,.95)";
+  ctx.fillText("v(t)", 100, 42);
+
+  // labels
+  ctx.fillStyle = "rgba(100,116,139,.95)";
+  ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+  ctx.fillText("t=0", plotX0, H-18);
+  ctx.fillText("t=max", plotX0+plotW-60, H-18);
+}
+
+function formatSI(x){
+  // simple formatter
+  if(!isFinite(x)) return "NaN";
+  const ax = Math.abs(x);
+  if(ax === 0) return "0";
+  if(ax >= 1e6 || ax < 1e-3){
+    return x.toExponential(3);
+  }
+  return x.toFixed(6).replace(/0+$/,'').replace(/\.$/,'');
+}
+
+/* =========================
+   UI wiring
+========================= */
+const el = (id)=>document.getElementById(id);
+
+const inputs = ["m","A","beta","P0L","P0R","L","x0","v0","T","dt"];
+function syncVals(){
+  inputs.forEach(id=>{
+    const v = parseFloat(el(id).value);
+    const label = el(id+"Val");
+    if(id==="v0"){
+      label.textContent = `${formatSI(v)} c  →  ${formatSI(v*c)} m/s`;
+    } else if(id==="P0L" || id==="P0R"){
+      label.textContent = `${Math.round(v).toLocaleString()} Pa`;
+    } else {
+      label.textContent = `${formatSI(v)}`;
+    }
+  });
+
+  // keep x0 within [0.01, L-0.01]
+  const L = parseFloat(el("L").value);
+  const x0 = el("x0");
+  x0.max = Math.max(0.02, L-0.01).toFixed(2);
+  if(parseFloat(x0.value) > parseFloat(x0.max)) x0.value = x0.max;
+  if(parseFloat(x0.value) < parseFloat(x0.min)) x0.value = x0.min;
+  el("x0Val").textContent = formatSI(parseFloat(x0.value));
+}
+
+inputs.forEach(id=> el(id).addEventListener("input", syncVals));
+
+el("btnTheme").addEventListener("click", ()=>toggleTheme());
+
+document.querySelectorAll(".langbtn").forEach(b=>{
+  b.addEventListener("click", ()=>setLang(b.dataset.lang));
+});
+
+el("btnReset").addEventListener("click", ()=>{
+  el("m").value=5;
+  el("A").value=0.02;
+  el("beta").value=2;
+  el("P0L").value=400000;
+  el("P0R").value=120000;
+  el("L").value=1.2;
+  el("x0").value=0.6;
+  el("v0").value=0;
+  el("T").value=0.25;
+  el("dt").value=0.0005;
+  syncVals();
+  runSim();
+});
+
+el("btnRun").addEventListener("click", runSim);
+
+function runSim(){
+  const m = parseFloat(el("m").value);
+  const A = parseFloat(el("A").value);
+  const beta = parseFloat(el("beta").value);
+  const P0L = parseFloat(el("P0L").value);
+  const P0R = parseFloat(el("P0R").value);
+  const L = parseFloat(el("L").value);
+  const x0 = parseFloat(el("x0").value);
+  const v0frac = parseFloat(el("v0").value);
+  const T = parseFloat(el("T").value);
+  const dt = parseFloat(el("dt").value);
+
+  // initial volumes: based on initial split
+  const V0L = Math.max(A*x0, eps);
+  const V0R = Math.max(A*(L-x0), eps);
+
+  // Optional small control (set to 0 by default)
+  const u0 = 0;          // N
+  const omegaU = 2*Math.PI*40; // rad/s (placeholder)
+
+  const params = {m, A, beta, L, P0L, P0R, V0L, V0R, u0, omegaU};
+
+  let state = {x:x0, v: v0frac*c};
+  const N = Math.max(2, Math.floor(T/dt));
+  const data = [];
+  let t=0;
+
+  let maxBeta=0, maxGamma=0, maxF=0;
+  let minX=Infinity, maxX=-Infinity;
+
+  for(let i=0;i<=N;i++){
+    const g = gammaFromV(state.v);
+    maxGamma = Math.max(maxGamma, g);
+    maxBeta = Math.max(maxBeta, Math.abs(state.v)/c);
+    minX = Math.min(minX, state.x);
+    maxX = Math.max(maxX, state.x);
+
+    data.push({t, x: state.x, v: state.v});
+    state = rk4Step(t, state, dt, params);
+    t += dt;
+
+    // keep inside [0,L] softly
+    if(state.x < 0) state.x = 0.000001;
+    if(state.x > L) state.x = L-0.000001;
+  }
+
+  drawPlot(el("plot"), data, L);
+
+  // final meta
+  const last = data[data.length-1];
+  const {PL, PR, VL, VR, F} = deriv(T, {x:last.x, v:last.v}, params);
+
+  maxF = Math.abs(F);
+
+  const he = (LANG==="he");
+  const out = he
+    ? String.raw`תוצאות (דוגמה נומרית):
+- \(L=${formatSI(L)}\) m, \(A=${formatSI(A)}\) m², \(m=${formatSI(m)}\) kg, \(\beta=${formatSI(beta)}\)
+- מקסימום \(|v|/c \approx ${formatSI(maxBeta)}\)
+- מקסימום \(\gamma \approx ${formatSI(maxGamma)}\)
+- טווח \(x(t)\): [${formatSI(minX)}, ${formatSI(maxX)}] m
+- בסוף: \(x(T)=${formatSI(last.x)}\) m, \(v(T)=${formatSI(last.v)}\) m/s
+- לחצים בסוף (אדיאבטי): \(P_L \approx ${Math.round(PL).toLocaleString()} \text{ Pa}\), \(P_R \approx ${Math.round(PR).toLocaleString()} \text{ Pa}\)
+הערה: זה מודל הדגמה. ניתן להחליף \(P(V)\) למודל מפורט (תרמו/זרימה) ולהוסיף \(u(t)\) לבקרה.`
+    : String.raw`Results (numerical demo):
+- \(L=${formatSI(L)}\) m, \(A=${formatSI(A)}\) m², \(m=${formatSI(m)}\) kg, \(\beta=${formatSI(beta)}\)
+- max \(|v|/c \approx ${formatSI(maxBeta)}\)
+- max \(\gamma \approx ${formatSI(maxGamma)}\)
+- \(x(t)\) range: [${formatSI(minX)}, ${formatSI(maxX)}] m
+- final: \(x(T)=${formatSI(last.x)}\) m, \(v(T)=${formatSI(last.v)}\) m/s
+- final pressures (adiabatic): \(P_L \approx ${Math.round(PL).toLocaleString()} \text{ Pa}\), \(P_R \approx ${Math.round(PR).toLocaleString()} \text{ Pa}\)
+Note: demo model. Replace \(P(V)\) with a detailed thermo/flow model and add \(u(t)\) for control if needed.`;
+
+  el("simOut").textContent = out;
+  renderMath();
+}
+
+function renderMath(){
+  if(!window.renderMathInElement) return;
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\[", right: "\\]", display: true},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "$", right: "$", display: false}
+    ],
+    throwOnError: false
+  });
+}
+
+function escapeHtml(s){
+  return (s+"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+/* =========================
+   Init
+========================= */
+function init(){
+  // default theme: follow prefers-color-scheme but allow toggle
+  document.documentElement.setAttribute("data-theme", "light");
+  // fill blocks & steps
+  fillBlocks();
+  fillSteps();
+  syncVals();
+
+  // render math after KaTeX loads
+  window.addEventListener("load", ()=>{
+    renderMath();
+    runSim();
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>
