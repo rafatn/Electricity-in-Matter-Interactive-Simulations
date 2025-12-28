@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>איחוד גל יחסותי + Maxwell + Dirac–Kähler (c, ħ מלאים) — מסמך מאוחד + נספחים</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <!-- Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --cardSolid:#ffffff;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+
+      --head:#0b1220;
+      --link:#2563eb;
+      --accent:#6366f1;
+
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", "Noto Sans", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a13; --bg1:#0b1220; --bg2:#0b1b2a;
+        --card:rgba(16,23,42,.72);
+        --card2:rgba(16,23,42,.55);
+        --cardSolid:#0f172a;
+
+        --text:#e5e7eb;
+        --muted:#a3a3a3;
+        --line:rgba(148,163,184,.18);
+
+        --head:#f3f4f6;
+        --link:#93c5fd;
+
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+      }
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 80% -10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at -10% 10%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    header{
+      padding:26px 16px 10px;
+      max-width:1180px;
+      margin:0 auto;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(22px, 3vw, 36px);
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:1100px;
+    }
+    .pillrow{ margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--muted);
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    main{
+      max-width:1180px;
+      margin:0 auto;
+      padding:10px 16px 40px;
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 1020px){
+      main{ grid-template-columns: 1fr; }
+      .toc{ position:static; }
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      backdrop-filter: blur(10px);
+    }
+    h2{ margin:0 0 10px; font-size:20px; color:var(--head); }
+    h3{ margin:16px 0 8px; font-size:16px; color:var(--head); }
+    p, li{ line-height:1.75; margin:8px 0; }
+    a{ color:var(--link); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .muted{ color:var(--muted); }
+    .kblock{
+      border:1px dashed var(--line);
+      background:linear-gradient(180deg, var(--card2), transparent);
+      border-radius:16px;
+      padding:12px 12px;
+      overflow:auto;
+      margin:10px 0;
+    }
+    pre{
+      margin:10px 0;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.04);
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:13px;
+      line-height:1.6;
+      direction:ltr;
+      text-align:left;
+    }
+    @media (prefers-color-scheme: dark){
+      pre{ background:rgba(255,255,255,.06); }
+    }
+
+    details{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--card2);
+      padding:10px 12px;
+      margin-top:12px;
+    }
+    summary{ cursor:pointer; font-weight:800; color:var(--head); }
+
+    .toc{
+      position:sticky;
+      top:12px;
+      padding:14px;
+    }
+    .toc h2{ font-size:18px; margin-bottom:6px; }
+    .toc ul{ margin:10px 0 0; padding:0 18px 0 0; }
+    .toc li{ margin:6px 0; }
+    .toc .small{ font-size:13px; color:var(--muted); margin-top:8px; }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 900px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .mermaid{
+      direction:ltr;
+      text-align:left;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px;
+      background:rgba(255,255,255,.35);
+    }
+    @media (prefers-color-scheme: dark){
+      .mermaid{ background:rgba(0,0,0,.18); }
+    }
+
+    .note{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.25);
+    }
+    @media (prefers-color-scheme: dark){
+      .note{ background:rgba(0,0,0,.18); }
+    }
+
+    footer{
+      max-width:1180px;
+      margin:0 auto;
+      padding:0 16px 28px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .topbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      border-radius:12px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+    }
+    .btn:hover{ filter:brightness(1.02); }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>איחוד גל יחסותי + Maxwell + Dirac–Kähler (עם \(c,\hbar\) מלאים)</h1>
+  <p class="subtitle">
+    מסמך מאוחד אחד: (1) \(\square\), KG, (2) הצמדה מינימלית \(D_\mu=\partial_\mu+\frac{i q}{\hbar}A_\mu\),
+    (3) Dirac–Kähler עם \(d_q,\delta_q\), (4) הזדהות \((d-\delta)\leftrightarrow \gamma^\mu\partial_\mu\) דרך כפל קליפורד,
+    (5) ריבוע שמוציא \(\sigma^{\mu\nu}F_{\mu\nu}\) והאנלוג \(F\cdot\) בצורות,
+    (6) פירוק רכיבי של \(F\cdot\Psi\) + הקרנות דרגה \(\langle\cdot\rangle_r\),
+    (7) נספח: \(B_z\) אחיד — חישוב מפורש על \(\phi,A,B\),
+    (8) נספח: בחירת Gauge ל-\(A\) (Landau/Symmetric) והצמדה מינימלית בתוך \(\Delta_q\)/\(D^2\).
+  </p>
+
+  <div class="pillrow">
+    <span class="pill">KaTeX · Mermaid</span>
+    <span class="pill">Clifford product</span>
+    <span class="pill">Dirac–Kähler</span>
+    <span class="pill">Minimal coupling</span>
+    <span class="pill">\(\sigma\!\cdot\!F\) ↔ \(F\cdot\)</span>
+  </div>
+
+  <div class="topbar">
+    <button class="btn" onclick="expandAll(true)">פתח הכל</button>
+    <button class="btn" onclick="expandAll(false)">סגור הכל</button>
+    <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">למעלה</button>
+  </div>
+</header>
+
+<main>
+  <!-- TOC -->
+  <aside class="card toc">
+    <h2>תוכן עניינים</h2>
+    <ul>
+      <li><a href="#sec0">0) תרשים-על</a></li>
+      <li><a href="#sec1">1) קבועים מלאים: \(\square\), KG</a></li>
+      <li><a href="#sec2">2) הצמדה מינימלית: \(D_\mu\), \(F_{\mu\nu}\)</a></li>
+      <li><a href="#sec3">3) Dirac–Kähler טעון: \(d_q,\delta_q\)</a></li>
+      <li><a href="#sec4">4) קליפורד: \((d-\delta)\leftrightarrow \gamma^\mu\partial_\mu\)</a></li>
+      <li><a href="#sec5">5) ריבוע דיראק: \(\sigma^{\mu\nu}F_{\mu\nu}\)</a></li>
+      <li><a href="#sec6">6) האנלוג ב־DK: \(\slashed{D}^2=-\Delta_q+\frac{i q}{\hbar}F\cdot\)</a></li>
+      <li><a href="#sec7">7) פירוק מפורש: \(F\cdot\omega\) עם \(\wedge\) וכיווץ</a></li>
+      <li><a href="#sec8">8) דוגמאות רכיביות: \(k=0,1,2\)</a></li>
+      <li><a href="#sec9">9) הקרנות דרגה \(\langle\cdot\rangle_r\) (GA)</a></li>
+      <li><a href="#app1">נספח A: \(B_z\) אחיד — חישובים מפורשים</a></li>
+      <li><a href="#app2">נספח B: בחירת \(A\) (Landau/Symmetric) + \(D^2\) ו-\(\Delta_q\)</a></li>
+    </ul>
+    <div class="small">טיפ: אפשר ללחוץ על “פתח הכל” כדי לראות את כל הפירוט.</div>
+  </aside>
+
+  <!-- CONTENT -->
+  <section class="card" id="sec0">
+    <h2>0) תרשים-על (איחוד מושגים)</h2>
+    <div class="mermaid">
+flowchart TD
+  A["לורנץ + □"] --> B["KG: (□ + m^2 c^2/ħ^2) φ = 0"]
+  C["U(1) gauge"] --> D["D_μ = ∂_μ + (iq/ħ)A_μ"]
+  D --> E["[D_μ,D_ν] = (iq/ħ)F_{μν}"]
+  F["Dirac: (iħ γ·D - mc)ψ=0"] --> G["(γ·D)^2 = D^2 + (q/2ħ)σ·F"]
+  H["Dirac–Kähler: (d_q-δ_q + mc/ħ)Ψ=0"] --> I["(d_q-δ_q)^2 = -Δ_q + (iq/ħ)F·"]
+  I --> J["F·Ψ: k→k+2,k,k-2"]
+  J --> K["Grade projections ⟨·⟩_r"]
+    </div>
+    <p class="muted">
+      ה”Pauli term” בשפת דיראק הוא \(\sigma^{\mu\nu}F_{\mu\nu}\). בשפת צורות זה מיוצג ע״י כפל קליפורד של 2-form:
+      \(F\cdot(\cdot)\), שמערבב דרגות \(k\to k\pm2\) וגם יוצר חלק שומר־דרגה.
+    </p>
+  </section>
+
+  <section class="card" id="sec1">
+    <h2>1) קבועים מלאים: \(\square\) וקליין–גורדון</h2>
+    <div class="kblock">
+      \[
+      \square=\partial_\mu\partial^\mu
+      =\frac{1}{c^2}\frac{\partial^2}{\partial t^2}-\nabla^2
+      \]
+      \[
+      \boxed{\left(\square+\frac{m^2c^2}{\hbar^2}\right)\phi=0}
+      \]
+      \[
+      \text{לפליין } e^{-iEt/\hbar+i\mathbf{p}\cdot\mathbf{x}/\hbar}:
+      \quad
+      E^2=p^2c^2+m^2c^4
+      \]
+    </div>
+
+    <details>
+      <summary>למה מופיע \(\frac{mc}{\hbar}\)?</summary>
+      <p>
+        \(\square\) ביחידות \(1/\text{אורך}^2\), לכן גם איבר המסה חייב להיות באותה יחידה:
+        \(\left(\frac{mc}{\hbar}\right)^2\).
+      </p>
+    </details>
+  </section>
+
+  <section class="card" id="sec2">
+    <h2>2) הצמדה מינימלית (QED): \(D_\mu\), \(F_{\mu\nu}\)</h2>
+    <div class="kblock">
+      \[
+      \boxed{D_\mu=\partial_\mu+\frac{i q}{\hbar}A_\mu}
+      \qquad
+      \boxed{F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu}
+      \qquad
+      \boxed{[D_\mu,D_\nu]=\frac{i q}{\hbar}F_{\mu\nu}}
+      \]
+    </div>
+
+    <details>
+      <summary>Maxwell (פורמלית, קומפקטית)</summary>
+      <div class="kblock">
+        \[
+        F=dA,\qquad dF=0
+        \]
+        \[
+        \partial_\mu F^{\mu\nu}=\mu_0 j^\nu
+        \quad
+        (\text{או } d\star F=\mu_0\star J)
+        \]
+      </div>
+    </details>
+  </section>
+
+  <section class="card" id="sec3">
+    <h2>3) Dirac–Kähler טעון: \(d_q,\delta_q\) עם \(c,\hbar\)</h2>
+    <p>
+      נכתוב את הפוטנציאל כ־1-form:
+      \[
+      A=A_\mu\,dx^\mu
+      \]
+      ואת העקמומיות:
+      \[
+      F=dA=\frac12F_{\mu\nu}\,dx^\mu\wedge dx^\nu
+      \]
+    </p>
+
+    <div class="kblock">
+      \[
+      \boxed{d_q \equiv d+\frac{i q}{\hbar}\,A\wedge}
+      \qquad
+      \boxed{\delta_q \equiv \delta-\frac{i q}{\hbar}\, i_{A^\sharp}}
+      \]
+      \[
+      \boxed{\left(d_q-\delta_q+\frac{mc}{\hbar}\right)\Psi=0}
+      \]
+    </div>
+
+    <details>
+      <summary>במקרה סקלרי מתקבל KG טעון</summary>
+      <div class="kblock">
+        \[
+        \boxed{\left(D_\mu D^\mu+\frac{m^2c^2}{\hbar^2}\right)\phi=0}
+        \]
+      </div>
+    </details>
+  </section>
+
+  <section class="card" id="sec4">
+    <h2>4) כפל קליפורד: \((d-\delta)\) כ־\(\gamma^\mu\partial_\mu\)</h2>
+
+    <h3>4.1 הגדרה: 1-form פועל בקליפורד על צורה</h3>
+    <div class="kblock">
+      \[
+      \boxed{\alpha\cdot\omega \equiv \alpha\wedge\omega - i_{\alpha^\sharp}\omega}
+      \]
+    </div>
+
+    <p>
+      בבסיס \(e^\mu=dx^\mu\):
+    </p>
+    <div class="kblock">
+      \[
+      e^\mu\cdot e^\nu + e^\nu\cdot e^\mu = 2\eta^{\mu\nu}
+      \]
+      שזה בדיוק יחס קליפורד של \(\gamma^\mu\).
+    </div>
+
+    <h3>4.2 האופרטור “סלאש”</h3>
+    <div class="kblock">
+      \[
+      \boxed{\slashed{\partial}\equiv dx^\mu\cdot \partial_\mu}
+      \qquad\Rightarrow\qquad
+      \boxed{\slashed{\partial}=d-\delta}
+      \]
+      ולכן:
+      \[
+      \boxed{d-\delta \;\longleftrightarrow\; \gamma^\mu\partial_\mu}
+      \qquad
+      \boxed{d_q-\delta_q \;\longleftrightarrow\; \gamma^\mu D_\mu}
+      \]
+    </div>
+  </section>
+
+  <section class="card" id="sec5">
+    <h2>5) ריבוע דיראק: הופעת \(\sigma^{\mu\nu}F_{\mu\nu}\)</h2>
+    <p>
+      מתחילים מ:
+      \[
+      [D_\mu,D_\nu]=\frac{i q}{\hbar}F_{\mu\nu}
+      \]
+      ומגדירים:
+      \[
+      \sigma^{\mu\nu}\equiv \frac{i}{2}[\gamma^\mu,\gamma^\nu]
+      \]
+    </p>
+
+    <div class="kblock">
+      \[
+      \boxed{(\gamma^\mu D_\mu)^2
+      = D_\mu D^\mu + \frac{q}{2\hbar}\sigma^{\mu\nu}F_{\mu\nu}}
+      \]
+      <div class="muted">
+        קונבנציות שונות (מטריקה/סימני \(i\)) עשויות לשנות סימן או פקטור \(i\),
+        אבל המבנה “\(D^2 + \sigma\!\cdot\!F\)” נשמר.
+      </div>
+    </div>
+
+    <details>
+      <summary>איך זה נכנס לריבוע משוואת דיראק עם \(mc\)?</summary>
+      <div class="kblock">
+        \[
+        (i\hbar\,\gamma^\mu D_\mu - mc)\psi=0
+        \]
+        \[
+        \Rightarrow
+        \boxed{\left(-\hbar^2 D_\mu D^\mu -\frac{q\hbar}{2}\sigma^{\mu\nu}F_{\mu\nu}+m^2c^2\right)\psi=0}
+        \]
+      </div>
+    </details>
+  </section>
+
+  <section class="card" id="sec6">
+    <h2>6) האנלוג ב־Dirac–Kähler: \(\slashed{D}^2=-\Delta_q+\frac{i q}{\hbar}F\cdot\)</h2>
+    <div class="kblock">
+      \[
+      \boxed{\slashed{D}\equiv d_q-\delta_q}
+      \qquad
+      \boxed{\Delta_q\equiv d_q\delta_q+\delta_q d_q}
+      \]
+      \[
+      \boxed{\slashed{D}^{\,2}\Psi
+      = -\Delta_q\Psi + \frac{i q}{\hbar}(F\cdot\Psi)}
+      \]
+      \[
+      \Rightarrow\quad
+      \boxed{\left(-\Delta_q+\frac{i q}{\hbar}F\cdot+\frac{m^2c^2}{\hbar^2}\right)\Psi=0}
+      \]
+    </div>
+
+    <details>
+      <summary>מהו \(F\cdot\Psi\)?</summary>
+      <p class="muted">
+        זה “כפל קליפורד” של 2-form \(F\) על \(\Psi\). הוא האנלוג המבני ל־\(\frac12\sigma^{\mu\nu}F_{\mu\nu}\) בשפת צורות.
+      </p>
+    </details>
+  </section>
+
+  <section class="card" id="sec7">
+    <h2>7) נוסחה מפורשת: \(F\cdot\omega\) בעזרת \(\wedge\) וכיווצים</h2>
+    <p>
+      עבור 2-form
+      \[
+      F=\frac12F_{\mu\nu}\,dx^\mu\wedge dx^\nu
+      \]
+      וכל צורה \(\omega\):
+    </p>
+
+    <div class="kblock">
+      \[
+      \boxed{
+      F\cdot \omega
+      =
+      F\wedge\omega
+      \;-\;F_{\mu\nu}\,dx^\mu\wedge i_{\partial^\nu}\omega
+      \;+\;\frac12 F_{\mu\nu}\,i_{\partial^\nu}i_{\partial^\mu}\omega
+      }
+      \]
+      <div class="muted">
+        זה פירוק ל־3 חלקים: דרגה \(+2\), שומר־דרגה, דרגה \(-2\).
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec8">
+    <h2>8) דוגמאות רכיביות: \(k=0,1,2\)</h2>
+
+    <div class="grid2">
+      <div class="card" style="padding:14px;">
+        <h3>\(k=0\): סקלר \(\phi\)</h3>
+        <div class="kblock">
+          \[
+          i_{\partial^\nu}\phi=0
+          \quad\Rightarrow\quad
+          \boxed{F\cdot\phi = F\wedge\phi=\phi F}
+          \]
+        </div>
+      </div>
+
+      <div class="card" style="padding:14px;">
+        <h3>\(k=1\): \(A=A_\rho dx^\rho\)</h3>
+        <div class="kblock">
+          \[
+          i_{\partial^\nu}A=A_\nu,\quad i_{\partial^\nu}i_{\partial^\mu}A=0
+          \]
+          \[
+          \boxed{
+          F\cdot A
+          =
+          F\wedge A
+          -F_{\mu\nu}\,dx^\mu\wedge(A_\nu)
+          =
+          F\wedge A -(F_{\mu\nu}A^\nu)\,dx^\mu
+          }
+          \]
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px; margin-top:12px;">
+      <h3>\(k=2\): \(B=\tfrac12 B_{\rho\sigma}dx^\rho\wedge dx^\sigma\)</h3>
+      <div class="kblock">
+        \[
+        i_{\partial^\nu}B=B_{\nu\sigma}\,dx^\sigma,\qquad
+        i_{\partial^\nu}i_{\partial^\mu}B=B_{\mu\nu}
+        \]
+        \[
+        \boxed{
+        F\cdot B
+        =
+        F\wedge B
+        -F_{\mu\nu}\,dx^\mu\wedge(B_{\nu\sigma}dx^\sigma)
+        +\frac12F_{\mu\nu}B_{\mu\nu}
+        }
+        \]
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec9">
+    <h2>9) הקרנות דרגה \(\langle\cdot\rangle_r\) (Geometric Algebra) + כתיבה קומפקטית</h2>
+
+    <p>
+      מפרקים:
+      \[
+      \Psi=\sum_{k=0}^4 \Psi^{(k)},\qquad \Psi^{(k)}\in\Omega^k
+      \]
+      ומגדירים הקרנה לדרגה:
+      \[
+      \boxed{\langle X\rangle_r=\text{הרכיב מדרגה }r\text{ של }X}
+      \]
+    </p>
+
+    <div class="kblock">
+      \[
+      X=\sum_{r=0}^4\langle X\rangle_r
+      \]
+    </div>
+
+    <p>
+      כי \(F\) הוא 2-form:
+    </p>
+    <div class="kblock">
+      \[
+      \boxed{
+      F\cdot\Psi^{(k)}
+      =
+      \langle F\Psi^{(k)}\rangle_{k+2}
+      +\langle F\Psi^{(k)}\rangle_{k}
+      +\langle F\Psi^{(k)}\rangle_{k-2}
+      }
+      \]
+      \[
+      \boxed{F\wedge\Psi^{(k)}\equiv \langle F\Psi^{(k)}\rangle_{k+2}}
+      \qquad
+      \boxed{F\lrcorner\Psi^{(k)}\equiv \langle F\Psi^{(k)}\rangle_{k-2}}
+      \]
+      <div class="muted">
+        \(\langle F\Psi^{(k)}\rangle_k\) הוא החלק “שומר־דרגה” — האנלוג המבני לצימוד ספיני.
+      </div>
+    </div>
+
+    <h3>9.1 הקרנה לדרגה \(k\) במשוואת הגל המאוחדת</h3>
+    <div class="kblock">
+      \[
+      \left(-\Delta_q+\frac{i q}{\hbar}F\cdot+\frac{m^2c^2}{\hbar^2}\right)\Psi=0
+      \]
+      \[
+      \boxed{
+      \left(-\Delta_q+\frac{m^2c^2}{\hbar^2}\right)\Psi^{(k)}
+      +\frac{i q}{\hbar}\langle F\cdot\Psi\rangle_k=0
+      }
+      \]
+      \[
+      \boxed{
+      \langle F\cdot\Psi\rangle_k
+      =
+      \langle F\Psi^{(k-2)}\rangle_k
+      +\langle F\Psi^{(k)}\rangle_k
+      +\langle F\Psi^{(k+2)}\rangle_k
+      }
+      \]
+    </div>
+  </section>
+
+  <!-- APPENDIX A -->
+  <section class="card" id="app1">
+    <h2>נספח A: שדה מגנטי אחיד \( \mathbf{B}=B_0\hat z \) — חישובים מפורשים</h2>
+    <p class="muted">
+      כאן רואים “בידיים” איך \(F=B_0\,dx\wedge dy\) מייצר חלקי דרגה \(k+2,k,k-2\) על \(\phi\), \(A\), \(B\).
+    </p>
+
+    <h3>A1) כתיב הצורה של \(F\)</h3>
+    <div class="kblock">
+      \[
+      \boxed{F = B_0\,dx\wedge dy}
+      \qquad
+      F_{xy}=-F_{yx}=B_0,\;\;\text{והשאר }0.
+      \]
+    </div>
+
+    <h3>A2) כלל עבודה</h3>
+    <div class="kblock">
+      \[
+      \boxed{
+      F\cdot \omega
+      =
+      F\wedge\omega
+      \;-\;F_{\mu\nu}\,dx^\mu\wedge i_{\partial^\nu}\omega
+      \;+\;\frac12 F_{\mu\nu}\,i_{\partial^\nu}i_{\partial^\mu}\omega
+      }
+      \]
+    </div>
+
+    <h3>A3) על סקלר \(\phi\) (0-form)</h3>
+    <div class="kblock">
+      \[
+      \boxed{F\cdot\phi = \phi\,B_0\,dx\wedge dy}
+      \]
+      <div class="muted">רק דרגה 2.</div>
+    </div>
+
+    <h3>A4) על 1-form כללי \(A=a_xdx+a_ydy+a_zdz+a_tdt\)</h3>
+    <div class="kblock">
+      \[
+      F\wedge A
+      = B_0\,dx\wedge dy\wedge (a_zdz+a_tdt)
+      \]
+      \[
+      \boxed{F\wedge A = B_0a_z\,dx\wedge dy\wedge dz + B_0a_t\,dx\wedge dy\wedge dt}
+      \]
+      \[
+      i_{\partial^x}A=a_x,\quad i_{\partial^y}A=a_y
+      \]
+      \[
+      -F_{\mu\nu}dx^\mu\wedge i_{\partial^\nu}A
+      =
+      -B_0\big(dx\wedge a_y - dy\wedge a_x\big)
+      =
+      \boxed{-B_0a_y\,dx + B_0a_x\,dy}
+      \]
+      \[
+      \boxed{
+      F\cdot A
+      =
+      \underbrace{B_0a_z\,dx\wedge dy\wedge dz + B_0a_t\,dx\wedge dy\wedge dt}_{\text{דרגה }3}
+      +\underbrace{\left(-B_0a_y\,dx + B_0a_x\,dy\right)}_{\text{דרגה }1}
+      }
+      \]
+    </div>
+
+    <h3>A5) על 2-form כללי \(B\)</h3>
+    <div class="kblock">
+      \[
+      B
+      =
+      b_{xy}\,dx\wedge dy
+      + b_{xz}\,dx\wedge dz
+      + b_{yz}\,dy\wedge dz
+      + b_{xt}\,dx\wedge dt
+      + b_{yt}\,dy\wedge dt
+      + b_{zt}\,dz\wedge dt
+      \]
+      \[
+      \boxed{F\wedge B = B_0b_{zt}\,dx\wedge dy\wedge dz\wedge dt}
+      \]
+      \[
+      \boxed{\frac12F_{\mu\nu}B_{\mu\nu} = B_0\,b_{xy}}
+      \]
+      \[
+      \boxed{
+      F\cdot B
+      =
+      \underbrace{(F\wedge B)}_{\text{דרגה }4}
+      +\underbrace{\big(-F_{\mu\nu}dx^\mu\wedge i_{\partial^\nu}B\big)}_{\text{דרגה }2}
+      +\underbrace{\left(\frac12F_{\mu\nu}B_{\mu\nu}\right)}_{\text{דרגה }0}
+      }
+      \]
+      <div class="muted">
+        במקרה זה רואים בפועל: \(k=2\Rightarrow 4+2+0\).
+      </div>
+    </div>
+  </section>
+
+  <!-- APPENDIX B -->
+  <section class="card" id="app2">
+    <h2>נספח B: בחירת \(A\) לשדה אחיד + הצמדה מינימלית בתוך \(\Delta_q\)/\(D^2\)</h2>
+
+    <h3>B1) שני Gauges נפוצים ל-\(\mathbf{B}=B_0\hat z\)</h3>
+    <div class="kblock">
+      \[
+      \boxed{F=B_0\,dx\wedge dy}
+      \]
+      <hr style="border:none;border-top:1px solid var(--line); margin:10px 0;">
+      \[
+      \text{Symmetric gauge: }\quad
+      \boxed{\mathbf{A}=\frac{B_0}{2}(-y,\;x,\;0)}
+      \quad\Longleftrightarrow\quad
+      \boxed{A=\frac{B_0}{2}(-y\,dx + x\,dy)}
+      \]
+      <hr style="border:none;border-top:1px solid var(--line); margin:10px 0;">
+      \[
+      \text{Landau gauge: }\quad
+      \boxed{\mathbf{A}=(0,\;B_0 x,\;0)}
+      \quad\Longleftrightarrow\quad
+      \boxed{A = B_0 x\,dy}
+      \]
+    </div>
+
+    <details>
+      <summary>בדיקה מהירה: למה \(dA= B_0\,dx\wedge dy\) ב־Landau gauge?</summary>
+      <div class="kblock">
+        \[
+        A = B_0 x\,dy
+        \quad\Rightarrow\quad
+        dA = B_0\,dx\wedge dy
+        \]
+      </div>
+    </details>
+
+    <h3>B2) הצמדה מינימלית עם \(c,\hbar\)</h3>
+    <div class="kblock">
+      \[
+      \boxed{D_\mu=\partial_\mu+\frac{i q}{\hbar}A_\mu}
+      \qquad
+      \boxed{[D_\mu,D_\nu]=\frac{i q}{\hbar}F_{\mu\nu}}
+      \]
+      \[
+      \boxed{d_q=d+\frac{i q}{\hbar}A\wedge}
+      \qquad
+      \boxed{\delta_q=\delta-\frac{i q}{\hbar}i_{A^\sharp}}
+      \qquad
+      \boxed{\Delta_q=d_q\delta_q+\delta_q d_q}
+      \]
+    </div>
+
+    <div class="note">
+      <b>הערה שימושית:</b> על רכיב סקלרי (0-form), \(\Delta_q\) מצטמצם לאופרטור \(D_\mu D^\mu\) (בהתאמה למטריקה/סימנים).
+    </div>
+
+    <h3>B3) “בפועל” על סקלר \(\phi\): \(D^2\) ב־Landau gauge</h3>
+    <p>
+      ב־Landau gauge:
+      \[
+      A_x=0,\quad A_y=B_0 x,\quad A_z=0
+      \]
+      ולכן:
+      \[
+      D_x=\partial_x,\quad
+      D_y=\partial_y+\frac{i q}{\hbar}B_0 x,\quad
+      D_z=\partial_z
+      \]
+      נגדיר:
+      \[
+      \alpha\equiv\frac{qB_0}{\hbar}
+      \]
+    </p>
+
+    <div class="kblock">
+      \[
+      \boxed{
+      D_x=\partial_x,\;
+      D_y=\partial_y+i\alpha x,\;
+      D_z=\partial_z
+      }
+      \]
+      \[
+      D_y^2=(\partial_y+i\alpha x)^2
+      =\partial_y^2+2i\alpha x\,\partial_y-\alpha^2x^2
+      \]
+      \[
+      \boxed{
+      D_iD_i
+      =
+      \partial_x^2+\partial_y^2+\partial_z^2
+      +2i\alpha x\,\partial_y
+      -\alpha^2x^2
+      }
+      \]
+    </div>
+
+    <details>
+      <summary>מבט “כמעט לנדאו”: אם \(\phi=e^{ik_y y}f(x)e^{ik_z z}\)</summary>
+      <p>
+        נניח:
+        \[
+        \phi(x,y,z)=e^{ik_y y}f(x)e^{ik_z z}
+        \]
+        אז \(\partial_y\to i k_y\), והאיבר \(2i\alpha x\partial_y\) נותן \(-2\alpha k_y x\),
+        ולכן מתקבל מבנה של אוסצילטור הרמוני מוזז ב־\(x\) (מקור לרמות לנדאו).
+      </p>
+      <div class="kblock">
+        \[
+        D_iD_i \sim \partial_x^2 - \alpha^2\left(x-\frac{k_y}{\alpha}\right)^2 + \text{קבועים}
+        \]
+        \[
+        \ell_B=\sqrt{\frac{\hbar}{|q|B_0}}
+        \]
+      </div>
+    </details>
+
+    <h3>B4) חיבור חזרה ל־Dirac–Kähler: \(\Delta_q\) + \(F\cdot\)</h3>
+    <div class="kblock">
+      \[
+      \boxed{
+      \left(-\Delta_q+\frac{i q}{\hbar}F\cdot+\frac{m^2c^2}{\hbar^2}\right)\Psi=0
+      }
+      \qquad
+      \boxed{F=B_0\,dx\wedge dy}
+      \]
+      <div class="muted">
+        כאן \(\Delta_q\) מכניס את ההצמדה המינימלית “לקינטיקה”, בעוד \(F\cdot\) הוא “איבר פאולי” בשפת צורות (ספין/ערבוב דרגות).
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="card" style="padding:14px;">
+    <b>כל הזכויות שמורות.</b> אין לשכפל אלא באישור מ־RA — <span style="direction:ltr;unicode-bidi:embed;">Raftn4@gmail.com</span>
+  </div>
+</footer>
+
+<script>
+  function expandAll(open){
+    document.querySelectorAll("details").forEach(d => d.open = !!open);
+  }
+
+  function renderMath(){
+    if (!window.renderMathInElement) return;
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+
+  async function renderMermaid(){
+    if (!window.mermaid) return;
+    mermaid.initialize({ startOnLoad: false, securityLevel: "loose" });
+    try{ await mermaid.run({ querySelector: ".mermaid" }); }catch(e){}
+  }
+
+  window.addEventListener("load", async ()=>{
+    renderMath();
+    await renderMermaid();
+  });
+</script>
+</body>
+</html>
