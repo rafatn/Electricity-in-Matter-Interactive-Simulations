@@ -1,5 +1,5 @@
-=<!doctype html>
-<html lang="he" dir="rtl" data-theme="light">
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light" data-viewport="desktop">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -36,6 +36,10 @@
       --chipText:#0f172a;
 
       --focus: 0 0 0 4px rgba(99,102,241,.22);
+
+      /* Device preview sizes (JS sets these) */
+      --vw: 390px;
+      --vr: 28px;
     }
 
     html[data-theme="dark"]{
@@ -507,39 +511,27 @@
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
 
     /* ======================================================
-       ✅ Device Preview: Desktop / Mobile / Tablet + Frame
+       ✅ Device Frame (hidden by default; JS will move #viewport inside it)
        ====================================================== */
-
-    #viewport{
-      min-height: 100vh;
-      transition: width .25s ease, max-width .25s ease, transform .25s ease, margin .25s ease;
-    }
-
-    /* Wrapper that draws the "device" frame */
     #deviceFrame{
       display:none;
       position:relative;
-      margin: 14px auto 34px;
-      width: var(--vw, 390px);
+      margin: 16px auto 28px;
+      width: var(--vw);
       max-width: calc(100vw - 24px);
-      border-radius: var(--vr, 28px);
-      box-shadow: 0 26px 90px rgba(0,0,0,.25);
+      border-radius: var(--vr);
+      padding: 12px;
       border: 1px solid rgba(148,163,184,.45);
       background: rgba(0,0,0,.10);
-      padding: 12px;
-      transition: all .25s ease;
+      box-shadow: 0 26px 90px rgba(0,0,0,.25);
     }
-
-    /* Inner "screen" */
     #deviceScreen{
       position:relative;
       overflow:hidden;
-      border-radius: calc(var(--vr, 28px) - 10px);
+      border-radius: calc(var(--vr) - 10px);
       background: transparent;
       border: 1px solid rgba(148,163,184,.35);
     }
-
-    /* Notch (mobile only-ish) */
     #notch{
       display:none;
       position:absolute;
@@ -566,25 +558,12 @@
       background: rgba(255,255,255,.25);
     }
 
-    /* Apply modes */
-    html[data-viewport="desktop"] #deviceFrame{ display:none; }
-    html[data-viewport="desktop"] #viewport{ margin:0; width:auto; max-width:none; }
-
     html[data-viewport="mobile"] #deviceFrame,
     html[data-viewport="tablet"] #deviceFrame{
       display:block;
     }
-
     html[data-viewport="mobile"] #notch{ display:block; }
 
-    /* Keep content natural width inside screen */
-    #deviceScreen #viewport{
-      width: var(--vw, 390px);
-      max-width: 100%;
-      margin: 0;
-    }
-
-    /* Small screens: avoid overflow */
     @media (max-width: 430px){
       #deviceFrame{
         width: calc(100vw - 18px);
@@ -603,11 +582,14 @@
 
 <body>
 
-<!-- ✅ Frame wrapper (shown only in mobile/tablet simulation) -->
+<!-- ✅ Device frame exists, but EMPTY at load; JS will move #viewport inside when needed -->
 <div id="deviceFrame" aria-hidden="true">
   <div id="notch"></div>
-  <div id="deviceScreen">
-    <div id="viewport">
+  <div id="deviceScreen"></div>
+</div>
+
+<!-- ✅ The whole app lives here ALWAYS -->
+<div id="viewport">
 
 <header>
   <div class="wrap">
@@ -630,7 +612,7 @@
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
 
-        <!-- ✅ NEW: device dropdown -->
+        <!-- ✅ NEW: Desktop/Mobile/Tablet toggle -->
         <select id="deviceSel" class="select" title="תצוגת מכשיר">
           <option value="desktop">🖥️ מחשב</option>
           <option value="tablet">📟 טאבלט</option>
@@ -684,6 +666,8 @@
 </main>
 
 <div class="toast" id="toast">הועתק!</div>
+
+</div><!-- /#viewport -->
 
 <script>
 /**
@@ -863,71 +847,12 @@ const EMOJI_MAP = {
   "absolute_organ_value_multilang_full_v2.html": "🫀",
   "absolute_organ_value_multilang_full.html": "🫁",
   "qr_withdrawal_offline_live_diagram_math (7).html": "🚀",
-  "svpad_material_compare_datasheet_multiband_FORMULAS.html": "🔬📊🧮🌈📉",
-  "Qumplex_Equtaion.html": "🔬⚙️⚡",
-  "Radiation.html": "📐 🧪 🔺 🔍",
-  "sea_like_air_hospital_en_only_fixed_mermaid.html": "🌊🌬️⚙️🧠",
-  "academic_atmosphere_bounds_relativity_he.html": "📘🌍🧠⏱️",
-  "brl_dynamic_xray_model.html": "🌍",
-  "brl_explained_notes.html": "📘⏱️",
-  "Coherante_Chimical.html": "🧪🛡️🔬⚛️",
-  "Magnatic_Current_Saver.html": "⚡🧲🎵",
-  "Equtations_For_Current.html": "⚡🧲🎵📈",
-  "Equtation_Line_Saver.html": "⚡🧠📡〰️🧮🔁🧲⚙️📈",
-  "pde_claim_theorem_counterexample_interactive.html": "🌀📐🔁🧩",
-  "Car_New_Motor.html": "🔧⚡💧",
-  "voltage_lamp_calibrated_rich.html": "🔴🟢🔵➕🔆🌙✨",
-  "spectral_mask_balloon_lamp_he.html": "🎈💡🌈",
-  "Wave_Long.html": "🎛️💡",
-  "PCX_cable_coupling_model_he_en.html": "⚡🧲🧮💧",
-  "Human_Tree_Modle.html": "📜🌿",
-  "SGVT_spin_gravity_vibration_transform_with_description.html": "📌↕",
-  "Nature_pilot1.html": "📌",
-  "Energy_Radiation_Equtaion.html": "🚀🌑📈",
-  "Energy_Radiation.html": "🚀🌑📈",
-  "quantum_amp_relativistic_partition_model_he_en.html": "⚛️🧪🧱💨🚀🌊📡📈✨",
-  "time_arrow_book_entropy_demo_he.html": "⚛️",
-  "time_arrow_book_entropy_demo_he_v2.html": "⚛️",
-  "Riemann_Hypothesis_V2.html": "📈",
-  "Riemann_Hypothesis.html": "📈",
-  "Complexity_P_vs_NP.html": "🚀",
-  "Navier–Stokes).html": "⚛️",
-  "black_hole_information_paradox_microecho.html": "⚛️",
-  "Unreasonable Effectiveness.html": "⚛️",
-  "DK_QED_full_with_grade_projections_HE.html": "⚛️",
-  "DK_QED_UNIFIED_MASTER_HE_FULL.html": "⚛️",
   "tv_like_board.html": "🎭➡️📝🔬✨",
 };
 
-/** Emoji per file: manual first, fallback after */
 function emojiForFile(file, tags){
   const key = String(file||"").trim();
   if(EMOJI_MAP[key]) return EMOJI_MAP[key];
-
-  const f = key.toLowerCase();
-  const t = new Set((tags||[]).map(x=>String(x||"").trim()));
-  if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
-  if(f.includes("hospital")) return "🏥";
-  if(f.includes("blood")) return "🩸";
-  if(f.includes("organ")) return "🫀";
-  if(f.includes("tooth")) return "🦷";
-  if(f.includes("bio") || f.includes("therapy")) return "🧬";
-  if(f.includes("security") || f.includes("ipv6") || f.includes("usb") || f.includes("hybirddata")) return "🛡️";
-  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) return "📡";
-  if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting")) return "⚡";
-  if(f.includes("thermal") || f.includes("thermo") || f.includes("thermosiphon")) return "🌡️";
-  if(f.includes("floor") || f.includes("paver") || f.includes("pressure")) return "🧱";
-  if(f.includes("water") && f.includes("shoes")) return "👟";
-  if(f.includes("water") || f.includes("gas") || f.includes("train")) return "🚆";
-  if(f.includes("aircraft") || f.includes("supersonic")) return "✈️";
-  if(f.includes("air_road") || f.includes("glider")) return "🪂";
-  if(f.includes("drone") || f.includes("pendulum")) return "🛠️";
-  if(f.includes("building") || f.includes("house") || f.includes("ceiling") || f.includes("stability")) return "🏗️";
-  if(f.includes("fingerprint") || f.includes("gesture") || f.includes("mobile") || f.includes("drawer")) return "🧩";
-  if(f.includes("constitution")) return "⚖️";
-  if(f.includes("calculator")) return "🧮";
-  if(f.includes("simulation")) return "🧪";
-  if(f.includes("multilang") || f.includes("trilingual") || f.includes("bilingual") || f.includes("all_languages")) return "🌍";
   return "📄";
 }
 
@@ -963,6 +888,10 @@ const deviceSel = $("#deviceSel");
 const activeInfo = $("#activeInfo");
 const toast = $("#toast");
 
+const viewportEl = $("#viewport");
+const deviceFrame = $("#deviceFrame");
+const deviceScreen = $("#deviceScreen");
+
 let showFavOnly = false;
 let activeTag = "הכל";
 let viewMode = localStorage.getItem(LS_VIEW) || "grid";
@@ -985,33 +914,6 @@ function setTheme(next){
 }
 function getTheme(){ return localStorage.getItem(LS_THEME) || "light"; }
 function norm(s){ return (s||"").toString().toLowerCase().trim(); }
-
-/** ✅ Apply device sizes */
-function applyDeviceMode(mode){
-  const m = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
-  deviceMode = m;
-  localStorage.setItem(LS_DEVICE, deviceMode);
-
-  // css attribute for show/hide frame
-  document.documentElement.setAttribute("data-viewport", deviceMode);
-
-  // Choose widths/radii
-  const root = document.documentElement;
-  if(deviceMode === "mobile"){
-    root.style.setProperty("--vw", "390px");
-    root.style.setProperty("--vr", "28px");
-  }else if(deviceMode === "tablet"){
-    root.style.setProperty("--vw", "820px");
-    root.style.setProperty("--vr", "26px");
-  }else{
-    root.style.setProperty("--vw", "1240px");
-    root.style.setProperty("--vr", "0px");
-  }
-
-  // update select UI
-  if(deviceSel) deviceSel.value = deviceMode;
-  renderActiveInfo();
-}
 
 /** File views */
 function loadFileViews(){
@@ -1173,6 +1075,40 @@ function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
   window.location.href = encodeURI(file);
+}
+
+/** ✅ Device preview: move #viewport in/out of frame */
+function applyDeviceMode(mode){
+  deviceMode = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
+  localStorage.setItem(LS_DEVICE, deviceMode);
+  document.documentElement.setAttribute("data-viewport", deviceMode);
+  if(deviceSel) deviceSel.value = deviceMode;
+
+  const root = document.documentElement;
+
+  if(deviceMode === "mobile"){
+    root.style.setProperty("--vw", "390px");
+    root.style.setProperty("--vr", "28px");
+  }else if(deviceMode === "tablet"){
+    root.style.setProperty("--vw", "820px");
+    root.style.setProperty("--vr", "26px");
+  }else{
+    root.style.setProperty("--vw", "1240px");
+    root.style.setProperty("--vr", "0px");
+  }
+
+  // Move DOM
+  if(deviceMode === "desktop"){
+    if(viewportEl.parentElement !== document.body){
+      document.body.insertBefore(viewportEl, document.body.querySelector("script"));
+    }
+  }else{
+    if(viewportEl.parentElement !== deviceScreen){
+      deviceScreen.appendChild(viewportEl);
+    }
+  }
+
+  renderActiveInfo();
 }
 
 function render(){
@@ -1361,7 +1297,7 @@ function init(){
     render();
   };
 
-  // ✅ Device select
+  // ✅ device select
   deviceSel.value = deviceMode;
   deviceSel.onchange = ()=> applyDeviceMode(deviceSel.value);
 
@@ -1391,10 +1327,9 @@ function init(){
     sortSel.value = "az";
     setSort("az");
 
-    applyDeviceMode("desktop");
-
     renderChips();
     render();
+    applyDeviceMode("desktop");
     showToast("איפוס בוצע ✅");
   };
 
@@ -1414,9 +1349,7 @@ function init(){
     }
   });
 
-  q.addEventListener("input", ()=>{
-    render();
-  });
+  q.addEventListener("input", ()=> render());
 
   window.addEventListener("keydown", (e)=>{
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
@@ -1429,15 +1362,11 @@ function init(){
   renderChips();
   render();
 
-  // ✅ Apply saved device mode on load
+  // ✅ apply saved device mode on load
   applyDeviceMode(deviceMode);
 }
 init();
 </script>
-
-    </div><!-- /#viewport -->
-  </div><!-- /#deviceScreen -->
-</div><!-- /#deviceFrame -->
 
 <footer style="text-align:center; font-size:14px; color:#555; margin-top:40px;">
   © כל הזכויות שמורות. אין להעתיק, לשכפל או לעשות שימוש בתוכן זה ללא אישור מפורש בכתב מאת RA –
@@ -1446,4 +1375,3 @@ init();
 
 </body>
 </html>
-
