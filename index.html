@@ -505,10 +505,110 @@
     }
 
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
+
+    /* ======================================================
+       ✅ Device Preview: Desktop / Mobile / Tablet + Frame
+       ====================================================== */
+
+    #viewport{
+      min-height: 100vh;
+      transition: width .25s ease, max-width .25s ease, transform .25s ease, margin .25s ease;
+    }
+
+    /* Wrapper that draws the "device" frame */
+    #deviceFrame{
+      display:none;
+      position:relative;
+      margin: 14px auto 34px;
+      width: var(--vw, 390px);
+      max-width: calc(100vw - 24px);
+      border-radius: var(--vr, 28px);
+      box-shadow: 0 26px 90px rgba(0,0,0,.25);
+      border: 1px solid rgba(148,163,184,.45);
+      background: rgba(0,0,0,.10);
+      padding: 12px;
+      transition: all .25s ease;
+    }
+
+    /* Inner "screen" */
+    #deviceScreen{
+      position:relative;
+      overflow:hidden;
+      border-radius: calc(var(--vr, 28px) - 10px);
+      background: transparent;
+      border: 1px solid rgba(148,163,184,.35);
+    }
+
+    /* Notch (mobile only-ish) */
+    #notch{
+      display:none;
+      position:absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 170px;
+      height: 28px;
+      border-radius: 0 0 18px 18px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.08);
+      z-index: 5;
+      pointer-events:none;
+    }
+    #notch:after{
+      content:"";
+      position:absolute;
+      top: 9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 52px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.25);
+    }
+
+    /* Apply modes */
+    html[data-viewport="desktop"] #deviceFrame{ display:none; }
+    html[data-viewport="desktop"] #viewport{ margin:0; width:auto; max-width:none; }
+
+    html[data-viewport="mobile"] #deviceFrame,
+    html[data-viewport="tablet"] #deviceFrame{
+      display:block;
+    }
+
+    html[data-viewport="mobile"] #notch{ display:block; }
+
+    /* Keep content natural width inside screen */
+    #deviceScreen #viewport{
+      width: var(--vw, 390px);
+      max-width: 100%;
+      margin: 0;
+    }
+
+    /* Small screens: avoid overflow */
+    @media (max-width: 430px){
+      #deviceFrame{
+        width: calc(100vw - 18px);
+        padding: 10px;
+        border-radius: 20px;
+      }
+      #deviceScreen{
+        border-radius: 14px;
+      }
+      #notch{
+        width: 150px;
+      }
+    }
   </style>
 </head>
 
 <body>
+
+<!-- ✅ Frame wrapper (shown only in mobile/tablet simulation) -->
+<div id="deviceFrame" aria-hidden="true">
+  <div id="notch"></div>
+  <div id="deviceScreen">
+    <div id="viewport">
+
 <header>
   <div class="wrap">
     <div class="top">
@@ -529,6 +629,14 @@
 
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
+
+        <!-- ✅ NEW: device dropdown -->
+        <select id="deviceSel" class="select" title="תצוגת מכשיר">
+          <option value="desktop">🖥️ מחשב</option>
+          <option value="tablet">📟 טאבלט</option>
+          <option value="mobile">📱 מובייל</option>
+        </select>
+
         <select id="sortSel" class="select" title="מיון">
           <option value="az">מיון: A→Z</option>
           <option value="za">מיון: Z→A</option>
@@ -837,7 +945,8 @@ const LS_THEME = "index.theme.v4";
 const LS_VISITS = "index.visits.v4";
 const LS_VIEW = "index.view.v3";
 const LS_SORT = "index.sort.v3";
-const LS_FILEVIEWS = "index.fileviews.v2"; // { "file.html": number }
+const LS_FILEVIEWS = "index.fileviews.v2";
+const LS_DEVICE = "index.device.v2"; // desktop | tablet | mobile
 
 const $ = (s)=>document.querySelector(s);
 const grid = $("#grid");
@@ -850,12 +959,14 @@ const fileViewsTotalEl = $("#fileViewsTotal");
 const showFavBtn = $("#showFavBtn");
 const sortSel = $("#sortSel");
 const viewBtn = $("#viewBtn");
+const deviceSel = $("#deviceSel");
 const activeInfo = $("#activeInfo");
 const toast = $("#toast");
 
 let showFavOnly = false;
 let activeTag = "הכל";
-let viewMode = localStorage.getItem(LS_VIEW) || "grid"; // grid | list
+let viewMode = localStorage.getItem(LS_VIEW) || "grid";
+let deviceMode = localStorage.getItem(LS_DEVICE) || "desktop";
 
 function loadFavs(){
   try{ return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
@@ -874,6 +985,33 @@ function setTheme(next){
 }
 function getTheme(){ return localStorage.getItem(LS_THEME) || "light"; }
 function norm(s){ return (s||"").toString().toLowerCase().trim(); }
+
+/** ✅ Apply device sizes */
+function applyDeviceMode(mode){
+  const m = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
+  deviceMode = m;
+  localStorage.setItem(LS_DEVICE, deviceMode);
+
+  // css attribute for show/hide frame
+  document.documentElement.setAttribute("data-viewport", deviceMode);
+
+  // Choose widths/radii
+  const root = document.documentElement;
+  if(deviceMode === "mobile"){
+    root.style.setProperty("--vw", "390px");
+    root.style.setProperty("--vr", "28px");
+  }else if(deviceMode === "tablet"){
+    root.style.setProperty("--vw", "820px");
+    root.style.setProperty("--vr", "26px");
+  }else{
+    root.style.setProperty("--vw", "1240px");
+    root.style.setProperty("--vr", "0px");
+  }
+
+  // update select UI
+  if(deviceSel) deviceSel.value = deviceMode;
+  renderActiveInfo();
+}
 
 /** File views */
 function loadFileViews(){
@@ -900,9 +1038,7 @@ function getFileView(file){
 function totalFileViews(){
   const views = loadFileViews();
   let sum = 0;
-  for(const k in views){
-    sum += Number(views[k] || 0);
-  }
+  for(const k in views) sum += Number(views[k] || 0);
   return sum;
 }
 
@@ -938,7 +1074,7 @@ function renderChips(){
 function matches(page, query){
   const s = norm(query);
   if(!s) return true;
-  const tokens = s.split(/\s+/g).filter(Boolean); // AND search
+  const tokens = s.split(/\s+/g).filter(Boolean);
   const hay = [page.title, page.file, page.desc, (page.tags||[]).join(" ")].map(norm).join(" | ");
   return tokens.every(tok => hay.includes(tok));
 }
@@ -1029,10 +1165,10 @@ function renderActiveInfo(){
   const qq = q.value.trim();
   const viewLabel = (viewMode==="list") ? "List" : "Grid";
   const tagLabel = activeTag || "הכל";
-  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel}`;
+  const deviceLabel = (deviceMode==="mobile") ? "Mobile" : (deviceMode==="tablet" ? "Tablet" : "Desktop");
+  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${deviceLabel}`;
 }
 
-/** open with counting */
 function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
@@ -1155,13 +1291,14 @@ function render(){
 /** Export / Import */
 function exportData(){
   const payload = {
-    version: 1,
+    version: 2,
     savedAt: new Date().toISOString(),
     favs: JSON.parse(localStorage.getItem(LS_FAV) || "[]"),
     visits: localStorage.getItem(LS_VISITS) || "0",
     viewMode: localStorage.getItem(LS_VIEW) || "grid",
     sortMode: localStorage.getItem(LS_SORT) || "az",
-    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}")
+    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}"),
+    deviceMode: localStorage.getItem(LS_DEVICE) || "desktop"
   };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
   const a = document.createElement("a");
@@ -1183,9 +1320,9 @@ function importData(obj){
   localStorage.setItem(LS_VIEW, String(obj.viewMode || "grid"));
   localStorage.setItem(LS_SORT, String(obj.sortMode || "az"));
   localStorage.setItem(LS_FILEVIEWS, JSON.stringify(obj.fileViews || {}));
+  localStorage.setItem(LS_DEVICE, String(obj.deviceMode || "desktop"));
 
   viewMode = localStorage.getItem(LS_VIEW) || "grid";
-  viewBtn.textContent = (viewMode==="list") ? "≡" : "▦";
   sortSel.value = getSort();
 
   showFavOnly = false;
@@ -1194,6 +1331,7 @@ function importData(obj){
 
   renderChips();
   render();
+  applyDeviceMode(localStorage.getItem(LS_DEVICE) || "desktop");
   showToast("ייבוא בוצע ✅");
 }
 
@@ -1223,6 +1361,10 @@ function init(){
     render();
   };
 
+  // ✅ Device select
+  deviceSel.value = deviceMode;
+  deviceSel.onchange = ()=> applyDeviceMode(deviceSel.value);
+
   showFavBtn.onclick = ()=>{
     showFavOnly = !showFavOnly;
     showFavBtn.textContent = showFavOnly ? "⭐ כל הקבצים" : "⭐ מועדפים";
@@ -1235,6 +1377,7 @@ function init(){
     localStorage.removeItem(LS_VIEW);
     localStorage.removeItem(LS_SORT);
     localStorage.removeItem(LS_FILEVIEWS);
+    localStorage.removeItem(LS_DEVICE);
 
     visitCountEl.textContent = String(incVisits());
     fileViewsTotalEl.textContent = String(totalFileViews());
@@ -1247,6 +1390,8 @@ function init(){
     viewBtn.textContent = "▦";
     sortSel.value = "az";
     setSort("az");
+
+    applyDeviceMode("desktop");
 
     renderChips();
     render();
@@ -1283,12 +1428,21 @@ function init(){
 
   renderChips();
   render();
+
+  // ✅ Apply saved device mode on load
+  applyDeviceMode(deviceMode);
 }
 init();
 </script>
-</body>
+
+    </div><!-- /#viewport -->
+  </div><!-- /#deviceScreen -->
+</div><!-- /#deviceFrame -->
+
 <footer style="text-align:center; font-size:14px; color:#555; margin-top:40px;">
   © כל הזכויות שמורות. אין להעתיק, לשכפל או לעשות שימוש בתוכן זה ללא אישור מפורש בכתב מאת RA –
   <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a>
 </footer>
+
+</body>
 </html>
