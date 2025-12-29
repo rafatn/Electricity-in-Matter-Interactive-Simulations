@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>פורייה–הודג' • זרימות בזמן • Abel–Jacobi • לפשץ–לפלס–פסקאל • אינדוקציה+טיילור</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --cardSolid:#ffffff;
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --r:18px;
+      --accent:#6366f1;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0b1226; --bg2:#071019;
+        --card:rgba(15,23,42,.68);
+        --card2:rgba(15,23,42,.52);
+        --cardSolid:#0f172a;
+        --text:#e5e7eb; --muted:#a3a3a3; --line:rgba(148,163,184,.18);
+        --head:#f8fafc; --link:#93c5fd;
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --accent:#a5b4fc;
+      }
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 60%),
+        radial-gradient(1000px 700px at 80% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      line-height:1.75;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg0) 72%, transparent);
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1120px; margin:0 auto; padding:18px 18px;}
+    .top{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex; gap:12px; align-items:center;}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 20%, white));
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      color:#0b1020; font-weight:900;
+    }
+    .title{display:flex; flex-direction:column; gap:2px;}
+    .title h1{margin:0; font-size:16px; letter-spacing:.2px; color:var(--head)}
+    .title .sub{color:var(--muted); font-size:12px; max-width:780px}
+    .nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .chip{
+      padding:8px 10px; border:1px solid var(--line); border-radius:999px;
+      background: color-mix(in srgb, var(--card) 70%, transparent);
+      box-shadow: 0 8px 22px rgba(2,6,23,.06);
+      font-size:13px;
+    }
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      margin:16px 0;
+    }
+    .card .hd{
+      padding:16px 16px 10px;
+      border-bottom:1px solid var(--line);
+      background: color-mix(in srgb, var(--cardSolid) 45%, transparent);
+    }
+    .card .hd h2{margin:0; font-size:16px; color:var(--head); display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .badge{
+      font-size:12px; padding:4px 8px; border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background: color-mix(in srgb, var(--card) 70%, transparent);
+    }
+    .card .bd{ padding:16px; }
+    .k{
+      font-family: var(--mono);
+      background: color-mix(in srgb, var(--cardSolid) 55%, transparent);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px 12px;
+      overflow:auto;
+    }
+    .callout{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding:12px 14px;
+      background: color-mix(in srgb, var(--card2) 65%, transparent);
+      margin:10px 0;
+    }
+    .ok{border-right:5px solid var(--ok)}
+    .warn{border-right:5px solid var(--warn)}
+    .bad{border-right:5px solid var(--bad)}
+    details{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: color-mix(in srgb, var(--card2) 60%, transparent);
+      padding:12px 14px;
+      margin:10px 0;
+    }
+    summary{cursor:pointer; font-weight:800; color:var(--head);}
+    .toc a{display:block; padding:6px 0; border-bottom:1px dashed color-mix(in srgb, var(--line) 70%, transparent)}
+    .toc a:last-child{border-bottom:none}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media (max-width: 980px){ .row{grid-template-columns:1fr} }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border:1px solid var(--line); border-radius:999px;
+      background: color-mix(in srgb, var(--card) 70%, transparent);
+      font-size:12px;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+    footer{
+      padding:26px 0 40px;
+      color:var(--muted);
+      font-size:12px;
+      border-top:1px solid var(--line);
+      margin-top:18px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap top">
+    <div class="brand">
+      <div class="logo">Σ</div>
+      <div class="title">
+        <h1>פורייה–הודג' • זרימות בזמן • Abel–Jacobi • לפשץ–לפלס–פסקאל • אינדוקציה+טיילור</h1>
+        <div class="sub">
+          קובץ מסכם אחד עם כל הנוסחאות והטענות שעלו: רציונלי/אי־רציונלי, מסלולים מחזוריים, פורייה, פורייה–הודג',
+          זרימות בזמן על מקדמים, Abel–Jacobi, אקסיומת האפס, \(p=1\) (מוכח) ו-\(p=2\) (מסגרת + מה חסר),
+          כולל אינדוקציה וטיילור/מקלורן.
+        </div>
+        <div class="meta">
+          <span class="pill">✅ מוכח: \(p=1\)</span>
+          <span class="pill">⚠️ מסגרת: \(p=2\)</span>
+          <span class="pill">🧰 לפשץ • לפלס • פסקאל • ליפשיץ • קושי–שוורץ</span>
+        </div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="chip" href="#toc">תוכן</a>
+      <a class="chip" href="#hodge">הודג'</a>
+      <a class="chip" href="#rational">רציונלי/אי־רציונלי</a>
+      <a class="chip" href="#trig">מחזוריות</a>
+      <a class="chip" href="#fourier">פורייה</a>
+      <a class="chip" href="#fourierhodge">פורייה–הודג'</a>
+      <a class="chip" href="#flows">זרימות</a>
+      <a class="chip" href="#aj">Abel–Jacobi</a>
+      <a class="chip" href="#axioms">אקסיומות</a>
+      <a class="chip" href="#p1">\(p=1\)</a>
+      <a class="chip" href="#p2">\(p=2\)</a>
+      <a class="chip" href="#induction">אינדוקציה+טיילור</a>
+      <a class="chip" href="#summary">סיכום</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="toc" class="card toc">
+    <div class="hd"><h2>תוכן עניינים <span class="badge">ניווט מהיר</span></h2></div>
+    <div class="bd">
+      <a href="#hodge">1) השערת הודג' — ניסוח פורמלי</a>
+      <a href="#rational">2) רציונלי מול אי־רציונלי — קירובים ושברים חלקיים</a>
+      <a href="#trig">3) טריגונומטריה — מסלולים מחזוריים/אי־מחזוריים</a>
+      <a href="#fourier">4) טור פורייה — שוויון אמיתי ותנאי התכנסות</a>
+      <a href="#fourierhodge">5) פורייה–הודג' — ספקטרום + \((p,q)\)</a>
+      <a href="#flows">6) זרימות בזמן — לפלס/ליפשיץ/קושי</a>
+      <a href="#aj">7) Abel–Jacobi + פונקציות נורמליות</a>
+      <a href="#axioms">8) אקסיומות: אפס + קשיחות</a>
+      <a href="#p1">9) \(p=1\): לפשץ \((1,1)\) (מוכח)</a>
+      <a href="#p2">10) \(p=2\) בתלת־יריעה: לפשץ–לפלס–פסקאל–ליפשיץ (מסגרת)</a>
+      <a href="#induction">11) אינדוקציה + טיילור/מקלורן</a>
+      <a href="#summary">12) סיכום</a>
+    </div>
+  </section>
+
+  <section id="hodge" class="card">
+    <div class="hd"><h2>1) השערת הודג' — ניסוח פורמלי <span class="badge">Hodge</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+H^k(X,\mathbb C)=\bigoplus_{p+q=k}H^{p,q}(X)
+\]
+\[
+\alpha\in H^{2p}(X,\mathbb Q)\ \text{נקראת מחלקת הודג' אם}\ \alpha\in H^{p,p}(X)
+\]
+\[
+\textbf{השערת הודג':}\quad H^{p,p}(X)\cap H^{2p}(X,\mathbb Q)=\sum_i \mathbb Q\,[Z_i]
+\]
+      </div>
+      <div class="callout ok"><b>אינטואיציה:</b> מחלקה רציונלית “מתאימה” אמורה להיות צירוף רציונלי של מחזורים אלגבריים.</div>
+    </div>
+  </section>
+
+  <section id="rational" class="card">
+    <div class="hd"><h2>2) רציונלי מול אי־רציונלי — שברים חלקיים וקירובים <span class="badge">Diophantine</span></h2></div>
+    <div class="bd">
+      <div class="row">
+        <div class="k">
+\[
+x\notin\mathbb Q\Rightarrow x=[a_0;a_1,a_2,\dots],\qquad \frac{p_n}{q_n}\to x
+\]
+        </div>
+        <div class="k">
+\[
+\gamma(t)\ \text{מסלול רציף},\ \exists\,t_n:\ \gamma(t_n)\approx \text{נקודות סריג/רציונליות}
+\]
+        </div>
+      </div>
+      <div class="callout ok">הרעיון: מסלול אי־רציונלי יכול להיות “מקודד” ע״י רצף קירובים רציונליים שמגלה נקודות בדידות (כמו torsion בטורוס).</div>
+    </div>
+  </section>
+
+  <section id="trig" class="card">
+    <div class="hd"><h2>3) פונקציות טריגונומטריות — מחזוריות ומספר סיבוב <span class="badge">Periodic</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+\sin(x+2\pi)=\sin x,\quad \cos(x+2\pi)=\cos x,\quad \tan(x+\pi)=\tan x
+\]
+\[
+\gamma_\omega(t)=(\cos(\omega t),\sin(\omega t))
+\]
+\[
+\omega=\frac pq\Rightarrow \gamma_\omega\Big(t+\frac{2\pi q}{p}\Big)=\gamma_\omega(t),\qquad
+\omega\notin\mathbb Q\Rightarrow \text{אין מחזור בדיוק}
+\]
+      </div>
+    </div>
+  </section>
+
+  <section id="fourier" class="card">
+    <div class="hd"><h2>4) טור פורייה — מתי מתקבל שוויון אמיתי <span class="badge">Fourier</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+f(x)\sim \frac{a_0}{2}+\sum_{n=1}^\infty\big(a_n\cos nx+b_n\sin nx\big)
+\quad\text{או}\quad
+f(x)\sim \sum_{n\in\mathbb Z}c_n e^{inx}
+\]
+      </div>
+      <div class="callout ok">בנקודות רציפות מתקבל שוויון (ובתנאים סטנדרטיים; בנקודות קפיצה מתקבל ממוצע הצדדים).</div>
+    </div>
+  </section>
+
+  <section id="fourierhodge" class="card">
+    <div class="hd"><h2>5) פורייה–הודג' — ספקטרום לפלסיאני + פירוק \((p,q)\) <span class="badge">Hodge–Laplace</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+\Delta=dd^*+d^*d,\qquad \Delta \omega_j=\lambda_j\omega_j
+\]
+\[
+\alpha=\sum_j c_j\,\omega_j,\qquad \omega_j=\sum_{p+q=k}\omega_j^{p,q}
+\]
+      </div>
+      <div class="callout ok">“הודג' שולט” = בקואורדינטות האלה רכיבי \((r,s)\neq(p,p)\) מתאפסים.</div>
+    </div>
+  </section>
+
+  <section id="flows" class="card">
+    <div class="hd"><h2>6) זרימות בזמן — לפלס, ליפשיץ, קושי–שוורץ <span class="badge">Flow</span></h2></div>
+    <div class="bd">
+      <details open>
+        <summary>6.1 זרימה ספקטרלית (“חום”)</summary>
+        <div class="k">
+\[
+\frac{d}{dt}\alpha(t)=-\Delta\,\alpha(t),\qquad
+\alpha(t)=\sum_j e^{-\lambda_j t}c_j\,\omega_j
+\]
+        </div>
+      </details>
+
+      <details open>
+        <summary>6.2 ירידה תלולה + קושי–שוורץ</summary>
+        <div class="k">
+\[
+E(x)=\|F(x)\|^2,\quad \dot x=-\nabla E(x)\Rightarrow \frac{d}{dt}E=-\|\nabla E\|^2\le 0
+\]
+\[
+|\langle\nabla E,\dot x\rangle|\le \|\nabla E\|\,\|\dot x\|\quad (\text{קושי–שוורץ})
+\]
+        </div>
+      </details>
+
+      <details>
+        <summary>6.3 תנאי ליפשיץ</summary>
+        <div class="k">
+\[
+\|\nabla E(x)-\nabla E(y)\|\le L\|x-y\|\Rightarrow \dot x=-\nabla E(x)\ \text{קיימת/יחידה מקומית}
+\]
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="aj" class="card">
+    <div class="hd"><h2>7) Abel–Jacobi ופונקציות נורמליות <span class="badge">AJ</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+AJ: CH^p(X)_{\mathrm{hom}}\to J^p(X)
+\]
+\[
+J^p(X)=\frac{H^{2p-1}(X,\mathbb C)}{F^pH^{2p-1}(X,\mathbb C)+H^{2p-1}(X,\mathbb Z)}
+\]
+\[
+\nu(t)=AJ(Z_t)\in J^p(X_t)
+\]
+      </div>
+      <div class="callout warn">הנקודות \(0\) ו-torsion ב-\(J^p\) הן נקודות “בדידות” ביחס לסריג — כאן מתחבר רעיון הקירובים הרציונליים.</div>
+    </div>
+  </section>
+
+  <section id="axioms" class="card">
+    <div class="hd"><h2>8) אקסיומות: אפס + קשיחות <span class="badge">Axioms</span></h2></div>
+    <div class="bd">
+      <details open>
+        <summary>8.1 אקסיומת האפס</summary>
+        <div class="k">
+\[
+\exists\,0:\ 0+x=x,\ x+(-x)=0,\qquad 0\in CH^p(X),\ 0\in J^p(X)
+\]
+\[
+E(\nu)=\mathrm{dist}(\nu,0)^2
+\]
+        </div>
+      </details>
+      <details>
+        <summary>8.2 אקסיומת/משפט קשיחות (מה שחסר עבור \(p\ge 2\))</summary>
+        <div class="k">
+\[
+\nu(t_*)\in\{0\}\cup \mathrm{Tors}(J^p(X_{t_*}))\ \Longrightarrow\ \text{מחזור אלגברי מייצג}
+\]
+        </div>
+        <div class="small">ב-\(p=1\) זה נסגר ע״י לפשץ \((1,1)\). ב-\(p=2\) אין משפט כללי ידוע שממלא זאת.</div>
+      </details>
+    </div>
+  </section>
+
+  <section id="p1" class="card">
+    <div class="hd"><h2>9) \(p=1\) — לפשץ \((1,1)\) <span class="badge">✅ מוכח</span></h2></div>
+    <div class="bd">
+      <div class="k">
+\[
+H^{1,1}(X)\cap H^2(X,\mathbb Z)=c_1(\mathrm{Pic}(X)),\qquad
+H^{1,1}(X)\cap H^2(X,\mathbb Q)=\mathrm{NS}(X)\otimes\mathbb Q
+\]
+      </div>
+      <div class="callout ok">מכאן: כל מחלקת הודג' רציונלית ב-\(H^2\) היא אלגברית.</div>
+    </div>
+  </section>
+
+  <section id="p2" class="card">
+    <div class="hd"><h2>10) \(p=2\) בתלת־יריעה — לפשץ–לפלס–פסקאל–ליפשיץ <span class="badge">⚠️ מסגרת</span></h2></div>
+    <div class="bd">
+      <details open>
+        <summary>10.1 הנוסח</summary>
+        <div class="k">
+\[
+X\ \text{תלת־יריעה פרויקטיבית חלקה},\quad \alpha\in H^4(X,\mathbb Q)\cap H^{2,2}(X)
+\]
+        </div>
+      </details>
+
+      <details open>
+        <summary>10.2 Hard Lefschetz + פירוק פרימיטיבי</summary>
+        <div class="k">
+\[
+L(\gamma)=\gamma\smile h,\quad h=c_1(\mathcal O_X(1)),\quad L:H^2(X)\xrightarrow{\sim}H^4(X)
+\]
+\[
+\alpha=L(\theta)+\alpha_{\mathrm{prim}},\qquad \alpha_{\mathrm{prim}}\smile h=0
+\]
+        </div>
+        <div class="k">
+\[
+(h+\varepsilon\eta)^k=\sum_{j=0}^k \binom{k}{j}h^{k-j}(\varepsilon\eta)^j\quad(\text{בינום פסקאל})
+\]
+        </div>
+      </details>
+
+      <details open>
+        <summary>10.3 החלק שמוכח מיד: \(\alpha=L(\theta)\) עם \(\theta\in (1,1)\cap \mathbb Q\)</summary>
+        <div class="k">
+\[
+\theta=\sum_i q_i[D_i]\Rightarrow \alpha=\theta\smile h=\sum_i q_i([D_i]\smile h)=\sum_i q_i[C_i]
+\]
+        </div>
+        <div class="callout ok">כלומר: כל מה שבתמונה של \(L\) מתוך \((1,1)\) הוא אלגברי (עקומות חיתוך).</div>
+      </details>
+
+      <details>
+        <summary>10.4 החלק הקשה: \(\alpha_{\mathrm{prim}}\) + חתכים + זרימה</summary>
+        <div class="k">
+\[
+\alpha_{\mathrm{prim}}\in H^{2,2}\cap H^4(\mathbb Q),\quad \alpha_{\mathrm{prim}}\smile h=0
+\]
+\[
+i:S\hookrightarrow X,\ S\in|h|,\quad i_*i^*(\alpha)=\alpha\smile h
+\]
+\[
+S=S(t),\ \beta_{S(t)}=\text{היטל }(1,1)\text{ של }i_t^*(\alpha),\ 
+E(t)=\mathrm{dist}(\beta_{S(t)},\mathrm{NS}(S(t))\otimes\mathbb R)^2
+\]
+\[
+\dot t=-\nabla E(t),\ \frac{d}{dt}E=-\|\nabla E\|^2\le 0
+\]
+        </div>
+      </details>
+
+      <details>
+        <summary>10.5 Abel–Jacobi עבור \(p=2\)</summary>
+        <div class="k">
+\[
+AJ:CH^2(X)_{\mathrm{hom}}\to J^2(X),\qquad
+J^2(X)=\frac{H^3(X,\mathbb C)}{F^2H^3(X,\mathbb C)+H^3(X,\mathbb Z)}
+\]
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="induction" class="card">
+    <div class="hd"><h2>11) אינדוקציה + טור טיילור/מקלורן <span class="badge">Induction</span></h2></div>
+    <div class="bd">
+      <details open>
+        <summary>11.1 טיילור סביב \(t_0\)</summary>
+        <div class="k">
+\[
+F(t)=\sum_{k=0}^\infty \frac{F^{(k)}(t_0)}{k!}(t-t_0)^k
+\]
+\[
+F(t_0)=F'(t_0)=\cdots=F^{(N)}(t_0)=0\Rightarrow \|F(t)\|\le C|t-t_0|^{N+1}
+\]
+        </div>
+      </details>
+
+      <details open>
+        <summary>11.2 אינדוקציה על סדר האפס (“להרוג עוד מקדם”)</summary>
+        <div class="k">
+\[
+\text{נניח }F^{(k)}(t_0)=0\ (k=0,\dots,N)\ \ \text{ומכוונים את הדינמיקה כך ש }F^{(N+1)}(t_0)=0
+\]
+\[
+\Rightarrow F(t)=O(|t-t_0|^{N+1})
+\]
+\[
+\text{אם לכל }N:\ F^{(k)}(t_0)=0\ \forall k\Rightarrow F\equiv 0\ \text{בסביבה}
+\]
+        </div>
+        <div class="callout warn">כדי להפוך \(F\equiv 0\) ל”מחזור אלגברי מייצג” ב-\(p=2\), צריך את שלב הקשיחות (אקסיומה/משפט נוסף).</div>
+      </details>
+    </div>
+  </section>
+
+  <section id="summary" class="card">
+    <div class="hd"><h2>12) סיכום מצב <span class="badge">Status</span></h2></div>
+    <div class="bd">
+      <div class="callout ok"><b>מוכח:</b> \(p=1\). וגם ב-\(p=2\): כל רכיב מהצורה \(L(\theta)\) עם \(\theta\in (1,1)\cap \mathbb Q\) הוא אלגברי.</div>
+      <div class="callout warn"><b>מסגרת:</b> עבור \(\alpha_{\mathrm{prim}}\) מוצעת זרימה על חתכים + Abel–Jacobi + אינדוקציה+טיילור.</div>
+      <div class="callout bad"><b>החסר:</b> משפט קשיחות כללי שממיר נעילה ב-\(J^2\) (אפס/torsion או \(\nu\equiv 0\)) למחזור אלגברי מייצג למחלקה פרימיטיבית \((2,2)\).</div>
+      <div class="k">
+\[
+\underbrace{\text{פורייה–הודג' + זרימה}}_{\text{אנליטי}}
++\underbrace{\text{Abel–Jacobi}}_{\text{גשר}}
++\underbrace{\text{קשיחות}}_{\text{חסר בכלליות}}
+\Rightarrow \text{אלגבריות}
+\]
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div>© כל הזכויות שמורות. אין לשכפל, להפיץ או לפרסם ללא אישור מפורש.</div>
+      <div class="small" style="margin-top:6px">הערה: סעיפים המסומנים ⚠️ הם “מסגרת/תכנית” ולא הוכחה מלאה של השערת הודג'.</div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+        ],
+        throwOnError: false
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
