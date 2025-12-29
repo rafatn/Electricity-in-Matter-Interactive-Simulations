@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he" dir="rtl" data-theme="light" data-viewport="desktop">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -36,10 +36,6 @@
       --chipText:#0f172a;
 
       --focus: 0 0 0 4px rgba(99,102,241,.22);
-
-      /* Device preview sizes (JS sets these) */
-      --vw: 390px;
-      --vr: 28px;
     }
 
     html[data-theme="dark"]{
@@ -509,88 +505,10 @@
     }
 
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
-
-    /* ======================================================
-       ✅ Device Frame (hidden by default; JS will move #viewport inside it)
-       ====================================================== */
-    #deviceFrame{
-      display:none;
-      position:relative;
-      margin: 16px auto 28px;
-      width: var(--vw);
-      max-width: calc(100vw - 24px);
-      border-radius: var(--vr);
-      padding: 12px;
-      border: 1px solid rgba(148,163,184,.45);
-      background: rgba(0,0,0,.10);
-      box-shadow: 0 26px 90px rgba(0,0,0,.25);
-    }
-    #deviceScreen{
-      position:relative;
-      overflow:hidden;
-      border-radius: calc(var(--vr) - 10px);
-      background: transparent;
-      border: 1px solid rgba(148,163,184,.35);
-    }
-    #notch{
-      display:none;
-      position:absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 170px;
-      height: 28px;
-      border-radius: 0 0 18px 18px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.08);
-      z-index: 5;
-      pointer-events:none;
-    }
-    #notch:after{
-      content:"";
-      position:absolute;
-      top: 9px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 52px;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.25);
-    }
-
-    html[data-viewport="mobile"] #deviceFrame,
-    html[data-viewport="tablet"] #deviceFrame{
-      display:block;
-    }
-    html[data-viewport="mobile"] #notch{ display:block; }
-
-    @media (max-width: 430px){
-      #deviceFrame{
-        width: calc(100vw - 18px);
-        padding: 10px;
-        border-radius: 20px;
-      }
-      #deviceScreen{
-        border-radius: 14px;
-      }
-      #notch{
-        width: 150px;
-      }
-    }
   </style>
 </head>
 
 <body>
-
-<!-- ✅ Device frame exists, but EMPTY at load; JS will move #viewport inside when needed -->
-<div id="deviceFrame" aria-hidden="true">
-  <div id="notch"></div>
-  <div id="deviceScreen"></div>
-</div>
-
-<!-- ✅ The whole app lives here ALWAYS -->
-<div id="viewport">
-
 <header>
   <div class="wrap">
     <div class="top">
@@ -611,14 +529,6 @@
 
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
-
-        <!-- ✅ NEW: Desktop/Mobile/Tablet toggle -->
-        <select id="deviceSel" class="select" title="תצוגת מכשיר">
-          <option value="desktop">🖥️ מחשב</option>
-          <option value="tablet">📟 טאבלט</option>
-          <option value="mobile">📱 מובייל</option>
-        </select>
-
         <select id="sortSel" class="select" title="מיון">
           <option value="az">מיון: A→Z</option>
           <option value="za">מיון: Z→A</option>
@@ -666,8 +576,6 @@
 </main>
 
 <div class="toast" id="toast">הועתק!</div>
-
-</div><!-- /#viewport -->
 
 <script>
 /**
@@ -724,7 +632,7 @@ const RAW_FILES = [
   "bio_magnet_therapy.html",
   "absolute_organ_value_multilang_full_v2.html",
   "absolute_organ_value_multilang_full.html",
-  "qr_withdrawal_offline_live_diagram_math (7).html",  "svpad_material_compare_datasheet_multiband_FORMULAS.html",  "Qumplex_Equtaion.html",  "Radiation.html",  "sea_like_air_hospital_en_only_fixed_mermaid.html",  "academic_atmosphere_bounds_relativity_he.html",  "brl_dynamic_xray_model.html",  "brl_explained_notes.html",  "Coherante_Chimical.html",  "Magnatic_Current_Saver.html",  "Equtations_For_Current.html",  "Equtation_Line_Saver.html",  "pde_claim_theorem_counterexample_interactive.html",  "Car_New_Motor.html",  "voltage_lamp_calibrated_rich.html",  "spectral_mask_balloon_lamp_he.html",  "Wave_Long.html",  "PCX_cable_coupling_model_he_en.html",  "Human_Tree_Modle.html",  "SGVT_spin_gravity_vibration_transform_with_description.html",  "Nature_pilot1.html",  "Energy_Radiation_Equtaion.html",  "Energy_Radiation.html",  "quantum_amp_relativistic_partition_model_he_en.html",  "time_arrow_book_entropy_demo_he.html",  "time_arrow_book_entropy_demo_he_v2.html",  "Riemann_Hypothesis_V2.html",  "Riemann_Hypothesis.html",  "Complexity_P_vs_NP.html",  "Navier–Stokes).html",  "black_hole_information_paradox_microecho.html",  "Unreasonable Effectiveness.html",  "DK_QED_full_with_grade_projections_HE.html",  "DK_QED_UNIFIED_MASTER_HE_FULL.html",  "tv_like_board.html",
+  "qr_withdrawal_offline_live_diagram_math (7).html",  "svpad_material_compare_datasheet_multiband_FORMULAS.html",  "Qumplex_Equtaion.html",  "Radiation.html",  "sea_like_air_hospital_en_only_fixed_mermaid.html",  "academic_atmosphere_bounds_relativity_he.html",  "brl_dynamic_xray_model.html",  "brl_explained_notes.html",  "Coherante_Chimical.html",  "Magnatic_Current_Saver.html",  "Equtations_For_Current.html",  "Equtation_Line_Saver.html",  "pde_claim_theorem_counterexample_interactive.html",  "Car_New_Motor.html",  "voltage_lamp_calibrated_rich.html",  "spectral_mask_balloon_lamp_he.html",  "Wave_Long.html",  "PCX_cable_coupling_model_he_en.html",  "Human_Tree_Modle.html",  "SGVT_spin_gravity_vibration_transform_with_description.html",  "Nature_pilot1.html",  "Energy_Radiation_Equtaion.html",  "Energy_Radiation.html",  "quantum_amp_relativistic_partition_model_he_en.html",  "time_arrow_book_entropy_demo_he.html",  "time_arrow_book_entropy_demo_he_v2.html",  "Riemann_Hypothesis_V2.html",  "Riemann_Hypothesis.html",  "Complexity_P_vs_NP.html",  "Navier–Stokes).html",  "black_hole_information_paradox_microecho.html",  "Unreasonable Effectiveness.html",  "DK_QED_full_with_grade_projections_HE.html",  "DK_QED_UNIFIED_MASTER_HE_FULL.html",  "tv_like_board.html",  "fourier_hodge_flow_abel_jacobi_full.html",
 ];
 
 function ensureHtml(name){
@@ -847,12 +755,72 @@ const EMOJI_MAP = {
   "absolute_organ_value_multilang_full_v2.html": "🫀",
   "absolute_organ_value_multilang_full.html": "🫁",
   "qr_withdrawal_offline_live_diagram_math (7).html": "🚀",
+  "svpad_material_compare_datasheet_multiband_FORMULAS.html": "🔬📊🧮🌈📉",
+  "Qumplex_Equtaion.html": "🔬⚙️⚡",
+  "Radiation.html": "📐 🧪 🔺 🔍",
+  "sea_like_air_hospital_en_only_fixed_mermaid.html": "🌊🌬️⚙️🧠",
+  "academic_atmosphere_bounds_relativity_he.html": "📘🌍🧠⏱️",
+  "brl_dynamic_xray_model.html": "🌍",
+  "brl_explained_notes.html": "📘⏱️",
+  "Coherante_Chimical.html": "🧪🛡️🔬⚛️",
+  "Magnatic_Current_Saver.html": "⚡🧲🎵",
+  "Equtations_For_Current.html": "⚡🧲🎵📈",
+  "Equtation_Line_Saver.html": "⚡🧠📡〰️🧮🔁🧲⚙️📈",
+  "pde_claim_theorem_counterexample_interactive.html": "🌀📐🔁🧩",
+  "Car_New_Motor.html": "🔧⚡💧",
+  "voltage_lamp_calibrated_rich.html": "🔴🟢🔵➕🔆🌙✨",
+  "spectral_mask_balloon_lamp_he.html": "🎈💡🌈",
+  "Wave_Long.html": "🎛️💡",
+  "PCX_cable_coupling_model_he_en.html": "⚡🧲🧮💧",
+  "Human_Tree_Modle.html": "📜🌿",
+  "SGVT_spin_gravity_vibration_transform_with_description.html": "📌↕",
+  "Nature_pilot1.html": "📌",
+  "Energy_Radiation_Equtaion.html": "🚀🌑📈",
+  "Energy_Radiation.html": "🚀🌑📈",
+  "quantum_amp_relativistic_partition_model_he_en.html": "⚛️🧪🧱💨🚀🌊📡📈✨",
+  "time_arrow_book_entropy_demo_he.html": "⚛️",
+  "time_arrow_book_entropy_demo_he_v2.html": "⚛️",
+  "Riemann_Hypothesis_V2.html": "📈",
+  "Riemann_Hypothesis.html": "📈",
+  "Complexity_P_vs_NP.html": "🚀",
+  "Navier–Stokes).html": "⚛️",
+  "black_hole_information_paradox_microecho.html": "⚛️",
+  "Unreasonable Effectiveness.html": "⚛️",
+  "DK_QED_full_with_grade_projections_HE.html": "⚛️",
+  "DK_QED_UNIFIED_MASTER_HE_FULL.html": "⚛️",
   "tv_like_board.html": "🎭➡️📝🔬✨",
+  "fourier_hodge_flow_abel_jacobi_full.html": "📝🔬",
 };
 
+/** Emoji per file: manual first, fallback after */
 function emojiForFile(file, tags){
   const key = String(file||"").trim();
   if(EMOJI_MAP[key]) return EMOJI_MAP[key];
+
+  const f = key.toLowerCase();
+  const t = new Set((tags||[]).map(x=>String(x||"").trim()));
+  if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
+  if(f.includes("hospital")) return "🏥";
+  if(f.includes("blood")) return "🩸";
+  if(f.includes("organ")) return "🫀";
+  if(f.includes("tooth")) return "🦷";
+  if(f.includes("bio") || f.includes("therapy")) return "🧬";
+  if(f.includes("security") || f.includes("ipv6") || f.includes("usb") || f.includes("hybirddata")) return "🛡️";
+  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) return "📡";
+  if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting")) return "⚡";
+  if(f.includes("thermal") || f.includes("thermo") || f.includes("thermosiphon")) return "🌡️";
+  if(f.includes("floor") || f.includes("paver") || f.includes("pressure")) return "🧱";
+  if(f.includes("water") && f.includes("shoes")) return "👟";
+  if(f.includes("water") || f.includes("gas") || f.includes("train")) return "🚆";
+  if(f.includes("aircraft") || f.includes("supersonic")) return "✈️";
+  if(f.includes("air_road") || f.includes("glider")) return "🪂";
+  if(f.includes("drone") || f.includes("pendulum")) return "🛠️";
+  if(f.includes("building") || f.includes("house") || f.includes("ceiling") || f.includes("stability")) return "🏗️";
+  if(f.includes("fingerprint") || f.includes("gesture") || f.includes("mobile") || f.includes("drawer")) return "🧩";
+  if(f.includes("constitution")) return "⚖️";
+  if(f.includes("calculator")) return "🧮";
+  if(f.includes("simulation")) return "🧪";
+  if(f.includes("multilang") || f.includes("trilingual") || f.includes("bilingual") || f.includes("all_languages")) return "🌍";
   return "📄";
 }
 
@@ -870,8 +838,7 @@ const LS_THEME = "index.theme.v4";
 const LS_VISITS = "index.visits.v4";
 const LS_VIEW = "index.view.v3";
 const LS_SORT = "index.sort.v3";
-const LS_FILEVIEWS = "index.fileviews.v2";
-const LS_DEVICE = "index.device.v2"; // desktop | tablet | mobile
+const LS_FILEVIEWS = "index.fileviews.v2"; // { "file.html": number }
 
 const $ = (s)=>document.querySelector(s);
 const grid = $("#grid");
@@ -884,18 +851,12 @@ const fileViewsTotalEl = $("#fileViewsTotal");
 const showFavBtn = $("#showFavBtn");
 const sortSel = $("#sortSel");
 const viewBtn = $("#viewBtn");
-const deviceSel = $("#deviceSel");
 const activeInfo = $("#activeInfo");
 const toast = $("#toast");
 
-const viewportEl = $("#viewport");
-const deviceFrame = $("#deviceFrame");
-const deviceScreen = $("#deviceScreen");
-
 let showFavOnly = false;
 let activeTag = "הכל";
-let viewMode = localStorage.getItem(LS_VIEW) || "grid";
-let deviceMode = localStorage.getItem(LS_DEVICE) || "desktop";
+let viewMode = localStorage.getItem(LS_VIEW) || "grid"; // grid | list
 
 function loadFavs(){
   try{ return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
@@ -940,7 +901,9 @@ function getFileView(file){
 function totalFileViews(){
   const views = loadFileViews();
   let sum = 0;
-  for(const k in views) sum += Number(views[k] || 0);
+  for(const k in views){
+    sum += Number(views[k] || 0);
+  }
   return sum;
 }
 
@@ -976,7 +939,7 @@ function renderChips(){
 function matches(page, query){
   const s = norm(query);
   if(!s) return true;
-  const tokens = s.split(/\s+/g).filter(Boolean);
+  const tokens = s.split(/\s+/g).filter(Boolean); // AND search
   const hay = [page.title, page.file, page.desc, (page.tags||[]).join(" ")].map(norm).join(" | ");
   return tokens.every(tok => hay.includes(tok));
 }
@@ -1067,48 +1030,14 @@ function renderActiveInfo(){
   const qq = q.value.trim();
   const viewLabel = (viewMode==="list") ? "List" : "Grid";
   const tagLabel = activeTag || "הכל";
-  const deviceLabel = (deviceMode==="mobile") ? "Mobile" : (deviceMode==="tablet" ? "Tablet" : "Desktop");
-  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${deviceLabel}`;
+  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel}`;
 }
 
+/** open with counting */
 function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
   window.location.href = encodeURI(file);
-}
-
-/** ✅ Device preview: move #viewport in/out of frame */
-function applyDeviceMode(mode){
-  deviceMode = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
-  localStorage.setItem(LS_DEVICE, deviceMode);
-  document.documentElement.setAttribute("data-viewport", deviceMode);
-  if(deviceSel) deviceSel.value = deviceMode;
-
-  const root = document.documentElement;
-
-  if(deviceMode === "mobile"){
-    root.style.setProperty("--vw", "390px");
-    root.style.setProperty("--vr", "28px");
-  }else if(deviceMode === "tablet"){
-    root.style.setProperty("--vw", "820px");
-    root.style.setProperty("--vr", "26px");
-  }else{
-    root.style.setProperty("--vw", "1240px");
-    root.style.setProperty("--vr", "0px");
-  }
-
-  // Move DOM
-  if(deviceMode === "desktop"){
-    if(viewportEl.parentElement !== document.body){
-      document.body.insertBefore(viewportEl, document.body.querySelector("script"));
-    }
-  }else{
-    if(viewportEl.parentElement !== deviceScreen){
-      deviceScreen.appendChild(viewportEl);
-    }
-  }
-
-  renderActiveInfo();
 }
 
 function render(){
@@ -1227,14 +1156,13 @@ function render(){
 /** Export / Import */
 function exportData(){
   const payload = {
-    version: 2,
+    version: 1,
     savedAt: new Date().toISOString(),
     favs: JSON.parse(localStorage.getItem(LS_FAV) || "[]"),
     visits: localStorage.getItem(LS_VISITS) || "0",
     viewMode: localStorage.getItem(LS_VIEW) || "grid",
     sortMode: localStorage.getItem(LS_SORT) || "az",
-    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}"),
-    deviceMode: localStorage.getItem(LS_DEVICE) || "desktop"
+    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}")
   };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
   const a = document.createElement("a");
@@ -1256,9 +1184,9 @@ function importData(obj){
   localStorage.setItem(LS_VIEW, String(obj.viewMode || "grid"));
   localStorage.setItem(LS_SORT, String(obj.sortMode || "az"));
   localStorage.setItem(LS_FILEVIEWS, JSON.stringify(obj.fileViews || {}));
-  localStorage.setItem(LS_DEVICE, String(obj.deviceMode || "desktop"));
 
   viewMode = localStorage.getItem(LS_VIEW) || "grid";
+  viewBtn.textContent = (viewMode==="list") ? "≡" : "▦";
   sortSel.value = getSort();
 
   showFavOnly = false;
@@ -1267,7 +1195,6 @@ function importData(obj){
 
   renderChips();
   render();
-  applyDeviceMode(localStorage.getItem(LS_DEVICE) || "desktop");
   showToast("ייבוא בוצע ✅");
 }
 
@@ -1297,10 +1224,6 @@ function init(){
     render();
   };
 
-  // ✅ device select
-  deviceSel.value = deviceMode;
-  deviceSel.onchange = ()=> applyDeviceMode(deviceSel.value);
-
   showFavBtn.onclick = ()=>{
     showFavOnly = !showFavOnly;
     showFavBtn.textContent = showFavOnly ? "⭐ כל הקבצים" : "⭐ מועדפים";
@@ -1313,7 +1236,6 @@ function init(){
     localStorage.removeItem(LS_VIEW);
     localStorage.removeItem(LS_SORT);
     localStorage.removeItem(LS_FILEVIEWS);
-    localStorage.removeItem(LS_DEVICE);
 
     visitCountEl.textContent = String(incVisits());
     fileViewsTotalEl.textContent = String(totalFileViews());
@@ -1329,7 +1251,6 @@ function init(){
 
     renderChips();
     render();
-    applyDeviceMode("desktop");
     showToast("איפוס בוצע ✅");
   };
 
@@ -1349,7 +1270,9 @@ function init(){
     }
   });
 
-  q.addEventListener("input", ()=> render());
+  q.addEventListener("input", ()=>{
+    render();
+  });
 
   window.addEventListener("keydown", (e)=>{
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
@@ -1361,17 +1284,12 @@ function init(){
 
   renderChips();
   render();
-
-  // ✅ apply saved device mode on load
-  applyDeviceMode(deviceMode);
 }
 init();
 </script>
-
+</body>
 <footer style="text-align:center; font-size:14px; color:#555; margin-top:40px;">
   © כל הזכויות שמורות. אין להעתיק, לשכפל או לעשות שימוש בתוכן זה ללא אישור מפורש בכתב מאת RA –
   <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a>
 </footer>
-
-</body>
 </html>
