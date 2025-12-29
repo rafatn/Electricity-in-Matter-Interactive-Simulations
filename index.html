@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he" dir="rtl" data-theme="light">
+<html lang="he" dir="rtl" data-theme="light" data-sim="auto">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -36,6 +36,11 @@
       --chipText:#0f172a;
 
       --focus: 0 0 0 4px rgba(99,102,241,.22);
+
+      /* ===== Device simulation (Desktop/Tablet/Mobile) ===== */
+      --simMax: 1240px;           /* default: auto/desktop */
+      --simPad: 18px;
+      --simFrame: transparent;
     }
 
     html[data-theme="dark"]{
@@ -63,6 +68,12 @@
       --focus: 0 0 0 4px rgba(147,197,253,.18);
     }
 
+    /* ===== Simulation presets (no effect on real device; just preview) ===== */
+    html[data-sim="desktop"]{ --simMax: 1240px; --simPad: 18px; }
+    html[data-sim="tablet"] { --simMax: 860px;  --simPad: 14px; }
+    html[data-sim="mobile"] { --simMax: 420px;  --simPad: 12px; }
+    html[data-sim="auto"]   { --simMax: 1240px; --simPad: 18px; }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -88,7 +99,25 @@
       background: linear-gradient(180deg, rgba(15,23,42,.60), rgba(15,23,42,.14));
     }
 
-    .wrap{max-width:1240px; margin:0 auto; padding:18px 18px 34px}
+    /* 👇 central responsive wrapper (real responsive + optional simulation) */
+    .wrap{
+      max-width: var(--simMax);
+      margin:0 auto;
+      padding: var(--simPad) var(--simPad) 34px;
+    }
+
+    /* optional "device frame" preview when sim != auto */
+    html[data-sim="mobile"] body::before,
+    html[data-sim="tablet"] body::before{
+      content:"";
+      position:fixed;
+      inset: 84px 0 0 0;
+      pointer-events:none;
+      background:
+        radial-gradient(700px 260px at 50% 0%, rgba(99,102,241,.10), transparent 70%);
+      opacity:.9;
+    }
+
     .top{
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
@@ -234,6 +263,35 @@
     }
     .btnGhost:hover{ transform: translateY(-1px); filter:brightness(1.02); }
     .btnGhost:focus-visible{ outline:none; box-shadow: var(--focus); }
+
+    /* ===== Device buttons (Desktop / Tablet / Mobile) ===== */
+    .deviceGroup{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding:8px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: color-mix(in srgb, var(--card) 70%, transparent);
+      box-shadow: 0 10px 30px rgba(2,6,23,.06);
+    }
+    .devBtn{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      background: transparent;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .devBtn:hover{ filter:brightness(1.02); transform: translateY(-1px); }
+    .devBtn:focus-visible{ outline:none; box-shadow: var(--focus); }
+    .devBtn.active{
+      background: rgba(99,102,241,.16);
+      border-color: rgba(99,102,241,.40);
+    }
 
     .select{
       padding:10px 12px;
@@ -529,6 +587,15 @@
 
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
+
+        <!-- ✅ Device compatibility / preview toggle -->
+        <div class="deviceGroup" title="תאימות: תצוגת הדמיה (לא חובה — הדף גם רספונסיבי אוטומטית)">
+          <button class="devBtn" id="devDesktop" data-sim="desktop" title="מחשב">🖥️ מחשב</button>
+          <button class="devBtn" id="devTablet"  data-sim="tablet"  title="טאבלט">📱 טאבלט</button>
+          <button class="devBtn" id="devMobile"  data-sim="mobile"  title="טלפון נייד">📞 נייד</button>
+          <button class="devBtn" id="devAuto"    data-sim="auto"    title="אוטומטי">✨ אוטו</button>
+        </div>
+
         <select id="sortSel" class="select" title="מיון">
           <option value="az">מיון: A→Z</option>
           <option value="za">מיון: Z→A</option>
@@ -580,6 +647,7 @@
 <script>
 /**
  * INDEX.HTML — Full list (no Top10) + Manual Emoji per file + Export/Import.
+ * ✅ Added: Desktop/Tablet/Mobile/Auto simulation for quick compatibility checks.
  */
 
 const RAW_FILES = [
@@ -632,7 +700,42 @@ const RAW_FILES = [
   "bio_magnet_therapy.html",
   "absolute_organ_value_multilang_full_v2.html",
   "absolute_organ_value_multilang_full.html",
-  "qr_withdrawal_offline_live_diagram_math (7).html",  "svpad_material_compare_datasheet_multiband_FORMULAS.html",  "Qumplex_Equtaion.html",  "Radiation.html",  "sea_like_air_hospital_en_only_fixed_mermaid.html",  "academic_atmosphere_bounds_relativity_he.html",  "brl_dynamic_xray_model.html",  "brl_explained_notes.html",  "Coherante_Chimical.html",  "Magnatic_Current_Saver.html",  "Equtations_For_Current.html",  "Equtation_Line_Saver.html",  "pde_claim_theorem_counterexample_interactive.html",  "Car_New_Motor.html",  "voltage_lamp_calibrated_rich.html",  "spectral_mask_balloon_lamp_he.html",  "Wave_Long.html",  "PCX_cable_coupling_model_he_en.html",  "Human_Tree_Modle.html",  "SGVT_spin_gravity_vibration_transform_with_description.html",  "Nature_pilot1.html",  "Energy_Radiation_Equtaion.html",  "Energy_Radiation.html",  "quantum_amp_relativistic_partition_model_he_en.html",  "time_arrow_book_entropy_demo_he.html",  "time_arrow_book_entropy_demo_he_v2.html",  "Riemann_Hypothesis_V2.html",  "Riemann_Hypothesis.html",  "Complexity_P_vs_NP.html",  "Navier–Stokes).html",  "black_hole_information_paradox_microecho.html",  "Unreasonable Effectiveness.html",  "DK_QED_full_with_grade_projections_HE.html",  "DK_QED_UNIFIED_MASTER_HE_FULL.html",  "tv_like_board.html",  "fourier_hodge_flow_abel_jacobi_full.html",
+  "qr_withdrawal_offline_live_diagram_math (7).html",
+  "svpad_material_compare_datasheet_multiband_FORMULAS.html",
+  "Qumplex_Equtaion.html",
+  "Radiation.html",
+  "sea_like_air_hospital_en_only_fixed_mermaid.html",
+  "academic_atmosphere_bounds_relativity_he.html",
+  "brl_dynamic_xray_model.html",
+  "brl_explained_notes.html",
+  "Coherante_Chimical.html",
+  "Magnatic_Current_Saver.html",
+  "Equtations_For_Current.html",
+  "Equtation_Line_Saver.html",
+  "pde_claim_theorem_counterexample_interactive.html",
+  "Car_New_Motor.html",
+  "voltage_lamp_calibrated_rich.html",
+  "spectral_mask_balloon_lamp_he.html",
+  "Wave_Long.html",
+  "PCX_cable_coupling_model_he_en.html",
+  "Human_Tree_Modle.html",
+  "SGVT_spin_gravity_vibration_transform_with_description.html",
+  "Nature_pilot1.html",
+  "Energy_Radiation_Equtaion.html",
+  "Energy_Radiation.html",
+  "quantum_amp_relativistic_partition_model_he_en.html",
+  "time_arrow_book_entropy_demo_he.html",
+  "time_arrow_book_entropy_demo_he_v2.html",
+  "Riemann_Hypothesis_V2.html",
+  "Riemann_Hypothesis.html",
+  "Complexity_P_vs_NP.html",
+  "Navier–Stokes).html",
+  "black_hole_information_paradox_microecho.html",
+  "Unreasonable Effectiveness.html",
+  "DK_QED_full_with_grade_projections_HE.html",
+  "DK_QED_UNIFIED_MASTER_HE_FULL.html",
+  "tv_like_board.html",
+  "fourier_hodge_flow_abel_jacobi_full.html",
 ];
 
 function ensureHtml(name){
@@ -840,6 +943,10 @@ const LS_VIEW = "index.view.v3";
 const LS_SORT = "index.sort.v3";
 const LS_FILEVIEWS = "index.fileviews.v2"; // { "file.html": number }
 
+/* ✅ Device simulation */
+const LS_SIM = "index.sim.v1";
+const SIMS = ["auto","desktop","tablet","mobile"];
+
 const $ = (s)=>document.querySelector(s);
 const grid = $("#grid");
 const q = $("#q");
@@ -1030,7 +1137,9 @@ function renderActiveInfo(){
   const qq = q.value.trim();
   const viewLabel = (viewMode==="list") ? "List" : "Grid";
   const tagLabel = activeTag || "הכל";
-  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel}`;
+  const sim = document.documentElement.getAttribute("data-sim") || "auto";
+  const simLabel = sim==="auto" ? "אוטו" : (sim==="desktop" ? "מחשב" : (sim==="tablet" ? "טאבלט" : "נייד"));
+  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${simLabel}`;
 }
 
 /** open with counting */
@@ -1038,6 +1147,22 @@ function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
   window.location.href = encodeURI(file);
+}
+
+/* ✅ Device simulation helpers */
+function setSim(sim){
+  const s = SIMS.includes(sim) ? sim : "auto";
+  document.documentElement.setAttribute("data-sim", s);
+  localStorage.setItem(LS_SIM, s);
+  updateSimButtons();
+  renderActiveInfo();
+}
+function updateSimButtons(){
+  const cur = document.documentElement.getAttribute("data-sim") || "auto";
+  const btns = document.querySelectorAll(".devBtn");
+  btns.forEach(b=>{
+    b.classList.toggle("active", (b.getAttribute("data-sim")===cur));
+  });
 }
 
 function render(){
@@ -1162,6 +1287,7 @@ function exportData(){
     visits: localStorage.getItem(LS_VISITS) || "0",
     viewMode: localStorage.getItem(LS_VIEW) || "grid",
     sortMode: localStorage.getItem(LS_SORT) || "az",
+    simMode: localStorage.getItem(LS_SIM) || "auto",
     fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}")
   };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
@@ -1183,11 +1309,14 @@ function importData(obj){
   localStorage.setItem(LS_VISITS, String(obj.visits || "0"));
   localStorage.setItem(LS_VIEW, String(obj.viewMode || "grid"));
   localStorage.setItem(LS_SORT, String(obj.sortMode || "az"));
+  localStorage.setItem(LS_SIM, String(obj.simMode || "auto"));
   localStorage.setItem(LS_FILEVIEWS, JSON.stringify(obj.fileViews || {}));
 
   viewMode = localStorage.getItem(LS_VIEW) || "grid";
   viewBtn.textContent = (viewMode==="list") ? "≡" : "▦";
   sortSel.value = getSort();
+
+  setSim(localStorage.getItem(LS_SIM) || "auto");
 
   showFavOnly = false;
   q.value = "";
@@ -1236,6 +1365,7 @@ function init(){
     localStorage.removeItem(LS_VIEW);
     localStorage.removeItem(LS_SORT);
     localStorage.removeItem(LS_FILEVIEWS);
+    localStorage.removeItem(LS_SIM);
 
     visitCountEl.textContent = String(incVisits());
     fileViewsTotalEl.textContent = String(totalFileViews());
@@ -1248,6 +1378,8 @@ function init(){
     viewBtn.textContent = "▦";
     sortSel.value = "az";
     setSort("az");
+
+    setSim("auto");
 
     renderChips();
     render();
@@ -1270,9 +1402,7 @@ function init(){
     }
   });
 
-  q.addEventListener("input", ()=>{
-    render();
-  });
+  q.addEventListener("input", ()=> render());
 
   window.addEventListener("keydown", (e)=>{
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
@@ -1282,14 +1412,24 @@ function init(){
     }
   });
 
+  // ✅ Device simulation buttons
+  document.querySelectorAll(".devBtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      setSim(btn.getAttribute("data-sim") || "auto");
+      showToast("תצוגה עודכנה ✅");
+    });
+  });
+  setSim(localStorage.getItem(LS_SIM) || "auto");
+
   renderChips();
   render();
 }
 init();
 </script>
-</body>
+
 <footer style="text-align:center; font-size:14px; color:#555; margin-top:40px;">
   © כל הזכויות שמורות. אין להעתיק, לשכפל או לעשות שימוש בתוכן זה ללא אישור מפורש בכתב מאת RA –
   <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a>
 </footer>
+</body>
 </html>
