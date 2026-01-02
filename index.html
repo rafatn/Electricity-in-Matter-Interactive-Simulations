@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he" dir="rtl" data-theme="light" data-sim="auto">
+<html lang="he" dir="rtl" data-theme="light" data-device="desktop">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -36,11 +36,6 @@
       --chipText:#0f172a;
 
       --focus: 0 0 0 4px rgba(99,102,241,.22);
-
-      /* ===== Device simulation (Desktop/Tablet/Mobile) ===== */
-      --simMax: 1240px;           /* default: auto/desktop */
-      --simPad: 18px;
-      --simFrame: transparent;
     }
 
     html[data-theme="dark"]{
@@ -68,12 +63,6 @@
       --focus: 0 0 0 4px rgba(147,197,253,.18);
     }
 
-    /* ===== Simulation presets (no effect on real device; just preview) ===== */
-    html[data-sim="desktop"]{ --simMax: 1240px; --simPad: 18px; }
-    html[data-sim="tablet"] { --simMax: 860px;  --simPad: 14px; }
-    html[data-sim="mobile"] { --simMax: 420px;  --simPad: 12px; }
-    html[data-sim="auto"]   { --simMax: 1240px; --simPad: 18px; }
-
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -99,25 +88,7 @@
       background: linear-gradient(180deg, rgba(15,23,42,.60), rgba(15,23,42,.14));
     }
 
-    /* 👇 central responsive wrapper (real responsive + optional simulation) */
-    .wrap{
-      max-width: var(--simMax);
-      margin:0 auto;
-      padding: var(--simPad) var(--simPad) 34px;
-    }
-
-    /* optional "device frame" preview when sim != auto */
-    html[data-sim="mobile"] body::before,
-    html[data-sim="tablet"] body::before{
-      content:"";
-      position:fixed;
-      inset: 84px 0 0 0;
-      pointer-events:none;
-      background:
-        radial-gradient(700px 260px at 50% 0%, rgba(99,102,241,.10), transparent 70%);
-      opacity:.9;
-    }
-
+    .wrap{max-width:1240px; margin:0 auto; padding:18px 18px 34px}
     .top{
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
@@ -263,35 +234,6 @@
     }
     .btnGhost:hover{ transform: translateY(-1px); filter:brightness(1.02); }
     .btnGhost:focus-visible{ outline:none; box-shadow: var(--focus); }
-
-    /* ===== Device buttons (Desktop / Tablet / Mobile) ===== */
-    .deviceGroup{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      padding:8px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: color-mix(in srgb, var(--card) 70%, transparent);
-      box-shadow: 0 10px 30px rgba(2,6,23,.06);
-    }
-    .devBtn{
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid transparent;
-      background: transparent;
-      font-weight:900;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      white-space:nowrap;
-    }
-    .devBtn:hover{ filter:brightness(1.02); transform: translateY(-1px); }
-    .devBtn:focus-visible{ outline:none; box-shadow: var(--focus); }
-    .devBtn.active{
-      background: rgba(99,102,241,.16);
-      border-color: rgba(99,102,241,.40);
-    }
 
     .select{
       padding:10px 12px;
@@ -563,6 +505,28 @@
     }
 
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
+
+    /* =========================
+       ✅ Device Preview (SAFE)
+       ========================= */
+    html[data-device="desktop"] .wrap{ max-width:1240px; }
+
+    html[data-device="tablet"] .wrap{ max-width: 900px; }
+
+    html[data-device="mobile"] .wrap{ max-width: 420px; }
+
+    html[data-device="tablet"] .wrap,
+    html[data-device="mobile"] .wrap{
+      outline: 1px solid rgba(148,163,184,.45);
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+    }
+
+    html[data-device="tablet"] body,
+    html[data-device="mobile"] body{
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   </style>
 </head>
 
@@ -588,13 +552,12 @@
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
 
-        <!-- ✅ Device compatibility / preview toggle -->
-        <div class="deviceGroup" title="תאימות: תצוגת הדמיה (לא חובה — הדף גם רספונסיבי אוטומטית)">
-          <button class="devBtn" id="devDesktop" data-sim="desktop" title="מחשב">🖥️ מחשב</button>
-          <button class="devBtn" id="devTablet"  data-sim="tablet"  title="טאבלט">📱 טאבלט</button>
-          <button class="devBtn" id="devMobile"  data-sim="mobile"  title="טלפון נייד">📞 נייד</button>
-          <button class="devBtn" id="devAuto"    data-sim="auto"    title="אוטומטי">✨ אוטו</button>
-        </div>
+        <!-- ✅ NEW: device preview -->
+        <select id="deviceSel" class="select" title="תצוגת מכשיר">
+          <option value="desktop">🖥️ מחשב</option>
+          <option value="tablet">📟 טאבלט</option>
+          <option value="mobile">📱 מובייל</option>
+        </select>
 
         <select id="sortSel" class="select" title="מיון">
           <option value="az">מיון: A→Z</option>
@@ -647,7 +610,6 @@
 <script>
 /**
  * INDEX.HTML — Full list (no Top10) + Manual Emoji per file + Export/Import.
- * ✅ Added: Desktop/Tablet/Mobile/Auto simulation for quick compatibility checks.
  */
 
 const RAW_FILES = [
@@ -700,42 +662,7 @@ const RAW_FILES = [
   "bio_magnet_therapy.html",
   "absolute_organ_value_multilang_full_v2.html",
   "absolute_organ_value_multilang_full.html",
-  "qr_withdrawal_offline_live_diagram_math (7).html",
-  "svpad_material_compare_datasheet_multiband_FORMULAS.html",
-  "Qumplex_Equtaion.html",
-  "Radiation.html",
-  "sea_like_air_hospital_en_only_fixed_mermaid.html",
-  "academic_atmosphere_bounds_relativity_he.html",
-  "brl_dynamic_xray_model.html",
-  "brl_explained_notes.html",
-  "Coherante_Chimical.html",
-  "Magnatic_Current_Saver.html",
-  "Equtations_For_Current.html",
-  "Equtation_Line_Saver.html",
-  "pde_claim_theorem_counterexample_interactive.html",
-  "Car_New_Motor.html",
-  "voltage_lamp_calibrated_rich.html",
-  "spectral_mask_balloon_lamp_he.html",
-  "Wave_Long.html",
-  "PCX_cable_coupling_model_he_en.html",
-  "Human_Tree_Modle.html",
-  "SGVT_spin_gravity_vibration_transform_with_description.html",
-  "Nature_pilot1.html",
-  "Energy_Radiation_Equtaion.html",
-  "Energy_Radiation.html",
-  "quantum_amp_relativistic_partition_model_he_en.html",
-  "time_arrow_book_entropy_demo_he.html",
-  "time_arrow_book_entropy_demo_he_v2.html",
-  "Riemann_Hypothesis_V2.html",
-  "Riemann_Hypothesis.html",
-  "Complexity_P_vs_NP.html",
-  "Navier–Stokes).html",
-  "black_hole_information_paradox_microecho.html",
-  "Unreasonable Effectiveness.html",
-  "DK_QED_full_with_grade_projections_HE.html",
-  "DK_QED_UNIFIED_MASTER_HE_FULL.html",
-  "tv_like_board.html",
-  "fourier_hodge_flow_abel_jacobi_full.html",
+  "qr_withdrawal_offline_live_diagram_math (7).html",  "svpad_material_compare_datasheet_multiband_FORMULAS.html",  "Qumplex_Equtaion.html",  "Radiation.html",  "sea_like_air_hospital_en_only_fixed_mermaid.html",  "academic_atmosphere_bounds_relativity_he.html",  "brl_dynamic_xray_model.html",  "brl_explained_notes.html",  "Coherante_Chimical.html",  "Magnatic_Current_Saver.html",  "Equtations_For_Current.html",  "Equtation_Line_Saver.html",  "pde_claim_theorem_counterexample_interactive.html",  "Car_New_Motor.html",  "voltage_lamp_calibrated_rich.html",  "spectral_mask_balloon_lamp_he.html",  "Wave_Long.html",  "PCX_cable_coupling_model_he_en.html",  "Human_Tree_Modle.html",  "SGVT_spin_gravity_vibration_transform_with_description.html",  "Nature_pilot1.html",  "Energy_Radiation_Equtaion.html",  "Energy_Radiation.html",  "quantum_amp_relativistic_partition_model_he_en.html",  "time_arrow_book_entropy_demo_he.html",  "time_arrow_book_entropy_demo_he_v2.html",  "Riemann_Hypothesis_V2.html",  "Riemann_Hypothesis.html",  "Complexity_P_vs_NP.html",  "Navier–Stokes).html",  "black_hole_information_paradox_microecho.html",  "Unreasonable Effectiveness.html",  "DK_QED_full_with_grade_projections_HE.html",  "DK_QED_UNIFIED_MASTER_HE_FULL.html",  "tv_like_board.html",
 ];
 
 function ensureHtml(name){
@@ -806,7 +733,6 @@ function descFromFile(file){
   return "מסמך רעיון/מודל מעוצב.";
 }
 
-/** ✅ Manual Emoji Map (file → emoji) */
 const EMOJI_MAP = {
   "water_walking_shoes_sonar_pump.html": "👟",
   "water_gas_train_blue.html": "🚆",
@@ -858,72 +784,12 @@ const EMOJI_MAP = {
   "absolute_organ_value_multilang_full_v2.html": "🫀",
   "absolute_organ_value_multilang_full.html": "🫁",
   "qr_withdrawal_offline_live_diagram_math (7).html": "🚀",
-  "svpad_material_compare_datasheet_multiband_FORMULAS.html": "🔬📊🧮🌈📉",
-  "Qumplex_Equtaion.html": "🔬⚙️⚡",
-  "Radiation.html": "📐 🧪 🔺 🔍",
-  "sea_like_air_hospital_en_only_fixed_mermaid.html": "🌊🌬️⚙️🧠",
-  "academic_atmosphere_bounds_relativity_he.html": "📘🌍🧠⏱️",
-  "brl_dynamic_xray_model.html": "🌍",
-  "brl_explained_notes.html": "📘⏱️",
-  "Coherante_Chimical.html": "🧪🛡️🔬⚛️",
-  "Magnatic_Current_Saver.html": "⚡🧲🎵",
-  "Equtations_For_Current.html": "⚡🧲🎵📈",
-  "Equtation_Line_Saver.html": "⚡🧠📡〰️🧮🔁🧲⚙️📈",
-  "pde_claim_theorem_counterexample_interactive.html": "🌀📐🔁🧩",
-  "Car_New_Motor.html": "🔧⚡💧",
-  "voltage_lamp_calibrated_rich.html": "🔴🟢🔵➕🔆🌙✨",
-  "spectral_mask_balloon_lamp_he.html": "🎈💡🌈",
-  "Wave_Long.html": "🎛️💡",
-  "PCX_cable_coupling_model_he_en.html": "⚡🧲🧮💧",
-  "Human_Tree_Modle.html": "📜🌿",
-  "SGVT_spin_gravity_vibration_transform_with_description.html": "📌↕",
-  "Nature_pilot1.html": "📌",
-  "Energy_Radiation_Equtaion.html": "🚀🌑📈",
-  "Energy_Radiation.html": "🚀🌑📈",
-  "quantum_amp_relativistic_partition_model_he_en.html": "⚛️🧪🧱💨🚀🌊📡📈✨",
-  "time_arrow_book_entropy_demo_he.html": "⚛️",
-  "time_arrow_book_entropy_demo_he_v2.html": "⚛️",
-  "Riemann_Hypothesis_V2.html": "📈",
-  "Riemann_Hypothesis.html": "📈",
-  "Complexity_P_vs_NP.html": "🚀",
-  "Navier–Stokes).html": "⚛️",
-  "black_hole_information_paradox_microecho.html": "⚛️",
-  "Unreasonable Effectiveness.html": "⚛️",
-  "DK_QED_full_with_grade_projections_HE.html": "⚛️",
-  "DK_QED_UNIFIED_MASTER_HE_FULL.html": "⚛️",
   "tv_like_board.html": "🎭➡️📝🔬✨",
-  "fourier_hodge_flow_abel_jacobi_full.html": "📝🔬",
 };
 
-/** Emoji per file: manual first, fallback after */
 function emojiForFile(file, tags){
   const key = String(file||"").trim();
   if(EMOJI_MAP[key]) return EMOJI_MAP[key];
-
-  const f = key.toLowerCase();
-  const t = new Set((tags||[]).map(x=>String(x||"").trim()));
-  if(t.has("פטנט/הגשה") || f.includes("patent") || f.includes("submission")) return "📜";
-  if(f.includes("hospital")) return "🏥";
-  if(f.includes("blood")) return "🩸";
-  if(f.includes("organ")) return "🫀";
-  if(f.includes("tooth")) return "🦷";
-  if(f.includes("bio") || f.includes("therapy")) return "🧬";
-  if(f.includes("security") || f.includes("ipv6") || f.includes("usb") || f.includes("hybirddata")) return "🛡️";
-  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) return "📡";
-  if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting")) return "⚡";
-  if(f.includes("thermal") || f.includes("thermo") || f.includes("thermosiphon")) return "🌡️";
-  if(f.includes("floor") || f.includes("paver") || f.includes("pressure")) return "🧱";
-  if(f.includes("water") && f.includes("shoes")) return "👟";
-  if(f.includes("water") || f.includes("gas") || f.includes("train")) return "🚆";
-  if(f.includes("aircraft") || f.includes("supersonic")) return "✈️";
-  if(f.includes("air_road") || f.includes("glider")) return "🪂";
-  if(f.includes("drone") || f.includes("pendulum")) return "🛠️";
-  if(f.includes("building") || f.includes("house") || f.includes("ceiling") || f.includes("stability")) return "🏗️";
-  if(f.includes("fingerprint") || f.includes("gesture") || f.includes("mobile") || f.includes("drawer")) return "🧩";
-  if(f.includes("constitution")) return "⚖️";
-  if(f.includes("calculator")) return "🧮";
-  if(f.includes("simulation")) return "🧪";
-  if(f.includes("multilang") || f.includes("trilingual") || f.includes("bilingual") || f.includes("all_languages")) return "🌍";
   return "📄";
 }
 
@@ -935,17 +801,13 @@ const PAGES = FILES.map(file => ({
   tags: tagsFromFile(file)
 }));
 
-/** LocalStorage keys */
 const LS_FAV = "index.favs.v4";
 const LS_THEME = "index.theme.v4";
 const LS_VISITS = "index.visits.v4";
 const LS_VIEW = "index.view.v3";
 const LS_SORT = "index.sort.v3";
-const LS_FILEVIEWS = "index.fileviews.v2"; // { "file.html": number }
-
-/* ✅ Device simulation */
-const LS_SIM = "index.sim.v1";
-const SIMS = ["auto","desktop","tablet","mobile"];
+const LS_FILEVIEWS = "index.fileviews.v2";
+const LS_DEVICE = "index.device.v1";
 
 const $ = (s)=>document.querySelector(s);
 const grid = $("#grid");
@@ -958,12 +820,13 @@ const fileViewsTotalEl = $("#fileViewsTotal");
 const showFavBtn = $("#showFavBtn");
 const sortSel = $("#sortSel");
 const viewBtn = $("#viewBtn");
+const deviceSel = $("#deviceSel");
 const activeInfo = $("#activeInfo");
 const toast = $("#toast");
 
 let showFavOnly = false;
 let activeTag = "הכל";
-let viewMode = localStorage.getItem(LS_VIEW) || "grid"; // grid | list
+let viewMode = localStorage.getItem(LS_VIEW) || "grid";
 
 function loadFavs(){
   try{ return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
@@ -983,7 +846,6 @@ function setTheme(next){
 function getTheme(){ return localStorage.getItem(LS_THEME) || "light"; }
 function norm(s){ return (s||"").toString().toLowerCase().trim(); }
 
-/** File views */
 function loadFileViews(){
   try{
     const obj = JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}");
@@ -1008,9 +870,7 @@ function getFileView(file){
 function totalFileViews(){
   const views = loadFileViews();
   let sum = 0;
-  for(const k in views){
-    sum += Number(views[k] || 0);
-  }
+  for(const k in views) sum += Number(views[k] || 0);
   return sum;
 }
 
@@ -1046,7 +906,7 @@ function renderChips(){
 function matches(page, query){
   const s = norm(query);
   if(!s) return true;
-  const tokens = s.split(/\s+/g).filter(Boolean); // AND search
+  const tokens = s.split(/\s+/g).filter(Boolean);
   const hay = [page.title, page.file, page.desc, (page.tags||[]).join(" ")].map(norm).join(" | ");
   return tokens.every(tok => hay.includes(tok));
 }
@@ -1133,36 +993,27 @@ async function copyText(text){
   }
 }
 
+function applyDevice(mode){
+  const m = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
+  document.documentElement.setAttribute("data-device", m);
+  localStorage.setItem(LS_DEVICE, m);
+  if(deviceSel) deviceSel.value = m;
+  renderActiveInfo();
+}
+
 function renderActiveInfo(){
   const qq = q.value.trim();
   const viewLabel = (viewMode==="list") ? "List" : "Grid";
   const tagLabel = activeTag || "הכל";
-  const sim = document.documentElement.getAttribute("data-sim") || "auto";
-  const simLabel = sim==="auto" ? "אוטו" : (sim==="desktop" ? "מחשב" : (sim==="tablet" ? "טאבלט" : "נייד"));
-  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${simLabel}`;
+  const dev = document.documentElement.getAttribute("data-device") || "desktop";
+  const devLabel = dev==="mobile" ? "Mobile" : (dev==="tablet" ? "Tablet" : "Desktop");
+  activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${devLabel}`;
 }
 
-/** open with counting */
 function openWithCount(file){
   incFileView(file);
   fileViewsTotalEl.textContent = String(totalFileViews());
   window.location.href = encodeURI(file);
-}
-
-/* ✅ Device simulation helpers */
-function setSim(sim){
-  const s = SIMS.includes(sim) ? sim : "auto";
-  document.documentElement.setAttribute("data-sim", s);
-  localStorage.setItem(LS_SIM, s);
-  updateSimButtons();
-  renderActiveInfo();
-}
-function updateSimButtons(){
-  const cur = document.documentElement.getAttribute("data-sim") || "auto";
-  const btns = document.querySelectorAll(".devBtn");
-  btns.forEach(b=>{
-    b.classList.toggle("active", (b.getAttribute("data-sim")===cur));
-  });
 }
 
 function render(){
@@ -1278,17 +1129,16 @@ function render(){
   }
 }
 
-/** Export / Import */
 function exportData(){
   const payload = {
-    version: 1,
+    version: 2,
     savedAt: new Date().toISOString(),
     favs: JSON.parse(localStorage.getItem(LS_FAV) || "[]"),
     visits: localStorage.getItem(LS_VISITS) || "0",
     viewMode: localStorage.getItem(LS_VIEW) || "grid",
     sortMode: localStorage.getItem(LS_SORT) || "az",
-    simMode: localStorage.getItem(LS_SIM) || "auto",
-    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}")
+    fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}"),
+    deviceMode: localStorage.getItem(LS_DEVICE) || "desktop"
   };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
   const a = document.createElement("a");
@@ -1309,14 +1159,12 @@ function importData(obj){
   localStorage.setItem(LS_VISITS, String(obj.visits || "0"));
   localStorage.setItem(LS_VIEW, String(obj.viewMode || "grid"));
   localStorage.setItem(LS_SORT, String(obj.sortMode || "az"));
-  localStorage.setItem(LS_SIM, String(obj.simMode || "auto"));
   localStorage.setItem(LS_FILEVIEWS, JSON.stringify(obj.fileViews || {}));
+  localStorage.setItem(LS_DEVICE, String(obj.deviceMode || "desktop"));
 
   viewMode = localStorage.getItem(LS_VIEW) || "grid";
   viewBtn.textContent = (viewMode==="list") ? "≡" : "▦";
   sortSel.value = getSort();
-
-  setSim(localStorage.getItem(LS_SIM) || "auto");
 
   showFavOnly = false;
   q.value = "";
@@ -1324,6 +1172,7 @@ function importData(obj){
 
   renderChips();
   render();
+  applyDevice(localStorage.getItem(LS_DEVICE) || "desktop");
   showToast("ייבוא בוצע ✅");
 }
 
@@ -1353,6 +1202,13 @@ function init(){
     render();
   };
 
+  // ✅ device preview
+  const savedDevice = localStorage.getItem(LS_DEVICE) || "desktop";
+  applyDevice(savedDevice);
+  if(deviceSel){
+    deviceSel.addEventListener("change", ()=> applyDevice(deviceSel.value));
+  }
+
   showFavBtn.onclick = ()=>{
     showFavOnly = !showFavOnly;
     showFavBtn.textContent = showFavOnly ? "⭐ כל הקבצים" : "⭐ מועדפים";
@@ -1365,7 +1221,7 @@ function init(){
     localStorage.removeItem(LS_VIEW);
     localStorage.removeItem(LS_SORT);
     localStorage.removeItem(LS_FILEVIEWS);
-    localStorage.removeItem(LS_SIM);
+    localStorage.removeItem(LS_DEVICE);
 
     visitCountEl.textContent = String(incVisits());
     fileViewsTotalEl.textContent = String(totalFileViews());
@@ -1379,14 +1235,12 @@ function init(){
     sortSel.value = "az";
     setSort("az");
 
-    setSim("auto");
-
     renderChips();
     render();
+    applyDevice("desktop");
     showToast("איפוס בוצע ✅");
   };
 
-  // export/import
   $("#exportBtn").onclick = exportData;
   $("#importBtn").onclick = ()=> $("#importFile").click();
   $("#importFile").addEventListener("change", async (e)=>{
@@ -1411,15 +1265,6 @@ function init(){
       q.select();
     }
   });
-
-  // ✅ Device simulation buttons
-  document.querySelectorAll(".devBtn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      setSim(btn.getAttribute("data-sim") || "auto");
-      showToast("תצוגה עודכנה ✅");
-    });
-  });
-  setSim(localStorage.getItem(LS_SIM) || "auto");
 
   renderChips();
   render();
