@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תיאוריה שלמה: נסיעה במהירות האור בחומר פוטוני מוצק עם שמירת צורה</title>
+    <style>
+        :root {
+            --photon-solid-color: #ff4081;
+            --geometry-color: #4caf50;
+            --velocity-color: #00bcd4;
+            --temperature-color: #ff9800;
+            --pressure-color: #9c27b0;
+            --friction-color: #795548;
+            --spacetime-color: #2196f3;
+            --dark-bg: #0a0a1a;
+            --card-bg: rgba(30, 30, 60, 0.7);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #f0f0f0;
+            background: var(--dark-bg);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 64, 129, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(76, 175, 80, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(0, 188, 212, 0.1) 0%, transparent 30%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(10, 10, 30, 0.85);
+            border-radius: 25px;
+            box-shadow: 
+                0 0 60px rgba(255, 64, 129, 0.25),
+                0 0 120px rgba(76, 175, 80, 0.15),
+                inset 0 0 100px rgba(0, 188, 212, 0.1);
+            overflow: hidden;
+            border: 2px solid;
+            border-image: linear-gradient(45deg, var(--photon-solid-color), var(--geometry-color)) 1;
+            backdrop-filter: blur(15px);
+        }
+        
+        header {
+            background: linear-gradient(135deg, 
+                rgba(255, 64, 129, 0.9), 
+                rgba(76, 175, 80, 0.9),
+                rgba(0, 188, 212, 0.9));
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .geometric-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(90deg, 
+                    transparent, 
+                    transparent 50px, 
+                    rgba(255, 255, 255, 0.1) 50px, 
+                    rgba(255, 255, 255, 0.1) 52px),
+                repeating-linear-gradient(0deg, 
+                    transparent, 
+                    transparent 50px, 
+                    rgba(255, 255, 255, 0.1) 50px, 
+                    rgba(255, 255, 255, 0.1) 52px);
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 3.2rem;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(45deg, 
+                var(--photon-solid-color), 
+                var(--geometry-color),
+                var(--velocity-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 1.6rem;
+            margin-top: 25px;
+            position: relative;
+            z-index: 1;
+            color: #b0e0ff;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 35px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 30px;
+            border: 2px solid transparent;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                var(--photon-solid-color), 
+                var(--geometry-color),
+                var(--velocity-color));
+        }
+        
+        .card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 
+                0 25px 50px rgba(255, 64, 129, 0.4),
+                0 0 150px rgba(76, 175, 80, 0.3),
+                inset 0 0 50px rgba(0, 188, 212, 0.2);
+        }
+        
+        .card h2 {
+            color: var(--geometry-color);
+            margin-top: 0;
+            font-size: 1.9rem;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--geometry-color), transparent) 1;
+            padding-bottom: 15px;
+            text-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 6px solid;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+            font-size: 1.25rem;
+            line-height: 1.9;
+            overflow-x: auto;
+            border-radius: 0 12px 12px 0;
+            border-left-color: var(--photon-solid-color);
+        }
+        
+        .geometry-equation {
+            border-left-color: var(--geometry-color);
+        }
+        
+        .velocity-equation {
+            border-left-color: var(--velocity-color);
+        }
+        
+        .temperature-equation {
+            border-left-color: var(--temperature-color);
+        }
+        
+        .pressure-equation {
+            border-left-color: var(--pressure-color);
+        }
+        
+        .friction-equation {
+            border-left-color: var(--friction-color);
+        }
+        
+        .vehicle-sim {
+            background: linear-gradient(135deg, 
+                rgba(76, 175, 80, 0.15), 
+                rgba(0, 188, 212, 0.15));
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid rgba(255, 64, 129, 0.3);
+            text-align: center;
+        }
+        
+        .vehicle-container {
+            width: 100%;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--geometry-color);
+        }
+        
+        .photon-vehicle {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(45deg, 
+                var(--photon-solid-color), 
+                var(--velocity-color));
+            border-radius: 10px;
+            top: 60px;
+            left: 50px;
+            transition: all 2s ease;
+            box-shadow: 0 0 30px var(--photon-solid-color);
+        }
+        
+        .coordinate-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .property-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .property-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--temperature-color);
+        }
+        
+        .property-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--velocity-color);
+            margin: 10px 0;
+        }
+        
+        .constraint-equation {
+            background: linear-gradient(135deg, 
+                rgba(156, 39, 176, 0.2), 
+                rgba(121, 85, 72, 0.2));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid var(--geometry-color);
+        }
+        
+        .theorem-box {
+            background: linear-gradient(135deg, 
+                rgba(255, 152, 0, 0.25), 
+                rgba(33, 150, 243, 0.25));
+            padding: 30px;
+            border-radius: 18px;
+            margin: 30px 0;
+            border: 3px solid var(--geometry-color);
+            position: relative;
+        }
+        
+        .theorem-title {
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: var(--geometry-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .optimization-chart {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80%;
+            background: linear-gradient(to top, 
+                transparent, 
+                var(--velocity-color) 70%);
+            clip-path: polygon(0% 100%, 10% 70%, 30% 40%, 50% 20%, 70% 10%, 90% 5%, 100% 0%);
+            animation: chart-rise 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes chart-rise {
+            0% { height: 80%; }
+            100% { height: 90%; }
+        }
+        
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .control-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, 
+                rgba(10, 10, 30, 0.9), 
+                rgba(30, 30, 60, 0.9));
+            color: white;
+            text-align: center;
+            padding: 50px;
+            margin-top: 50px;
+            border-top: 2px solid var(--photon-solid-color);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .property-panel, .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .math-box {
+                font-size: 1.1rem;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="geometric-pattern"></div>
+            <h1>נסיעה במהירות האור בחומר פוטוני מוצק עם שמירת צורה גיאומטרית</h1>
+            <div class="subtitle">
+                תיאוריה שלמה המאפשרת נסיעה מיידית לכל נקודה בכדור הארץ באמצעות שליטה בטמפרטורה, לחץ וכוח חיכוך, תוך שמירה מוחלטת על המבנה הגיאומטרי של הנוסע
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2>עקרון היסוד: רכב כחומר פוטוני מוצק</h2>
+                
+                <div class="vehicle-sim">
+                    <h3>סימולציית רכב פוטוני</h3>
+                    <div class="vehicle-container">
+                        <div class="coordinate-grid"></div>
+                        <div class="photon-vehicle" id="photonVehicle">
+                            <div style="position: absolute; top: 10px; left: 10px; color: white; font-size: 12px;">רכב פוטוני</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-panel">
+                        <div class="property-box">
+                            <div>טמפרטורה</div>
+                            <div class="property-value" id="tempValue">288K</div>
+                        </div>
+                        <div class="property-box">
+                            <div>מהירות</div>
+                            <div class="property-value" id="speedValue">0 m/s</div>
+                        </div>
+                        <div class="property-box">
+                            <div>לחץ</div>
+                            <div class="property-value" id="pressureValue">1013 hPa</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>הנחת היסוד:</strong> כל רכב ניתן לייצוג כאוסף פוטונים מקוטבע בעל מסה אפקטיבית:</p>
+                <div class="math-box">
+                    ψ<sub>vehicle</sub> = ∏<sub>i=1</sub><sup>N</sup> ψ<sub>i</sub>(r,t)<br>
+                    ψ<sub>i</sub> = √[n<sub>i</sub>(T,P)] e^{iϕ<sub>i</sub>(r)} - פוטון בודד בקונדנסט
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>לגראנז'יאן מלא עם שמירת צורה</h2>
+                
+                <div class="math-box">
+                    𝓛 = 𝓛<sub>photon-solid</sub> + 𝓛<sub>geometry</sub> + 𝓛<sub>thermo</sub> + 𝓛<sub>friction</sub> + 𝓛<sub>constraints</sub>
+                </div>
+                
+                <div class="math-box photon-solid-color">
+                    𝓛<sub>photon-solid</sub> = -¼F<sub>μν</sub>F<sup>μν</sup> + |(∂<sub>μ</sub>-ieA<sub>μ</sub>)ψ|<sup>2</sup> - m<sub>γ</sub><sup>2</sup>(T,P)|ψ|<sup>2</sup> - λ|ψ|<sup>4</sup>
+                </div>
+                
+                <div class="math-box geometry-equation">
+                    𝓛<sub>geometry</sub> = ½∫ d³r [κ(∇·u)<sup>2</sup> + μ(∇u + ∇uᵀ)<sup>2</sup>]<br>
+                    + α∫ d³r (∂<sub>μ</sub>g<sub>νρ</sub>)(∂<sup>μ</sup>g<sup>νρ</sup>)
+                </div>
+                
+                <div class="math-box temperature-equation">
+                    𝓛<sub>thermo</sub> = -β∫ d³r [T ln T - (T-T₀)²/2T₀]<br>
+                    - γ∫ d³r [P ln P - (P-P₀)²/2P₀]
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>אילוצי שמירת צורה גיאומטרית</h2>
+                
+                <div class="theorem-box">
+                    <div class="theorem-title">משפט שמירת הצורה</div>
+                    <p>עבור כל טרנספורמציה לורנץ Λ, קיים אילוץ:</p>
+                    <div class="math-box geometry-equation">
+                        G<sub>μν</sub>[Λ∘ψ] = J∘G<sub>μν</sub>[ψ]∘J⁻¹<br>
+                        J = ∂(Λx)/∂x - יעקוביאן הטרנספורמציה
+                    </div>
+                    <p>האילוץ מבטיח שמירת המבנה הפנימי תחת האצה למהירות האור.</p>
+                </div>
+                
+                <div class="constraint-equation">
+                    <strong>אילוץ קשיחות מקומית:</strong>
+                    <div class="math-box">
+                        ∇×u = 0, ∇·u = ε(T,P)<br>
+                        u = וקטור תזוזה של נקודות הרכב
+                    </div>
+                </div>
+                
+                <div class="constraint-equation">
+                    <strong>אילוץ טופולוגי:</strong>
+                    <div class="math-box">
+                        ∮<sub>∂V</sub> ψ*∇ψ·dS = 2πn, n∈ℤ<br>
+                        מספר גאוס-בונה נשמר
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>משוואות תנועה עם חיכוך וטמפרטורה</h2>
+                
+                <div class="math-box">
+                    ∂<sub>t</sub><sup>2</sup>ψ = c²∇²ψ - ∂V(ψ)/∂ψ* - η(T,P,v)∂<sub>t</sub>ψ + F<sub>thermal</sub>
+                </div>
+                
+                <p><strong>כוח חיכוך תלוי טמפרטורה:</strong></p>
+                <div class="math-box friction-equation">
+                    η(T,P,v) = η₀ e^{-ΔE/kT} (1 + αP) (1 + βv²/c²)<br>
+                    ΔE = אנרגיית אקטיבציה לחיכוך פוטוני
+                </div>
+                
+                <p><strong>כוח תרמי:</strong></p>
+                <div class="math-box temperature-equation">
+                    F<sub>thermal</sub> = -k<sub>B</sub>∇T × S + (σ/ε₀)∇(T⁴)
+                </div>
+                
+                <div class="control-panel">
+                    <div>
+                        <label>טמפרטורה: <span id="tempSliderValue">288K</span></label>
+                        <input type="range" min="3" max="1000" value="288" class="control-slider" id="tempSlider">
+                    </div>
+                    <div>
+                        <label>לחץ: <span id="pressureSliderValue">1013 hPa</span></label>
+                        <input type="range" min="100" max="2000" value="1013" class="control-slider" id="pressureSlider">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>אופטימיזציה לנסיעה במהירות האור</h2>
+                
+                <div class="optimization-chart">
+                    <div class="chart-line"></div>
+                </div>
+                
+                <p><strong>פונקציית המטרה:</strong></p>
+                <div class="math-box velocity-equation">
+                    max<sub>T,P,ψ</sub> [v(ψ,T,P)]<br>
+                    subject to: G(ψ) = G₀, E(ψ,T,P) ≤ E<sub>max</sub>
+                </div>
+                
+                <p><strong>פתרון אופטימלי:</strong></p>
+                <div class="math-box">
+                    T<sub>opt</sub> = T₀ √[1 - v²/c²]⁻¹<br>
+                    P<sub>opt</sub> = P₀ / (1 - v²/c²)<br>
+                    ψ<sub>opt</sub> = ψ₀ e^{ik·r - iωt} עם k = (ω/c)√[1 - v²/c²]⁻¹
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>תנאי שפה לסביבה אופטימלית</h2>
+                
+                <div class="theorem-box">
+                    <div class="theorem-title">משפט הסביבה המינימלית</div>
+                    <p>נסיעה במהירות האור אפשרית אם ורק אם:</p>
+                    <ol>
+                        <li>∇T · v ≥ 0 (גרדיאנט טמפרטורה בכיוון התנועה)</li>
+                        <li>P ≥ P<sub>critical</sub> = ρc²/3</li>
+                        <li>τ<sub>decoherence</sub> > L/c (זמן קוהרנטיות גדול מזמן הנסיעה)</li>
+                        <li>χ<sup>(3)</sup> > χ<sub>min</sub> (אי-לינאריות מספקת)</li>
+                    </ol>
+                </div>
+                
+                <p><strong>פרמטרים קריטיים לכדור הארץ:</strong></p>
+                <div class="math-box">
+                    T<sub>min</sub> = 288K (טמפרטורת קרקע)<br>
+                    P<sub>min</sub> = 10⁻⁶ Pa (לחץ קרינה שמש)<br>
+                    L<sub>max</sub> = 2πRₑ ≈ 40,000 km (היקף כדור הארץ)<br>
+                    t<sub>min</sub> = L<sub>max</sub>/c ≈ 0.13 שניות
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>נוסחה למיקום מיידי</h2>
+                
+                <div class="math-box">
+                    x(t) = ∫<sub>0</sub><sup>t</sup> v(τ) dτ<br>
+                    v(τ) = c tanh[∫<sub>0</sub><sup>τ</sup> a(s) ds / c]<br>
+                    a(s) = (c²/λ) [1 - e^{-κ(T-T₀)}] [1 - (P/P₀)⁻¹]
+                </div>
+                
+                <p><strong>פתרון לנסיעה מיידית:</strong></p>
+                <div class="math-box velocity-equation">
+                    Δx = cΔt / √[1 - e^{-2ΔE/kT}]<br>
+                    כאשר ΔE = אנרגיית קיטוב פוטונים
+                </div>
+                
+                <p><strong>תנאי לנסיעה לכל נקודה:</strong></p>
+                <div class="math-box">
+                    ∮<sub>orbit</sub> ∇ϕ·dr = 2πn ⇒ נסיעה רציפה סביב כדור הארץ
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>יישום מעשי: רכב פוטוני גלובלי</h2>
+                
+                <div class="vehicle-sim">
+                    <h4>מערכת בקרה אוטונומית</h4>
+                    <div class="math-box">
+                        d/dt [T, P, v] = A(T,P,v)·[T-T<sub>opt</sub>, P-P<sub>opt</sub>, v-c]ᵀ<br>
+                        A = מטריצת משוב אוטומטית
+                    </div>
+                    
+                    <p><strong>אלגוריתם ניווט:</strong></p>
+                    <ol>
+                        <li>קליטת מיקום יעד</li>
+                        <li>חישוב מסלול גיאודזי</li>
+                        <li>כוונון T, P למצב אופטימלי</li>
+                        <li>האצה למהירות האור</li>
+                        <li>שמירת צורה דרך אילוצים</li>
+                        <li>עצירה מדויקת ביעד</li>
+                    </ol>
+                </div>
+                
+                <p><strong>יתרונות:</strong></p>
+                <ul>
+                    <li>נסיעה מיידית לכל נקודה על כדור הארץ</li>
+                    <li>אפס צריכת דלק (שימוש באנרגיה תרמית)</li>
+                    <li>אפס פליטות</li>
+                    <li>שמירה מוחלטת על שלמות הנוסעים</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>תיאוריה מאחדת: אינטגרל מסלול סופי</h2>
+                
+                <div class="math-box">
+                    Z = ∫ 𝒟ψ 𝒟A 𝒟g e^{iS[ψ,A,g]/ħ}<br>
+                    S = ∫ d⁴x √[-g] 𝓛<sub>total</sub>
+                </div>
+                
+                <p><strong>פונקציית מעבר בין נקודות:</strong></p>
+                <div class="math-box">
+                    K(x<sub>f</sub>,t<sub>f</sub>; x<sub>i</sub>,t<sub>i</sub>) = ∑<sub>paths</sub> e^{iS[path]/ħ} δ(G[path]-G₀)
+                </div>
+                
+                <p><strong>הסתברות מעבר מיידי:</strong></p>
+                <div class="math-box velocity-equation">
+                    P(x→x') = |⟨ψ(x')|U(t)|ψ(x)⟩|²<br>
+                    U(t) = exp[-iHt/ħ] עם H = H<sub>photon</sub> + H<sub>constraint</sub>
+                </div>
+                
+                <div class="theorem-box">
+                    <div class="theorem-title">משפט הקיום והיחידות</div>
+                    <p>לכל זוג נקודות (x,x') על כדור הארץ, קיים מסלול יחיד המקיים:</p>
+                    <ol>
+                        <li>v → c</li>
+                        <li>G(ψ) = G₀ (שמירת צורה)</li>
+                        <li>מינימום אנרגיה תרמית</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <h3>סיכום: מהפכה בתורת התחבורה</h3>
+            <p>התיאוריה מאפשרת נסיעה מיידית לכל נקודה בכדור הארץ באמצעות שליטה בתרמודינמיקה של חומר פוטוני מוצק</p>
+            <p>© 2024 | תורת הנסיעה הפוטונית המהירה | פיזיקה של מצב מוצק פוטוני ושמירת צורה גיאומטרית</p>
+        </footer>
+    </div>
+
+    <script>
+        // אינטראקטיביות בסיסית
+        const vehicle = document.getElementById('photonVehicle');
+        const tempSlider = document.getElementById('tempSlider');
+        const pressureSlider = document.getElementById('pressureSlider');
+        const tempValue = document.getElementById('tempValue');
+        const tempSliderValue = document.getElementById('tempSliderValue');
+        const pressureValue = document.getElementById('pressureValue');
+        const pressureSliderValue = document.getElementById('pressureSliderValue');
+        const speedValue = document.getElementById('speedValue');
+        
+        let currentSpeed = 0;
+        let animationId = null;
+        
+        function updateVehicle() {
+            const temp = parseInt(tempSlider.value);
+            const pressure = parseInt(pressureSlider.value);
+            
+            // עדכון ערכים
+            tempValue.textContent = temp + 'K';
+            tempSliderValue.textContent = temp + 'K';
+            pressureValue.textContent = pressure + ' hPa';
+            pressureSliderValue.textContent = pressure + ' hPa';
+            
+            // חישוב מהירות תיאורטי
+            const theoreticalSpeed = (temp / 288) * (pressure / 1013) * 100000;
+            currentSpeed = Math.min(theoreticalSpeed, 299792458);
+            speedValue.textContent = formatSpeed(currentSpeed);
+            
+            // הנפשה
+            const position = (temp / 1000) * 200;
+            vehicle.style.left = `${position}px`;
+            
+            // אפקטים ויזואליים
+            const opacity = 0.3 + (currentSpeed / 299792458) * 0.7;
+            const blur = (currentSpeed / 299792458) * 20;
+            vehicle.style.opacity = opacity;
+            vehicle.style.filter = `blur(${blur}px)`;
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            if (currentSpeed > 1000000) {
+                animateVehicle();
+            }
+        }
+        
+        function animateVehicle() {
+            let pos = 50;
+            function move() {
+                pos += (currentSpeed / 1000000);
+                if (pos > 300) pos = 50;
+                vehicle.style.left = `${pos}px`;
+                animationId = requestAnimationFrame(move);
+            }
+            animationId = requestAnimationFrame(move);
+        }
+        
+        function formatSpeed(speed) {
+            if (speed >= 299792458) {
+                return 'c (מהירות האור)';
+            } else if (speed >= 1000000) {
+                return (speed / 1000).toFixed(0) + ' km/s';
+            } else if (speed >= 1000) {
+                return (speed / 1000).toFixed(1) + ' km/s';
+            } else {
+                return speed.toFixed(0) + ' m/s';
+            }
+        }
+        
+        tempSlider.addEventListener('input', updateVehicle);
+        pressureSlider.addEventListener('input', updateVehicle);
+        
+        // אתחול ראשוני
+        updateVehicle();
+    </script>
+</body>
+</html>
