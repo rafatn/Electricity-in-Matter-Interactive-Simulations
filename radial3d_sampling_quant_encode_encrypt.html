@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>דגימה רדיאלית 3D → כימות → קידוד → הצפנה (JavaScript)</title>
+
+  <!-- KaTeX (אופציונלי, אבל נותן נוסחאות יפות) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial;
+      background:
+        radial-gradient(1200px 600px at 90% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 10% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #fff);
+    }
+    header{
+      padding:22px 16px 12px;
+      max-width:1200px; margin:0 auto;
+    }
+    h1{margin:0 0 6px; font-size:22px}
+    .sub{color:var(--muted); line-height:1.45; max-width:980px}
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1.05fr .95fr;
+      max-width:1200px; margin:0 auto; padding:0 16px 20px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 8px; font-size:16px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 150px;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card2);
+      box-shadow:var(--shadow2);
+      flex:1 1 160px;
+    }
+    label{font-size:12px; color:var(--muted)}
+    input, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      outline:none;
+      font-family:inherit;
+      font-size:14px;
+    }
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      cursor:pointer;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      font-weight:700;
+      box-shadow:var(--shadow2);
+    }
+    button.primary{
+      background:#0f172a;
+      color:#fff;
+      border-color:#0f172a;
+    }
+    button:disabled{opacity:.5; cursor:not-allowed}
+    .note{color:var(--muted); font-size:13px; line-height:1.55}
+    .mono{font-family:var(--mono); font-size:12.5px; direction:ltr; text-align:left}
+    .kpi{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap:10px; margin-top:10px;
+    }
+    @media (max-width:720px){ .kpi{grid-template-columns:1fr} }
+    .kpi .box{
+      background:var(--card2);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+    }
+    .kpi .t{font-size:12px; color:var(--muted)}
+    .kpi .v{font-size:16px; font-weight:800; margin-top:4px}
+    canvas{
+      width:100%; height:340px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    details{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.55);
+      padding:10px;
+    }
+    summary{cursor:pointer; font-weight:800}
+    .hr{height:1px; background:var(--line); margin:12px 0}
+    .ok{color:#0a7a2f; font-weight:800}
+    .bad{color:#b42318; font-weight:800}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.6);
+      font-size:12px; color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>דגימה רדיאלית ב־3D → כימות → קידוד → הצפנה (JavaScript + WebCrypto)</h1>
+  <div class="sub">
+    הדגמה עצמאית בקובץ אחד: נייצר פונקציה רדיאלית סימטרית־כדורית
+    <span class="pill">\(g(r)=\frac{\sin(kr)}{r}\)</span>
+    ואז נבצע:
+    <b>Sampling</b> לפי נייקוויסט, <b>Quantization</b>, <b>Delta+Varint Encoding</b>, ולבסוף <b>AES-GCM Encryption</b> → פענוח → שחזור והשוואה.
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h2>פרמטרים + הרצה</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>מימד: שדה רדיאלי 3D (סימטריה כדורית)</label>
+        <input value="u(x)=g(r) , r=||x||" disabled />
+      </div>
+
+      <div class="field">
+        <label>תדר רדיאלי בסיסי \(k\) (rad/m) לייצור הדוגמה</label>
+        <input id="kBase" type="number" step="0.1" value="12" />
+      </div>
+
+      <div class="field">
+        <label>גבול תדר \(k_{max}\) (לנייקוויסט)</label>
+        <input id="kMax" type="number" step="0.1" value="20" />
+      </div>
+
+      <div class="field">
+        <label>רדיוס מקסימלי \(R\) (m)</label>
+        <input id="Rmax" type="number" step="0.1" value="6" />
+      </div>
+
+      <div class="field">
+        <label>מרווח דגימה \(\Delta r\) (m)</label>
+        <select id="drMode">
+          <option value="nyquist" selected>אוטומטי לפי נייקוויסט:  Δr = π / kmax</option>
+          <option value="custom">מותאם ידנית</option>
+        </select>
+      </div>
+
+      <div class="field" id="drCustomWrap" style="display:none">
+        <label>Δr ידני (m)</label>
+        <input id="drCustom" type="number" step="0.001" value="0.1" />
+      </div>
+
+      <div class="field">
+        <label>כימות: ביטים \(B\)</label>
+        <select id="bits">
+          <option>8</option>
+          <option selected>12</option>
+          <option>16</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>טווח כימות (g_min, g_max)</label>
+        <select id="rangeMode">
+          <option value="auto" selected>אוטומטי מתוך המדידות (עם margin)</option>
+          <option value="fixed">קבוע: [-1, 1]</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>הצפנה: AES-GCM</label>
+        <select id="keyMode">
+          <option value="random" selected>מפתח אקראי (רק להרצה)</option>
+          <option value="password">סיסמה → PBKDF2 → AES-GCM</option>
+        </select>
+      </div>
+
+      <div class="field" id="passWrap" style="display:none">
+        <label>סיסמה (ל־PBKDF2)</label>
+        <input id="password" type="password" placeholder="הקלד סיסמה…" />
+      </div>
+
+      <div class="field">
+        <label>איטרציות PBKDF2 (רק אם סיסמה)</label>
+        <input id="pbkdf2Iters" type="number" step="1000" value="120000" />
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="primary" id="runBtn">הרץ הכל (דגימה→כימות→קידוד→הצפנה→פענוח→שחזור)</button>
+      <button id="downloadBtn" disabled>הורד דו״ח JSON (תוצאות)</button>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="kpi">
+      <div class="box">
+        <div class="t">בדיקת נייקוויסט</div>
+        <div class="v" id="nyqStatus">—</div>
+      </div>
+      <div class="box">
+        <div class="t">מספר דגימות \(N\)</div>
+        <div class="v" id="Nout">—</div>
+      </div>
+      <div class="box">
+        <div class="t">שגיאה RMS בין \(g\) ל־\(\hat g\)</div>
+        <div class="v" id="rmsOut">—</div>
+      </div>
+      <div class="box">
+        <div class="t">גודל Payload מקודד (bytes)</div>
+        <div class="v" id="encSizeOut">—</div>
+      </div>
+      <div class="box">
+        <div class="t">גודל Ciphertext (bytes)</div>
+        <div class="v" id="cipherSizeOut">—</div>
+      </div>
+      <div class="box">
+        <div class="t">בדיקת CRC32</div>
+        <div class="v" id="crcOut">—</div>
+      </div>
+    </div>
+
+    <details>
+      <summary>נוסחאות (Bessel/כדורי) + תנאי נייקוויסט</summary>
+      <div class="note">
+        <p><b>משוואת הלמהולץ:</b> \(\nabla^2 u + k^2 u = 0\)</p>
+        <p><b>סימטריה כדורית:</b> \(u(\mathbf{x})=g(r)\)</p>
+        <p>
+          <b>ODE רדיאלי:</b>
+          \[
+            \frac{1}{r^2}\frac{d}{dr}\Big(r^2 g'(r)\Big)+k^2 g(r)=0
+          \]
+        </p>
+        <p>
+          <b>פתרון רגיל במרכז (ב־3D):</b>
+          \[
+            g(r)\propto \frac{\sin(kr)}{r} \quad \text{(או)} \quad j_0(kr)=\frac{\sin(kr)}{kr}
+          \]
+        </p>
+        <p>
+          <b>נייקוויסט רדיאלי:</b>
+          אם הספקטרום חסום עד \(k_{max}\), אז ללא aliasing:
+          \[
+            \Delta r \le \frac{\pi}{k_{max}}
+          \]
+        </p>
+      </div>
+    </details>
+
+    <details>
+      <summary>מה בדיוק עושה ה״קידוד״ כאן?</summary>
+      <div class="note">
+        <ol>
+          <li><b>Quantization:</b> הופכים \(s[n]\) ל־\(q[n]\in\{0,\dots,2^B-1\}\).</li>
+          <li><b>Delta:</b> \(d[0]=q[0]\), \(d[n]=q[n]-q[n-1]\).</li>
+          <li><b>ZigZag:</b> ממפה מספרים חתומים לשלמים לא־שליליים.</li>
+          <li><b>Varint:</b> קידוד משתנה־אורך (7 ביט בכל בית) ליעילות.</li>
+          <li><b>CRC32:</b> חתימת שלמות על ה־payload לפני הצפנה.</li>
+          <li><b>AES-GCM:</b> מצפין + מאמת (tag) את הנתונים.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details>
+      <summary>למה CRC32 אם יש AES-GCM?</summary>
+      <div class="note">
+        AES-GCM כבר נותן אימות. כאן CRC32 נותן בדיקה מהירה/מוקדמת על ה־payload לפני פירוק (decode),
+        ומועיל גם כשבודקים דיבוג או רוצים לזהות שגיאת קידוד עוד לפני קריפטו.
+      </div>
+    </details>
+
+  </section>
+
+  <section class="card">
+    <h2>גרף: המקור מול השחזור</h2>
+    <canvas id="plot" width="900" height="340"></canvas>
+
+    <div class="hr"></div>
+
+    <h2>תצוגה טכנית (Header + סטטיסטיקה)</h2>
+    <pre class="mono" id="tech">—</pre>
+
+    <details>
+      <summary>פלט בינארי: מה נשלח?</summary>
+      <div class="note">
+        <div class="mono">
+          HEADER (JSON קטן) + payload מקודד<br>
+          payload = [version|B|N|Δr|gmin|gmax|...] + varint(deltas) + CRC32<br>
+          ואז:<br>
+          nonce(12 bytes) + AES-GCM(ciphertext + tag)
+        </div>
+      </div>
+    </details>
+
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   Utilities
+   ========================================================= */
+const te = new TextEncoder();
+const td = new TextDecoder();
+
+function clamp(x, a, b){ return Math.max(a, Math.min(b, x)); }
+
+function fmt(x, d=6){
+  if (!isFinite(x)) return String(x);
+  const s = x.toFixed(d);
+  return s.replace(/\.?0+$/,'');
+}
+
+function nowMs(){ return performance.now(); }
+
+/* =========================================================
+   ZigZag + Varint
+   - ZigZag maps signed int -> unsigned int
+   - Varint encodes unsigned int in 7-bit chunks
+   ========================================================= */
+function zigzagEncode(n){
+  // n is signed 32-bit
+  // (n<<1) ^ (n>>31)
+  return ((n << 1) ^ (n >> 31)) >>> 0;
+}
+function zigzagDecode(u){
+  // (u>>>1) ^ -(u&1)
+  return ((u >>> 1) ^ (-(u & 1))) | 0;
+}
+
+function varintEncode(u){
+  // u: unsigned 32-bit
+  const out = [];
+  while (u >= 0x80){
+    out.push((u & 0x7F) | 0x80);
+    u >>>= 7;
+  }
+  out.push(u & 0x7F);
+  return out;
+}
+
+function varintDecode(bytes, offset){
+  let u = 0, shift = 0, i = offset;
+  while (i < bytes.length){
+    const b = bytes[i++];
+    u |= (b & 0x7F) << shift;
+    if ((b & 0x80) === 0) return { value: u >>> 0, next: i };
+    shift += 7;
+    if (shift > 35) throw new Error("Varint too long");
+  }
+  throw new Error("Unexpected end of varint");
+}
+
+/* =========================================================
+   CRC32 (fast-ish, table)
+   ========================================================= */
+const CRC32_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let i=0;i<256;i++){
+    let c = i;
+    for (let k=0;k<8;k++){
+      c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    }
+    t[i] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(bytes){
+  let c = 0xFFFFFFFF;
+  for (let i=0;i<bytes.length;i++){
+    c = CRC32_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  }
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+/* =========================================================
+   AES-GCM helpers (WebCrypto)
+   ========================================================= */
+async function aesGcmEncrypt(key, plaintextBytes, aadBytes){
+  const nonce = crypto.getRandomValues(new Uint8Array(12));
+  const cipherBuf = await crypto.subtle.encrypt(
+    { name:"AES-GCM", iv: nonce, additionalData: aadBytes || new Uint8Array(), tagLength: 128 },
+    key,
+    plaintextBytes
+  );
+  return { nonce, ciphertext: new Uint8Array(cipherBuf) };
+}
+
+async function aesGcmDecrypt(key, nonce, ciphertextBytes, aadBytes){
+  const plainBuf = await crypto.subtle.decrypt(
+    { name:"AES-GCM", iv: nonce, additionalData: aadBytes || new Uint8Array(), tagLength: 128 },
+    key,
+    ciphertextBytes
+  );
+  return new Uint8Array(plainBuf);
+}
+
+async function makeAesKeyRandom(){
+  return crypto.subtle.generateKey({ name:"AES-GCM", length: 256 }, true, ["encrypt","decrypt"]);
+}
+
+async function makeAesKeyFromPassword(password, saltBytes, iterations){
+  const baseKey = await crypto.subtle.importKey(
+    "raw",
+    te.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    { name:"PBKDF2", salt: saltBytes, iterations, hash:"SHA-256" },
+    baseKey,
+    { name:"AES-GCM", length: 256 },
+    true,
+    ["encrypt","decrypt"]
+  );
+}
+
+/* =========================================================
+   The 3D radial function g(r) used for demo:
+   g(r) = sin(k r) / r  with safe handling at r=0
+   (physically: spherical Bessel-like behavior)
+   ========================================================= */
+function gDemo(r, k){
+  if (r === 0) return k; // limit sin(kr)/r ~ k
+  return Math.sin(k*r)/r;
+}
+
+/* =========================================================
+   Quantization
+   ========================================================= */
+function quantize(samples, B, gmin, gmax){
+  const L = 1 << B; // for B<=16 ok; B=16 => 65536
+  const dq = (gmax - gmin) / (L - 1);
+  const q = new Uint16Array(samples.length);
+  for (let i=0;i<samples.length;i++){
+    const x = (samples[i] - gmin) / dq;
+    const qi = Math.round(x);
+    q[i] = clamp(qi, 0, L-1);
+  }
+  return { q, dq };
+}
+
+function dequantize(q, dq, gmin){
+  const out = new Float64Array(q.length);
+  for (let i=0;i<q.length;i++){
+    out[i] = gmin + q[i]*dq;
+  }
+  return out;
+}
+
+/* =========================================================
+   Encoding (delta + zigzag + varint)
+   payload format (binary):
+     [version:1][B:1][N:4 LE][dr:8 float64 LE][gmin:8 float64 LE][gmax:8 float64 LE]
+     [varint stream of zigzag(deltas)]
+     [crc32:4 LE]  (crc over everything before crc)
+   ========================================================= */
+function writeU32LE(arr, v){
+  arr.push(v & 255, (v>>>8)&255, (v>>>16)&255, (v>>>24)&255);
+}
+function writeF64LE(arr, x){
+  const b = new ArrayBuffer(8);
+  new DataView(b).setFloat64(0, x, true);
+  const u = new Uint8Array(b);
+  for (const byte of u) arr.push(byte);
+}
+function readU32LE(bytes, off){
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  return dv.getUint32(off, true);
+}
+function readF64LE(bytes, off){
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  return dv.getFloat64(off, true);
+}
+
+function encodePayload(q, B, dr, gmin, gmax){
+  const version = 1;
+  const header = [];
+  header.push(version & 255);
+  header.push(B & 255);
+  writeU32LE(header, q.length >>> 0);
+  writeF64LE(header, dr);
+  writeF64LE(header, gmin);
+  writeF64LE(header, gmax);
+
+  // delta + zigzag + varint
+  const body = [];
+  let prev = 0;
+  for (let i=0;i<q.length;i++){
+    const cur = q[i] | 0;
+    const d = (i===0) ? cur : (cur - prev);
+    prev = cur;
+    const zz = zigzagEncode(d | 0);
+    body.push(...varintEncode(zz));
+  }
+
+  // concat without CRC first
+  const withoutCrc = new Uint8Array(header.length + body.length);
+  withoutCrc.set(header, 0);
+  withoutCrc.set(body, header.length);
+
+  const crc = crc32(withoutCrc);
+  const out = new Uint8Array(withoutCrc.length + 4);
+  out.set(withoutCrc, 0);
+
+  out[withoutCrc.length+0] = crc & 255;
+  out[withoutCrc.length+1] = (crc>>>8) & 255;
+  out[withoutCrc.length+2] = (crc>>>16) & 255;
+  out[withoutCrc.length+3] = (crc>>>24) & 255;
+
+  return { bytes: out, crc };
+}
+
+function decodePayload(payloadBytes){
+  if (payloadBytes.length < 1+1+4+8+8+8+4) throw new Error("Payload too small");
+
+  // verify CRC
+  const dataLen = payloadBytes.length - 4;
+  const data = payloadBytes.slice(0, dataLen);
+  const gotCrc = (payloadBytes[dataLen]) |
+                 (payloadBytes[dataLen+1] << 8) |
+                 (payloadBytes[dataLen+2] << 16) |
+                 (payloadBytes[dataLen+3] << 24);
+  const calc = crc32(data);
+  const ok = (calc >>> 0) === (gotCrc >>> 0);
+
+  // parse header
+  const version = data[0];
+  const B = data[1];
+  const N = readU32LE(data, 2);
+  const dr = readF64LE(data, 6);
+  const gmin = readF64LE(data, 14);
+  const gmax = readF64LE(data, 22);
+
+  let offset = 30; // header bytes
+  const q = new Uint16Array(N);
+  let prev = 0;
+
+  for (let i=0;i<N;i++){
+    const { value: zz, next } = varintDecode(data, offset);
+    offset = next;
+    const d = zigzagDecode(zz) | 0;
+    const cur = (i===0) ? d : (prev + d);
+    q[i] = cur & 0xFFFF;
+    prev = cur;
+  }
+
+  return { version, B, N, dr, gmin, gmax, q, crcOk: ok, crcCalc: calc>>>0, crcGot: gotCrc>>>0, headerBytes: 30, usedBytes: offset };
+}
+
+/* =========================================================
+   Metrics + plot
+   ========================================================= */
+function rms(a, b){
+  let s=0;
+  const n = Math.min(a.length,b.length);
+  for (let i=0;i<n;i++){
+    const d = a[i]-b[i];
+    s += d*d;
+  }
+  return Math.sqrt(s/n);
+}
+
+function plotSeries(canvas, x, y1, y2){
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // padding
+  const padL=52, padR=16, padT=14, padB=36;
+  const iw = W-padL-padR, ih = H-padT-padB;
+
+  // ranges
+  const xmin = x[0], xmax = x[x.length-1];
+  let ymin=+Infinity, ymax=-Infinity;
+  for (let i=0;i<x.length;i++){
+    ymin = Math.min(ymin, y1[i], y2[i]);
+    ymax = Math.max(ymax, y1[i], y2[i]);
+  }
+  if (!isFinite(ymin) || !isFinite(ymax) || ymin===ymax){ ymin-=1; ymax+=1; }
+
+  // helpers
+  const X = (v)=> padL + (v-xmin)/(xmax-xmin)*iw;
+  const Y = (v)=> padT + (1-(v-ymin)/(ymax-ymin))*ih;
+
+  // grid
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = "rgba(148,163,184,.55)";
+  ctx.lineWidth = 1;
+
+  const gx=6, gy=5;
+  for (let i=0;i<=gx;i++){
+    const xx = padL + (i/gx)*iw;
+    ctx.beginPath(); ctx.moveTo(xx,padT); ctx.lineTo(xx,padT+ih); ctx.stroke();
+  }
+  for (let j=0;j<=gy;j++){
+    const yy = padT + (j/gy)*ih;
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(padL+iw,yy); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle = "rgba(15,23,42,.75)";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ih); ctx.lineTo(padL+iw,padT+ih);
+  ctx.stroke();
+
+  // draw y1 (original)
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = "rgba(2,6,23,.85)";
+  ctx.beginPath();
+  for (let i=0;i<x.length;i++){
+    const xx=X(x[i]), yy=Y(y1[i]);
+    if (i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  }
+  ctx.stroke();
+
+  // draw y2 (reconstructed)
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = "rgba(37,99,235,.85)";
+  ctx.beginPath();
+  for (let i=0;i<x.length;i++){
+    const xx=X(x[i]), yy=Y(y2[i]);
+    if (i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  }
+  ctx.stroke();
+
+  // legend
+  ctx.font = "12px system-ui";
+  ctx.fillStyle = "rgba(2,6,23,.9)";
+  ctx.fillText("מקור g(r)", padL+8, padT+14);
+  ctx.fillStyle = "rgba(37,99,235,.95)";
+  ctx.fillText("שחזור ĝ(r)", padL+8, padT+30);
+
+  // x labels
+  ctx.fillStyle = "rgba(15,23,42,.85)";
+  ctx.font = "12px system-ui";
+  ctx.fillText("r", padL+iw-8, padT+ih+28);
+
+  // y labels (min/max)
+  ctx.fillStyle = "rgba(100,116,139,1)";
+  ctx.font = "11px system-ui";
+  ctx.fillText(fmt(ymax,4), 6, padT+10);
+  ctx.fillText(fmt(ymin,4), 6, padT+ih);
+}
+
+/* =========================================================
+   Main pipeline
+   ========================================================= */
+function computeDr(kMax, mode, drCustom){
+  if (mode === "custom") return Math.max(1e-9, Number(drCustom));
+  return Math.PI / Math.max(1e-9, Number(kMax));
+}
+
+function makeSamples(Rmax, dr, kBase){
+  const N = Math.max(2, Math.floor(Rmax / dr) + 1);
+  const r = new Float64Array(N);
+  const s = new Float64Array(N);
+  for (let i=0;i<N;i++){
+    r[i] = i*dr;
+    s[i] = gDemo(r[i], kBase);
+  }
+  return { r, s };
+}
+
+function pickRange(samples, rangeMode){
+  if (rangeMode === "fixed") return { gmin: -1, gmax: 1 };
+  let mn=+Infinity, mx=-Infinity;
+  for (const v of samples){
+    mn = Math.min(mn, v);
+    mx = Math.max(mx, v);
+  }
+  if (!isFinite(mn)||!isFinite(mx)||mn===mx){ mn-=1; mx+=1; }
+  // margin 5%
+  const span = mx-mn;
+  return { gmin: mn - 0.05*span, gmax: mx + 0.05*span };
+}
+
+function nyquistOk(dr, kMax){
+  return dr <= (Math.PI / Math.max(1e-9, kMax)) + 1e-12;
+}
+
+let lastReport = null;
+
+async function runAll(){
+  const kBase = Number(document.getElementById("kBase").value);
+  const kMax  = Number(document.getElementById("kMax").value);
+  const Rmax  = Number(document.getElementById("Rmax").value);
+  const drMode = document.getElementById("drMode").value;
+  const drCustom = Number(document.getElementById("drCustom").value);
+  const B = Number(document.getElementById("bits").value);
+  const rangeMode = document.getElementById("rangeMode").value;
+
+  const keyMode = document.getElementById("keyMode").value;
+  const password = document.getElementById("password").value;
+  const iters = Number(document.getElementById("pbkdf2Iters").value);
+
+  const dr = computeDr(kMax, drMode, drCustom);
+
+  // 1) Sampling
+  const t0 = nowMs();
+  const { r, s } = makeSamples(Rmax, dr, kBase);
+
+  // 2) Quantization
+  const { gmin, gmax } = pickRange(s, rangeMode);
+  const { q, dq } = quantize(s, B, gmin, gmax);
+
+  // 3) Encoding
+  const enc0 = nowMs();
+  const { bytes: payloadBytes, crc } = encodePayload(q, B, dr, gmin, gmax);
+  const enc1 = nowMs();
+
+  // 4) Encryption
+  let key, salt = null;
+  if (keyMode === "password"){
+    if (!password) throw new Error("בחרת סיסמה אבל לא הוזנה סיסמה.");
+    salt = crypto.getRandomValues(new Uint8Array(16));
+    key = await makeAesKeyFromPassword(password, salt, iters);
+  } else {
+    key = await makeAesKeyRandom();
+  }
+
+  // Header JSON קטן כ-AAD (כדי שלא ישנו אותו בלי להתגלות)
+  const aadObj = {
+    scheme: "radial3d-demo",
+    v: 1,
+    keyMode,
+    pbkdf2Iters: (keyMode==="password") ? iters : null
+  };
+  const aadBytes = te.encode(JSON.stringify(aadObj));
+
+  const crypt0 = nowMs();
+  const { nonce, ciphertext } = await aesGcmEncrypt(key, payloadBytes, aadBytes);
+  const crypt1 = nowMs();
+
+  // 5) Decryption
+  const dec0 = nowMs();
+  const decrypted = await aesGcmDecrypt(key, nonce, ciphertext, aadBytes);
+  const dec1 = nowMs();
+
+  // 6) Decode + reconstruct
+  const parsed = decodePayload(decrypted);
+  if (!parsed.crcOk){
+    throw new Error(`CRC לא תקין! got=${parsed.crcGot} calc=${parsed.crcCalc}`);
+  }
+  const sHat = dequantize(parsed.q, (parsed.gmax-parsed.gmin)/((1<<parsed.B)-1), parsed.gmin);
+
+  // Metrics
+  const rmsErr = rms(s, sHat);
+  const nyq = nyquistOk(dr, kMax);
+
+  // UI updates
+  document.getElementById("nyqStatus").innerHTML = nyq ? `<span class="ok">תקין ✅</span>` : `<span class="bad">לא תקין ❌</span>`;
+  document.getElementById("Nout").textContent = String(s.length);
+  document.getElementById("rmsOut").textContent = fmt(rmsErr, 8);
+  document.getElementById("encSizeOut").textContent = String(payloadBytes.length);
+  document.getElementById("cipherSizeOut").textContent = String(ciphertext.length);
+  document.getElementById("crcOut").innerHTML = `<span class="ok">OK ✅</span>`;
+
+  plotSeries(document.getElementById("plot"), r, s, sHat);
+
+  const report = {
+    params: { kBase, kMax, Rmax, drMode, dr, B, rangeMode, keyMode, pbkdf2Iters: (keyMode==="password") ? iters : null },
+    aad: aadObj,
+    salt: salt ? Array.from(salt) : null,
+    nonce: Array.from(nonce),
+    sizes: { N: s.length, payloadBytes: payloadBytes.length, ciphertextBytes: ciphertext.length },
+    nyquist: { ok: nyq, condition: "dr <= pi/kMax", dr, pi_over_kMax: Math.PI/Math.max(1e-9,kMax) },
+    quant: { gmin, gmax, dq },
+    crc32: { value: crc },
+    timings_ms: {
+      total: nowMs()-t0,
+      encode: enc1-enc0,
+      encrypt: crypt1-crypt0,
+      decrypt: dec1-dec0
+    },
+    decode: {
+      version: parsed.version,
+      usedBytes: parsed.usedBytes,
+      headerBytes: parsed.headerBytes
+    },
+    rmsError: rmsErr
+  };
+  lastReport = report;
+  document.getElementById("downloadBtn").disabled = false;
+
+  document.getElementById("tech").textContent =
+`Header/AAD:
+${JSON.stringify(aadObj, null, 2)}
+
+Δr = ${fmt(dr, 8)}   |  π/kMax = ${fmt(Math.PI/Math.max(1e-9,kMax), 8)}  | Nyquist: ${nyq ? "OK" : "FAIL"}
+N = ${s.length}
+Quant: B=${B}, gmin=${fmt(gmin,6)}, gmax=${fmt(gmax,6)}, dq=${fmt(dq,10)}
+
+Encoding:
+payloadBytes=${payloadBytes.length}
+CRC32=${crc}
+
+Crypto (AES-GCM):
+nonce(12)=${nonce.length} bytes
+ciphertext+tag=${ciphertext.length} bytes
+${salt ? "salt(16) used for PBKDF2" : "random AES key"}
+
+Timings (ms):
+encode=${fmt(report.timings_ms.encode,3)}
+encrypt=${fmt(report.timings_ms.encrypt,3)}
+decrypt=${fmt(report.timings_ms.decrypt,3)}
+total=${fmt(report.timings_ms.total,3)}
+
+Decode:
+version=${parsed.version}, headerBytes=${parsed.headerBytes}, usedBytes=${parsed.usedBytes}
+RMS error=${fmt(rmsErr, 10)}
+`;
+}
+
+function downloadJson(obj, filename="radial3d_report.json"){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   UI bindings
+   ========================================================= */
+const drModeEl = document.getElementById("drMode");
+const drWrap = document.getElementById("drCustomWrap");
+drModeEl.addEventListener("change", () => {
+  drWrap.style.display = (drModeEl.value === "custom") ? "block" : "none";
+});
+
+const keyModeEl = document.getElementById("keyMode");
+const passWrap = document.getElementById("passWrap");
+keyModeEl.addEventListener("change", () => {
+  passWrap.style.display = (keyModeEl.value === "password") ? "block" : "none";
+});
+
+document.getElementById("runBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("runBtn");
+  btn.disabled = true;
+  btn.textContent = "מריץ…";
+  try{
+    await runAll();
+  }catch(e){
+    alert("שגיאה: " + (e?.message || e));
+    console.error(e);
+    document.getElementById("crcOut").innerHTML = `<span class="bad">ERROR</span>`;
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "הרץ הכל (דגימה→כימות→קידוד→הצפנה→פענוח→שחזור)";
+  }
+});
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  if (!lastReport) return;
+  downloadJson(lastReport);
+});
+
+/* =========================================================
+   KaTeX render
+   ========================================================= */
+window.addEventListener("load", () => {
+  if (window.renderMathInElement){
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false},
+      ]
+    });
+  }
+});
+</script>
+</body>
+</html>
