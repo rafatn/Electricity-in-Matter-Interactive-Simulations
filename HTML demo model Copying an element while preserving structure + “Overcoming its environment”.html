@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מודל העתקת איבר (דמו) — שמירת מבנה + סביבה (FEM מינימלי)</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg:#0b1020; --card:rgba(255,255,255,.08); --card2:rgba(255,255,255,.06);
+      --txt:#e8eefc; --muted:#a8b3cf; --line:rgba(255,255,255,.12);
+      --good:#33d17a; --warn:#ffb86b; --bad:#ff4d4d; --accent:#7aa2ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --radius: 18px;
+    }
+    html,body{height:100%; margin:0; background: radial-gradient(1200px 700px at 20% 10%, rgba(122,162,255,.18), transparent 55%),
+                                   radial-gradient(900px 600px at 80% 20%, rgba(51,209,122,.12), transparent 55%),
+                                   radial-gradient(900px 600px at 45% 95%, rgba(255,184,107,.10), transparent 55%),
+                                   var(--bg);
+              color:var(--txt); font-family:var(--sans);}
+    .wrap{max-width:1200px; margin:0 auto; padding:18px;}
+    header{
+      display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    h1{font-size:20px; margin:0; letter-spacing:.2px}
+    .subtitle{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px;}
+    @media (max-width:980px){ .grid{grid-template-columns:1fr; } }
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px; border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .card .hd .t{font-weight:700; font-size:13px}
+    .card .bd{padding:12px 14px}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width:540px){ .row{grid-template-columns:1fr} }
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input[type="range"]{width:100%}
+    .btns{display:flex; flex-wrap:wrap; gap:8px}
+    button{
+      cursor:pointer; border:1px solid var(--line); background:rgba(255,255,255,.06);
+      color:var(--txt); padding:9px 10px; border-radius:12px; font-weight:650;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{background:rgba(255,255,255,.09)}
+    button:active{transform: translateY(1px)}
+    button.primary{background:rgba(122,162,255,.18); border-color:rgba(122,162,255,.35)}
+    button.danger{background:rgba(255,77,77,.14); border-color:rgba(255,77,77,.35)}
+    .small{font-size:12px; color:var(--muted); line-height:1.5}
+    .kpi{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;
+    }
+    .kpi .box{
+      border:1px solid var(--line); border-radius:14px; padding:10px; background:rgba(255,255,255,.04)
+    }
+    .kpi .box .n{font-family:var(--mono); font-size:13px}
+    .pill{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--muted)}
+    .dot{width:10px; height:10px; border-radius:99px; background:var(--muted)}
+    .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+    canvas{display:block; width:100%; height:520px; background:rgba(0,0,0,.22)}
+    @media (max-width:980px){ canvas{height:420px} }
+    .mono{font-family:var(--mono)}
+    .sep{height:1px; background:var(--line); margin:10px 0}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width:540px){ .two{grid-template-columns:1fr} }
+    .note{
+      border-left:3px solid rgba(122,162,255,.6);
+      padding:10px 12px; background:rgba(122,162,255,.08);
+      border-radius:12px; color:var(--muted); font-size:12px; line-height:1.55;
+    }
+    .legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px}
+    .legend .item{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px}
+    .swatch{width:14px; height:10px; border-radius:4px; background:#888}
+    .swatch.c{background:rgba(51,209,122,.9)}
+    .swatch.t{background:rgba(255,184,107,.9)}
+    .swatch.j{background:rgba(122,162,255,.9)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>מודל דמו ב-HTML: העתקת איבר תוך שמירת מבנה + “התגברות על סביבה”</h1>
+      <div class="subtitle">
+        דוגמה מינימלית בסגנון FEM: גוף קטן (8 צמתים + טטראהדרים), אנרגיית שמירת מבנה (איזומטריה + נפח + מחסום J&gt;0),
+        ודינמיקת סביבה (חמצן/טמפרטורה) על גרף הצמתים עם בקרה.
+      </div>
+    </div>
+    <div class="pill"><span class="dot" id="statusDot"></span><span id="statusText">מוכן</span></div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="hd">
+        <div class="t">תצוגה (פרויקטציה 2D של 3D)</div>
+        <div class="pill mono">FPS: <span id="fps">—</span></div>
+      </div>
+      <div class="bd">
+        <canvas id="cv" width="1100" height="520"></canvas>
+        <div class="legend">
+          <div class="item"><span class="swatch j"></span>צבע צמתים לפי J (דטרמיננטה) — כחול טוב, אדום רע</div>
+          <div class="item"><span class="swatch c"></span>בר חמצן (c) — ירוק גבוה</div>
+          <div class="item"><span class="swatch t"></span>בר טמפרטורה (T) — כתום גבוה</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd">
+        <div class="t">בקרות</div>
+        <div class="pill mono">Δt=<span id="dtLbl">0.10</span></div>
+      </div>
+      <div class="bd">
+
+        <div class="note">
+          <b>איך לקרוא את זה:</b> אנחנו מזיזים את הצמתים \(x_i\) כדי למזער אנרגיה:
+          \(\|F^T F-I\|^2\) (שמירת צורה מקומית) + \((J-1)^2\) (שמירת נפח) + מחסום \(-\log J\) (מונע \(J\le0\)).
+          במקביל, \(c,T\) מתפתחים בזמן לפי דיפוזיה על גרף שכנות, והבקרה מנסה לשמור ספים.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <div>
+            <label>משקל שמירת צורה \(w_g\): <span class="mono" id="wgLbl">1.00</span></label>
+            <input id="wg" type="range" min="0" max="6" step="0.05" value="1.0">
+          </div>
+          <div>
+            <label>משקל נפח \(w_v\): <span class="mono" id="wvLbl">1.00</span></label>
+            <input id="wv" type="range" min="0" max="6" step="0.05" value="1.0">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>מחסום \(w_b\) ל-J&gt;0: <span class="mono" id="wbLbl">0.20</span></label>
+            <input id="wb" type="range" min="0" max="2" step="0.01" value="0.20">
+          </div>
+          <div>
+            <label>צעד גרדיאנט (גיאומטריה): <span class="mono" id="lrLbl">0.03</span></label>
+            <input id="lr" type="range" min="0.001" max="0.12" step="0.001" value="0.030">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Δt דינמיקה (סביבה): <span class="mono" id="dt2Lbl">0.10</span></label>
+            <input id="dt" type="range" min="0.02" max="0.30" step="0.01" value="0.10">
+          </div>
+          <div>
+            <label>דיפוזיה (גרף) D: <span class="mono" id="diffLbl">0.25</span></label>
+            <input id="diff" type="range" min="0.00" max="1.20" step="0.01" value="0.25">
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <label>סף חמצן \(c_{min}\): <span class="mono" id="cminLbl">0.35</span></label>
+            <input id="cmin" type="range" min="0.05" max="0.80" step="0.01" value="0.35">
+          </div>
+          <div>
+            <label>טווח טמפ׳ [Tmin,Tmax]: <span class="mono" id="trLbl">[0.30,0.70]</span></label>
+            <input id="tmin" type="range" min="0.00" max="0.60" step="0.01" value="0.30">
+            <input id="tmax" type="range" min="0.40" max="1.00" step="0.01" value="0.70">
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <div>
+            <label>סביבה: חמצן חיצוני \(c_{env}\): <span class="mono" id="cenvLbl">0.55</span></label>
+            <input id="cenv" type="range" min="0.00" max="1.00" step="0.01" value="0.55">
+          </div>
+          <div>
+            <label>סביבה: טמפ׳ חיצונית \(T_{env}\): <span class="mono" id="tenvLbl">0.55</span></label>
+            <input id="tenv" type="range" min="0.00" max="1.00" step="0.01" value="0.55">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>בקרה: “פרפוזיה” q (מקס׳): <span class="mono" id="qmaxLbl">0.25</span></label>
+            <input id="qmax" type="range" min="0.00" max="0.80" step="0.01" value="0.25">
+          </div>
+          <div>
+            <label>בקרה: קירור/חימום (מקס׳): <span class="mono" id="umaxLbl">0.25</span></label>
+            <input id="umax" type="range" min="0.00" max="0.80" step="0.01" value="0.25">
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="btns">
+          <button class="primary" id="runBtn">▶︎ הרץ</button>
+          <button id="stepBtn">צעד אחד</button>
+          <button id="resetBtn">איפוס</button>
+          <button class="danger" id="stressBtn">הפרעה חזקה (סביבה קשה)</button>
+        </div>
+
+        <div class="kpi">
+          <div class="box">
+            <div class="small">שגיאת צורה \(\epsilon_{shape}\)</div>
+            <div class="n mono" id="kShape">—</div>
+          </div>
+          <div class="box">
+            <div class="small">מינימום \(J\) (בטיחות)</div>
+            <div class="n mono" id="kJmin">—</div>
+          </div>
+          <div class="box">
+            <div class="small">מינימום חמצן \(\min c\)</div>
+            <div class="n mono" id="kCmin">—</div>
+          </div>
+          <div class="box">
+            <div class="small">טווח טמפ׳ \([minT,maxT]\)</div>
+            <div class="n mono" id="kTr">—</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+        <div class="small">
+          הערה: זהו <b>דמו</b> כדי להמחיש את הרעיונות (F, C, J, אנרגיה, דיפוזיה, בקרה).  
+          זה לא מודל קליני. אבל המבנה המתמטי זהה לקווים שהגדרנו.
+        </div>
+
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(() => {
+  // -------------------------
+  // Helpers
+  // -------------------------
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const lerp  = (a,b,t)=>a+(b-a)*t;
+
+  // 3D vector ops
+  const vadd=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+  const vsub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+  const vscale=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
+  const vdot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const vlen=(a)=>Math.hypot(a[0],a[1],a[2]);
+  const vnorm=(a)=>{ const L=vlen(a)||1; return [a[0]/L,a[1]/L,a[2]/L]; };
+
+  // 3x3 matrix ops
+  const mT = (A)=>[
+    [A[0][0],A[1][0],A[2][0]],
+    [A[0][1],A[1][1],A[2][1]],
+    [A[0][2],A[1][2],A[2][2]],
+  ];
+  const mMul = (A,B)=> {
+    const C=[[0,0,0],[0,0,0],[0,0,0]];
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++){
+      C[i][j]=A[i][0]*B[0][j]+A[i][1]*B[1][j]+A[i][2]*B[2][j];
+    }
+    return C;
+  };
+  const mSub = (A,B)=>A.map((r,i)=>r.map((v,j)=>v-B[i][j]));
+  const mFrob2 = (A)=>A[0][0]**2+A[0][1]**2+A[0][2]**2+A[1][0]**2+A[1][1]**2+A[1][2]**2+A[2][0]**2+A[2][1]**2+A[2][2]**2;
+  const det3 = (A)=> (
+    A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1]) -
+    A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0]) +
+    A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0])
+  );
+  const inv3 = (A)=> {
+    const d = det3(A);
+    if(Math.abs(d)<1e-12) return null;
+    const inv = [
+      [
+        (A[1][1]*A[2][2]-A[1][2]*A[2][1])/d,
+        (A[0][2]*A[2][1]-A[0][1]*A[2][2])/d,
+        (A[0][1]*A[1][2]-A[0][2]*A[1][1])/d
+      ],
+      [
+        (A[1][2]*A[2][0]-A[1][0]*A[2][2])/d,
+        (A[0][0]*A[2][2]-A[0][2]*A[2][0])/d,
+        (A[0][2]*A[1][0]-A[0][0]*A[1][2])/d
+      ],
+      [
+        (A[1][0]*A[2][1]-A[1][1]*A[2][0])/d,
+        (A[0][1]*A[2][0]-A[0][0]*A[2][1])/d,
+        (A[0][0]*A[1][1]-A[0][1]*A[1][0])/d
+      ]
+    ];
+    return inv;
+  };
+
+  // -------------------------
+  // Minimal "organ" mesh (cube) with tetrahedra
+  // Nodes (reference positions X_i)
+  // -------------------------
+  const X0 = [
+    [0,0,0], [1,0,0], [1,1,0], [0,1,0],
+    [0,0,1], [1,0,1], [1,1,1], [0,1,1]
+  ];
+
+  // Tetrahedra indices (cover the cube)
+  // A common 5-tet decomposition
+  const tets = [
+    [0,1,3,4],
+    [1,2,3,6],
+    [1,3,4,6],
+    [3,4,6,7],
+    [1,4,5,6],
+  ];
+
+  // Edges for drawing (unique)
+  const edges = (() => {
+    const set = new Set();
+    const add=(i,j)=>{
+      const a=Math.min(i,j), b=Math.max(i,j);
+      set.add(a+"-"+b);
+    };
+    for(const tet of tets){
+      for(let a=0;a<4;a++) for(let b=a+1;b<4;b++) add(tet[a],tet[b]);
+    }
+    return [...set].map(s=>s.split("-").map(Number));
+  })();
+
+  // Adjacency graph for diffusion/boundary exchange
+  const adj = (() => {
+    const A = Array.from({length:X0.length},()=>new Set());
+    for(const [i,j] of edges){ A[i].add(j); A[j].add(i); }
+    return A.map(s=>[...s]);
+  })();
+
+  // Precompute per-tet reference Dm inverse and volume
+  const tetData = tets.map((tet) => {
+    const [i0,i1,i2,i3] = tet;
+    const X = [X0[i0],X0[i1],X0[i2],X0[i3]];
+    // Dm = [X1-X0, X2-X0, X3-X0] as columns
+    const Dm = [
+      [X[1][0]-X[0][0], X[2][0]-X[0][0], X[3][0]-X[0][0]],
+      [X[1][1]-X[0][1], X[2][1]-X[0][1], X[3][1]-X[0][1]],
+      [X[1][2]-X[0][2], X[2][2]-X[0][2], X[3][2]-X[0][2]],
+    ];
+    const invDm = inv3(Dm);
+    // volume = |det(Dm)|/6
+    const vol = Math.abs(det3(Dm))/6;
+    return {invDm, vol};
+  });
+
+  // -------------------------
+  // State: deformed positions x_i, oxygen c_i, temperature T_i
+  // -------------------------
+  let x = X0.map(p=>p.slice());
+  let c = X0.map(()=>0.60);
+  let T = X0.map(()=>0.50);
+
+  // Default "target" deformation: translate + mild shear (for demonstration)
+  const targetTransform = (p)=> {
+    // A gentle transform in world
+    const xx = p[0], yy = p[1], zz = p[2];
+    return [
+      xx + 0.25 + 0.10*yy,
+      yy + 0.05*Math.sin(Math.PI*xx),
+      zz + 0.05*xx
+    ];
+  };
+  const xTarget = X0.map(targetTransform);
+
+  // Fix some boundary nodes to simulate "anastomosis / fixation"
+  // Here: fix bottom face nodes (z=0) slightly, so shape preservation has something to do.
+  const fixed = new Set([0,1,2,3]);
+
+  // -------------------------
+  // UI
+  // -------------------------
+  const $ = (id)=>document.getElementById(id);
+  const ui = {
+    wg: $("wg"), wv: $("wv"), wb: $("wb"), lr: $("lr"),
+    dt: $("dt"), diff: $("diff"), cmin: $("cmin"), tmin:$("tmin"), tmax:$("tmax"),
+    cenv:$("cenv"), tenv:$("tenv"), qmax:$("qmax"), umax:$("umax"),
+    runBtn:$("runBtn"), stepBtn:$("stepBtn"), resetBtn:$("resetBtn"), stressBtn:$("stressBtn"),
+    wgLbl:$("wgLbl"), wvLbl:$("wvLbl"), wbLbl:$("wbLbl"), lrLbl:$("lrLbl"),
+    dtLbl:$("dtLbl"), dt2Lbl:$("dt2Lbl"), diffLbl:$("diffLbl"),
+    cminLbl:$("cminLbl"), trLbl:$("trLbl"),
+    cenvLbl:$("cenvLbl"), tenvLbl:$("tenvLbl"), qmaxLbl:$("qmaxLbl"), umaxLbl:$("umaxLbl"),
+    kShape:$("kShape"), kJmin:$("kJmin"), kCmin:$("kCmin"), kTr:$("kTr"),
+    statusDot:$("statusDot"), statusText:$("statusText"),
+    fps:$("fps")
+  };
+
+  const syncLabels = () => {
+    const wg=+ui.wg.value, wv=+ui.wv.value, wb=+ui.wb.value, lr=+ui.lr.value;
+    const dt=+ui.dt.value, diff=+ui.diff.value, cmin=+ui.cmin.value, tmin=+ui.tmin.value, tmax=+ui.tmax.value;
+    const cenv=+ui.cenv.value, tenv=+ui.tenv.value, qmax=+ui.qmax.value, umax=+ui.umax.value;
+    ui.wgLbl.textContent=wg.toFixed(2);
+    ui.wvLbl.textContent=wv.toFixed(2);
+    ui.wbLbl.textContent=wb.toFixed(2);
+    ui.lrLbl.textContent=lr.toFixed(3);
+    ui.dtLbl.textContent=dt.toFixed(2);
+    ui.dt2Lbl.textContent=dt.toFixed(2);
+    ui.diffLbl.textContent=diff.toFixed(2);
+    ui.cminLbl.textContent=cmin.toFixed(2);
+    ui.trLbl.textContent=`[${tmin.toFixed(2)},${tmax.toFixed(2)}]`;
+    ui.cenvLbl.textContent=cenv.toFixed(2);
+    ui.tenvLbl.textContent=tenv.toFixed(2);
+    ui.qmaxLbl.textContent=qmax.toFixed(2);
+    ui.umaxLbl.textContent=umax.toFixed(2);
+  };
+  ["input","change"].forEach(ev=>{
+    document.addEventListener(ev, (e)=>{
+      if(e.target && e.target.matches("input[type='range']")) syncLabels();
+    });
+  });
+  syncLabels();
+
+  // -------------------------
+  // Energy + numerical gradient
+  // -------------------------
+  const I3 = [[1,0,0],[0,1,0],[0,0,1]];
+
+  function tetF(tetIndex, xPositions){
+    const tet = tets[tetIndex];
+    const {invDm} = tetData[tetIndex];
+    const [i0,i1,i2,i3] = tet;
+    const X = [xPositions[i0], xPositions[i1], xPositions[i2], xPositions[i3]];
+    // Ds = [x1-x0, x2-x0, x3-x0]
+    const Ds = [
+      [X[1][0]-X[0][0], X[2][0]-X[0][0], X[3][0]-X[0][0]],
+      [X[1][1]-X[0][1], X[2][1]-X[0][1], X[3][1]-X[0][1]],
+      [X[1][2]-X[0][2], X[2][2]-X[0][2], X[3][2]-X[0][2]],
+    ];
+    if(!invDm) return {F:null, J:-1};
+    const F = mMul(Ds, invDm);
+    const J = det3(F);
+    return {F, J};
+  }
+
+  function energy(xPositions){
+    const wg=+ui.wg.value, wv=+ui.wv.value, wb=+ui.wb.value;
+    let Eg=0, Ev=0, Eb=0;
+
+    for(let e=0;e<tets.length;e++){
+      const {vol} = tetData[e];
+      const {F, J} = tetF(e, xPositions);
+      if(!F){ Eg += 1e6; continue; }
+
+      const C = mMul(mT(F), F);
+      const dC = mSub(C, I3);
+      const shape = mFrob2(dC);
+
+      const volerr = (J-1)*(J-1);
+
+      let barrier = 0;
+      if(J<=0) barrier = 1e6;
+      else barrier = -Math.log(J);
+
+      Eg += vol * shape;
+      Ev += vol * volerr;
+      Eb += vol * barrier;
+    }
+
+    // Soft target attraction (so you see motion) for non-fixed nodes:
+    let Et=0;
+    const wt = 0.08;
+    for(let i=0;i<xPositions.length;i++){
+      if(fixed.has(i)) continue;
+      const d = vsub(xPositions[i], xTarget[i]);
+      Et += vdot(d,d);
+    }
+    return wg*Eg + wv*Ev + wb*Eb + wt*Et;
+  }
+
+  function shapeErrorAndJmin(xPositions){
+    let Eg=0;
+    let Jmin=Infinity;
+    for(let e=0;e<tets.length;e++){
+      const {vol} = tetData[e];
+      const {F, J} = tetF(e, xPositions);
+      if(!F) continue;
+      const C = mMul(mT(F), F);
+      const dC = mSub(C, I3);
+      Eg += vol * mFrob2(dC);
+      if(J<Jmin) Jmin=J;
+    }
+    return {shape: Math.sqrt(Eg), Jmin};
+  }
+
+  // Numerical gradient (finite differences) — small mesh so ok
+  function grad(xPositions){
+    const eps = 1e-5;
+    const base = energy(xPositions);
+    const g = xPositions.map(()=>[0,0,0]);
+
+    for(let i=0;i<xPositions.length;i++){
+      if(fixed.has(i)) continue;
+      for(let k=0;k<3;k++){
+        const xp = xPositions.map(p=>p.slice());
+        xp[i][k] += eps;
+        const ep = energy(xp);
+        g[i][k] = (ep - base)/eps;
+      }
+    }
+    return g;
+  }
+
+  function stepGeometry(){
+    const lr = +ui.lr.value;
+    const g = grad(x);
+    for(let i=0;i<x.length;i++){
+      if(fixed.has(i)) continue;
+      x[i][0] -= lr*g[i][0];
+      x[i][1] -= lr*g[i][1];
+      x[i][2] -= lr*g[i][2];
+    }
+  }
+
+  // -------------------------
+  // Environment dynamics (graph diffusion + sink/source + control)
+  // -------------------------
+  function stepEnv(){
+    const dt = +ui.dt.value;
+    const D  = +ui.diff.value;
+
+    const cEnv = +ui.cenv.value;
+    const tEnv = +ui.tenv.value;
+
+    const cmin = +ui.cmin.value;
+    const Tmin = +ui.tmin.value;
+    const Tmax = +ui.tmax.value;
+
+    const qMax = +ui.qmax.value;   // perfusion "boost"
+    const uMax = +ui.umax.value;   // cooling/heating max strength
+
+    // Control: try to push c up if below cmin; try to bring T into [Tmin,Tmax]
+    // Here, control acts as source term to each node proportional to violation.
+    const q = c.map(ci => clamp((cmin - ci), 0, 1) * qMax);
+    const u = T.map(Ti => {
+      let u0 = 0;
+      if(Ti < Tmin) u0 = +(Tmin - Ti);     // heat
+      if(Ti > Tmax) u0 = -(Ti - Tmax);     // cool
+      return clamp(u0, -uMax, uMax);
+    });
+
+    // Diffusion on adjacency graph (explicit)
+    const cNew = c.slice();
+    const tNew = T.slice();
+
+    for(let i=0;i<c.length;i++){
+      const neigh = adj[i];
+      let lapC = 0, lapT = 0;
+      for(const j of neigh){
+        lapC += (c[j] - c[i]);
+        lapT += (T[j] - T[i]);
+      }
+      // exchange with environment (boundary-like): stronger for "outer" nodes
+      const boundaryFactor = (X0[i][0]===0||X0[i][0]===1||X0[i][1]===0||X0[i][1]===1||X0[i][2]===0||X0[i][2]===1) ? 0.35 : 0.10;
+
+      // consumption (sink)
+      const k = 0.25; // oxygen consumption rate
+      // temperature relax (sink to env)
+      const h = 0.20;
+
+      cNew[i] = c[i] + dt*( D*lapC - k*c[i] + q[i] + boundaryFactor*(cEnv - c[i]) );
+      tNew[i] = T[i] + dt*( D*lapT + u[i] + h*boundaryFactor*(tEnv - T[i]) );
+
+      cNew[i] = clamp(cNew[i], 0, 1);
+      tNew[i] = clamp(tNew[i], 0, 1);
+    }
+
+    c = cNew; T = tNew;
+  }
+
+  // -------------------------
+  // Success / status
+  // -------------------------
+  function updateKPIs(){
+    const {shape, Jmin} = shapeErrorAndJmin(x);
+    const cminNow = Math.min(...c);
+    const TminNow = Math.min(...T);
+    const TmaxNow = Math.max(...T);
+
+    ui.kShape.textContent = shape.toFixed(5);
+    ui.kJmin.textContent  = Jmin.toFixed(5);
+    ui.kCmin.textContent  = cminNow.toFixed(5);
+    ui.kTr.textContent    = `[${TminNow.toFixed(3)}, ${TmaxNow.toFixed(3)}]`;
+
+    const cminReq = +ui.cmin.value;
+    const TminReq = +ui.tmin.value;
+    const TmaxReq = +ui.tmax.value;
+
+    const okJ = Jmin > 0.02;
+    const okC = cminNow >= cminReq - 1e-6;
+    const okT = (TminNow >= TminReq - 1e-6) && (TmaxNow <= TmaxReq + 1e-6);
+
+    if(okJ && okC && okT){
+      ui.statusDot.className = "dot good";
+      ui.statusText.textContent = "מעבר תקין (מבנה+סביבה נשמרים)";
+    }else if(Jmin <= 0){
+      ui.statusDot.className = "dot bad";
+      ui.statusText.textContent = "כשל מבני: J≤0 (היפוך/קריעה מתמטית)";
+    }else{
+      ui.statusDot.className = "dot warn";
+      const parts=[];
+      if(!okJ) parts.push("מבנה חלש (J קטן)");
+      if(!okC) parts.push("חמצן מתחת סף");
+      if(!okT) parts.push("טמפ׳ מחוץ לטווח");
+      ui.statusText.textContent = "אזהרה: " + parts.join(" + ");
+    }
+  }
+
+  // -------------------------
+  // Rendering
+  // -------------------------
+  const cv = $("cv");
+  const ctx = cv.getContext("2d");
+
+  // camera for simple 3D->2D projection
+  let camYaw = -0.65, camPitch = 0.55, camDist = 3.2;
+  let dragging=false, lastX=0, lastY=0;
+
+  function rotY(p,a){
+    const c=Math.cos(a), s=Math.sin(a);
+    return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]];
+  }
+  function rotX(p,a){
+    const c=Math.cos(a), s=Math.sin(a);
+    return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]];
+  }
+  function project(p){
+    let q = vsub(p, [0.5,0.5,0.5]);
+    q = rotY(q, camYaw);
+    q = rotX(q, camPitch);
+    q = vadd(q, [0,0,camDist]);
+    const f = 520 / (q[2] + 0.001);
+    return [cv.width*0.52 + q[0]*f, cv.height*0.50 - q[1]*f, f];
+  }
+
+  function colorForJ(J){
+    // map J ~ 1 good, J small/bad -> red
+    const t = clamp((J-0.2)/(1.2-0.2), 0, 1);
+    const r = Math.round(lerp(255, 60, t));
+    const g = Math.round(lerp(80,  150, t));
+    const b = Math.round(lerp(80,  255, t));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+
+    // background grid faint
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    for(let i=0;i<24;i++){
+      const y = (i/24)*cv.height;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cv.width,y); ctx.stroke();
+    }
+    for(let i=0;i<24;i++){
+      const xg = (i/24)*cv.width;
+      ctx.beginPath(); ctx.moveTo(xg,0); ctx.lineTo(xg,cv.height); ctx.stroke();
+    }
+    ctx.restore();
+
+    // compute per-tet J for node coloring (average)
+    const nodeJ = new Array(x.length).fill(0);
+    const nodeCnt = new Array(x.length).fill(0);
+    for(let e=0;e<tets.length;e++){
+      const {J} = tetF(e, x);
+      const tet = tets[e];
+      for(const i of tet){ nodeJ[i]+=J; nodeCnt[i]++; }
+    }
+    for(let i=0;i<x.length;i++){
+      nodeJ[i] = nodeCnt[i] ? nodeJ[i]/nodeCnt[i] : 1;
+    }
+
+    // project nodes
+    const P = x.map(project);
+
+    // draw edges
+    ctx.save();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(255,255,255,.25)";
+    for(const [i,j] of edges){
+      ctx.beginPath();
+      ctx.moveTo(P[i][0], P[i][1]);
+      ctx.lineTo(P[j][0], P[j][1]);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // draw nodes (sorted by depth for nicer look)
+    const order = [...P.keys()].sort((a,b)=>P[a][2]-P[b][2]);
+    for(const i of order){
+      const [sx,sy,f] = P[i];
+      const rad = clamp(6 + (f/120), 6, 13);
+      const col = colorForJ(nodeJ[i]);
+
+      // node circle
+      ctx.beginPath();
+      ctx.fillStyle = col;
+      ctx.globalAlpha = fixed.has(i) ? 0.95 : 0.85;
+      ctx.arc(sx,sy,rad,0,Math.PI*2);
+      ctx.fill();
+
+      // outline
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = fixed.has(i) ? "rgba(255,255,255,.65)" : "rgba(0,0,0,.35)";
+      ctx.stroke();
+
+      // small bars for c and T
+      const barW = rad*1.4, barH = 6;
+      const cx = sx - barW/2, cy = sy + rad + 6;
+
+      // oxygen bar (green)
+      ctx.fillStyle = "rgba(51,209,122,.85)";
+      ctx.fillRect(cx, cy, barW*clamp(c[i],0,1), barH);
+      ctx.strokeStyle = "rgba(255,255,255,.18)";
+      ctx.strokeRect(cx, cy, barW, barH);
+
+      // temperature bar (orange)
+      const ty = cy + barH + 4;
+      ctx.fillStyle = "rgba(255,184,107,.85)";
+      ctx.fillRect(cx, ty, barW*clamp(T[i],0,1), barH);
+      ctx.strokeStyle = "rgba(255,255,255,.18)";
+      ctx.strokeRect(cx, ty, barW, barH);
+
+      // node id
+      ctx.fillStyle = "rgba(255,255,255,.70)";
+      ctx.font = "11px var(--mono)";
+      ctx.fillText(String(i), sx - 3, sy + 4);
+    }
+
+    // HUD
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.75)";
+    ctx.font = "12px var(--mono)";
+    ctx.fillText("גרור עם העכבר: סיבוב | גלגלת: זום", 14, 18);
+    ctx.restore();
+  }
+
+  // Mouse controls
+  cv.addEventListener("mousedown",(e)=>{
+    dragging=true; lastX=e.clientX; lastY=e.clientY;
+  });
+  window.addEventListener("mouseup",()=>dragging=false);
+  window.addEventListener("mousemove",(e)=>{
+    if(!dragging) return;
+    const dx=(e.clientX-lastX), dy=(e.clientY-lastY);
+    lastX=e.clientX; lastY=e.clientY;
+    camYaw += dx*0.006;
+    camPitch += dy*0.006;
+    camPitch = clamp(camPitch, -1.2, 1.2);
+  });
+  cv.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+    camDist += (e.deltaY>0? 0.20 : -0.20);
+    camDist = clamp(camDist, 2.0, 6.0);
+  }, {passive:false});
+
+  // -------------------------
+  // Simulation loop
+  // -------------------------
+  let running=false;
+  let lastTime=performance.now(), fpsSmooth=0;
+
+  function tick(now){
+    const dtms = now-lastTime; lastTime=now;
+    const fps = 1000/(dtms||1);
+    fpsSmooth = fpsSmooth? (0.9*fpsSmooth + 0.1*fps) : fps;
+    ui.fps.textContent = fpsSmooth.toFixed(0);
+
+    if(running){
+      // do a few geometry steps per frame (small mesh)
+      for(let k=0;k<2;k++) stepGeometry();
+      stepEnv();
+      updateKPIs();
+    }
+    draw();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // -------------------------
+  // Buttons
+  // -------------------------
+  ui.runBtn.addEventListener("click",()=>{
+    running=!running;
+    ui.runBtn.textContent = running ? "⏸︎ עצור" : "▶︎ הרץ";
+    updateKPIs();
+  });
+
+  ui.stepBtn.addEventListener("click",()=>{
+    // single step: geometry + env once
+    stepGeometry();
+    stepEnv();
+    updateKPIs();
+    draw();
+  });
+
+  ui.resetBtn.addEventListener("click",()=>{
+    x = X0.map(p=>p.slice());
+    c = X0.map(()=>0.60);
+    T = X0.map(()=>0.50);
+    running=false;
+    ui.runBtn.textContent="▶︎ הרץ";
+    updateKPIs();
+    draw();
+  });
+
+  ui.stressBtn.addEventListener("click",()=>{
+    // Make environment harsh suddenly
+    ui.cenv.value = "0.10";
+    ui.tenv.value = "0.95";
+    ui.diff.value = "0.12";
+    syncLabels();
+    // Also perturb non-fixed nodes a bit to challenge structure
+    for(let i=0;i<x.length;i++){
+      if(fixed.has(i)) continue;
+      x[i] = vadd(x[i], [ (Math.random()-0.5)*0.25, (Math.random()-0.5)*0.25, (Math.random()-0.5)*0.25 ]);
+    }
+    updateKPIs();
+    draw();
+  });
+
+  // Initial KPIs
+  updateKPIs();
+  draw();
+
+})();
+</script>
+</body>
+</html>
