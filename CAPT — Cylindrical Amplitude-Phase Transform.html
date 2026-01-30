@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CAPT — טרנספורם גלילי אמפליטודה–פאזה (Cylindrical Amplitude–Phase Transform)</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <!-- Mermaid (NO defer: we render manually for stability) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", "Noto Sans Arabic", sans-serif;
+      --radius: 18px;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1020; --bg1:#0b1a33; --bg2:#081423;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.55);
+        --text:#e5e7eb; --muted:#94a3b8; --line:rgba(148,163,184,.18);
+        --head:#f8fafc; --link:#60a5fa;
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --shadow2: 0 10px 28px rgba(0,0,0,.25);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 0%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at 100% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      padding:26px 18px 14px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex; gap:12px; align-items:center;}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(37,99,235,.9), rgba(34,211,238,.75));
+      box-shadow: var(--shadow2);
+      position:relative; overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-20px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 55%);
+      transform: rotate(12deg);
+    }
+    h1{margin:0; font-size:1.25rem; color:var(--head); letter-spacing:.2px;}
+    .subtitle{margin:4px 0 0; color:var(--muted); font-size:.95rem; line-height:1.35;}
+    .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .btn{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:14px;
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+      font-weight:600;
+      font-size:.9rem;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--muted);
+      font-size:.85rem;
+    }
+    .langswitch{
+      display:flex; gap:8px; align-items:center;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:4px;
+      background: rgba(255,255,255,.06);
+    }
+    .langswitch button{
+      border:none;
+      background: transparent;
+      color: var(--muted);
+      padding:7px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:.85rem;
+    }
+    .langswitch button.active{
+      background: rgba(37,99,235,.16);
+      color: var(--text);
+      box-shadow: var(--shadow2);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding: 0 18px 34px;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+    }
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 16px;
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 10px; font-size:1.05rem; color:var(--head);}
+    .card h3{margin:16px 0 8px; font-size:.98rem; color:var(--head);}
+    .muted{color:var(--muted)}
+    .hr{height:1px; background:var(--line); margin:14px 0}
+    .list{margin:8px 0 0; padding:0 18px 0 0}
+    .list li{margin:6px 0; line-height:1.45}
+    .note{
+      border:1px dashed var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(34,211,238,.06);
+    }
+    .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    .tag{
+      font-size:.8rem;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(37,99,235,.06);
+      color:var(--muted);
+    }
+    pre{
+      margin:10px 0 0;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.06);
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:.88rem;
+      line-height:1.4;
+      direction:ltr;
+      text-align:left;
+    }
+    .codebar{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .small{font-size:.86rem}
+    .copy{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      padding:7px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:.85rem;
+    }
+    .copy.ok{border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.10)}
+    .lang{display:none}
+    .lang.active{display:block}
+
+    /* Mermaid container styling */
+    .mermaid{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+    }
+
+    footer{
+      max-width:1100px; margin:0 auto; padding: 0 18px 18px;
+      color:var(--muted);
+      font-size:.85rem;
+    }
+    .watermark{
+      position:fixed;
+      bottom:10px; left:10px;
+      opacity:.08;
+      font-weight:900;
+      letter-spacing:2px;
+      user-select:none;
+      pointer-events:none;
+      transform: rotate(-8deg);
+    }
+    .katex-display{overflow-x:auto; overflow-y:hidden; padding:8px 0;}
+  </style>
+</head>
+
+<body>
+  <div class="watermark">CAPT • Cylindrical A–P Transform</div>
+
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>CAPT — טרנספורם גלילי אמפליטודה–פאזה</h1>
+          <div class="subtitle">פירוק פונקציות ב־\( (r,\varphi,z) \) למצבי \((m,\rho,k)\) + אמפליטודה \(\,A\) ופאזה \(\,\Phi\)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <span class="pill">✅ KaTeX פעיל</span>
+        <span class="pill">✅ Mermaid פעיל</span>
+
+        <div class="langswitch" title="שפה / Language">
+          <button id="btn-he" class="active" onclick="setLang('he')">עברית</button>
+          <button id="btn-en" onclick="setLang('en')">English</button>
+        </div>
+
+        <button class="btn" onclick="toggleTheme()" title="החלפת מצב בהיר/כהה">
+          🌓 <span>תצוגה</span>
+        </button>
+        <button class="btn" onclick="window.print()" title="הדפסה / שמירה כ-PDF">
+          🖨️ <span>הדפסה / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <!-- LEFT / MAIN -->
+      <section class="card">
+
+        <!-- HEBREW -->
+        <div class="lang active" id="lang-he">
+          <h2>1) ההגדרה (טרנספורם קדמי)</h2>
+          <p class="muted">
+            הרעיון: כמו פורייה, אבל בבסיס גלילי טבעי: זווית \(\varphi\) עם הרמוניות \(m\),
+            רדיוס \(r\) עם בסל \(J_m\), וציר \(z\) עם תדר \(k\). במקום להישאר רק עם מקדם מורכב,
+            אנחנו מגדירים במפורש <b>אמפליטודה</b> ו־<b>פאזה</b>.
+          </p>
+
+          <div class="hr"></div>
+
+          <h3>מקדמי מצב גלילי (מורכב)</h3>
+          <div class="note">
+            <div class="muted small">ל־\(f(r,\varphi,z)\) (ממשית/מרוכבת), \(r\ge0\), \(\varphi\in[0,2\pi)\), \(z\in\mathbb{R}\):</div>
+            \[
+            F_m(\rho,k)=
+            \int_{-\infty}^{\infty}\!\!\int_{0}^{2\pi}\!\!\int_{0}^{\infty}
+            f(r,\varphi,z)\,J_m(\rho r)\,e^{-im\varphi}\,e^{-ikz}\,r\,dr\,d\varphi\,dz
+            \]
+          </div>
+
+          <h3>הייצוג החדש: אמפליטודה–פאזה</h3>
+          \[
+          A_m(\rho,k)=|F_m(\rho,k)|,\qquad
+          \Phi_m(\rho,k)=\arg(F_m(\rho,k))
+          \]
+          <p>
+            ולכן הטרנספורם מוגדר כ:
+            \(\ \mathcal{T}_{\text{CAPT}}\{f\}=\{A_m(\rho,k),\Phi_m(\rho,k)\}\ \)
+          </p>
+
+          <div class="tagrow">
+            <span class="tag">\(m\): מספר “אונות” סביב הציר</span>
+            <span class="tag">\(\rho\): “תדר” רדיאלי (טבעות/פרטים)</span>
+            <span class="tag">\(k\): תדר לאורך \(z\)</span>
+          </div>
+
+          <div class="hr"></div>
+
+          <h2>2) שחזור (טרנספורם הפוך)</h2>
+          \[
+          f(r,\varphi,z)=
+          \frac{1}{(2\pi)^2}
+          \sum_{m=-\infty}^{\infty}\int_{-\infty}^{\infty}\int_{0}^{\infty}
+          F_m(\rho,k)\,J_m(\rho r)\,e^{im\varphi}\,e^{ikz}\,\rho\,d\rho\,dk
+          \]
+          <p class="muted small">
+            אם רוצים “בדיוק אמפליטודה–פאזה”, מציבים \(F_m(\rho,k)=A_m(\rho,k)e^{i\Phi_m(\rho,k)}\).
+          </p>
+
+          <div class="hr"></div>
+
+          <h2>3) אנרגיה (Parseval)</h2>
+          <p class="muted">בדומה לפורייה, האנרגיה נשמרת בין המרחב לבין הספקטרום:</p>
+          \[
+          \int_{-\infty}^{\infty}\int_{0}^{2\pi}\int_{0}^{\infty}
+          |f(r,\varphi,z)|^2 \, r\,dr\,d\varphi\,dz
+          =
+          \frac{1}{(2\pi)^2}
+          \sum_{m=-\infty}^{\infty}\int_{-\infty}^{\infty}\int_{0}^{\infty}
+          |F_m(\rho,k)|^2 \,\rho\,d\rho\,dk
+          \]
+          \[
+          \Rightarrow\quad
+          \|f\|_2^2=
+          \frac{1}{(2\pi)^2}
+          \sum_m \int\!\!\int A_m(\rho,k)^2\,\rho\,d\rho\,dk
+          \]
+
+          <div class="hr"></div>
+
+          <h2>4) סימטריות: סיבוב/הזזה → שינוי פאזה לינארי</h2>
+          <ul class="list">
+            <li>
+              <b>סיבוב בזווית</b> \(\varphi_0\): אם \(f(r,\varphi,z)\to f(r,\varphi-\varphi_0,z)\) אז
+              \[
+              A_m \text{ לא משתנה},\qquad \Phi_m \to \Phi_m + m\varphi_0
+              \]
+            </li>
+            <li>
+              <b>הזזה בציר</b> \(z_0\): אם \(f(r,\varphi,z)\to f(r,\varphi,z-z_0)\) אז
+              \[
+              A_m \text{ לא משתנה},\qquad \Phi_m \to \Phi_m + kz_0
+              \]
+            </li>
+          </ul>
+
+          <div class="hr"></div>
+
+          <h2>5) גרסה תחומה ומעשית (דיסקרטית): \(0\le r\le R\), \(0\le z\le L\)</h2>
+          <p class="muted">במדידות אמיתיות לרוב יש רדיוס \(R\) ואורך \(L\). אז מחליפים את \(\rho,k\) הרציפים בדיסקרטיים.</p>
+
+          <h3>5.1 דיסקרטי ב-\(z\)</h3>
+          \[
+          k_\ell=\frac{2\pi\ell}{L},\quad \ell\in\mathbb{Z}
+          \]
+
+          <h3>5.2 דיסקרטי ברדיוס: אפסי בסל</h3>
+          <p class="muted small">נסמן \(\alpha_{m,n}\) האפס ה-\(n\) של \(J_m\). ואז:</p>
+          \[
+          \rho_{m,n}=\frac{\alpha_{m,n}}{R}
+          \]
+
+          <h3>מקדם דיסקרטי מלא</h3>
+          \[
+          F_{m,n,\ell}=
+          \int_{0}^{L}\int_{0}^{2\pi}\int_{0}^{R}
+          f(r,\varphi,z)\,
+          J_m\!\left(\frac{\alpha_{m,n}}{R}r\right)\,
+          e^{-im\varphi}\,
+          e^{-ik_\ell z}\,
+          r\,dr\,d\varphi\,dz
+          \]
+          \[
+          A_{m,n,\ell}=|F_{m,n,\ell}|,\qquad \Phi_{m,n,\ell}=\arg(F_{m,n,\ell})
+          \]
+
+          <div class="hr"></div>
+
+          <h2>6) אלגוריתם דיסקרטי (FFT + הקרנת בסל)</h2>
+          <p class="muted">
+            נניח דגימה \(f[i,j,k]=f(r_i,\varphi_j,z_k)\) עם
+            \(\varphi_j=2\pi j/N_\varphi\).
+          </p>
+
+          <div class="codebar">
+            <div class="muted small">פסאודו־קוד (סדר עבודה מלא)</div>
+            <button class="copy" onclick="copyBlock('code-he', this)">העתקה</button>
+          </div>
+
+<pre id="code-he">Input: f[r_i, phi_j, z_k], grids r_i, phi_j, z_k
+Choose: Mmax, Nrad_modes, Lfreq
+
+1) FFT over phi (angle):
+   f_m[r_i, z_k, m] = FFT_phi( f[r_i, phi_j, z_k] )
+
+2) FFT over z (axis):
+   f_m_l[r_i, m, l] = FFT_z( f_m[r_i, z_k, m] )
+
+3) Radial Bessel projection (for each m,l):
+   rho_{m,n} = alpha_{m,n} / R
+   F[m,n,l] = sum_i f_m_l[r_i,m,l] * J_m(rho_{m,n}*r_i) * w_i
+   (w_i include r-weight: w_i ≈ r_i * Δr)
+
+4) Amplitude/Phase:
+   A[m,n,l] = abs(F[m,n,l])
+   Phi[m,n,l] = angle(F[m,n,l])
+
+Output: A, Phi  (CAPT spectrum)</pre>
+
+          <div class="hr"></div>
+
+          <h2>7) דיאגרמת זרימה (Mermaid) — אמורה לעבוד ✅</h2>
+          <p class="muted small">
+            אם אתה משנה שפה/תצוגה — אנחנו מרנדרים מחדש אוטומטית.
+          </p>
+
+          <div class="mermaid" id="cylDiagram">
+flowchart TD
+  A[דגימה f(r,φ,z)] --> B[FFT בזווית φ → m]
+  B --> C[FFT בציר z → k_ℓ]
+  C --> D[הקרנה רדיאלית J_m → ρ או n]
+  D --> E[מקדמים F_{m,n,ℓ}]
+  E --> F[אמפליטודה A = |F|]
+  E --> G[פאזה Φ = arg(F)]
+  F --> H[פילטרים/חתימה/דחיסה]
+  G --> I[יישור: סיבוב/הזזה]
+          </div>
+
+          <div class="hr"></div>
+
+          <h2>8) שימושים</h2>
+          <ul class="list">
+            <li><b>פילטר לפי \(m\)</b>: דיכוי/הדגשת אונות סביב הציר.</li>
+            <li><b>פילטר לפי \(\rho\)</b>: מבנים גדולים (נמוך) מול פרטים (גבוה).</li>
+            <li><b>פילטר לפי \(k\)</b>: סינון לאורך \(z\).</li>
+            <li><b>יישור אוטומטי</b>: אמפליטודה לחתימה, פאזה להערכת סיבוב/הזזה.</li>
+          </ul>
+        </div>
+
+        <!-- ENGLISH -->
+        <div class="lang" id="lang-en" dir="ltr">
+          <h2>1) Definition (Forward Transform)</h2>
+          <p class="muted">
+            CAPT expands a function in cylindrical coordinates \((r,\varphi,z)\) using the natural basis:
+            angular harmonics \(m\), Bessel radial modes \(J_m\), and axial frequencies \(k\).
+            We explicitly extract <b>amplitude</b> and <b>phase</b>.
+          </p>
+
+          <div class="hr"></div>
+
+          <h3>Complex cylindrical coefficient</h3>
+          \[
+          F_m(\rho,k)=
+          \int_{-\infty}^{\infty}\!\!\int_{0}^{2\pi}\!\!\int_{0}^{\infty}
+          f(r,\varphi,z)\,J_m(\rho r)\,e^{-im\varphi}\,e^{-ikz}\,r\,dr\,d\varphi\,dz
+          \]
+
+          <h3>Amplitude–Phase</h3>
+          \[
+          A_m(\rho,k)=|F_m(\rho,k)|,\qquad
+          \Phi_m(\rho,k)=\arg(F_m(\rho,k))
+          \]
+
+          <div class="hr"></div>
+
+          <h2>2) Inverse</h2>
+          \[
+          f(r,\varphi,z)=
+          \frac{1}{(2\pi)^2}
+          \sum_{m=-\infty}^{\infty}\int_{-\infty}^{\infty}\int_{0}^{\infty}
+          F_m(\rho,k)\,J_m(\rho r)\,e^{im\varphi}\,e^{ikz}\,\rho\,d\rho\,dk
+          \]
+
+          <div class="hr"></div>
+
+          <h2>3) Energy (Parseval)</h2>
+          \[
+          \int |f|^2\, r\,dr\,d\varphi\,dz
+          =
+          \frac{1}{(2\pi)^2}\sum_m \int\!\!\int |F_m|^2\,\rho\,d\rho\,dk
+          \]
+
+          <div class="hr"></div>
+
+          <h2>4) Practical discrete version</h2>
+          <p class="muted">
+            For finite \(r\le R\) and \(z\le L\), discretize \(k_\ell=2\pi\ell/L\) and \(\rho_{m,n}=\alpha_{m,n}/R\)
+            using zeros \(\alpha_{m,n}\) of \(J_m\). Then compute \(F_{m,n,\ell}\) and extract \(A,\Phi\).
+          </p>
+
+          <div class="codebar">
+            <div class="muted small">Pseudo-code</div>
+            <button class="copy" onclick="copyBlock('code-en', this)">Copy</button>
+          </div>
+<pre id="code-en">Input: f[r_i, phi_j, z_k]
+1) FFT over phi -> m
+2) FFT over z   -> k_l
+3) Project over r using Bessel basis J_m -> rho or n
+4) A = |F|, Phi = arg(F)</pre>
+
+          <div class="hr"></div>
+
+          <h2>Flow Diagram (Mermaid)</h2>
+          <div class="mermaid" id="cylDiagramEN">
+flowchart TD
+  A[Samples f(r,φ,z)] --> B[FFT over φ → m]
+  B --> C[FFT over z → k_ℓ]
+  C --> D[Radial projection J_m → ρ or n]
+  D --> E[Coefficients F_{m,n,ℓ}]
+  E --> F[Amplitude A = |F|]
+  E --> G[Phase Φ = arg(F)]
+  F --> H[Filters/Fingerprint/Compression]
+  G --> I[Alignment: rotation/shift]
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT / QUICK PANEL -->
+      <aside class="card">
+        <h2>כלים מהירים</h2>
+        <div class="note">
+          <div><b>מתי CAPT הכי שימושי?</b></div>
+          <ul class="list">
+            <li>שדות סביב צינור/ציר (EM, אקוסטיקה, זרימה).</li>
+            <li>דפוסים סיבוביים (אונות, טבעות, מערבולות).</li>
+            <li>יישור אוטומטי: סיבוב/הזזה דרך פאזה.</li>
+          </ul>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>טיפים לפרקטיקה</h3>
+        <ul class="list">
+          <li><b>משקל \(r\)</b>: באינטגרלים/סכומים תמיד מופיע \(r\,dr\).</li>
+          <li><b>חתימה יציבה</b>: לעבוד עם \(A\) כמאפיין, ועם \(\Phi\) ליישור.</li>
+          <li><b>פילטרים</b>: הגבל \(m\), חתוך \(\rho\), או סנן \(k\).</li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <h3>שמירה כ־PDF</h3>
+        <p class="muted small">
+          לחץ <b>הדפסה / PDF</b> למעלה → “Save as PDF”.
+        </p>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <div class="hr"></div>
+    <div>כל הזכויות שמורות. אין לשכפל אלא באישור מ־RA — <a href="mailto:Raftn4@gmail.com">Raftn4@gmail.com</a></div>
+    <div class="muted small" style="margin-top:6px;">
+      הערה: זהו מסמך תיאורטי/חישובי. בנומריקה (דיסקרטית) ייתכנו מקדמי נרמול נוספים בהתאם לבסיס ולתנאי השפה.
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle (CSS is based on prefers-color-scheme; data-theme is for your own UI logic)
+    function toggleTheme(){
+      const root = document.documentElement;
+      const cur = root.getAttribute("data-theme") || "light";
+      root.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+      // Re-render diagrams after style changes (sometimes helpful)
+      setTimeout(()=>{ renderMath(); renderMermaid(); }, 0);
+    }
+
+    // Language toggle
+    function setLang(lang){
+      const he = document.getElementById("lang-he");
+      const en = document.getElementById("lang-en");
+      const bhe = document.getElementById("btn-he");
+      const ben = document.getElementById("btn-en");
+
+      if(lang === "en"){
+        he.classList.remove("active");
+        en.classList.add("active");
+        bhe.classList.remove("active");
+        ben.classList.add("active");
+        document.documentElement.setAttribute("dir","ltr");
+        document.documentElement.setAttribute("lang","en");
+      }else{
+        en.classList.remove("active");
+        he.classList.add("active");
+        ben.classList.remove("active");
+        bhe.classList.add("active");
+        document.documentElement.setAttribute("dir","rtl");
+        document.documentElement.setAttribute("lang","he");
+      }
+      setTimeout(()=>{ renderMath(); renderMermaid(); }, 0);
+    }
+
+    // Copy helpers
+    async function copyBlock(id, btn){
+      try{
+        const el = document.getElementById(id);
+        await navigator.clipboard.writeText(el.innerText);
+        const old = btn.textContent;
+        btn.textContent = (document.documentElement.lang === "en") ? "✅ Copied" : "✅ הועתק";
+        btn.classList.add("ok");
+        setTimeout(()=>{ btn.textContent = old; btn.classList.remove("ok"); }, 1100);
+      }catch(e){
+        alert("לא הצלחתי להעתיק (אולי הדפדפן חסם). אפשר לסמן ולהעתיק ידנית.");
+      }
+    }
+
+    // KaTeX render
+    function renderMath(){
+      if(!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false
+      });
+    }
+
+    // Mermaid render (stable, manual)
+    async function renderMermaid(){
+      try{
+        if(!window.mermaid) return;
+
+        // Initialize (safe to call multiple times)
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: "loose"
+        });
+
+        // Reset every mermaid block to its original source, then re-render
+        document.querySelectorAll(".mermaid").forEach(el=>{
+          // Save original text once
+          if(!el.dataset.src){
+            el.dataset.src = el.textContent.trim();
+          }
+          el.innerHTML = el.dataset.src;
+        });
+
+        // Render all blocks
+        await mermaid.run({ querySelector: ".mermaid" });
+      }catch(e){
+        console.warn("Mermaid render failed:", e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+      renderMath();
+      renderMermaid();
+    });
+  </script>
+</body>
+</html>
