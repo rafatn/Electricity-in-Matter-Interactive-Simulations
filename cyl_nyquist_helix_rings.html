@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>נייקוויסט גלילי + Helix+Rings • FFT 1D/2D • Alias Demo</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.84); --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --radius:18px; --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --ok:#0a7a2f; --bad:#b42318;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial;
+      background:
+        radial-gradient(1200px 700px at 90% 12%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 10% 22%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #fff);
+    }
+    header{max-width:1280px;margin:0 auto;padding:22px 16px 10px}
+    h1{margin:0 0 6px;font-size:22px}
+    .sub{color:var(--muted);line-height:1.65;max-width:1200px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.65);font-size:12px;color:var(--muted);
+      margin: 3px 0 0 6px;
+    }
+    .grid{
+      max-width:1280px;margin:0 auto;padding:0 16px 22px;
+      display:grid;gap:14px;
+      grid-template-columns: 1.05fr .95fr;
+    }
+    @media (max-width: 1050px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background:var(--card);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:14px;overflow:hidden;
+    }
+    .card h2{margin:0 0 10px;font-size:16px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .field{
+      display:flex;flex-direction:column;gap:6px;
+      min-width: 165px;
+      padding:10px;border:1px solid var(--line);border-radius:14px;
+      background:var(--card2);box-shadow:var(--shadow2);
+      flex:1 1 180px;
+    }
+    label{font-size:12px;color:var(--muted)}
+    input, select{
+      width:100%;padding:10px 10px;border-radius:12px;border:1px solid var(--line);
+      background:#fff;outline:none;font-family:inherit;font-size:14px;
+    }
+    button{
+      cursor:pointer;border-radius:14px;border:1px solid var(--line);
+      background:#fff;padding:10px 12px;font-weight:900;box-shadow:var(--shadow2);
+    }
+    button.primary{background:#0f172a;color:#fff;border-color:#0f172a}
+    .kpi{
+      display:grid;gap:10px;margin-top:10px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 820px){ .kpi{grid-template-columns:1fr} }
+    .box{
+      background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px;
+    }
+    .t{font-size:12px;color:var(--muted)}
+    .v{font-size:16px;font-weight:900;margin-top:4px}
+    .ok{color:var(--ok);font-weight:900}
+    .bad{color:var(--bad);font-weight:900}
+    .note{color:var(--muted);font-size:14px;line-height:1.65}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    canvas{
+      width:100%;height:310px;border-radius:16px;border:1px solid var(--line);background:#fff;
+    }
+    .two{
+      display:grid;gap:12px;
+      grid-template-columns:1fr 1fr;
+      margin-top:10px;
+    }
+    @media (max-width: 1050px){ .two{grid-template-columns:1fr} }
+    .four{
+      display:grid;gap:12px;
+      grid-template-columns:1fr 1fr;
+      margin-top:10px;
+    }
+    @media (max-width: 1050px){ .four{grid-template-columns:1fr} }
+    details{
+      margin-top:10px;border:1px solid var(--line);border-radius:14px;
+      background:rgba(255,255,255,.55);padding:10px;
+    }
+    summary{cursor:pointer;font-weight:900}
+    .mono{font-family:var(--mono);font-size:12.5px;direction:ltr;text-align:left}
+    .hide{display:none !important;}
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>נייקוויסט גלילי • Helix+Rings • FFT דו־ממדי + FFT חד־ממדי (θ ו־z) כדי לראות aliasing</h1>
+  <div class="sub">
+    כאן תראה <b>FFT 2D</b> (אמת מול שחזור) וגם <b>FFT 1D</b>:
+    <span class="pill">FFTθ בחתך \(z=z_0\)</span>
+    <span class="pill">FFTz בחתך \(\theta=\theta_0\)</span>
+    <span class="pill">כשאין נייקוויסט — השיא “מתקפל” (alias)</span>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h2>פרמטרים</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>מוד דגימה</label>
+        <select id="mode">
+          <option value="grid">Grid (θ,z)</option>
+          <option value="helix">Helix (θ=ωt, z=vt)</option>
+          <option value="helix_rings" selected>Helix + Rings</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>\(k_{\max}\) [rad/unit]</label>
+        <input id="kMax" type="number" step="0.1" value="18" />
+      </div>
+
+      <div class="field">
+        <label>רדיוס \(R\)</label>
+        <input id="R" type="number" step="0.1" value="6" />
+      </div>
+
+      <div class="field">
+        <label>\(z_{min}\)</label>
+        <input id="zMin" type="number" step="0.1" value="0" />
+      </div>
+
+      <div class="field">
+        <label>\(z_{max}\)</label>
+        <input id="zMax" type="number" step="0.1" value="10" />
+      </div>
+
+      <div class="field">
+        <label>מהירות \(v\) (z/s)</label>
+        <input id="v" type="number" step="0.1" value="1.6" />
+      </div>
+
+      <div class="field">
+        <label>Δt</label>
+        <input id="dt" type="number" step="0.001" value="0.12" />
+      </div>
+
+      <!-- GRID ONLY -->
+      <div class="field hide" id="gridOnly_dTheta">
+        <label>Grid: Δθ</label>
+        <input id="dTheta" type="number" step="0.001" value="0.20" />
+      </div>
+
+      <div class="field hide" id="gridOnly_dzMode">
+        <label>Grid: Δz</label>
+        <select id="dzMode">
+          <option value="from_dt" selected>Δz=vΔt</option>
+          <option value="nyq">Δz=π/kmax</option>
+          <option value="custom">ידני</option>
+        </select>
+      </div>
+
+      <div class="field hide" id="gridOnly_dzCustomWrap">
+        <label>Grid: Δz ידני</label>
+        <input id="dzCustom" type="number" step="0.001" value="0.18" />
+      </div>
+
+      <!-- HELIX / HELIX+RINGS -->
+      <div class="field" id="helixOnly_omega">
+        <label>Helix: ω [rad/s]</label>
+        <input id="omega" type="number" step="0.1" value="5.2" />
+      </div>
+
+      <!-- RINGS -->
+      <div class="field" id="ringsOnly_dzRing">
+        <label>Rings: \(Δz_{\text{ring}}\)</label>
+        <input id="dzRing" type="number" step="0.01" value="1.0" />
+      </div>
+
+      <div class="field" id="ringsOnly_dThetaRing">
+        <label>Rings: Δθ לטבעת</label>
+        <input id="dThetaRing" type="number" step="0.001" value="0.14" />
+      </div>
+
+      <!-- SIGNAL -->
+      <div class="field">
+        <label>סיגנל \(f(\theta,z)\)</label>
+        <select id="sigMode">
+          <option value="coscos" selected>\(\cos(m\theta)\cos(k_z z)\)</option>
+          <option value="sincos">\(\sin(m\theta)\cos(k_z z)\)</option>
+          <option value="mix">mix: \(\cos(m\theta)+0.6\cos(2m\theta)\)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>\(m\)</label>
+        <input id="m" type="number" step="1" value="14" />
+      </div>
+
+      <div class="field">
+        <label>\(k_z\) [rad/unit]</label>
+        <input id="kz" type="number" step="0.1" value="9" />
+      </div>
+
+      <div class="field">
+        <label>Kernel לשחזור (σ)</label>
+        <input id="sigma" type="number" step="0.001" value="0.22" />
+      </div>
+
+      <div class="field">
+        <label>FFT 2D: גודל (חזקה של 2)</label>
+        <select id="fftSize">
+          <option value="64">64×64</option>
+          <option value="128" selected>128×128</option>
+          <option value="256">256×256</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>FFT 1D: N (חזקה של 2)</label>
+        <select id="fft1dN">
+          <option value="128">128</option>
+          <option value="256" selected>256</option>
+          <option value="512">512</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>חתך ל־FFT 1D: \(z_0\) (בין zMin ל־zMax)</label>
+        <input id="z0" type="number" step="0.1" value="5.0" />
+      </div>
+
+      <div class="field">
+        <label>חתך ל־FFT 1D: \(\theta_0\) [rad] (0..2π)</label>
+        <input id="theta0" type="number" step="0.1" value="0.0" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="runBtn">הרץ (FFT 1D/2D)</button>
+      <button id="resetBtn">איפוס</button>
+    </div>
+
+    <div class="kpi">
+      <div class="box">
+        <div class="t">נייקוויסט זוויתי</div>
+        <div class="v" id="nyqTheta">—</div>
+      </div>
+      <div class="box">
+        <div class="t">נייקוויסט צירי</div>
+        <div class="v" id="nyqZ">—</div>
+      </div>
+      <div class="box">
+        <div class="t">נייקוויסט זמן→מרחב</div>
+        <div class="v" id="nyqT">—</div>
+      </div>
+      <div class="box">
+        <div class="t">נייקוויסט הליקס</div>
+        <div class="v" id="nyqS">—</div>
+      </div>
+      <div class="box">
+        <div class="t">RMS (θ=θ0)</div>
+        <div class="v" id="rmsOut">—</div>
+      </div>
+      <div class="box">
+        <div class="t">ΔNyq=π/kmax</div>
+        <div class="v" id="nyqVal">—</div>
+      </div>
+      <div class="box">
+        <div class="t">דגימות</div>
+        <div class="v" id="Nout">—</div>
+      </div>
+      <div class="box">
+        <div class="t">טבעות</div>
+        <div class="v" id="ringsCount">—</div>
+      </div>
+      <div class="box">
+        <div class="t">bandlimit sanity</div>
+        <div class="v" id="bandSanity">—</div>
+      </div>
+    </div>
+
+    <details>
+      <summary>איך לקרוא FFT 1D כאן?</summary>
+      <div class="note">
+        <ul>
+          <li><b>FFTθ ב־\(z=z_0\):</b> אמור להראות שיא ב־\(m\) (או סביבו), ואם אין נייקוויסט — השיא יזוז/יתקפל.</li>
+          <li><b>FFTz ב־\(\theta=\theta_0\):</b> אמור להראות שיא סביב \(k_z\).</li>
+        </ul>
+        אנחנו מציגים את הספקטרום “בציר אינדקס” (bins) כי זו הדגמה ויזואלית. עדיין רואים aliasing בבירור.
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>תצוגה: Unwrap + Slice + FFT 2D + FFT 1D</h2>
+
+    <div class="note">
+      למעלה: נקודות הדגימה. באמצע: אמת מול שחזור לאורך \(\theta=\theta_0\).
+      למטה: FFT 2D (אמת/שחזור) ואז FFT 1D (θ ב־z0, ו־z ב־θ0).
+    </div>
+
+    <div class="hr"></div>
+    <canvas id="cyl" width="1024" height="310"></canvas>
+    <div style="height:10px"></div>
+    <canvas id="plot" width="1024" height="310"></canvas>
+
+    <div class="two">
+      <div>
+        <div class="note"><b>FFT 2D — אמת</b></div>
+        <canvas id="specTrue" width="1024" height="310"></canvas>
+      </div>
+      <div>
+        <div class="note"><b>FFT 2D — שחזור</b></div>
+        <canvas id="specHat" width="1024" height="310"></canvas>
+      </div>
+    </div>
+
+    <div class="four">
+      <div>
+        <div class="note"><b>FFTθ @ z=z0 — אמת</b></div>
+        <canvas id="fftThetaTrue" width="1024" height="310"></canvas>
+      </div>
+      <div>
+        <div class="note"><b>FFTθ @ z=z0 — שחזור</b></div>
+        <canvas id="fftThetaHat" width="1024" height="310"></canvas>
+      </div>
+      <div>
+        <div class="note"><b>FFTz @ θ=θ0 — אמת</b></div>
+        <canvas id="fftZTrue" width="1024" height="310"></canvas>
+      </div>
+      <div>
+        <div class="note"><b>FFTz @ θ=θ0 — שחזור</b></div>
+        <canvas id="fftZHat" width="1024" height="310"></canvas>
+      </div>
+    </div>
+
+    <details>
+      <summary>פלט טכני</summary>
+      <pre class="mono" id="tech">—</pre>
+    </details>
+  </section>
+</div>
+
+<script>
+/* =========================
+   Utilities
+========================= */
+function fmt(x,d=6){ if(!isFinite(x)) return String(x); const s=x.toFixed(d); return s.replace(/\.?0+$/,''); }
+function rms(a,b){ let s=0,n=Math.min(a.length,b.length); for(let i=0;i<n;i++){ const d=a[i]-b[i]; s+=d*d; } return Math.sqrt(s/n); }
+function statusSpan(ok){ return ok ? `<span class="ok">תקין ✅</span>` : `<span class="bad">לא תקין ❌</span>`; }
+function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+function wrapAngleDiff(a,b){ let d=a-b; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; return d; }
+function isPow2(n){ return (n & (n-1))===0 && n>0; }
+
+/* =========================
+   Signal f(theta,z)
+========================= */
+function fCyl(theta, z, mode, m, kz){
+  if (mode === "coscos") return Math.cos(m*theta) * Math.cos(kz*z);
+  if (mode === "sincos") return Math.sin(m*theta) * Math.cos(kz*z);
+  return (Math.cos(m*theta) + 0.6*Math.cos(2*m*theta)) * Math.cos(kz*z);
+}
+
+/* =========================
+   Sampling
+========================= */
+function computeDz(dzMode, v, dt, kMax, dzCustom){
+  const piOver = Math.PI / Math.max(1e-9, kMax);
+  if (dzMode === "nyq") return piOver;
+  if (dzMode === "custom") return Math.max(1e-9, dzCustom);
+  return Math.max(1e-9, v*dt);
+}
+
+function genGrid({zMin,zMax,dz,dTheta,mode,m,kz}){
+  const samples=[];
+  const zSpan=Math.max(1e-9,zMax-zMin);
+  const stepsZ=Math.max(2, Math.floor(zSpan/dz)+1);
+  const nTheta=Math.max(8, Math.floor((2*Math.PI)/Math.max(1e-6,dTheta)));
+  for(let i=0;i<stepsZ;i++){
+    const z=zMin+(i/(stepsZ-1))*zSpan;
+    for(let j=0;j<nTheta;j++){
+      const th=(j/nTheta)*2*Math.PI;
+      samples.push({theta:th,z,val:fCyl(th,z,mode,m,kz), src:"grid"});
+    }
+  }
+  return {samples, ringsInjected:0};
+}
+
+function genHelix({zMin,zMax,v,dt,omega,mode,m,kz}){
+  const samples=[];
+  const zSpan=Math.max(1e-9,zMax-zMin);
+  const T=zSpan/Math.max(1e-9,v);
+  const N=Math.max(32, Math.floor(T/dt)+1);
+  for(let n=0;n<N;n++){
+    const t=(n/(N-1))*T;
+    const z=zMin+v*t;
+    const th=(omega*t)%(2*Math.PI);
+    samples.push({theta:th,z,val:fCyl(th,z,mode,m,kz), src:"helix"});
+  }
+  return {samples, ringsInjected:0};
+}
+
+function injectRings(samples, {zMin,zMax,dzRing,dThetaRing,mode,m,kz}){
+  const zSpan=Math.max(1e-9,zMax-zMin);
+  const countR=Math.max(1, Math.floor(zSpan/Math.max(1e-9,dzRing))+1);
+  const nThetaRing=Math.max(8, Math.floor((2*Math.PI)/Math.max(1e-6,dThetaRing)));
+  let injected=0;
+  for(let i=0;i<countR;i++){
+    const z=zMin+(i/(countR-1))*zSpan;
+    for(let j=0;j<nThetaRing;j++){
+      const th=(j/nThetaRing)*2*Math.PI;
+      samples.push({theta:th,z,val:fCyl(th,z,mode,m,kz), src:"ring"});
+    }
+    injected++;
+  }
+  return {ringsInjected: injected, nThetaRing};
+}
+
+/* =========================
+   Reconstruction: dense theta×z grid (demo kernel regression)
+========================= */
+function reconstructDense({samples,zMin,zMax,nT=256,nZ=256,sigmaT=0.22,sigmaZ=0.22}){
+  const eps=1e-12;
+  const sT2=Math.max(eps, sigmaT*sigmaT);
+  const sZ2=Math.max(eps, sigmaZ*sigmaZ);
+
+  const thetas=new Float64Array(nT);
+  const zs=new Float64Array(nZ);
+  for(let i=0;i<nT;i++) thetas[i]=(i/nT)*2*Math.PI;
+  for(let k=0;k<nZ;k++) zs[k]=zMin+(k/(nZ-1))*(zMax-zMin);
+
+  const grid=new Float64Array(nT*nZ);
+
+  for(let k=0;k<nZ;k++){
+    const zq=zs[k];
+    for(let i=0;i<nT;i++){
+      const tq=thetas[i];
+      let num=0, den=0;
+      for(const p of samples){
+        const dt = wrapAngleDiff(p.theta, tq);
+        const dz = p.z - zq;
+        const w = Math.exp(-(dt*dt)/(2*sT2)) * Math.exp(-(dz*dz)/(2*sZ2));
+        num += w*p.val; den += w;
+      }
+      grid[k*nT+i]=(den>eps)?(num/den):0;
+    }
+  }
+  return {thetas,zs,grid,nT,nZ};
+}
+
+/* =========================
+   Drawing: unwrap samples
+========================= */
+function drawUnwrap(canvas, samples, zMin, zMax){
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const padL=56,padR=16,padT=14,padB=28;
+  const iw=W-padL-padR, ih=H-padT-padB;
+
+  ctx.strokeStyle="rgba(148,163,184,.55)"; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){ const x=padL+(i/6)*iw; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ih); ctx.stroke(); }
+  for(let j=0;j<=5;j++){ const y=padT+(j/5)*ih; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+iw,y); ctx.stroke(); }
+
+  ctx.strokeStyle="rgba(15,23,42,.75)"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ih); ctx.lineTo(padL+iw,padT+ih); ctx.stroke();
+
+  let vmin=+Infinity, vmax=-Infinity;
+  for(const p of samples){ vmin=Math.min(vmin,p.val); vmax=Math.max(vmax,p.val); }
+  const span=(vmax-vmin)||1;
+
+  const X = th => padL + (th/(2*Math.PI))*iw;
+  const Y = z  => padT + (1-((z-zMin)/(zMax-zMin)))*ih;
+
+  for(const p of samples){
+    const t=(p.val-vmin)/span;
+    if (p.src==="helix") ctx.fillStyle=`rgba(2,6,23,${0.10+0.75*t})`;
+    else if (p.src==="ring") ctx.fillStyle=`rgba(16,185,129,${0.10+0.70*t})`;
+    else ctx.fillStyle=`rgba(37,99,235,${0.12+0.70*t})`;
+    ctx.beginPath();
+    ctx.arc(X(p.theta), Y(p.z), (p.src==="helix")?1.45:1.12, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.font="12px system-ui";
+  ctx.fillStyle="rgba(15,23,42,.85)";
+  ctx.fillText("θ →", padL+iw-30, padT+ih+22);
+  ctx.fillText("z", 18, padT+12);
+}
+
+/* =========================
+   Drawing: slice (truth vs hat) at theta=theta0
+========================= */
+function drawSliceAtTheta(canvas, thetas, zs, gridTrue, gridHat, nT, nZ, theta0){
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // find nearest theta index
+  let i0=0, best=1e9;
+  for(let i=0;i<nT;i++){
+    const d = Math.abs(thetas[i]-theta0);
+    if(d<best){ best=d; i0=i; }
+  }
+
+  const trueVals=new Float64Array(nZ);
+  const hatVals=new Float64Array(nZ);
+  for(let k=0;k<nZ;k++){
+    trueVals[k]=gridTrue[k*nT+i0];
+    hatVals[k]=gridHat[k*nT+i0];
+  }
+
+  const padL=56,padR=16,padT=14,padB=36;
+  const iw=W-padL-padR, ih=H-padT-padB;
+
+  const zmin=zs[0], zmax=zs[nZ-1];
+
+  let ymin=+Infinity, ymax=-Infinity;
+  for(let k=0;k<nZ;k++){ ymin=Math.min(ymin,trueVals[k],hatVals[k]); ymax=Math.max(ymax,trueVals[k],hatVals[k]); }
+  if(ymin===ymax){ ymin-=1; ymax+=1; }
+
+  const X = z => padL + ((z-zmin)/(zmax-zmin))*iw;
+  const Y = v => padT + (1-((v-ymin)/(ymax-ymin)))*ih;
+
+  ctx.strokeStyle="rgba(148,163,184,.55)"; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){ const x=padL+(i/6)*iw; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ih); ctx.stroke(); }
+  for(let j=0;j<=5;j++){ const y=padT+(j/5)*ih; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+iw,y); ctx.stroke(); }
+
+  ctx.strokeStyle="rgba(15,23,42,.75)"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ih); ctx.lineTo(padL+iw,padT+ih); ctx.stroke();
+
+  ctx.lineWidth=2.3;
+  ctx.strokeStyle="rgba(2,6,23,.85)";
+  ctx.beginPath();
+  for(let k=0;k<nZ;k++){ const xx=X(zs[k]), yy=Y(trueVals[k]); if(k===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
+  ctx.stroke();
+
+  ctx.strokeStyle="rgba(37,99,235,.85)";
+  ctx.beginPath();
+  for(let k=0;k<nZ;k++){ const xx=X(zs[k]), yy=Y(hatVals[k]); if(k===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
+  ctx.stroke();
+
+  ctx.font="12px system-ui";
+  ctx.fillStyle="rgba(2,6,23,.9)"; ctx.fillText("אמת", padL+8, padT+14);
+  ctx.fillStyle="rgba(37,99,235,.95)"; ctx.fillText("שחזור", padL+8, padT+30);
+  ctx.fillStyle="rgba(15,23,42,.85)";
+  ctx.fillText("z →", padL+iw-30, padT+ih+28);
+
+  return {trueVals, hatVals, iTheta:i0};
+}
+
+/* =========================
+   FFT radix-2 (in-place)
+========================= */
+function bitReversePermute(re, im){
+  const n = re.length;
+  let j = 0;
+  for(let i=0;i<n;i++){
+    if(i<j){
+      [re[i],re[j]]=[re[j],re[i]];
+      [im[i],im[j]]=[im[j],im[i]];
+    }
+    let m = n>>1;
+    while(m>=1 && j>=m){ j-=m; m>>=1; }
+    j += m;
+  }
+}
+function fftRadix2(re, im, inverse=false){
+  const n=re.length;
+  if(!isPow2(n)) throw new Error("FFT length must be power of 2");
+  bitReversePermute(re, im);
+  for(let len=2; len<=n; len<<=1){
+    const ang = (inverse ? 2 : -2) * Math.PI / len;
+    const wlenRe = Math.cos(ang);
+    const wlenIm = Math.sin(ang);
+    for(let i=0; i<n; i+=len){
+      let wRe=1, wIm=0;
+      for(let j=0; j<len/2; j++){
+        const uRe = re[i+j], uIm = im[i+j];
+        const vRe = re[i+j+len/2]*wRe - im[i+j+len/2]*wIm;
+        const vIm = re[i+j+len/2]*wIm + im[i+j+len/2]*wRe;
+        re[i+j] = uRe + vRe;
+        im[i+j] = uIm + vIm;
+        re[i+j+len/2] = uRe - vRe;
+        im[i+j+len/2] = uIm - vIm;
+
+        const nextWRe = wRe*wlenRe - wIm*wlenIm;
+        const nextWIm = wRe*wlenIm + wIm*wlenRe;
+        wRe = nextWRe; wIm = nextWIm;
+      }
+    }
+  }
+  if(inverse){
+    for(let i=0;i<n;i++){ re[i]/=n; im[i]/=n; }
+  }
+}
+
+/* =========================
+   2D FFT magnitude (fftshift) on real NxN input
+========================= */
+function fft2dRealMagnitudeShifted(grid, N){
+  const re = new Float64Array(N*N);
+  const im = new Float64Array(N*N);
+  re.set(grid);
+
+  // rows
+  const rowRe = new Float64Array(N);
+  const rowIm = new Float64Array(N);
+  for(let y=0;y<N;y++){
+    for(let x=0;x<N;x++){ rowRe[x]=re[y*N+x]; rowIm[x]=0; }
+    fftRadix2(rowRe, rowIm, false);
+    for(let x=0;x<N;x++){ re[y*N+x]=rowRe[x]; im[y*N+x]=rowIm[x]; }
+  }
+
+  // cols
+  const colRe = new Float64Array(N);
+  const colIm = new Float64Array(N);
+  for(let x=0;x<N;x++){
+    for(let y=0;y<N;y++){ colRe[y]=re[y*N+x]; colIm[y]=im[y*N+x]; }
+    fftRadix2(colRe, colIm, false);
+    for(let y=0;y<N;y++){ re[y*N+x]=colRe[y]; im[y*N+x]=colIm[y]; }
+  }
+
+  // magnitude + fftshift
+  const mag = new Float64Array(N*N);
+  for(let y=0;y<N;y++){
+    for(let x=0;x<N;x++){
+      const yy=(y+N/2)%N;
+      const xx=(x+N/2)%N;
+      const aRe = re[yy*N+xx];
+      const aIm = im[yy*N+xx];
+      mag[y*N+x] = Math.sqrt(aRe*aRe + aIm*aIm);
+    }
+  }
+  return mag;
+}
+
+/* =========================
+   Resample dense (nZ×nT) to N×N for FFT2D
+========================= */
+function resampleDenseToSquare(dense, N){
+  const out = new Float64Array(N*N);
+  const nT=dense.nT, nZ=dense.nZ;
+  for(let y=0;y<N;y++){
+    const srcY = (y/(N-1))*(nZ-1);
+    const y0 = Math.floor(srcY);
+    const y1 = Math.min(nZ-1, y0+1);
+    const ty = srcY - y0;
+
+    for(let x=0;x<N;x++){
+      const srcX = (x/(N-1))*(nT-1);
+      const x0 = Math.floor(srcX);
+      const x1 = Math.min(nT-1, x0+1);
+      const tx = srcX - x0;
+
+      const v00 = dense.grid[y0*nT + x0];
+      const v01 = dense.grid[y0*nT + x1];
+      const v10 = dense.grid[y1*nT + x0];
+      const v11 = dense.grid[y1*nT + x1];
+
+      const v0 = v00*(1-tx) + v01*tx;
+      const v1 = v10*(1-tx) + v11*tx;
+      out[y*N + x] = v0*(1-ty) + v1*ty;
+    }
+  }
+  return out;
+}
+
+/* =========================
+   Draw spectrum heatmap (log)
+========================= */
+function drawSpectrum(canvas, mag, N){
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+
+  let maxv = 0;
+  for(let i=0;i<mag.length;i++) if(mag[i]>maxv) maxv=mag[i];
+  maxv = Math.max(1e-12, maxv);
+
+  const img = ctx.createImageData(N, N);
+  for(let y=0;y<N;y++){
+    for(let x=0;x<N;x++){
+      const v = mag[y*N + x];
+      const lv = Math.log(1 + v) / Math.log(1 + maxv); // 0..1
+      const c = Math.floor(255*lv);
+      const idx=(y*N + x)*4;
+      img.data[idx+0]=c; img.data[idx+1]=c; img.data[idx+2]=c; img.data[idx+3]=255;
+    }
+  }
+  const off=document.createElement("canvas");
+  off.width=N; off.height=N;
+  off.getContext("2d").putImageData(img,0,0);
+
+  ctx.clearRect(0,0,W,H);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(off,0,0,W,H);
+
+  ctx.strokeStyle="rgba(15,23,42,.55)";
+  ctx.lineWidth=1;
+  ctx.strokeRect(0.5,0.5,W-1,H-1);
+
+  ctx.font="12px system-ui";
+  ctx.fillStyle="rgba(15,23,42,.85)";
+  ctx.fillText("kθ (fftshift) →", 10, H-10);
+  ctx.save();
+  ctx.translate(14, 18);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("kz (fftshift) →", 0, 0);
+  ctx.restore();
+}
+
+/* =========================
+   1D FFT spectrum from real signal (length N):
+   - compute FFT
+   - magnitude
+   - fftshift
+========================= */
+function fft1dRealMagnitudeShifted(sig){
+  const N = sig.length;
+  const re = new Float64Array(N);
+  const im = new Float64Array(N);
+  re.set(sig);
+  fftRadix2(re, im, false);
+
+  const mag = new Float64Array(N);
+  for(let i=0;i<N;i++){
+    const j=(i+N/2)%N;
+    mag[i] = Math.sqrt(re[j]*re[j] + im[j]*im[j]);
+  }
+  return mag;
+}
+
+/* =========================
+   Extract 1D cuts from dense grids:
+   - theta cut at z=z0 -> vector over theta (length N)
+   - z cut at theta=theta0 -> vector over z (length N)
+   We resample the dense grid bilinearly.
+========================= */
+function extractThetaCut(dense, z0, N){
+  const out = new Float64Array(N);
+  const nT=dense.nT, nZ=dense.nZ;
+  const zMin=dense.zs[0], zMax=dense.zs[nZ-1];
+  const zc = clamp(z0, zMin, zMax);
+
+  const srcY = ((zc - zMin)/(zMax - zMin))*(nZ-1);
+  const y0 = Math.floor(srcY);
+  const y1 = Math.min(nZ-1, y0+1);
+  const ty = srcY - y0;
+
+  for(let x=0;x<N;x++){
+    const th = (x/N)*2*Math.PI;
+    const srcX = (th/(2*Math.PI))*(nT-1);
+    const x0 = Math.floor(srcX);
+    const x1 = Math.min(nT-1, x0+1);
+    const tx = srcX - x0;
+
+    const v00 = dense.grid[y0*nT + x0];
+    const v01 = dense.grid[y0*nT + x1];
+    const v10 = dense.grid[y1*nT + x0];
+    const v11 = dense.grid[y1*nT + x1];
+
+    const v0 = v00*(1-tx) + v01*tx;
+    const v1 = v10*(1-tx) + v11*tx;
+    out[x] = v0*(1-ty) + v1*ty;
+  }
+  return out;
+}
+
+function extractZCut(dense, theta0, N){
+  const out = new Float64Array(N);
+  const nT=dense.nT, nZ=dense.nZ;
+  const zMin=dense.zs[0], zMax=dense.zs[nZ-1];
+  const th0 = ((theta0%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+
+  const srcX = (th0/(2*Math.PI))*(nT-1);
+  const x0 = Math.floor(srcX);
+  const x1 = Math.min(nT-1, x0+1);
+  const tx = srcX - x0;
+
+  for(let y=0;y<N;y++){
+    const z = zMin + (y/(N-1))*(zMax - zMin);
+    const srcY = ((z - zMin)/(zMax - zMin))*(nZ-1);
+    const y0 = Math.floor(srcY);
+    const y1 = Math.min(nZ-1, y0+1);
+    const ty = srcY - y0;
+
+    const v00 = dense.grid[y0*nT + x0];
+    const v01 = dense.grid[y0*nT + x1];
+    const v10 = dense.grid[y1*nT + x0];
+    const v11 = dense.grid[y1*nT + x1];
+
+    const v0 = v00*(1-tx) + v01*tx;
+    const v1 = v10*(1-tx) + v11*tx;
+    out[y] = v0*(1-ty) + v1*ty;
+  }
+  return out;
+}
+
+/* =========================
+   Draw 1D spectrum line (log magnitude) with grid
+========================= */
+function draw1DSpectrum(canvas, mag){
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const padL=56,padR=16,padT=14,padB=32;
+  const iw=W-padL-padR, ih=H-padT-padB;
+
+  // log scale for visibility
+  let maxv=0;
+  for(let i=0;i<mag.length;i++) if(mag[i]>maxv) maxv=mag[i];
+  maxv = Math.max(1e-12, maxv);
+
+  const logMag = new Float64Array(mag.length);
+  let minL=+Infinity, maxL=-Infinity;
+  for(let i=0;i<mag.length;i++){
+    const v = Math.log(1+mag[i]);
+    logMag[i]=v;
+    minL=Math.min(minL,v);
+    maxL=Math.max(maxL,v);
+  }
+  if(minL===maxL){ minL-=1; maxL+=1; }
+
+  const X = i => padL + (i/(mag.length-1))*iw;
+  const Y = v => padT + (1-((v-minL)/(maxL-minL)))*ih;
+
+  // grid
+  ctx.strokeStyle="rgba(148,163,184,.55)"; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){ const x=padL+(i/6)*iw; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ih); ctx.stroke(); }
+  for(let j=0;j<=5;j++){ const y=padT+(j/5)*ih; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+iw,y); ctx.stroke(); }
+
+  // axes
+  ctx.strokeStyle="rgba(15,23,42,.75)"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ih); ctx.lineTo(padL+iw,padT+ih); ctx.stroke();
+
+  // curve
+  ctx.strokeStyle="rgba(2,6,23,.85)";
+  ctx.lineWidth=2.2;
+  ctx.beginPath();
+  for(let i=0;i<logMag.length;i++){
+    const xx=X(i), yy=Y(logMag[i]);
+    if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  }
+  ctx.stroke();
+
+  ctx.font="12px system-ui";
+  ctx.fillStyle="rgba(15,23,42,.85)";
+  ctx.fillText("bin (fftshift) →", padL+iw-92, padT+ih+26);
+  ctx.fillText("log|FFT|", 10, padT+12);
+}
+
+/* =========================
+   UI visibility
+========================= */
+function updateVisibility(){
+  const mode=document.getElementById("mode").value;
+  const grid=(mode==="grid");
+  const helix=(mode!=="grid");
+  const rings=(mode==="helix_rings");
+
+  document.getElementById("gridOnly_dTheta").classList.toggle("hide", !grid);
+  document.getElementById("gridOnly_dzMode").classList.toggle("hide", !grid);
+
+  const dzMode=document.getElementById("dzMode").value;
+  document.getElementById("gridOnly_dzCustomWrap").classList.toggle("hide", !(grid && dzMode==="custom"));
+
+  document.getElementById("helixOnly_omega").classList.toggle("hide", !helix);
+
+  document.getElementById("ringsOnly_dzRing").classList.toggle("hide", !rings);
+  document.getElementById("ringsOnly_dThetaRing").classList.toggle("hide", !rings);
+}
+
+/* =========================
+   MAIN RUN
+========================= */
+function run(){
+  const modeSel=document.getElementById("mode").value;
+
+  const kMax=Number(document.getElementById("kMax").value);
+  const R=Number(document.getElementById("R").value);
+  const zMin=Number(document.getElementById("zMin").value);
+  const zMax=Number(document.getElementById("zMax").value);
+  const v=Number(document.getElementById("v").value);
+  const dt=Number(document.getElementById("dt").value);
+
+  const sigMode=document.getElementById("sigMode").value;
+  const m=Math.max(0, Math.floor(Number(document.getElementById("m").value)));
+  const kz=Number(document.getElementById("kz").value);
+
+  const sigma=Math.max(1e-6, Number(document.getElementById("sigma").value));
+  const Nfft2=Number(document.getElementById("fftSize").value);
+  const Nfft1=Number(document.getElementById("fft1dN").value);
+
+  const z0=Number(document.getElementById("z0").value);
+  const theta0=Number(document.getElementById("theta0").value);
+
+  if(!isPow2(Nfft2)||!isPow2(Nfft1)) throw new Error("FFT sizes must be powers of 2");
+
+  const piOver=Math.PI/Math.max(1e-9,kMax);
+  document.getElementById("nyqVal").textContent=fmt(piOver,8);
+
+  // approx bandlimit sanity
+  const angSpatial = m/Math.max(1e-9,R);
+  const okBand = (Math.max(angSpatial, Math.abs(kz)) <= kMax + 1e-12);
+  document.getElementById("bandSanity").innerHTML = okBand ? `<span class="ok">בתוך kmax ✅</span>` : `<span class="bad">חוצה kmax ⚠️</span>`;
+
+  let samplesInfo, omega=0, dzEff=0, dThetaCircle=0, ringsInjected=0, nThetaRing=0;
+
+  if(modeSel==="grid"){
+    const dTheta=Number(document.getElementById("dTheta").value);
+    const dzMode=document.getElementById("dzMode").value;
+    const dzCustom=Number(document.getElementById("dzCustom").value);
+
+    dzEff=computeDz(dzMode,v,dt,kMax,dzCustom);
+    dThetaCircle=dTheta;
+    samplesInfo=genGrid({zMin,zMax,dz:dzEff,dTheta,mode:sigMode,m,kz});
+  }else{
+    omega=Number(document.getElementById("omega").value);
+    dzEff=v*dt;
+    samplesInfo=genHelix({zMin,zMax,v,dt,omega,mode:sigMode,m,kz});
+    dThetaCircle=omega*dt;
+
+    if(modeSel==="helix_rings"){
+      const dzRing=Math.max(1e-6, Number(document.getElementById("dzRing").value));
+      const dThetaRing=Math.max(1e-6, Number(document.getElementById("dThetaRing").value));
+      const inj=injectRings(samplesInfo.samples,{zMin,zMax,dzRing,dThetaRing,mode:sigMode,m,kz});
+      ringsInjected=inj.ringsInjected;
+      nThetaRing=inj.nThetaRing;
+      dThetaCircle=dThetaRing; // circle check uses rings
+    }
+  }
+
+  const samples=samplesInfo.samples;
+  document.getElementById("Nout").textContent=String(samples.length);
+  document.getElementById("ringsCount").textContent=String(ringsInjected);
+
+  // Nyquist checks
+  const dsThetaCircle=R*dThetaCircle;
+  const okTheta=dsThetaCircle <= piOver + 1e-12;
+  const okZ=dzEff <= piOver + 1e-12;
+  const okT=(v*dt) <= piOver + 1e-12;
+
+  let dsHelix=NaN, okS=true;
+  if(modeSel==="grid"){
+    const dsTheta=R*Number(document.getElementById("dTheta").value);
+    dsHelix=Math.sqrt(dsTheta*dsTheta + dzEff*dzEff);
+    okS=dsHelix <= piOver + 1e-12;
+  }else{
+    const dsThetaH=R*(omega*dt);
+    dsHelix=Math.sqrt(dsThetaH*dsThetaH + dzEff*dzEff);
+    okS=dsHelix <= piOver + 1e-12;
+  }
+
+  document.getElementById("nyqTheta").innerHTML=statusSpan(okTheta);
+  document.getElementById("nyqZ").innerHTML=statusSpan(okZ);
+  document.getElementById("nyqT").innerHTML=statusSpan(okT);
+  document.getElementById("nyqS").innerHTML=statusSpan(okS);
+
+  // Reconstruction dense (FFT-friendly)
+  const denseHat=reconstructDense({
+    samples, zMin, zMax,
+    nT:256, nZ:256,
+    sigmaT:sigma, sigmaZ:sigma
+  });
+
+  // Ground truth dense (same axes)
+  const denseTrue=(function(){
+    const nT=denseHat.nT, nZ=denseHat.nZ;
+    const thetas=denseHat.thetas, zs=denseHat.zs;
+    const grid=new Float64Array(nT*nZ);
+    for(let k=0;k<nZ;k++){
+      const z=zs[k];
+      for(let i=0;i<nT;i++){
+        const th=thetas[i];
+        grid[k*nT+i]=fCyl(th,z,sigMode,m,kz);
+      }
+    }
+    return {thetas, zs, grid, nT, nZ};
+  })();
+
+  // Draw unwrap
+  drawUnwrap(document.getElementById("cyl"), samples, zMin, zMax);
+
+  // Slice at theta0 (truth vs hat) + RMS
+  const th0 = ((theta0%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  const slice = drawSliceAtTheta(
+    document.getElementById("plot"),
+    denseTrue.thetas, denseTrue.zs,
+    denseTrue.grid, denseHat.grid,
+    denseTrue.nT, denseTrue.nZ,
+    th0
+  );
+  const err=rms(slice.trueVals, slice.hatVals);
+  document.getElementById("rmsOut").textContent=fmt(err,10);
+
+  // FFT 2D (true/hat)
+  const sqTrue=resampleDenseToSquare(denseTrue, Nfft2);
+  const sqHat =resampleDenseToSquare(denseHat,  Nfft2);
+  const magTrue2=fft2dRealMagnitudeShifted(sqTrue, Nfft2);
+  const magHat2 =fft2dRealMagnitudeShifted(sqHat,  Nfft2);
+  drawSpectrum(document.getElementById("specTrue"), magTrue2, Nfft2);
+  drawSpectrum(document.getElementById("specHat"),  magHat2,  Nfft2);
+
+  // FFT 1D: theta-cut at z=z0 (true/hat)
+  const thetaCutTrue = extractThetaCut(denseTrue, z0, Nfft1);
+  const thetaCutHat  = extractThetaCut(denseHat,  z0, Nfft1);
+  const magThetaTrue = fft1dRealMagnitudeShifted(thetaCutTrue);
+  const magThetaHat  = fft1dRealMagnitudeShifted(thetaCutHat);
+  draw1DSpectrum(document.getElementById("fftThetaTrue"), magThetaTrue);
+  draw1DSpectrum(document.getElementById("fftThetaHat"),  magThetaHat);
+
+  // FFT 1D: z-cut at theta=theta0 (true/hat)
+  const zCutTrue = extractZCut(denseTrue, th0, Nfft1);
+  const zCutHat  = extractZCut(denseHat,  th0, Nfft1);
+  const magZTrue = fft1dRealMagnitudeShifted(zCutTrue);
+  const magZHat  = fft1dRealMagnitudeShifted(zCutHat);
+  draw1DSpectrum(document.getElementById("fftZTrue"), magZTrue);
+  draw1DSpectrum(document.getElementById("fftZHat"),  magZHat);
+
+  // Tech
+  const dThetaHelix = (modeSel==="grid") ? Number(document.getElementById("dTheta").value) : omega*dt;
+  const dsThetaHelix = R*dThetaHelix;
+
+  let extra="";
+  if(modeSel==="grid"){
+    extra=`Grid: dTheta=${dThetaCircle}, dz=${dzEff}`;
+  }else if(modeSel==="helix"){
+    extra=`Helix: omega=${omega}, dThetaH=${dThetaHelix}, dz=v*dt=${dzEff}, dsHelix≈${dsHelix}`;
+  }else{
+    const dzRing=Number(document.getElementById("dzRing").value);
+    const dThetaRing=Number(document.getElementById("dThetaRing").value);
+    extra=`Helix+Rings:
+  Helix: omega=${omega}, dThetaH=${dThetaHelix}, dz=v*dt=${dzEff}, dsHelix≈${dsHelix}
+  Rings: dzRing=${dzRing}, dThetaRing=${dThetaRing}, nThetaRing=${nThetaRing}, ringsInjected=${ringsInjected}`;
+  }
+
+  document.getElementById("tech").textContent =
+`Mode=${modeSel}
+kMax=${kMax}
+R=${R}
+zMin=${zMin}, zMax=${zMax}
+v=${v}, dt=${dt}
+pi/kMax=${piOver}
+
+${extra}
+
+Nyquist:
+Circle: R*dTheta_circle=${R*dThetaCircle} <= ${piOver} => ${okTheta ? "OK" : "FAIL"}
+Axial: dz=${dzEff} <= ${piOver} => ${okZ ? "OK" : "FAIL"}
+Time: v*dt=${v*dt} <= ${piOver} => ${okT ? "OK" : "FAIL"}
+Helix ds≈${dsHelix} <= ${piOver} => ${okS ? "OK" : "FAIL"}
+
+Signal sanity:
+m/R=${angSpatial}, |kz|=${Math.abs(kz)}, max<=kMax? ${okBand?"YES":"NO"}
+
+1D FFT cuts:
+z0=${z0} (theta-cut), theta0=${th0} (z-cut)
+FFT1D N=${Nfft1}, FFT2D N=${Nfft2}
+`;
+}
+
+/* =========================
+   UI wiring
+========================= */
+document.getElementById("mode").addEventListener("change", ()=>{ updateVisibility(); run(); });
+document.getElementById("dzMode").addEventListener("change", ()=>{ updateVisibility(); run(); });
+document.getElementById("runBtn").addEventListener("click", ()=>{ try{ run(); }catch(e){ alert("שגיאה: "+(e?.message||e)); console.error(e);} });
+
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  document.getElementById("mode").value="helix_rings";
+  document.getElementById("kMax").value=18;
+  document.getElementById("R").value=6;
+  document.getElementById("zMin").value=0;
+  document.getElementById("zMax").value=10;
+  document.getElementById("v").value=1.6;
+  document.getElementById("dt").value=0.12;
+
+  document.getElementById("dTheta").value=0.20;
+  document.getElementById("dzMode").value="from_dt";
+  document.getElementById("dzCustom").value=0.18;
+
+  document.getElementById("omega").value=5.2;
+  document.getElementById("dzRing").value=1.0;
+  document.getElementById("dThetaRing").value=0.14;
+
+  document.getElementById("sigMode").value="coscos";
+  document.getElementById("m").value=14;
+  document.getElementById("kz").value=9;
+
+  document.getElementById("sigma").value=0.22;
+  document.getElementById("fftSize").value="128";
+  document.getElementById("fft1dN").value="256";
+  document.getElementById("z0").value=5.0;
+  document.getElementById("theta0").value=0.0;
+
+  updateVisibility();
+  run();
+});
+
+window.addEventListener("load", ()=>{
+  updateVisibility();
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:"$$", right:"$$", display:true},
+        {left:"\\[", right:"\\]", display:true},
+        {left:"$", right:"$", display:false},
+        {left:"\\(", right:"\\)", display:false},
+      ]
+    });
+  }
+  run();
+});
+</script>
+</body>
+</html>
