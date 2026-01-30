@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>אוסף תדרים בזוגות ±f • נורמות שוות • מרחב מנה • ספקטרום/קו־וריאנס</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --link:#2563eb;
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --r:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1a2a; --bg2:#081018;
+        --card:rgba(17,24,39,.72);
+        --card2:rgba(17,24,39,.55);
+        --text:#e5e7eb; --muted:#9ca3af; --line:rgba(148,163,184,.18);
+        --head:#f9fafb; --link:#60a5fa;
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --shadow2: 0 10px 28px rgba(0,0,0,.25);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      line-height:1.6;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1100px; margin:0 auto; padding:26px 18px 70px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      margin: 10px 0 18px;
+    }
+    .title{
+      flex:1;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding:16px 16px 12px;
+      box-shadow:var(--shadow2);
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:0 0 6px; font-size: 22px; color:var(--head)}
+    .sub{margin:0; color:var(--muted); font-size: 13.5px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .chip{
+      border:1px solid var(--line);
+      background:var(--card2);
+      padding:6px 10px; border-radius:999px;
+      font-size:12.5px; color:var(--muted);
+    }
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding: 14px 14px 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    h2{margin:0 0 8px; font-size:16.5px; color:var(--head)}
+    h3{margin:14px 0 6px; font-size:14.5px; color:var(--head)}
+    .muted{color:var(--muted)}
+    .hr{height:1px; background:var(--line); margin:12px 0}
+    code, pre{font-family:var(--mono)}
+    pre{
+      margin:10px 0 0;
+      background: rgba(2,6,23,.06);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      overflow:auto;
+    }
+    @media (prefers-color-scheme: dark){
+      pre{background: rgba(255,255,255,.04)}
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .field{
+      display:flex; flex-direction:column; gap:6px; min-width: 180px; flex:1;
+    }
+    label{font-size:12.5px; color:var(--muted)}
+    input[type="number"], input[type="range"], select, button{
+      font: inherit;
+    }
+    input[type="number"], select{
+      padding:10px 10px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      color: var(--text);
+      outline: none;
+    }
+    @media (prefers-color-scheme: dark){
+      input[type="number"], select{
+        background: rgba(17,24,39,.6);
+      }
+    }
+    button{
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      color: var(--text);
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+    }
+    button:hover{filter:brightness(1.02)}
+    .kpi{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      margin-top: 10px;
+    }
+    .box{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 10px 8px;
+      background: var(--card2);
+    }
+    .box .t{font-size:12px; color:var(--muted)}
+    .box .v{font-size:15px; font-family: var(--mono); margin-top:4px}
+    canvas{
+      width:100%; height:240px; display:block;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.42);
+    }
+    @media (prefers-color-scheme: dark){
+      canvas{background: rgba(17,24,39,.55)}
+    }
+    .foot{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12.5px;
+      text-align:center;
+    }
+    .pill{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: var(--card2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>אוסף תדרים בזוגות <span class="pill">±f</span> כך שהנורמה זהה</h1>
+        <p class="sub">
+          כולל: הגדרה פורמלית • יחס שקילות \(f\sim -f\) • מרחב מנה \(\mathbb{R}/\{\pm1\}\) •
+          דוגמאות ב־FT/DFT • ספקטרום כוח/קו־וריאנס (Wiener–Khinchin) • הדגמה אינטראקטיבית
+        </p>
+        <div class="chips">
+          <span class="chip">🧭 סימטריה סביב 0</span>
+          <span class="chip">📏 \(|f|=|-f|\)</span>
+          <span class="chip">🧮 מחלקות שקילות</span>
+          <span class="chip">📡 ספקטרום ↔ קו־וריאנס</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: Theory -->
+      <section class="card">
+        <h2>1) ההגדרה – “אוסף כל התדרים בזוגות”</h2>
+        <div class="muted">
+          נניח מרחב תדרים רציף \( \mathbb{R} \) (או בדיד \( \mathbb{Z} \)).  
+          עבור כל \(f\) נצרף את הזוג הסימטרי סביב האפס: \( (f,-f) \).
+        </div>
+
+        <h3>הצמדה לזוגות</h3>
+        <div>
+          נגדיר פונקציית “זיווג”:
+          <div class="hr"></div>
+          \[
+            \Pi:\mathbb{R}\to \mathcal{P}(\mathbb{R}),\qquad \Pi(f)=\{f,-f\}.
+          \]
+          אם רוצים למנוע ספירה כפולה, מספיק לקחת \(f\ge 0\):
+          \[
+            \mathcal{F}=\{\{f,-f\}\mid f\in\mathbb{R}_{\ge 0}\}.
+          \]
+          הערה: עבור \(f=0\) מתקבל \(\{0,-0\}=\{0\}\) (נקודה קבועה).
+        </div>
+
+        <h3>שוויון נורמות</h3>
+        <div>
+          אם הנורמה היא הערך המוחלט (ברירת־מחדל בתדרים 1D):
+          \[
+            \|f\|=|f|,\quad \|-f\|=|-f|=|f|\quad\Rightarrow\quad \|f\|=\|-f\|.
+          \]
+          יותר כללי: בכל מרחב נורמי שבו \(\|x\|=\|-x\|\) (זו תכונה בסיסית של נורמה), נקבל תמיד זוגות איזו־נורמיים.
+        </div>
+
+        <h2 style="margin-top:16px;">2) יחס שקילות ומרחב מנה</h2>
+        <div class="muted">כאן אנחנו “מכווצים” את שני הצדדים של הציר למחלקה אחת.</div>
+
+        <h3>יחס שקילות</h3>
+        \[
+          f \sim g \iff g\in\{f,-f\}.
+        \]
+        כלומר: שתי נקודות שקולות אם הן באותו זוג סימטרי. מחלקת השקילות של \(f\) היא:
+        \[
+          [f]=\{f,-f\}.
+        \]
+
+        <h3>פעולת חבורה (תמונה גאומטרית)</h3>
+        החבורה \(G=\{\pm1\}\) פועלת על \(\mathbb{R}\) ע״י כפל:
+        \[
+          \sigma\cdot f=\sigma f,\quad \sigma\in\{\pm1\}.
+        \]
+        ואז כל “מסלול” (orbit) הוא:
+        \[
+          \mathrm{Orb}(f)=\{f,-f\}.
+        \]
+
+        <h3>מרחב המנה</h3>
+        \[
+          \mathbb{R}/\{\pm1\}\ \cong\ \mathbb{R}_{\ge 0}
+        \]
+        כלומר: אחרי הזיהוי \(f\sim -f\), כל תדר מיוצג היטב ע״י גודלו \(|f|\).
+        זו דרך פורמלית להגיד “הספקטרום חי למעשה על תדרים לא־שליליים”.
+
+        <h2 style="margin-top:16px;">3) פורייה: למה הזוגות חשובים לסיגנלים ממשיים</h2>
+
+        <h3>FT רציף (סיגנל ממשי)</h3>
+        אם \(x(t)\) ממשי, אז לטרנספורם פורייה \(\hat{x}(f)\) יש סימטריית צמוד־מרוכב:
+        \[
+          \hat{x}(-f)=\overline{\hat{x}(f)}.
+        \]
+        מכאן מיד:
+        \[
+          |\hat{x}(-f)|=|\hat{x}(f)|,
+        \]
+        כלומר האנרגיה/עוצמה במגמה בתדרים \( \pm f \) זהה.
+
+        <h3>הזוגות מייצרים קוסינוס/סינוס</h3>
+        הזוג האקספוננציאלי:
+        \[
+          e^{i2\pi ft} + e^{-i2\pi ft}=2\cos(2\pi ft)
+        \]
+        הוא “האובייקט הממשי” שמופיע בסיגנלים אמיתיים. לכן לקבץ ל־\(\pm f\) הוא טבעי.
+
+        <h2 style="margin-top:16px;">4) ספקטרום כוח וקו־וריאנס (Wiener–Khinchin)</h2>
+        <div class="muted">
+          כאן מחברים בדיוק בין “אוסף זוגות ±f” לבין רעש/תהליך סטוכסטי, קו־וריאנס ותדר.
+        </div>
+
+        <h3>PSD – צפיפות ספקטרלית של功</h3>
+        עבור תהליך רחב־תחנה \(x(t)\), ספקטרום הכוח \(S_{xx}(f)\) הוא:
+        \[
+          S_{xx}(f)\ \ge 0,\qquad S_{xx}(-f)=S_{xx}(f).
+        \]
+        כלומר הוא *זוגי* (even) — עוד סיבה טבעית לעבוד על \(|f|\) או על \(f\ge 0\).
+
+        <h3>Wiener–Khinchin: קו־וריאנס ↔ ספקטרום</h3>
+        פונקציית האוטו־קו־וריאנס/אוטו־קורלציה:
+        \[
+          R_{xx}(\tau)=\mathbb{E}[x(t)\,x(t+\tau)]
+        \]
+        קשורה ל־PSD דרך פורייה:
+        \[
+          S_{xx}(f)=\int_{-\infty}^{\infty} R_{xx}(\tau)\,e^{-i2\pi f\tau}\,d\tau,
+        \qquad
+          R_{xx}(\tau)=\int_{-\infty}^{\infty} S_{xx}(f)\,e^{i2\pi f\tau}\,df.
+        \]
+        כאשר \(R_{xx}(\tau)\) ממשית, מתקבלת סימטריה שמבטיחה ש־\(S_{xx}(f)\) זוגי.
+
+        <h2 style="margin-top:16px;">5) בדיד (DFT): איך הזיווג נראה באינדקסים</h2>
+        <div class="muted">
+          בדגימה: \(N\) נקודות. התדרים הם אינדקסים \(k=0,\dots,N-1\), והזוג של \(k\) הוא \(N-k\) (מודולו \(N\)).
+        </div>
+
+        <h3>זיווג אינדקסים</h3>
+        \[
+          k \leftrightarrow (N-k)\ \ (\mathrm{mod}\ N).
+        \]
+        נקודות מיוחדות:
+        - \(k=0\) (DC) מזדווג עם עצמו  
+        - אם \(N\) זוגי: \(k=N/2\) (Nyquist) מזדווג עם עצמו
+
+        <h3>סיגנל ממשי בדיד</h3>
+        אם \(x[n]\) ממשי:
+        \[
+          X[N-k]=\overline{X[k]},
+        \]
+        ולכן:
+        \[
+          |X[N-k]|=|X[k]|.
+        \]
+
+        <h3>קוד פסאודו: יצירת ספקטרום סימטרי</h3>
+        <pre><code>// ליצור ספקטרום מורכב X[k] ואז לכפות סימטריית צמוד:
+// X[N-k] = conj(X[k])  (ל-k=1..N/2-1)
+X[0] = realOnly();
+if (N%2==0) X[N/2] = realOnly();
+for (k=1; k&lt;N/2; k++){
+  X[N-k] = conj(X[k]);
+}</code></pre>
+
+      </section>
+
+      <!-- Right: Interactive -->
+      <aside class="card">
+        <h2>הדגמה אינטראקטיבית</h2>
+        <p class="muted" style="margin:0 0 10px;">
+          בחר תדר \(f\), ונראה את הזוג \(\{f,-f\}\), שוויון הנורמות, וגם נייצר ספקטרום סימטרי לדוגמה.
+        </p>
+
+        <div class="row">
+          <div class="field">
+            <label for="fnum">תדר \(f\)</label>
+            <input id="fnum" type="number" step="0.1" value="7.5">
+          </div>
+          <div class="field">
+            <label for="normType">נורמה</label>
+            <select id="normType">
+              <option value="abs">1D: |f|</option>
+              <option value="euclid2">2D (הדגמה): ‖(f,0)‖₂</option>
+              <option value="p3">הדגמה: ‖f‖ₚ עם p=3 (כללי ב-1D)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="field" style="min-width:240px;">
+            <label for="fslider">מחוון</label>
+            <input id="fslider" type="range" min="-50" max="50" step="0.1" value="7.5">
+          </div>
+          <button id="randBtn" title="מייצר ספקטרום סימטרי חדש">🎲 ספקטרום חדש</button>
+        </div>
+
+        <div class="kpi">
+          <div class="box">
+            <div class="t">הזוג</div>
+            <div class="v" id="pairOut">{7.5, -7.5}</div>
+          </div>
+          <div class="box">
+            <div class="t">מחלקת שקילות</div>
+            <div class="v" id="classOut">[f] = {f, -f}</div>
+          </div>
+          <div class="box">
+            <div class="t">‖f‖</div>
+            <div class="v" id="nfOut">7.5</div>
+          </div>
+          <div class="box">
+            <div class="t">‖-f‖</div>
+            <div class="v" id="nnegfOut">7.5</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 style="margin-top:0;">ספקטרום סימטרי לדוגמה (משרעת |X(f)|)</h3>
+        <canvas id="spec"></canvas>
+        <p class="muted" style="margin:10px 0 0;">
+          הגרף מצייר משרעת סימטרית סביב 0: אותה משרעת בתדר \(f\) וב־\(-f\).
+        </p>
+
+        <div class="hr"></div>
+
+        <h3 style="margin-top:0;">סיכום קצר (מה יצא לנו?)</h3>
+        <ul class="muted" style="margin:0; padding-right:18px;">
+          <li>זיווג: \(f \leftrightarrow -f\)</li>
+          <li>שקילות: \(f\sim -f\), מרחב מנה \(\mathbb{R}/\{\pm1\}\cong\mathbb{R}_{\ge0}\)</li>
+          <li>סיגנל ממשי ⇒ \(|\hat{x}(f)|=|\hat{x}(-f)|\)</li>
+          <li>PSD זוגי, וקו־וריאנס ↔ ספקטרום (Wiener–Khinchin)</li>
+        </ul>
+
+      </aside>
+    </div>
+
+    <div class="foot">
+      <span class="pill">כל הזכויות שמורות</span>
+      <span class="muted"> • אין לשכפל אלא באישור • </span>
+      <span class="pill" style="font-family:var(--mono)">RA - Raftn4@gmail.com</span>
+    </div>
+  </div>
+
+  <script>
+    // KaTeX render
+    window.addEventListener('load', () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\(", right: "\\)", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+
+    // Helpers
+    const $ = (id) => document.getElementById(id);
+    const fnum = $("fnum");
+    const fslider = $("fslider");
+    const normType = $("normType");
+    const pairOut = $("pairOut");
+    const classOut = $("classOut");
+    const nfOut = $("nfOut");
+    const nnegfOut = $("nnegfOut");
+    const randBtn = $("randBtn");
+    const canvas = $("spec");
+    const ctx = canvas.getContext("2d");
+
+    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+    function norm1D(f, type){
+      const af = Math.abs(f);
+      if (type === "abs") return af;
+      if (type === "p3") return Math.pow(af, 3); // רק הדגמה: "נורמה" בסגנון |f|^p (ב-1D זה מונוטוני)
+      if (type === "euclid2") return Math.hypot(f, 0); // עדיין |f|
+      return af;
+    }
+
+    function fmt(x){
+      const ax = Math.abs(x);
+      if (ax >= 1000 || (ax > 0 && ax < 1e-3)) return x.toExponential(3);
+      return (Math.round(x*1000)/1000).toString();
+    }
+
+    function updatePairUI(){
+      const f = Number(fnum.value || 0);
+      fslider.value = String(clamp(f, Number(fslider.min), Number(fslider.max)));
+
+      pairOut.textContent = `{${fmt(f)}, ${fmt(-f)}}`;
+      classOut.textContent = `[${fmt(f)}] = {${fmt(f)}, ${fmt(-f)}}`;
+
+      const t = normType.value;
+      const nf = norm1D(f, t);
+      const nnegf = norm1D(-f, t);
+
+      nfOut.textContent = fmt(nf);
+      nnegfOut.textContent = fmt(nnegf);
+    }
+
+    // -------- Spectrum demo (symmetric magnitude) --------
+    // We'll create a symmetric array A for f in [-F..F] sampled at N points.
+    let specA = [];
+    const N = 201;          // odd so there's a center at 0
+    const FMAX = 50;        // frequency axis [-FMAX, FMAX]
+
+    function randn(){
+      // Box-Muller
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    function newSpectrum(){
+      // Create magnitude on nonnegative side, then mirror.
+      const half = Math.floor(N/2); // 100 for N=201
+      const right = new Array(half+1);
+
+      // Make something smooth-ish: sum of a few bumps
+      for (let i=0; i<=half; i++){
+        const f = (i/half)*FMAX;
+        const bump1 = Math.exp(-Math.pow((f - (10 + 10*Math.random()))/ (5 + 4*Math.random()), 2));
+        const bump2 = 0.7*Math.exp(-Math.pow((f - (25 + 12*Math.random()))/ (6 + 5*Math.random()), 2));
+        const noise = 0.12*Math.abs(randn());
+        right[i] = bump1 + bump2 + noise;
+      }
+
+      // Mirror to negative: A[-i] = A[i]
+      const A = new Array(N);
+      for (let i=0; i<=half; i++){
+        A[half + i] = right[i];   // f>=0 (center is i=0)
+        A[half - i] = right[i];   // f<=0
+      }
+
+      // Normalize to [0..1]
+      let mx = 0;
+      for (const x of A) mx = Math.max(mx, x);
+      specA = A.map(x => x / (mx || 1));
+      drawSpectrum();
+    }
+
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(300, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(180, Math.floor(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function drawSpectrum(){
+      if (!specA.length) return;
+      resizeCanvas();
+
+      const W = canvas.getBoundingClientRect().width;
+      const H = canvas.getBoundingClientRect().height;
+
+      // Clear
+      ctx.clearRect(0, 0, W, H);
+
+      // Axes
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 1;
+
+      // horizontal midline
+      ctx.beginPath();
+      ctx.moveTo(12, H-24);
+      ctx.lineTo(W-12, H-24);
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim();
+      ctx.stroke();
+
+      // vertical at 0
+      const x0 = W/2;
+      ctx.beginPath();
+      ctx.moveTo(x0, 12);
+      ctx.lineTo(x0, H-18);
+      ctx.stroke();
+
+      // Plot
+      ctx.beginPath();
+      for (let i=0; i<N; i++){
+        const x = 12 + (i/(N-1))*(W-24);
+        const y = (H-28) - specA[i]*(H-48) + 10;
+        if (i===0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--link').trim() || '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Labels
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();
+      ctx.font = '12px system-ui';
+      ctx.textAlign = 'right';
+      ctx.fillText('+f', W-12, H-6);
+      ctx.textAlign = 'left';
+      ctx.fillText('-f', 12, H-6);
+      ctx.textAlign = 'center';
+      ctx.fillText('0', x0, H-6);
+      ctx.textAlign = 'right';
+      ctx.fillText('|X(f)|', W-12, 16);
+
+      // Highlight chosen f and -f
+      const f = Number(fnum.value || 0);
+      const ff = clamp(f, -FMAX, FMAX);
+      const iPos = Math.round(((ff + FMAX)/(2*FMAX))*(N-1));
+      const iNeg = Math.round(((-ff + FMAX)/(2*FMAX))*(N-1));
+
+      function dot(i, alpha){
+        const x = 12 + (i/(N-1))*(W-24);
+        const y = (H-28) - specA[i]*(H-48) + 10;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.arc(x, y, 4.5, 0, Math.PI*2);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--head').trim();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      dot(iPos, 0.85);
+      dot(iNeg, 0.35); // same magnitude, faded to show pairing
+    }
+
+    // Events
+    fnum.addEventListener('input', () => { updatePairUI(); drawSpectrum(); });
+    fslider.addEventListener('input', () => { fnum.value = fslider.value; updatePairUI(); drawSpectrum(); });
+    normType.addEventListener('change', updatePairUI);
+    randBtn.addEventListener('click', newSpectrum);
+    window.addEventListener('resize', drawSpectrum);
+
+    // Init
+    updatePairUI();
+    newSpectrum();
+  </script>
+</body>
+</html>
