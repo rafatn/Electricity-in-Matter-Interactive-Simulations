@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>מסמך פטנט – אבטחת מידע היברידית IPv6 + Bluetooth + MAC + IPv4/APIPA</title>
+  <meta name="description" content="מסמך פטנט מעוצב הכולל תביעות (Claims), הסברים מפורטים ויישום מעשי בציוד קיים (Linux/Windows/macOS)." />
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --card: rgba(255,255,255,.08);
+      --text: #e8eefc;
+      --muted: rgba(232,238,252,.72);
+      --muted2: rgba(232,238,252,.55);
+      --line: rgba(255,255,255,.12);
+      --accent: #7c3aed;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 18px;
+      --r2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1200px 700px at 80% -10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 600px at 10% 10%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 600px at 50% 110%, rgba(59,130,246,.14), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a{ color: #b9a7ff; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+      padding: 18px;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    header.hero{
+      grid-column: 1 / -1;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      padding: 18px 18px 14px;
+      overflow:hidden;
+      position: relative;
+    }
+    header.hero:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 260px at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+                  radial-gradient(700px 260px at 80% 0%, rgba(34,197,94,.22), transparent 60%);
+      filter: blur(14px);
+      opacity: .65;
+      pointer-events:none;
+    }
+    header.hero > *{ position:relative; }
+    .heroTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .titleBlock h1{
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .titleBlock p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      max-width: 74ch;
+      font-size: 14px;
+    }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .chip{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .chip b{ color: var(--text); font-weight:700; }
+    .heroActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 12px;
+    }
+    .btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 700;
+      font-size: 13px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.45), rgba(59,130,246,.18));
+      border-color: rgba(124,58,237,.55);
+    }
+    .btn.good{
+      background: linear-gradient(135deg, rgba(34,197,94,.34), rgba(16,185,129,.14));
+      border-color: rgba(34,197,94,.55);
+    }
+    .btn.warn{
+      background: linear-gradient(135deg, rgba(245,158,11,.28), rgba(245,158,11,.12));
+      border-color: rgba(245,158,11,.55);
+    }
+
+    aside{
+      position: sticky;
+      top: 14px;
+      align-self: start;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .sideHead{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .sideHead h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.3px;
+      color: var(--muted);
+    }
+    .searchBox{
+      margin-top: 10px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .searchBox input{
+      width:100%;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding: 10px 10px;
+      border-radius: 12px;
+      outline:none;
+      font-size: 13px;
+    }
+    .searchBox input::placeholder{ color: rgba(232,238,252,.45); }
+
+    nav.toc{
+      padding: 10px 10px 14px;
+      max-height: calc(100vh - 220px);
+      overflow:auto;
+    }
+    .toc a{
+      display:block;
+      padding: 9px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      border: 1px solid transparent;
+      font-size: 13px;
+      line-height: 1.3;
+      margin: 4px 0;
+    }
+    .toc a:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.10);
+      color: var(--text);
+      text-decoration:none;
+    }
+    .toc a.active{
+      background: rgba(124,58,237,.18);
+      border-color: rgba(124,58,237,.35);
+      color: var(--text);
+    }
+    .toc small{
+      display:block;
+      color: rgba(232,238,252,.45);
+      font-weight:600;
+      margin-top: 2px;
+    }
+
+    main{
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .content{
+      padding: 18px;
+    }
+
+    section{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--r);
+      padding: 16px;
+      margin: 14px 0;
+    }
+    section h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:800;
+      letter-spacing: .2px;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .note{
+      border:1px solid rgba(124,58,237,.35);
+      background: rgba(124,58,237,.12);
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .note b{ color: var(--text); }
+    .ok{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.10);
+    }
+    .warnBox{
+      border-color: rgba(245,158,11,.45);
+      background: rgba(245,158,11,.10);
+    }
+    .dangerBox{
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.10);
+    }
+
+    ul,ol{ margin: 8px 0 0 0; padding-right: 18px; color: var(--muted); }
+    li{ margin: 6px 0; }
+    p{ margin: 10px 0; color: var(--muted); }
+    p strong{ color: var(--text); }
+
+    .claims{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .claim{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .claimHead{
+      display:flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .claimNum{
+      font-family: var(--mono);
+      font-weight: 900;
+      color: #fff;
+      background: rgba(124,58,237,.24);
+      border: 1px solid rgba(124,58,237,.45);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .claimTitle{
+      font-weight: 900;
+      color: var(--text);
+      font-size: 13.5px;
+    }
+    .claimBody{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .codeCard{
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.20);
+      margin-top: 10px;
+    }
+    .codeTop{
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .codeTop .label{
+      font-weight: 900;
+      font-size: 12.5px;
+      color: var(--text);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .codeTop .meta{
+      color: rgba(232,238,252,.55);
+      font-size: 12px;
+    }
+    .copyBtn{
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 12px;
+      user-select:none;
+    }
+    .copyBtn:hover{ background: rgba(255,255,255,.10); }
+    pre{
+      margin:0;
+      padding: 12px;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+      color: #eaf2ff;
+      white-space: pre;
+    }
+    code{ font-family: var(--mono); }
+
+    .diagram{
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0,0,0,.16);
+      padding: 12px;
+      margin-top: 10px;
+      overflow:auto;
+    }
+    .diagram h3{
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--text);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(232,238,252,.70);
+    }
+
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.14);
+      margin-top: 10px;
+    }
+    .table th, .table td{
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      text-align:right;
+      font-size: 13px;
+      color: var(--muted);
+      vertical-align: top;
+    }
+    .table th{
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+      font-weight: 900;
+    }
+    .table tr:last-child td{ border-bottom:none; }
+
+    .footer{
+      padding: 14px 18px;
+      border-top: 1px solid var(--line);
+      color: rgba(232,238,252,.55);
+      font-size: 12.5px;
+      background: rgba(255,255,255,.02);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+
+    .hl{
+      background: rgba(245,158,11,.18);
+      border-radius: 6px;
+      padding: 0 4px;
+      color: var(--text);
+      font-weight: 900;
+    }
+
+    .muted{ color: var(--muted2); }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+      aside{ position: static; }
+      nav.toc{ max-height: unset; }
+    }
+
+    /* Print */
+    @media print{
+      body{ background:#fff; color:#000; }
+      .wrap{ max-width: 100%; padding: 0; }
+      header.hero, aside, .heroActions{ display:none !important; }
+      main{ border:none; box-shadow:none; background:#fff; }
+      section{ page-break-inside: avoid; border: 1px solid #ddd; background:#fff; }
+      pre{ color:#000; }
+      a{ color:#000; text-decoration: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="hero" id="top">
+      <div class="heroTop">
+        <div class="titleBlock">
+          <h1>מסמך פטנט מעוצב – אבטחת מידע היברידית</h1>
+          <p>
+            מערכת ושיטה לאבטחת תקשורת באמצעות <strong>IPv6 פנימי</strong> + <strong>Bluetooth Overlay</strong> + <strong>MAC Hardware Identity</strong>
+            עם מעטפת חשיפה <strong>IPv4</strong> ו־<strong>APIPA</strong> במצב Offline – הכל על בסיס ציוד קיים כיום.
+          </p>
+        </div>
+
+        <div class="chips" aria-label="תגיות">
+          <div class="chip"><b>Transport</b>: IPv6</div>
+          <div class="chip"><b>Gateway</b>: IPv4</div>
+          <div class="chip"><b>Offline</b>: APIPA</div>
+          <div class="chip"><b>Identity</b>: MAC</div>
+          <div class="chip"><b>Physical Auth</b>: Bluetooth</div>
+        </div>
+      </div>
+
+      <div class="heroActions">
+        <button class="btn primary" onclick="window.print()" title="הדפסה / שמירה ל-PDF בדפדפן">
+          🖨️ הדפסה / PDF
+        </button>
+        <button class="btn good" onclick="scrollToId('claims')" title="קפיצה לתביעות הפטנט">
+          ⚖️ לתביעות (Claims)
+        </button>
+        <button class="btn warn" onclick="scrollToId('implementation')" title="קפיצה ליישום">
+          ⚙️ ליישום מעשי
+        </button>
+        <button class="btn" onclick="toggleAllCode(true)" title="פתיחת כל הקוד">
+          ▾ הצג קוד
+        </button>
+        <button class="btn" onclick="toggleAllCode(false)" title="סגור כל הקוד">
+          ▸ הסתר קוד
+        </button>
+      </div>
+    </header>
+
+    <aside>
+      <div class="sideHead">
+        <h2>ניווט + חיפוש במסמך</h2>
+        <div class="searchBox">
+          <input id="q" type="search" placeholder="חיפוש (למשל: IPv6, Bluetooth, Claim, Linux, APIPA...)" autocomplete="off" />
+        </div>
+      </div>
+      <nav class="toc" id="toc" aria-label="תוכן עניינים">
+        <a href="#abstract" data-to="abstract">תקציר (Abstract) <small>הגדרה קצרה של ההמצאה</small></a>
+        <a href="#field" data-to="field">תחום ההמצאה <small>Security / Networking / Hardware Identity</small></a>
+        <a href="#background" data-to="background">רקע טכנולוגי <small>הבעיה ומה חסר כיום</small></a>
+        <a href="#problem" data-to="problem">בעיה טכנולוגית <small>דרישות וחסרים</small></a>
+        <a href="#summary" data-to="summary">תמצית ההמצאה <small>מה חדש ומה מתקבל</small></a>
+        <a href="#architecture" data-to="architecture">ארכיטקטורה <small>שכבות + זרימת עבודה</small></a>
+        <a href="#novelty" data-to="novelty">חידוש (Novelty) <small>למה לא טריוויאלי</small></a>
+        <a href="#claims" data-to="claims">תביעות (Claims) <small>ניסוח משפטי לפטנט</small></a>
+        <a href="#implementation" data-to="implementation">יישום מעשי <small>Linux / Windows / macOS</small></a>
+        <a href="#security" data-to="security">ניתוח אבטחה <small>איומים + עמידות</small></a>
+        <a href="#industrial" data-to="industrial">יישומים תעשייתיים <small>Medical / Critical / Offline</small></a>
+        <a href="#variants" data-to="variants">וריאציות והרחבות <small>Zero-Trust / IoT / Policy</small></a>
+        <a href="#glossary" data-to="glossary">מילון מושגים <small>IPv6 / APIPA / MAC</small></a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="content" id="doc">
+
+        <section id="abstract" data-section>
+          <h2><span class="kicker">Abstract</span> תקציר ההמצאה</h2>
+          <p>
+            ההמצאה מתארת מערכת ושיטה לאבטחת תקשורת מחשובית תוך שילוב <strong>זהות חומרה (MAC)</strong> ו־<strong>אימות פיזי קצר־טווח באמצעות Bluetooth</strong>,
+            כאשר תעבורת המידע האמיתית מתנהלת בתוך <strong>רשת IPv6 פנימית</strong>, בעוד <strong>IPv4</strong> משמש כמעטפת חשיפה חיצונית (Gateway/Decoy).
+            בהיעדר חיבור אינטרנט, המערכת עוברת למצב <strong>APIPA</strong> וממשיכה לפעול מקומית, תוך שמירה על מנגנוני האימות והבקרה.
+          </p>
+          <div class="grid2">
+            <div class="note ok">
+              <b>תועלת מרכזית:</b> האבטחה נשענת על <span class="hl">נוכחות פיזית של חומרה</span> ולא רק על סיסמה/כתובת/שרת.
+            </div>
+            <div class="note warnBox">
+              <b>היקף:</b> מיועד לרשתות ארגוניות/קריטיות/רפואיות, כולל תרחישי Offline, ללא צורך בחומרה חדשה.
+            </div>
+          </div>
+        </section>
+
+        <section id="field" data-section>
+          <h2><span class="kicker">Field</span> תחום ההמצאה</h2>
+          <ul>
+            <li>אבטחת מידע והגנת גישה ברשתות מחשבים</li>
+            <li>אימות וזהות חומרה (Hardware Identity & Fingerprinting)</li>
+            <li>רשתות היברידיות IPv4/IPv6</li>
+            <li>Bluetooth Overlay / Mesh כאימות פיזי</li>
+            <li>פעולה ב־Offline באמצעות APIPA</li>
+          </ul>
+        </section>
+
+        <section id="background" data-section>
+          <h2><span class="kicker">Background</span> רקע טכנולוגי</h2>
+          <p>
+            פתרונות אבטחה נפוצים (סיסמאות, VPN, תעודות, ACL לפי IP) משיגים תוצאות טובות, אך לעיתים:
+            (1) ניתנים לגניבה/העתקה, (2) תלויים בשרתים חיצוניים, (3) פגיעים ל־Spoofing/Replay, (4) אינם עובדים היטב בסביבות Offline.
+          </p>
+          <p>
+            ההמצאה מציעה תחליף/תוספת: <strong>זהות חומרה רב־שכבתית + אימות פיזי</strong> כתנאי לפתיחת תעבורה,
+            יחד עם הפרדה ברורה בין <strong>תעבורה פנימית (IPv6)</strong> לבין <strong>חשיפה חיצונית (IPv4/APIPA)</strong>.
+          </p>
+        </section>
+
+        <section id="problem" data-section>
+          <h2><span class="kicker">Problem</span> הבעיה הטכנולוגית</h2>
+          <div class="note dangerBox">
+            <b>הבעיה:</b> מערכות רבות מסתמכות על “זהות רשת” (IP/תעודה/סיסמה). תוקף מרחוק יכול לנסות לזייף/לגנוב אותן.
+            יש צורך במנגנון שמחייב <span class="hl">נוכחות פיזית של רכיבים</span> כדי לאפשר גישה.
+          </div>
+          <ul>
+            <li>דרישה ליכולת פעולה ללא אינטרנט (Offline) בלי לפגוע באבטחה.</li>
+            <li>דרישה לשילוב בציוד קיים (Bluetooth + NIC) ללא חומרה חדשה.</li>
+            <li>הפרדת שכבת תעבורה מאובטחת משכבת חשיפה חיצונית.</li>
+          </ul>
+        </section>
+
+        <section id="summary" data-section>
+          <h2><span class="kicker">Summary</span> תמצית ההמצאה</h2>
+          <p>
+            המערכת בנויה משכבות:
+          </p>
+          <ol>
+            <li><strong>Hardware Identity:</strong> איסוף MAC (Bluetooth/NIC/Wi-Fi) → יצירת Fingerprint.</li>
+            <li><strong>Bluetooth Overlay:</strong> Bluetooth פעיל ו/או Mesh מקומי כ“מפתח פיזי”.</li>
+            <li><strong>IPv6 פנימי:</strong> תעבורה אמיתית עוברת ב־IPv6 פנימי “נסתר”.</li>
+            <li><strong>IPv4 Gateway:</strong> חשיפה חיצונית ב־IPv4 בלבד כ־Decoy/מעטפת.</li>
+            <li><strong>APIPA Offline:</strong> בעת ניתוק אינטרנט → שימוש 169.254/16 תוך המשך אימות.</li>
+          </ol>
+
+          <div class="note ok">
+            <b>רעיון ליבה:</b> גם אם מישהו מחזיק סיסמה/גישה לרשת, בלי Bluetooth+Fingerprint חומרתי תעבורה לא “נפתחת”.
+          </div>
+        </section>
+
+        <section id="architecture" data-section>
+          <h2><span class="kicker">Architecture</span> ארכיטקטורה וזרימה</h2>
+
+          <div class="diagram" role="region" aria-label="תרשים זרימה טקסטואלי">
+            <h3>תרשים זרימה (טקסטואלי) <span class="badge">Flow</span></h3>
+            <pre><code>[Hardware MAC IDs]
+        ↓  (Fingerprint + Key Derivation)
+[Bluetooth Auth / Presence Check]
+        ↓  (Policy: allow/deny)
+[IPv6 Internal Secure Transport]
+        ↓  (Encapsulation / routing)
+[IPv4 Gateway OR APIPA Offline]
+        ↓
+[External Internet / Local Network]</code></pre>
+          </div>
+
+          <table class="table" aria-label="שכבות ומטרות">
+            <thead>
+              <tr>
+                <th>שכבה</th>
+                <th>מטרה</th>
+                <th>מה תוקף “רואה”</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bluetooth Presence</strong></td>
+                <td>אימות פיזי קצר־טווח / תנאי גישה</td>
+                <td>קשה לחיקוי מרחוק</td>
+              </tr>
+              <tr>
+                <td><strong>MAC Fingerprint</strong></td>
+                <td>Seed קריפטוגרפי / Hardware Identity</td>
+                <td>אפילו אם זייפו IP – חסר “מפתח”</td>
+              </tr>
+              <tr>
+                <td><strong>IPv6 פנימי</strong></td>
+                <td>תעבורה מאובטחת, נסתרת, קשה לסריקה</td>
+                <td>מעטפת פנימית שאינה נחשפת</td>
+              </tr>
+              <tr>
+                <td><strong>IPv4 Gateway</strong></td>
+                <td>שכבת חשיפה חיצונית בלבד (Decoy)</td>
+                <td>נראה רגיל – אך לא הליבה</td>
+              </tr>
+              <tr>
+                <td><strong>APIPA Offline</strong></td>
+                <td>פעולה מקומית ללא אינטרנט</td>
+                <td>גישה מקומית – עם אותו אימות</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="novelty" data-section>
+          <h2><span class="kicker">Novelty</span> חידוש והיבטים לא־טריוויאליים</h2>
+          <ul>
+            <li><strong>Bluetooth אינו רק תקשורת</strong> – הוא הופך ל־“מפתח פיזי” למדיניות גישה.</li>
+            <li><strong>MAC Fingerprint</strong> משמש Seed/מרכיב ב־Key Derivation – תלוי נוכחות חומרה.</li>
+            <li><strong>IPv6 פנימי כתחבורה אמיתית</strong> עם <strong>IPv4 חיצוני כמעטפת</strong>.</li>
+            <li>יכולת <strong>Offline Security</strong> באמצעות APIPA בלי “נפילה” במצב ללא אינטרנט.</li>
+          </ul>
+        </section>
+
+        <section id="claims" data-section>
+          <h2><span class="kicker">Claims</span> תביעות פטנט (ניסוח משפטי)</h2>
+
+          <div class="claims" id="claimsList">
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 1</span>
+                <span class="claimTitle">תביעה עצמאית – מערכת אבטחת מידע רב־שכבתית</span>
+              </div>
+              <div class="claimBody">
+                מערכת אבטחת מידע, הכוללת: (א) שכבת אימות חומרתית המבוססת על כתובות MAC של רכיבי Bluetooth ו/או רכיבי תקשורת נוספים במכשיר;
+                (ב) שכבת אימות מקומית מבוססת Bluetooth, הפועלת כתנאי מוקדם לפתיחת תעבורת רשת;
+                (ג) רשת תקשורת פנימית מבוססת IPv6 שבה מתבצעת התעבורה המאובטחת;
+                (ד) שכבת מעבר חיצונית מבוססת IPv4 המשמשת כנקודת חשיפה מוגבלת;
+                (ה) מנגנון פעולה במצב ללא אינטרנט באמצעות APIPA; כאשר פתיחת התעבורה מתאפשרת רק בנוכחות פיזית של רכיבי החומרה המאומתים.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 2</span>
+                <span class="claimTitle">Seed קריפטוגרפי מבוסס MAC</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה כתובות ה־MAC משמשות כ־Seed ליצירת מפתחות הצפנה דינמיים או מפתחות גישה מתחלפים (Key Rotation).
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 3</span>
+                <span class="claimTitle">Bluetooth Mesh / Presence כמדיניות גישה</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה שכבת Bluetooth יוצרת רשת Mesh מקומית בין רכיבים ו/או בין מכשירים סמוכים,
+                ומאפשרת פתיחת תעבורה רק אם מתקיימת נוכחות/אימות לפי מדיניות מוגדרת.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 4</span>
+                <span class="claimTitle">הסתרת IPv6 פנימי מפני IPv4 חיצוני</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה תעבורת IPv6 פנימית מוסתרת או מופרדת כך שרשת IPv4 חיצונית אינה יכולה לגשת אליה באופן ישיר.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 5</span>
+                <span class="claimTitle">חסימת תעבורה בהיעדר Bluetooth</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה השבתת Bluetooth או היעדר נוכחות רכיבי Bluetooth מאומתים גורמים לחסימת תעבורה חלקית או מלאה לפי מדיניות.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 6</span>
+                <span class="claimTitle">Fallback ל־APIPA בעת Offline</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה מעבר אוטומטי לכתובות APIPA מתבצע בעת היעדר אינטרנט או DHCP, תוך שמירה על אותן שכבות אימות.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 7</span>
+                <span class="claimTitle">פעולה ללא שרת חיצוני</span>
+              </div>
+              <div class="claimBody">
+                המערכת לפי Claim 1, שבה האימות וקבלת החלטת הגישה מתבצעים מקומית ללא תלות בשרת חיצוני.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 8</span>
+                <span class="claimTitle">תביעה עצמאית – שיטה לאבטחת תקשורת</span>
+              </div>
+              <div class="claimBody">
+                שיטה לאבטחת תקשורת מחשובית הכוללת: זיהוי רכיבי חומרה מקומיים; יצירת טביעת אצבע קריפטוגרפית;
+                הפעלת Bluetooth כתנאי גישה; ניתוב תעבורה פנימית ב־IPv6; הצגת שכבת IPv4 חיצונית בלבד; ובמצב Offline שימוש ב־APIPA.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 9</span>
+                <span class="claimTitle">עדכון דינמי של Fingerprint</span>
+              </div>
+              <div class="claimBody">
+                השיטה לפי Claim 8, שבה טביעת האצבע משתנה דינמית עם שינוי רכיב חומרה או שינוי מצב Bluetooth, לצורך מניעת Replay/Cloning.
+              </div>
+            </div>
+
+            <div class="claim" data-claim>
+              <div class="claimHead">
+                <span class="claimNum">Claim 10</span>
+                <span class="claimTitle">יישום בתשתיות קריטיות</span>
+              </div>
+              <div class="claimBody">
+                השיטה לפי Claim 8, המיועדת לשימוש במערכות רפואיות, תעשייתיות, תחנות עבודה קריטיות, רשתות חירום או סביבות Offline.
+              </div>
+            </div>
+
+          </div>
+
+          <div class="note">
+            <b>הערה:</b> זהו ניסוח טכני־משפטי בסיסי. עורך פטנטים יכול לחדד ניסוחים בהתאם למדינה (US/EP/IL),
+            ולהוסיף תביעות נוספות (כמו Claims לתצורות IoT, Policy Engines, או Keys).
+          </div>
+        </section>
+
+        <section id="implementation" data-section>
+          <h2><span class="kicker">Implementation</span> יישום מעשי בציוד קיים (הנדסי)</h2>
+          <p>
+            להלן מימוש לדוגמה ברמת “Blueprint” שניתן ליישם היום. המטרה: להדגים את <strong>העיקרון</strong>:
+            אם Bluetooth אינו פעיל/מאומת – <strong>אין יציאת תעבורה</strong> (או יציאה מוגבלת), ותעבורה פנימית מתעדפת IPv6.
+          </p>
+
+          <div class="grid2">
+            <div class="note ok">
+              <b>ציוד נדרש:</b> מחשב רגיל עם Bluetooth + כרטיס רשת. נתב רגיל מספיק.
+            </div>
+            <div class="note warnBox">
+              <b>הערת בטיחות:</b> קוד חסימת רשת עלול לנתק אינטרנט. מומלץ לבדוק בסביבה ניסיונית/VM.
+            </div>
+          </div>
+
+          <!-- Linux -->
+          <div class="codeCard" data-code>
+            <div class="codeTop">
+              <div class="label">🐧 Linux – סקריפט הדגמה (Presence → Policy → IPv6/IPv4/APIPA)</div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <div class="meta">קובץ מומלץ: <code>plutus_guard.sh</code></div>
+                <button class="copyBtn" data-copy="#code-linux">העתק</button>
+              </div>
+            </div>
+            <pre id="code-linux"><code>#!/usr/bin/env bash
+set -euo pipefail
+
+# =========================
+# Plutus Guard (DEMO)
+# IPv6 internal preference + IPv4 gateway exposure + APIPA fallback
+# Physical presence gate: Bluetooth (hci0) + MAC fingerprint
+# =========================
+
+require_cmd() {
+  command -v "$1" >/dev/null 2>&1 || { echo "Missing command: $1" >&2; exit 1; }
+}
+
+require_cmd ip
+require_cmd awk
+require_cmd sha256sum
+
+# Optional tools (if present)
+HCICFG_OK=0
+if command -v hciconfig >/dev/null 2>&1; then
+  HCICFG_OK=1
+fi
+
+echo "[*] Collecting MAC addresses..."
+MACS=$(ip link | awk '/link\/ether/ {print $2}' | tr '\n' ' ' | sed 's/ *$//')
+BT_MAC=""
+if [[ "$HCICFG_OK" -eq 1 ]]; then
+  BT_MAC=$(hciconfig -a 2>/dev/null | awk '/Address:/ {print $2; exit}' || true)
+fi
+
+# Fingerprint: combine NIC MACs + (optional) BT MAC
+FP_INPUT="NIC:${MACS}|BT:${BT_MAC}"
+FP=$(echo -n "$FP_INPUT" | sha256sum | awk '{print $1}')
+
+echo "[*] Hardware Fingerprint (sha256): $FP"
+echo "[*] Input: $FP_INPUT"
+
+echo "[*] Checking Bluetooth presence..."
+BT_OK=0
+if [[ "$HCICFG_OK" -eq 1 ]]; then
+  if hciconfig hci0 2>/dev/null | grep -q "UP RUNNING"; then
+    BT_OK=1
+  fi
+else
+  echo "[!] hciconfig not found. Install BlueZ tools (package varies by distro)."
+fi
+
+# Policy decision
+# You can replace this with:
+# - a whitelist of approved fingerprints
+# - time-based rotation
+# - pairing proof (device nearby)
+ALLOW=0
+
+# Example policy:
+# allow if Bluetooth is UP AND fingerprint is not empty
+if [[ "$BT_OK" -eq 1 && -n "$FP" ]]; then
+  ALLOW=1
+fi
+
+echo "[*] Policy: ALLOW=$ALLOW (Bluetooth=$BT_OK)"
+
+# =========================
+# Network control (DEMO)
+# Choose firewall: nftables/iptables; here we'll show iptables if present.
+# =========================
+if command -v iptables >/dev/null 2>&1; then
+  echo "[*] Using iptables/ip6tables (demo rules)..."
+  # Clear demo rules (safe-ish cleanup)
+  iptables -F OUTPUT || true
+  ip6tables -F OUTPUT || true
+
+  if [[ "$ALLOW" -eq 1 ]]; then
+    # Allow IPv6 output; allow IPv4 only through selected gateway ports (example)
+    ip6tables -P OUTPUT ACCEPT
+    iptables -P OUTPUT DROP
+
+    # Example: allow IPv4 DNS + HTTPS only (customize)
+    iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+
+    echo "[+] Allowed: IPv6 (all). IPv4 limited: DNS(53/udp), HTTPS(443/tcp)."
+  else
+    # Block everything outward (demo hard lock)
+    iptables -P OUTPUT DROP
+    ip6tables -P OUTPUT DROP
+    echo "[!] BLOCKED: IPv4+IPv6 OUTPUT (Bluetooth not present/authorized)."
+  fi
+else
+  echo "[!] iptables not found. Consider nftables or OS firewall integration."
+fi
+
+# =========================
+# Offline detection + APIPA fallback (DEMO)
+# =========================
+# Basic check: default route exists?
+DEFAULT_ROUTE=$(ip route show default 2>/dev/null || true)
+
+if [[ -z "$DEFAULT_ROUTE" ]]; then
+  echo "[*] No default route detected (likely Offline). Setting APIPA address..."
+  # Pick interface automatically (first non-loopback UP)
+  IFACE=$(ip -o link show up | awk -F': ' '$2!="lo"{print $2; exit}')
+  if [[ -n "$IFACE" ]]; then
+    # Add APIPA (example). In real product: choose unique address, avoid conflicts (ARP probe).
+    ip addr add 169.254.10.10/16 dev "$IFACE" 2>/dev/null || true
+    echo "[+] APIPA configured on $IFACE: 169.254.10.10/16"
+  else
+    echo "[!] No UP interface found for APIPA."
+  fi
+else
+  echo "[*] Default route exists (Online). IPv4 exposure remains controlled by firewall policy."
+fi
+
+echo "[*] Done."</code></pre>
+          </div>
+
+          <div class="note">
+            <b>איך להפוך את זה ל“מוצר אמיתי”:</b>
+            במקום כלל “Bluetooth UP”, השתמשו באימות חזק יותר:
+            <ul>
+              <li>Whitelist של Fingerprints מורשים (מכשירים/עמדות)</li>
+              <li>Proof-of-Presence: Pairing/Advertising עם תג Bluetooth מורשה</li>
+              <li>Key Rotation: מפתח מתחלף לפי זמן + fingerprint</li>
+              <li>Policy Engine: החלטות לפי משתמש/זמן/מיקום/רמת רשת</li>
+            </ul>
+          </div>
+
+          <!-- Windows -->
+          <div class="codeCard" data-code>
+            <div class="codeTop">
+              <div class="label">🪟 Windows – Blueprint (PowerShell + Firewall + Bluetooth State)</div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <div class="meta">דוגמה עקרונית (לא תלויה חבילות צד)</div>
+                <button class="copyBtn" data-copy="#code-win">העתק</button>
+              </div>
+            </div>
+            <pre id="code-win"><code># PowerShell Blueprint (concept)
+# Goal:
+# - Read MAC addresses (adapters)
+# - Detect Bluetooth radio state
+# - If Bluetooth not enabled → block outbound (or restrict)
+# - If enabled → allow outbound per policy
+
+# 1) Collect MACs
+$macs = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Select-Object -ExpandProperty MacAddress
+$fpInput = "NIC:" + ($macs -join ",")
+$fp = [System.BitConverter]::ToString(
+  (New-Object Security.Cryptography.SHA256Managed).ComputeHash(
+    [System.Text.Encoding]::UTF8.GetBytes($fpInput)
+  )
+) -replace "-", ""
+Write-Host "Fingerprint SHA256: $fp"
+
+# 2) Bluetooth presence (basic heuristic)
+# Note: Bluetooth APIs vary; simplest checks:
+# - service bthserv
+# - device class present
+$btService = Get-Service -Name bthserv -ErrorAction SilentlyContinue
+$btOK = $false
+if ($btService -and $btService.Status -eq "Running") { $btOK = $true }
+
+Write-Host "Bluetooth OK: $btOK"
+
+# 3) Firewall policy (example)
+# WARNING: rules can impact connectivity.
+# Prefer:
+# - Create a dedicated rule group and toggle it
+# - Allow only required ports when btOK
+
+if (-not $btOK) {
+  # Block outbound (example rule - customize)
+  New-NetFirewallRule -DisplayName "PlutusGuard Block Outbound" -Direction Outbound -Action Block -Enabled True -Profile Any
+  Write-Host "Outbound blocked (Bluetooth not OK)."
+} else {
+  # Remove block rule
+  Get-NetFirewallRule -DisplayName "PlutusGuard Block Outbound" -ErrorAction SilentlyContinue | Remove-NetFirewallRule
+  # Optional: add restrictive allowlist rules instead of full allow
+  Write-Host "Outbound allowed (policy can be refined)."
+}
+
+# 4) Offline mode / APIPA
+# Windows auto-assigns APIPA when DHCP fails.
+# You can detect it and keep policy consistent:
+# Get-NetIPAddress | Where-Object {$_.IPAddress -like "169.254*"} </code></pre>
+          </div>
+
+          <!-- macOS -->
+          <div class="codeCard" data-code>
+            <div class="codeTop">
+              <div class="label">🍎 macOS – Blueprint (CoreBluetooth + PF Firewall / Network Extension)</div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <div class="meta">עקרונות מערכתיים</div>
+                <button class="copyBtn" data-copy="#code-mac">העתק</button>
+              </div>
+            </div>
+            <pre id="code-mac"><code># macOS Blueprint (concept)
+# - Use CoreBluetooth to detect authorized beacon/tag or local Bluetooth radio state
+# - Use Network Extension (preferred for modern macOS) or pf firewall rules
+# - Gate outbound traffic until presence/auth passes
+
+# Detect interfaces & MAC (CLI)
+ifconfig | grep -E "ether "   # MACs
+networksetup -listallhardwareports
+
+# PF approach (concept)
+# 1) Create anchors in /etc/pf.anchors/plutusguard
+# 2) Load rules in /etc/pf.conf:
+#    anchor "plutusguard"
+#    load anchor "plutusguard" from "/etc/pf.anchors/plutusguard"
+# 3) In plutusguard anchor:
+#    block out all
+#    pass out proto tcp to any port 443
+# Toggle anchor contents based on Bluetooth auth result.</code></pre>
+          </div>
+
+          <div class="note ok">
+            <b>שכבת IPv6 פנימית (ריאלית):</b> ב־Linux אפשר להקים <strong>Network Namespace</strong> / <strong>VRF</strong> עבור “רשת מאובטחת”,
+            ולהעביר אליה תהליכים רגישים בלבד; החוצה עוברים דרך Gateway מבוקר.
+          </div>
+        </section>
+
+        <section id="security" data-section>
+          <h2><span class="kicker">Security</span> ניתוח אבטחה: איומים ועמידות</h2>
+          <table class="table" aria-label="איומים מול שכבות">
+            <thead>
+              <tr>
+                <th>איום</th>
+                <th>מה קורה בפתרונות רגילים</th>
+                <th>מה קורה כאן</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>IP Spoofing</strong></td>
+                <td>אפשר לנסות לזייף מקור/יעד</td>
+                <td>עדיין אין “מפתח פיזי” (Bluetooth) ואין fingerprint חומרתי</td>
+              </tr>
+              <tr>
+                <td><strong>Password Leak</strong></td>
+                <td>דליפת סיסמה יכולה להספיק</td>
+                <td>סיסמה לבדה לא מספיקה – נדרש Bluetooth Presence</td>
+              </tr>
+              <tr>
+                <td><strong>Replay</strong></td>
+                <td>שידור חוזר לעיתים מצליח</td>
+                <td>אפשר להוסיף Key Rotation מבוסס זמן+fingerprint</td>
+              </tr>
+              <tr>
+                <td><strong>Offline Attack</strong></td>
+                <td>לעיתים אין מדיניות / פותחים הכל</td>
+                <td>APIPA עם אותה מדיניות – האבטחה לא נופלת</td>
+              </tr>
+              <tr>
+                <td><strong>Recon/Scan</strong></td>
+                <td>IPv4 קל יחסית לסריקה</td>
+                <td>הליבה ב־IPv6 פנימי, החשיפה ב־IPv4 מינימלית</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="note warnBox">
+            <b>הערת תכנון:</b> MAC לבדו ניתן לזיוף במצבים מסוימים, לכן החידוש המשמעותי הוא שילובו עם
+            <strong>Bluetooth Presence</strong> + <strong>מדיניות מקומית</strong> + <strong>מפתחות מתחלפים</strong>.
+          </div>
+        </section>
+
+        <section id="industrial" data-section>
+          <h2><span class="kicker">Industrial</span> שימושים תעשייתיים</h2>
+          <ul>
+            <li><strong>מערכות רפואיות:</strong> עמדות טיפול/מדידה המחייבות נוכחות פיזית של ציוד מורשה.</li>
+            <li><strong>תשתיות קריטיות:</strong> בקרה תעשייתית, תחנות SCADA, מערכות חירום.</li>
+            <li><strong>ארגונים:</strong> תחנות עבודה רגישות, הרשאות לפי “ציוד בסביבה” (Proximity).</li>
+            <li><strong>סביבות Offline:</strong> אתרים ללא אינטרנט קבוע – אבטחה נשמרת.</li>
+          </ul>
+        </section>
+
+        <section id="variants" data-section>
+          <h2><span class="kicker">Variants</span> וריאציות והרחבות</h2>
+          <div class="grid2">
+            <div class="note ok">
+              <b>Zero Trust Mode:</b> כל יציאה דורשת Policy Engine שמחליט לפי משתמש/זמן/פרופיל רשת + Presence.
+            </div>
+            <div class="note">
+              <b>IoT / Tags:</b> הוספת תג Bluetooth מורשה (Beacon) שמגדיר “אזור מאובטח” – בלי תג אין גישה.
+            </div>
+          </div>
+          <ul>
+            <li><strong>Key Rotation:</strong> מפתח מתחלף כל N דקות: K = H(Fingerprint || TimeSlice || Secret)</li>
+            <li><strong>Whitelist:</strong> רשימת fingerprints מורשים מקומית (קובץ חתום/TPM אם קיים)</li>
+            <li><strong>Granular Egress:</strong> IPv4 רק לפורטים מוגדרים (DNS/HTTPS) בעוד IPv6 פנימי מלא</li>
+            <li><strong>Split-Tunnel Apps:</strong> רק אפליקציות מסוימות רצות בתוך namespace מאובטח</li>
+          </ul>
+        </section>
+
+        <section id="glossary" data-section>
+          <h2><span class="kicker">Glossary</span> מילון מושגים קצר</h2>
+          <ul>
+            <li><strong>IPv6:</strong> פרוטוקול אינטרנט עם מרחב כתובות עצום; מאפשר רשת פנימית קשה לסריקה.</li>
+            <li><strong>IPv4:</strong> פרוטוקול נפוץ; כאן משמש מעטפת חיצונית/נקודת מעבר (Gateway).</li>
+            <li><strong>APIPA:</strong> כתובות <code>169.254.0.0/16</code> שמוקצות אוטומטית כשאין DHCP/אינטרנט.</li>
+            <li><strong>MAC Address:</strong> מזהה חומרה של כרטיס רשת/BT; משמש כאן כחלק מטביעת אצבע.</li>
+            <li><strong>Bluetooth Presence:</strong> תנאי גישה המבוסס על נוכחות/אימות קצר־טווח.</li>
+          </ul>
+
+          <div class="note">
+            <b>סיכום משפט מפתח:</b> האבטחה אינה תלויה רק בכתובת/סיסמה, אלא ב־<span class="hl">נוכחות פיזית של החומרה</span> שמייצרת זהות רב־שכבתית.
+          </div>
+        </section>
+
+      </div>
+
+      <div class="footer">
+        <div>מסמך פטנט/Blueprint – אבטחת מידע היברידית (IPv6 + Bluetooth + MAC + IPv4/APIPA)</div>
+        <div class="muted">טיפ: השתמש בחיפוש כדי להדגיש מונחים, ובכפתור הדפסה כדי לשמור ל-PDF</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll
+    function scrollToId(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({behavior:"smooth", block:"start"});
+      history.replaceState(null, "", "#"+id);
+    }
+
+    // TOC active state on scroll
+    const tocLinks = Array.from(document.querySelectorAll(".toc a"));
+    const sections = Array.from(document.querySelectorAll("[data-section]"));
+
+    const io = new IntersectionObserver((entries)=>{
+      const visible = entries.filter(e => e.isIntersecting)
+                            .sort((a,b)=> b.intersectionRatio - a.intersectionRatio)[0];
+      if(!visible) return;
+      const id = visible.target.id;
+      tocLinks.forEach(a => a.classList.toggle("active", a.dataset.to === id));
+    }, {rootMargin: "-20% 0px -70% 0px", threshold: [0.05, 0.15, 0.25]});
+
+    sections.forEach(s => io.observe(s));
+
+    // Click TOC
+    tocLinks.forEach(a=>{
+      a.addEventListener("click", (e)=>{
+        e.preventDefault();
+        scrollToId(a.dataset.to);
+      });
+    });
+
+    // Copy buttons
+    function copyTextFrom(selector){
+      const el = document.querySelector(selector);
+      if(!el) return;
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(()=> {
+        toast("הועתק ללוח ההעתקה ✅");
+      }).catch(()=> {
+        // Fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand("copy"); toast("הועתק ✅"); }catch(e){ toast("לא הצלחתי להעתיק ❌"); }
+        document.body.removeChild(ta);
+      });
+    }
+
+    document.querySelectorAll("[data-copy]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        copyTextFrom(btn.getAttribute("data-copy"));
+      });
+    });
+
+    // Toggle all code blocks visibility
+    function toggleAllCode(show){
+      document.querySelectorAll(".codeCard").forEach(card=>{
+        const pre = card.querySelector("pre");
+        if(!pre) return;
+        pre.style.display = show ? "block" : "none";
+      });
+      toast(show ? "כל הקוד מוצג" : "כל הקוד הוסתר");
+    }
+    window.toggleAllCode = toggleAllCode;
+
+    // Search highlight across main content
+    const q = document.getElementById("q");
+    const doc = document.getElementById("doc");
+    let last = "";
+
+    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+    function clearHighlights(){
+      // Remove <mark data-hl>
+      doc.querySelectorAll("mark[data-hl]").forEach(m=>{
+        const t = document.createTextNode(m.textContent);
+        m.replaceWith(t);
+      });
+      // Normalize text nodes
+      doc.normalize();
+    }
+
+    function highlight(term){
+      if(!term) return;
+      const rx = new RegExp(escapeRegExp(term), "gi");
+
+      // Walk text nodes only (skip script/style)
+      const walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node)=>{
+          const p = node.parentElement;
+          if(!p) return NodeFilter.FILTER_REJECT;
+          const tag = p.tagName?.toLowerCase();
+          if(["script","style"].includes(tag)) return NodeFilter.FILTER_REJECT;
+          if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+
+      const nodes = [];
+      while(walker.nextNode()) nodes.push(walker.currentNode);
+
+      nodes.forEach(node=>{
+        const text = node.nodeValue;
+        if(!rx.test(text)) return;
+        rx.lastIndex = 0;
+
+        const frag = document.createDocumentFragment();
+        let lastIndex = 0;
+        let m;
+        while((m = rx.exec(text)) !== null){
+          const before = text.slice(lastIndex, m.index);
+          if(before) frag.appendChild(document.createTextNode(before));
+
+          const mark = document.createElement("mark");
+          mark.setAttribute("data-hl","1");
+          mark.className = "hl";
+          mark.textContent = text.slice(m.index, m.index + m[0].length);
+          frag.appendChild(mark);
+
+          lastIndex = m.index + m[0].length;
+        }
+        const after = text.slice(lastIndex);
+        if(after) frag.appendChild(document.createTextNode(after));
+
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+
+    q.addEventListener("input", ()=>{
+      const term = q.value.trim();
+      if(term === last) return;
+      clearHighlights();
+      if(term.length >= 2){
+        highlight(term);
+      }
+      last = term;
+    });
+
+    // Tiny toast
+    let toastTimer = null;
+    function toast(msg){
+      let t = document.getElementById("toast");
+      if(!t){
+        t = document.createElement("div");
+        t.id = "toast";
+        t.style.position = "fixed";
+        t.style.left = "14px";
+        t.style.bottom = "14px";
+        t.style.zIndex = "9999";
+        t.style.padding = "10px 12px";
+        t.style.borderRadius = "12px";
+        t.style.border = "1px solid rgba(255,255,255,.16)";
+        t.style.background = "rgba(0,0,0,.45)";
+        t.style.color = "rgba(232,238,252,.92)";
+        t.style.backdropFilter = "blur(10px)";
+        t.style.boxShadow = "0 14px 40px rgba(0,0,0,.45)";
+        t.style.fontWeight = "800";
+        t.style.fontSize = "13px";
+        t.style.opacity = "0";
+        t.style.transform = "translateY(8px)";
+        t.style.transition = "opacity .18s ease, transform .18s ease";
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = "1";
+      t.style.transform = "translateY(0)";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>{
+        t.style.opacity = "0";
+        t.style.transform = "translateY(8px)";
+      }, 1600);
+    }
+
+    // Start with code visible (feel free to change to false)
+    toggleAllCode(true);
+
+    // If URL has hash, scroll
+    if(location.hash){
+      const id = location.hash.replace("#","");
+      setTimeout(()=> scrollToId(id), 50);
+    }
+  </script>
+</body>
+</html>
