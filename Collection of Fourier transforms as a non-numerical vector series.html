@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>אוסף התמרות פורייה כסדרה וקטורית לא־מספרית — פיתוחים חדשים + הדגמה אינטראקטיבית</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f6f7fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78); --card2:rgba(255,255,255,.60);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --head:#0b1220; --shadow:0 18px 50px rgba(2,6,23,.10);
+      --link:#2563eb; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+      --radius: 18px;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#070a12; --bg1:#0b1220; --bg2:#081018;
+        --card:rgba(15,23,42,.70); --card2:rgba(15,23,42,.50);
+        --text:#e5e7eb; --muted:#a3a3a3; --line:rgba(148,163,184,.22);
+        --head:#f8fafc; --shadow:0 18px 50px rgba(0,0,0,.35);
+        --link:#60a5fa;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    header{
+      padding:28px 18px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .title{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; justify-content:space-between;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(22px, 2.6vw, 34px);
+      letter-spacing:.2px;
+      color:var(--head);
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color:var(--muted);
+      line-height:1.6;
+      max-width:900px;
+    }
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px 18px 40px;
+      display:grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px 16px 14px;
+      backdrop-filter: blur(8px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:18px;
+      color:var(--head);
+    }
+    .card h3{
+      margin:14px 0 8px;
+      font-size:15px;
+      color:var(--head);
+    }
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      border-radius:999px;
+      font-size:13px;
+      color:var(--muted);
+      user-select:none;
+    }
+    .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 700px){ .grid2{grid-template-columns:1fr} }
+
+    .kbox{
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.35);
+    }
+    @media (prefers-color-scheme: dark){
+      .kbox{ background: rgba(2,6,23,.25); }
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:600;
+      transition: transform .05s ease, border-color .15s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{border-color: rgba(37,99,235,.35)}
+    .btn.primary:hover{border-color: rgba(37,99,235,.60)}
+    .btn.ghost{background:transparent}
+
+    .select, .input{
+      width:100%;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font: 600 14px var(--sans);
+    }
+    .input{font-weight:500}
+    .label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:4px 0 6px;
+    }
+
+    pre{
+      margin:0;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.45);
+      font-family:var(--mono);
+      font-size:12.5px;
+      overflow:auto;
+      line-height:1.45;
+    }
+    @media (prefers-color-scheme: dark){
+      pre{ background: rgba(2,6,23,.35); }
+    }
+    code{font-family:var(--mono)}
+    .ok{color:var(--ok); font-weight:700}
+    .bad{color:var(--bad); font-weight:700}
+    .warn{color:var(--warn); font-weight:700}
+
+    .plotWrap{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.35);
+      padding:10px;
+      overflow:hidden;
+    }
+    @media (prefers-color-scheme: dark){
+      .plotWrap{ background: rgba(2,6,23,.25); }
+    }
+    svg{display:block; width:100%; height:auto}
+    .small{font-size:12px}
+    .hr{height:1px; background:var(--line); margin:12px 0}
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 18px 28px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.7;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:var(--card2);
+    }
+    summary{cursor:pointer; font-weight:700; color:var(--head)}
+    .badge{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      font-size:12px;
+      margin-inline-start:6px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="title">
+      <h1>אוסף התמרות פורייה כסדרה וקטורית לא־מספרית</h1>
+      <span class="pill">✨ פיתוחים חדשים • הגדרה פורמלית • מדדים • סדר על־פי אנרגיה • הדגמה FFT</span>
+    </div>
+    <p class="subtitle">
+      כאן אנחנו מנסחים בצורה מדויקת למה “אוסף התמרות פורייה” איננו סדרה חשבונית/הנדסית,
+      ומציעים <b>מבנה חדש</b>: משפחה וקטורית כללית עם <b>סדר חלופי</b> שנבנה מתוך הספקטרום עצמו (ולא “איבר הבא”).
+      בסוף יש הדגמה אינטראקטיבית שמראה בפועל ש־הפרשים/יחסים בין “איברים עוקבים” אינם קבועים.
+    </p>
+  </header>
+
+  <main>
+    <!-- LEFT: theory -->
+    <section class="card" id="theory">
+      <h2>1) למה זו לא סדרה חשבונית/הנדסית?</h2>
+
+      <div class="kbox">
+        <div class="small muted">הגדרת התמרת פורייה (רציפה):</div>
+        <div class="katex">
+          \[
+          \widehat f(\omega)=\mathcal F\{f\}(\omega)=\int_{-\infty}^{\infty} f(t)\,e^{-i\omega t}\,dt
+          \]
+        </div>
+      </div>
+
+      <p class="muted" style="margin:10px 0 0; line-height:1.7">
+        בסדרה מספרית יש אינדקס <b>סדרתי</b> \(n\) (“איבר הבא”). כאן האינדקס הטבעי הוא תדר \(\omega\) —
+        והוא קואורדינטה ספקטרלית (רציפה/בדידה), לא “שלב בסדרה”.
+        לכן \(\{\widehat f(\omega)\}_{\omega\in\Omega}\) הוא <b>שדה/פונקציה</b> על מרחב התדרים, לא “רשימה” עם חוק הפרשים.
+      </p>
+
+      <div class="hr"></div>
+
+      <h3>2) ההגדרה החדשה: “משפחה וקטורית ספקטרלית” (SVF)</h3>
+      <div class="kbox">
+        <div class="small muted">הגדרה (פיתוח חדש):</div>
+        <div class="katex">
+          \[
+          \text{SVF}(f)\;:=\;\Big(\Omega,\;\widehat f:\Omega\to\mathbb C,\;\langle\cdot,\cdot\rangle_{L^2(\Omega)}\Big)
+          \]
+        </div>
+      </div>
+
+      <p class="muted" style="line-height:1.7; margin:10px 0 0">
+        כלומר: במקום “סדרה”, אנחנו מתייחסים ל־<b>אובייקט וקטורי</b> במרחב פונקציות, עם מכפלה פנימית.
+        זה מאפשר לדבר על <b>כיוון</b>, <b>נורמה</b>, <b>מרחק</b>, <b>אורתוגונליות</b> ו־<b>פרויקציות</b> — ולא על הפרש קבוע.
+      </p>
+
+      <details style="margin-top:10px">
+        <summary>אקסיומות מינימליות למבנה SVF <span class="badge">חדש</span></summary>
+        <div class="small muted" style="margin-top:8px; line-height:1.8">
+          <ol style="margin:0; padding-inline-start:18px">
+            <li><b>מרחב תדרים</b> \(\Omega\) (רציף או בדיד).</li>
+            <li><b>מיפוי ספקטרלי</b> \(\widehat f:\Omega\to\mathbb C\) (או \(\mathbb R\)).</li>
+            <li><b>נורמה/אנרגיה</b> \(\|\widehat f\|_2^2=\int_\Omega |\widehat f(\omega)|^2\,d\omega\) (או סכום בדיד).</li>
+            <li><b>סימטריות</b> (למשל עבור אות ממשי: \(\widehat f(-\omega)=\overline{\widehat f(\omega)}\)).</li>
+            <li><b>אופרטורים טבעיים</b> (הזזה בזמן ↔ פאזה; גזירה בזמן ↔ הכפלה ב־\(i\omega\)).</li>
+          </ol>
+        </div>
+      </details>
+
+      <div class="hr"></div>
+
+      <h3>3) “סדר” חדש במקום “איבר הבא”</h3>
+      <p class="muted" style="line-height:1.7; margin:0">
+        אם בכל זאת רוצים “סדרה”, צריך <b>להגדיר סדר</b> על \(\Omega\).
+        הנה שלושה סדרים חדשים (שימושיים) שאינם דורשים חשבונית/הנדסית:
+      </p>
+
+      <div class="grid2" style="margin-top:10px">
+        <div class="kbox">
+          <div class="small"><b>א) סדר לפי אנרגיה</b> <span class="badge">חדש</span></div>
+          <div class="katex">
+            \[
+            E(\omega)=|\widehat f(\omega)|^2,\quad
+            \omega_{(1)}\ge \omega_{(2)}\ge\cdots
+            \]
+          </div>
+          <div class="small muted" style="line-height:1.65">
+            ממיינים תדרים לפי תרומה לאנרגיה — מתקבלת “סדרה” שמספרת מה חשוב בספקטרום.
+          </div>
+        </div>
+
+        <div class="kbox">
+          <div class="small"><b>ב) סדר לפי קוונטיל אנרגטי</b> <span class="badge">חדש</span></div>
+          <div class="katex">
+            \[
+            C(\omega)=\int_{0}^{|\omega|} |\widehat f(\nu)|^2\,d\nu
+            \]
+          </div>
+          <div class="small muted" style="line-height:1.65">
+            בונים ציר חדש שבו כל “צעד” מייצג אותה תוספת אנרגיה מצטברת.
+          </div>
+        </div>
+
+        <div class="kbox">
+          <div class="small"><b>ג) סדר לפי עיוות (Warping)</b> <span class="badge">חדש</span></div>
+          <div class="katex">
+            \[
+            \xi=\phi(\omega),\quad \phi \text{ מונוטונית}
+            \]
+          </div>
+          <div class="small muted" style="line-height:1.65">
+            מחליפים את ציר התדר לציר מותאם (לוג/מל/אחר), ואז דוגמים באופן “אחיד” בציר החדש.
+          </div>
+        </div>
+
+        <div class="kbox">
+          <div class="small"><b>משמעות:</b></div>
+          <div class="small muted" style="line-height:1.75">
+            “סדרה” כאן היא <b>תוצר של סדר</b> שאתה מגדיר על \(\Omega\),
+            ולא חוק מספרי שמחייב את \(\widehat f\) להתנהג חשבונית/הנדסית.
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>4) מדדים חדשים שמחליפים “חשבוני/הנדסי”</h3>
+
+      <div class="kbox">
+        <div class="small muted">מדד אי־חשבוניות ואי־הנדסיות (פיתוח חדש):</div>
+        <div class="katex">
+          \[
+          \Delta_n = x_{n+1}-x_n,\quad R_n=\frac{x_{n+1}}{x_n}
+          \]
+          \[
+          \text{Score}_A = \mathrm{Var}(\Delta_n),\quad
+          \text{Score}_G = \mathrm{Var}(R_n)
+          \]
+        </div>
+      </div>
+
+      <p class="muted" style="line-height:1.7; margin:10px 0 0">
+        אם היית יכול לייצר “סדרה” \(x_n\) מתוך הספקטרום (למשל לפי סדר אנרגיה),
+        אז סדרה חשבונית הייתה נותנת \(\text{Score}_A\approx 0\),
+        וסדרה הנדסית הייתה נותנת \(\text{Score}_G\approx 0\).
+        לרוב (וכפי שתראה בהדגמה) שני המדדים לא מתאפסים ⇒ לא חשבוני ולא הנדסי.
+      </p>
+
+      <details style="margin-top:10px">
+        <summary>מושג חדש: “קו־וריאנס ספקטרלי” <span class="badge">חדש</span></summary>
+        <div class="small muted" style="margin-top:8px; line-height:1.8">
+          נבנה קו־וריאנס בין תדרים עם ליבה \(K(\omega,\nu)\) (למשל ליבה מקומית/גאוסיאנית):
+          <div class="katex" style="margin-top:8px">
+            \[
+            \mathrm{Cov}_K(\omega,\nu)=K(\omega,\nu)\,\widehat f(\omega)\overline{\widehat f(\nu)}
+            \]
+          </div>
+          ואז מגדירים “גרף ספקטרלי” שבו צמתים הם תדרים וקשתות משקלן \(|\mathrm{Cov}_K|\).
+          זה נותן מבנה <b>וקטורי־גרפי</b> חדש לספקטרום (לא סדרה).
+        </div>
+      </details>
+
+      <div class="hr"></div>
+
+      <h3>5) סיכום קצר (בדיוק כמו שאמרת)</h3>
+      <ul style="margin:8px 0 0; padding-inline-start:18px; line-height:1.8" class="muted">
+        <li>אוסף התמרות פורייה הוא <b>משפחה וקטורית</b> במרחב פונקציות, לא סדרה מספרית.</li>
+        <li>אין “איבר הבא” טבעי — יש ציר תדרים \(\omega\) או קבוצת תדרים \(\Omega\).</li>
+        <li>אם בכל זאת רוצים סדרה: מגדירים <b>סדר חדש</b> (אנרגיה/קוונטיל/וורפינג).</li>
+        <li>את “חשבוני/הנדסי” מחליפים במדדים (וריאציות של הפרשים/יחסים, גרפים, קו־וריאנס).</li>
+      </ul>
+    </section>
+
+    <!-- RIGHT: interactive demo -->
+    <aside class="card" id="demo">
+      <h2>הדגמה אינטראקטיבית: FFT שמראה “לא חשבוני/לא הנדסי”</h2>
+      <p class="muted" style="margin:0 0 10px; line-height:1.7">
+        בחר אות, צור דגימה, חשב FFT, ואז נמיין תדרים לפי אנרגיה ונמדוד את
+        \(\mathrm{Var}(\Delta_n)\) ו־\(\mathrm{Var}(R_n)\).
+      </p>
+
+      <div class="grid2">
+        <div>
+          <label class="label">סוג אות</label>
+          <select id="signalType" class="select">
+            <option value="gauss">גאוסיאני (Gaussian)</option>
+            <option value="rect">מלבני (Rect)</option>
+            <option value="chirp">צ'ירפ (Chirp)</option>
+            <option value="sine2">סכום סינוסים</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">מספר דגימות (כוח של 2)</label>
+          <select id="N" class="select">
+            <option>256</option>
+            <option selected>512</option>
+            <option>1024</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="label">רוחב/קצב (פרמטר)</label>
+          <input id="param" class="input" type="range" min="1" max="100" value="30">
+          <div class="small muted">ערך: <span id="paramVal">30</span></div>
+        </div>
+        <div>
+          <label class="label">רעש (Noise)</label>
+          <input id="noise" class="input" type="range" min="0" max="50" value="3">
+          <div class="small muted">ערך: <span id="noiseVal">3</span></div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="runBtn">חשב FFT</button>
+        <button class="btn ghost" id="copyBtn">העתק תוצאות</button>
+        <span class="pill small" id="status">מוכן</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="plotWrap">
+        <div class="small muted" style="margin-bottom:6px">
+          ספקטרום (גודל |FFT|) — תדרים חיוביים
+        </div>
+        <svg id="plot" viewBox="0 0 760 260" aria-label="Spectrum plot"></svg>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="kbox">
+        <div class="small"><b>מדדי “לא חשבוני/לא הנדסי” (על סדר אנרגיה)</b></div>
+        <div class="small muted" style="line-height:1.7; margin-top:6px">
+          <span class="ok">Score_A</span> = Var(Δn) : <span id="scoreA">—</span><br/>
+          <span class="warn">Score_G</span> = Var(Rn) : <span id="scoreG">—</span><br/>
+          <span class="muted">הערה:</span> אם אחד המדדים היה ~0, היינו מקבלים התנהגות חשבונית/הנדסית בהתאם.
+        </div>
+      </div>
+
+      <details style="margin-top:10px">
+        <summary>הסבר קצר: למה זה “מוכיח” את הרעיון? <span class="badge">הדגמה</span></summary>
+        <div class="small muted" style="margin-top:8px; line-height:1.8">
+          אנחנו יוצרים סדרה מלאכותית \(x_n\) ע"י מיון תדרים לפי האנרגיה שלהם.
+          אם הספקטרום היה “חשבון” או “הנדסה” באופן טבעי, היינו רואים הפרשים/יחסים קבועים (שונות ~0).
+          בפועל השונות לרוב חיובית משמעותית ⇒ אין חוק סדרתי פשוט.
+        </div>
+      </details>
+
+      <div class="hr"></div>
+
+      <details>
+        <summary>פיתוח חדש: “סדרה ספקטרלית” כישות נתונה־אופרטורים <span class="badge">חדש</span></summary>
+        <div class="small muted" style="margin-top:8px; line-height:1.8">
+          במקום לחפש חוק כמו חשבוני/הנדסי, מגדירים את ההתפתחות דרך אופרטורים:
+          <div class="katex" style="margin-top:8px">
+            \[
+            \widehat f_{k+1} = \mathcal T_k(\widehat f_k),
+            \quad \mathcal T_k \in \{\text{סינון},\ \text{וורפינג},\ \text{נורמליזציה},\ \text{דגימה}\}
+            \]
+          </div>
+          זו “סדרה” שבה החוק הוא <b>אופרטורי</b> (טרנספורמציות), לא מספרי.
+        </div>
+      </details>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="muted">
+      טיפ: אם תרצה להפוך את זה למסמך “אקדמי מלא”, אפשר להוסיף:
+      <b>הגדרה פורמלית של סדר על \(\Omega\)</b>, <b>למ"ת (למה/מתי) מתקבלות סימטריות</b>,
+      ופרק “קריטריונים שקולים” (למשל קו־וריאנס ספקטרלי או גרף תדרים).
+    </div>
+  </footer>
+
+  <script>
+    // ---------- Helpers ----------
+    const $ = (id)=>document.getElementById(id);
+    const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+
+    function randn(){ // Box-Muller
+      let u=0, v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+    }
+
+    // ---------- Signal generation ----------
+    function makeSignal(type, N, param, noiseLevel){
+      const x = new Array(N).fill(0);
+      const tMid = (N-1)/2;
+      const p = param/100;
+      for(let n=0;n<N;n++){
+        const t = (n - tMid)/N; // ~[-.5,.5]
+        let s = 0;
+        if(type==="gauss"){
+          // width controlled by param
+          const sigma = 0.03 + 0.25*(1-p);
+          s = Math.exp(-(t*t)/(2*sigma*sigma));
+        }else if(type==="rect"){
+          const w = 0.05 + 0.40*p; // width
+          s = (Math.abs(t) < w/2) ? 1 : 0;
+        }else if(type==="chirp"){
+          // linear chirp in time
+          const f0 = 5 + 40*p;
+          const f1 = 60 + 140*p;
+          const tt = (n)/N;
+          const inst = f0 + (f1-f0)*tt;
+          s = Math.sin(2*Math.PI*inst*tt);
+          // window to reduce edge spikes
+          const win = 0.5 - 0.5*Math.cos(2*Math.PI*tt);
+          s *= win;
+        }else if(type==="sine2"){
+          const fA = 8 + 50*p;
+          const fB = 20 + 90*p;
+          s = 0.70*Math.sin(2*Math.PI*fA*n/N) + 0.45*Math.sin(2*Math.PI*fB*n/N + 0.6);
+        }
+        // add noise
+        const nl = noiseLevel/50;
+        s += nl*0.35*randn();
+        x[n]=s;
+      }
+      return x;
+    }
+
+    // ---------- FFT (Cooley–Tukey, iterative) ----------
+    function fft(re, im){
+      const N = re.length;
+      // bit-reversal
+      let j=0;
+      for(let i=0;i<N;i++){
+        if(i<j){
+          [re[i],re[j]]=[re[j],re[i]];
+          [im[i],im[j]]=[im[j],im[i]];
+        }
+        let m = N>>1;
+        while(m>=1 && j>=m){ j-=m; m>>=1; }
+        j+=m;
+      }
+      for(let len=2; len<=N; len<<=1){
+        const ang = -2*Math.PI/len;
+        const wlenRe = Math.cos(ang);
+        const wlenIm = Math.sin(ang);
+        for(let i=0;i<N;i+=len){
+          let wRe=1, wIm=0;
+          for(let k=0;k<len/2;k++){
+            const uRe = re[i+k], uIm = im[i+k];
+            const vRe = re[i+k+len/2]*wRe - im[i+k+len/2]*wIm;
+            const vIm = re[i+k+len/2]*wIm + im[i+k+len/2]*wRe;
+
+            re[i+k] = uRe + vRe;
+            im[i+k] = uIm + vIm;
+            re[i+k+len/2] = uRe - vRe;
+            im[i+k+len/2] = uIm - vIm;
+
+            const nextWRe = wRe*wlenRe - wIm*wlenIm;
+            const nextWIm = wRe*wlenIm + wIm*wlenRe;
+            wRe = nextWRe; wIm = nextWIm;
+          }
+        }
+      }
+      return {re,im};
+    }
+
+    // ---------- Plot ----------
+    function plotSpectrum(mag){
+      const svg = $("plot");
+      svg.innerHTML = "";
+      const W = 760, H = 260;
+      const padL = 38, padR = 14, padT = 10, padB = 26;
+      const w = W - padL - padR;
+      const h = H - padT - padB;
+
+      const maxV = Math.max(...mag, 1e-9);
+      // axes
+      const axis = (x1,y1,x2,y2,op=.55)=>
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-opacity="${op}" stroke-width="1"/>`;
+      svg.insertAdjacentHTML("beforeend", axis(padL, padT, padL, padT+h));
+      svg.insertAdjacentHTML("beforeend", axis(padL, padT+h, padL+w, padT+h));
+
+      // path
+      let d = "";
+      for(let i=0;i<mag.length;i++){
+        const x = padL + (i/(mag.length-1))*w;
+        const y = padT + h - (mag[i]/maxV)*h;
+        d += (i===0?`M ${x} ${y}`:` L ${x} ${y}`);
+      }
+      svg.insertAdjacentHTML("beforeend",
+        `<path d="${d}" fill="none" stroke="currentColor" stroke-opacity=".9" stroke-width="2" />`
+      );
+
+      // labels
+      svg.insertAdjacentHTML("beforeend",
+        `<text x="${padL}" y="${padT+h+20}" fill="currentColor" fill-opacity=".65" font-size="12">תדר → (bins)</text>`
+      );
+      svg.insertAdjacentHTML("beforeend",
+        `<text x="${padL-6}" y="${padT+12}" fill="currentColor" fill-opacity=".65" font-size="12" text-anchor="end">|FFT|</text>`
+      );
+    }
+
+    // ---------- Scores ----------
+    function variance(arr){
+      if(arr.length<2) return 0;
+      const m = arr.reduce((a,b)=>a+b,0)/arr.length;
+      const v = arr.reduce((a,b)=>a+(b-m)*(b-m),0)/arr.length;
+      return v;
+    }
+
+    function computeScoresFromSpectrum(mag){
+      // build x_n: sorted magnitudes (energy order proxy)
+      const x = [...mag].sort((a,b)=>b-a);
+      // avoid zeros for ratios
+      const eps = 1e-12;
+      const deltas = [];
+      const ratios = [];
+      for(let i=0;i<x.length-1;i++){
+        deltas.push(x[i+1]-x[i]);
+        ratios.push((x[i+1]+eps)/(x[i]+eps));
+      }
+      const scoreA = variance(deltas);
+      const scoreG = variance(ratios);
+      return {scoreA, scoreG, x};
+    }
+
+    function fmt(x){
+      if(!isFinite(x)) return "—";
+      if(x===0) return "0";
+      const ax = Math.abs(x);
+      if(ax>=1e4 || ax<1e-4) return x.toExponential(3);
+      return x.toFixed(6);
+    }
+
+    // ---------- Main run ----------
+    function run(){
+      $("status").textContent = "מריץ…";
+      const type = $("signalType").value;
+      const N = parseInt($("N").value,10);
+      const param = parseInt($("param").value,10);
+      const noise = parseInt($("noise").value,10);
+
+      const sig = makeSignal(type, N, param, noise);
+      const re = sig.slice();
+      const im = new Array(N).fill(0);
+      const out = fft(re, im);
+
+      // magnitude for positive frequencies (0..N/2-1)
+      const half = N/2;
+      const mag = [];
+      for(let k=0;k<half;k++){
+        const a = out.re[k], b = out.im[k];
+        mag.push(Math.sqrt(a*a + b*b));
+      }
+
+      plotSpectrum(mag);
+
+      const {scoreA, scoreG, x} = computeScoresFromSpectrum(mag);
+      $("scoreA").textContent = fmt(scoreA);
+      $("scoreG").textContent = fmt(scoreG);
+
+      // Heuristic label
+      const aSmall = scoreA < 1e-6;
+      const gSmall = scoreG < 1e-6;
+      let msg = "בוצע ✔︎";
+      if(aSmall && gSmall) msg = "נדיר: כמעט קבוע בשניהם";
+      else if(aSmall) msg = "קרוב לחשבוני (לפי הסדר שנבחר)";
+      else if(gSmall) msg = "קרוב להנדסי (לפי הסדר שנבחר)";
+      else msg = "לא חשבוני ולא הנדסי (כצפוי)";
+      $("status").textContent = msg;
+
+      // stash results for copy
+      window.__lastResults = {
+        type, N, param, noise,
+        scoreA, scoreG,
+        top10: x.slice(0,10)
+      };
+    }
+
+    // ---------- Copy ----------
+    function copyResults(){
+      const r = window.__lastResults;
+      if(!r){
+        navigator.clipboard?.writeText("אין תוצאות עדיין. לחץ 'חשב FFT'.");
+        return;
+      }
+      const txt =
+`תוצאות FFT (סדר לפי אנרגיה):
+סוג אות: ${r.type}
+N: ${r.N}
+param: ${r.param}
+noise: ${r.noise}
+
+Score_A = Var(Δn) = ${r.scoreA}
+Score_G = Var(Rn) = ${r.scoreG}
+
+Top-10 magnitudes (sorted):
+${r.top10.map((v,i)=>`${i+1}. ${v}`).join("\n")}
+`;
+      navigator.clipboard?.writeText(txt);
+      $("status").textContent = "הועתק ללוח ✔︎";
+      setTimeout(()=>{ $("status").textContent="מוכן"; }, 900);
+    }
+
+    // ---------- Init ----------
+    function renderMath(){
+      if(!window.renderMathInElement) return;
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "\\[", right: "\\]", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false
+      });
+    }
+
+    $("param").addEventListener("input", ()=> $("paramVal").textContent = $("param").value);
+    $("noise").addEventListener("input", ()=> $("noiseVal").textContent = $("noise").value);
+    $("runBtn").addEventListener("click", run);
+    $("copyBtn").addEventListener("click", copyResults);
+
+    window.addEventListener("load", ()=>{
+      renderMath();
+      run(); // first run
+    });
+  </script>
+</body>
+</html>
