@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לגראנז'יאן למערכות אלקטרודינמיות בחומר</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #9b59b6;
+            --accent-color: #e74c3c;
+            --em-field-color: #3498db;
+            --material-color: #e67e22;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .math-box {
+            background: white;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            overflow-x: auto;
+        }
+        
+        .em-equation {
+            border-left-color: var(--em-field-color);
+        }
+        
+        .material-equation {
+            border-left-color: var(--material-color);
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 3px 5px;
+            border-radius: 3px;
+        }
+        
+        .variable-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .variable-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .variable-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .var-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .em-var {
+            color: var(--em-field-color);
+        }
+        
+        .material-var {
+            color: var(--material-color);
+        }
+        
+        .derivation-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .system-example {
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        footer {
+            background: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .interaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .interaction-table th, .interaction-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .interaction-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>לגראנז'יאן למערכות אלקטרודינמיות בחומר</h1>
+            <div class="subtitle">שילוב משוואות מקסוול, משוואות חומריות, ותנועת חלקיקים טעונים בתווך</div>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2>מערכת אלקטרודינמית כללית בחומר</h2>
+                <p>נשקול מערכת הכוללת:</p>
+                <ul class="variable-list">
+                    <li><span class="var-name em-var">חלקיקים טעונים</span> (כגון אלקטרונים) עם קואורדינטות <span class="highlight">rᵢ(t)</span></li>
+                    <li><span class="var-name em-var">שדות אלקטרומגנטיים</span> בתוך חומר: <span class="highlight">E, B, D, H</span></li>
+                    <li><span class="var-name material-var">מאפייני חומר</span>: <span class="highlight">ε(r), μ(r), σ(r)</span></li>
+                    <li><span class="var-name material-var">קיטוב ומגנוט</span>: <span class="highlight">P, M</span></li>
+                </ul>
+                <p>הלגראנז'יאן הכללי יכלול שלושה חלקים עיקריים:</p>
+                <div class="math-box">
+                    𝓛 = 𝓛<sub>חלקיקים</sub> + 𝓛<sub>שדות</sub> + 𝓛<sub>אינטראקציה</sub>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>לגראנז'יאן מפורש</h2>
+                <div class="math-box em-equation">
+                    𝓛 = ∑ᵢ [½mᵢvᵢ² - qᵢφ(rᵢ) + qᵢvᵢ·A(rᵢ)]<br>
+                    + ½∫ [ε₀E² - (1/μ₀)B²] d³r<br>
+                    + ∫ [P·E - M·B] d³r<br>
+                    + 𝓛<sub>חומר</sub>(P, M, ∇P, ...)
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li><span class="em-var">φ, A</span> - פוטנציאלים סקלרי ווקטורי</li>
+                    <li><span class="em-var">E = -∇φ - ∂A/∂t</span>, <span class="em-var">B = ∇×A</span></li>
+                    <li><span class="material-var">P</span> - וקטור הקיטוב (דיפול ליחידת נפח)</li>
+                    <li><span class="material-var">M</span> - וקטור המגנוט</li>
+                    <li><span class="material-var">𝓛<sub>חומר</sub></span> - לגראנז'יאן פנימי של החומר</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>משוואות מקסוול בחומר</h2>
+                <p>מעקרון הפעולה δ∫𝓛 dt = 0 עבור וריאציות של הפוטנציאלים φ ו-A:</p>
+                
+                <div class="derivation-box">
+                    <p><strong>לגבי φ:</strong></p>
+                    <div class="math-box">
+                        ∇·D = ρ<sub>חופשית</sub>
+                    </div>
+                    
+                    <p><strong>לגבי A:</strong></p>
+                    <div class="math-box">
+                        ∇×H - ∂D/∂t = J<sub>חופשית</sub>
+                    </div>
+                    
+                    <p>יחד עם המשוואות ההומוגניות:</p>
+                    <div class="math-box">
+                        ∇·B = 0, ∇×E + ∂B/∂t = 0
+                    </div>
+                </div>
+                
+                <p>כאשר השדות המקרוסקופיים מוגדרים:</p>
+                <div class="math-box">
+                    D = ε₀E + P, &nbsp;&nbsp; H = (1/μ₀)B - M
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>משוואות חומריות</h2>
+                <p>מווריאציות על P ו-M נקבל את משוואות התגובה של החומר:</p>
+                
+                <div class="math-box material-equation">
+                    δ𝓛/δP = 0 &nbsp;→&nbsp; P = ε₀χ<sub>e</sub>E &nbsp;(עבור חומר לינארי)
+                </div>
+                
+                <div class="math-box material-equation">
+                    δ𝓛/δM = 0 &nbsp;→&nbsp; M = χ<sub>m</sub>H &nbsp;(עבור חומר לינארי)
+                </div>
+                
+                <p>עבור חומרים לא-לינאריים, 𝓛<sub>חומר</sub> יכלול איברים מסדרים גבוהים יותר:</p>
+                <div class="math-box material-equation">
+                    𝓛<sub>חומר</sub> = ½α<sub>1</sub>P² + ¼α<sub>2</sub>P⁴ + ... + איברי שיפוע
+                </div>
+                
+                <p>איברי השיפוע (כמו ∇P) מתאימים לתיאור תנודות בקיטוב (פולריטונים).</p>
+            </div>
+            
+            <div class="card">
+                <h2>תנועת אלקטרון בחומר</h2>
+                <p>משוואת התנועה של אלקטרון במערכת:</p>
+                
+                <div class="math-box em-equation">
+                    d/dt (∂𝓛/∂vᵢ) - ∂𝓛/∂rᵢ = 0
+                </div>
+                
+                <p>נותן את כוח לורנץ המורחב:</p>
+                <div class="math-box em-equation">
+                    mᵢ dvᵢ/dt = qᵢ[E(rᵢ) + vᵢ×B(rᵢ)] + F<sub>חומר</sub>
+                </div>
+                
+                <p>כאשר <span class="highlight">F<sub>חומר</sub></span> כולל:</p>
+                <ul>
+                    <li>כוחות עקב שיפועי דיאלקטרי: F = -∇(p·E) עבור דיפול p</li>
+                    <li>כוחות חיכוך/התנגדות פרופורציוניים ל-v</li>
+                    <li>כוחות עקב אי-הומוגניות בחומר</li>
+                </ul>
+                
+                <div class="system-example">
+                    <p><strong>דוגמה: אלקטרון בחומר דיאלקטרי</strong></p>
+                    <p>עבור אלקטרון בחומר עם קבוע דיאלקטרי ε(ω):</p>
+                    <div class="math-box">
+                        F<sub>דיאלקטרי</sub> = (q²/2)∇[1/ε(r,ω)]
+                    </div>
+                    <p>כוח זה מתאים לאפקט של "דחיפה" או "משיכה" לאזורים עם ε שונה.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>יחסי חומר כלליים</h2>
+                
+                <table class="interaction-table">
+                    <thead>
+                        <tr>
+                            <th>סוג חומר</th>
+                            <th>יחס חומרי</th>
+                            <th>תרומה ל-𝓛</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>לינארי איזוטרופי</td>
+                            <td>D = εE, B = μH</td>
+                            <td>½∫(εE² - (1/μ)B²)dV</td>
+                        </tr>
+                        <tr>
+                            <td>אניזוטרופי</td>
+                            <td>Dᵢ = εᵢⱼEⱼ</td>
+                            <td>½∫εᵢⱼEᵢEⱼ dV</td>
+                        </tr>
+                        <tr>
+                            <td>דיאלקטרי לא-לינארי</td>
+                            <td>P = ε₀(χ⁽¹⁾E + χ⁽²⁾E² + ...)</td>
+                            <td>∫(½αP² + ¼βP⁴)dV</td>
+                        </tr>
+                        <tr>
+                            <td>מוליך</td>
+                            <td>J = σE</td>
+                            <td>איבר דיסיפציה ב-𝓛 (לא שמרני)</td>
+                        </tr>
+                        <tr>
+                            <td>דיאלקטרי עם פיזור</td>
+                            <td>ε(ω) = ε₁(ω) + iε₂(ω)</td>
+                            <td>𝓛 עם איברים מרוכבים/דיסיפאטיביים</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>לתיאור דיסיפציה (התנגדות, בליעה), ניתן להוסיף פונקציית דיסיפציה 𝓡:</p>
+                <div class="math-box">
+                    d/dt (∂𝓛/∂˙q) - ∂𝓛/∂q = -∂𝓡/∂˙q
+                </div>
+                <p>לדוגמה, עבור התנגדות לינארית: 𝓡 = ½γv².</p>
+            </div>
+            
+            <div class="card">
+                <h2>פתרון לדוגמה: אלקטרון בגביש</h2>
+                <div class="system-example">
+                    <p>נבחן אלקטרון בגביש עם פוטנציאל מחזורי V(r) ושדה אלקטרומגנטי:</p>
+                    
+                    <div class="math-box">
+                        𝓛 = ½mẋ² - V(x) - eφ(x,t) + eẋ·A(x,t)<br>
+                        + ½∫[ε(x)E² - (1/μ₀)B²]d³r
+                    </div>
+                    
+                    <p>כאשר ε(x) מחזורית עם סריג הגביש.</p>
+                    
+                    <p>משוואת התנועה המתקבלת:</p>
+                    <div class="math-box">
+                        mẍ = -∇V(x) - e∇φ + e(∇A)·ẋ + eẋ×(∇×A)<br>
+                        + (e²/2m)∇[A²] + כוחות דיאלקטריים
+                    </div>
+                    
+                    <p>בגביע אפקטיבי, עם קירוב המסה האפקטיבית m*:</p>
+                    <div class="math-box">
+                        m*ẍ = e(E + ẋ×B) - (1/τ)m*ẋ
+                    </div>
+                    <p>כאשר τ זמן הרפיה עקב פיזור.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>חוקי שימור ומשפט נתר</h2>
+                <p>מהסימטריות של הלגראנז'יאן, נגזרים חוקי שימור:</p>
+                
+                <ul>
+                    <li><strong>שימור אנרגיה</strong> מנדיבות בזמן</li>
+                    <li><strong>שימור תנע</strong> מנדיבות במרחב</li>
+                    <li><strong>שימור מטען</strong> מנדיבות גלובלית ב-φ</li>
+                </ul>
+                
+                <p>טנזור מאמץ-אנרגיה משולב:</p>
+                <div class="math-box">
+                    T<sup>μν</sup> = T<sub>שדה</sub><sup>μν</sup> + T<sub>חומר</sub><sup>μν</sup> + T<sub>אינטראקציה</sub><sup>μν</sup>
+                </div>
+                
+                <p>חוק שימור מטען (ממשיך להתקיים גם בחומר):</p>
+                <div class="math-box">
+                    ∂ρ/∂t + ∇·J = 0
+                </div>
+                
+                <p>שימור התנע: התנע הכולל של השדות + החומר + החלקיקים נשמר.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 | פורמליזם לגראנז' למערכות אלקטרודינמיות בחומר | שילוב משוואות מקסוול, חומריות, ותנועה</p>
+            <p>גישה זו מאפשרת טיפול אחיד במערכות אלקטרומגנטיות מורכבות עם חומרים לינאריים ולא-לינאריים</p>
+        </footer>
+    </div>
+</body>
+</html>
