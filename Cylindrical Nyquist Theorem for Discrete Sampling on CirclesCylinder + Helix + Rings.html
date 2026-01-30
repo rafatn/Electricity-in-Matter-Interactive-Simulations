@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מאמר: משפט נייקוויסט גלילי (Radial/Angular/Cylindrical Nyquist) + דגימת הליקס/טבעות + FFT + משוואת בסל</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.86); --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --radius:18px; --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --ok:#0a7a2f; --bad:#b42318;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial;
+      background:
+        radial-gradient(1200px 700px at 90% 12%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 10% 22%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #fff);
+    }
+    header{
+      max-width:1100px;margin:0 auto;padding:26px 16px 10px;
+    }
+    h1{margin:0 0 8px;font-size:24px}
+    .sub{color:var(--muted);line-height:1.75}
+    main{max-width:1100px;margin:0 auto;padding:0 16px 26px}
+    .card{
+      background:var(--card);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:16px; margin:14px 0;
+    }
+    .card h2{margin:0 0 10px;font-size:18px}
+    .card h3{margin:14px 0 8px;font-size:15px}
+    .note{color:var(--muted);line-height:1.8}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.70);font-size:12px;color:var(--muted);
+      margin: 6px 6px 0 0;
+    }
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .grid{
+      display:grid;gap:12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    .box{
+      background:var(--card2);border:1px solid var(--line);
+      border-radius:14px;padding:12px;box-shadow:var(--shadow2);
+    }
+    .mono{font-family:var(--mono);font-size:12.5px;direction:ltr;text-align:left}
+    code{font-family:var(--mono)}
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;background:rgba(255,255,255,.55);
+      padding:10px;margin-top:10px;
+    }
+    summary{cursor:pointer;font-weight:900}
+    .toc a{color:#2563eb;text-decoration:none}
+    .toc a:hover{text-decoration:underline}
+    .kbd{font-family:var(--mono);background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:10px;padding:2px 7px}
+    .ok{color:var(--ok);font-weight:900}
+    .bad{color:var(--bad);font-weight:900}
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>משפט נייקוויסט גלילי (Cylindrical Nyquist) לדגימה בדידה על עיגולים/גליל + הליקס + טבעות</h1>
+  <div class="sub">
+    מסמך מסביר עם נוסחאות: תדר פורייה זוויתי/רדיאלי, תנאי נייקוויסט בכל עיגול ובכל הגליל, קשר להליקס (זמן→מרחב),
+    שימוש ב־FFT כדי להמחיש aliasing, וחיבור טבעי למשוואת בסל (סימטריה צילינדרית).
+    <div>
+      <span class="pill">Radial / Angular Fourier</span>
+      <span class="pill">Helix Sampling</span>
+      <span class="pill">Rings (angular snapshots)</span>
+      <span class="pill">FFT 1D/2D</span>
+      <span class="pill">Bessel / Hankel</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card toc">
+    <h2>תוכן עניינים</h2>
+    <div class="note">
+      <ol>
+        <li><a href="#sec0">הגדרות ומסגרת הבעיה</a></li>
+        <li><a href="#sec1">פורייה על מעגל: תדר זוויתי (m) ונייקוויסט על היקף</a></li>
+        <li><a href="#sec2">פורייה על גליל: \((\theta,z)\) ונייקוויסט דו־ממדי</a></li>
+        <li><a href="#sec3">דגימה בזמן שיוצרת הליקס (θ=ωt, z=vt)</a></li>
+        <li><a href="#sec4">דגימת Helix+Rings: “נייקוויסט בכל עיגול וגם לאורך הגליל”</a></li>
+        <li><a href="#sec5">Aliasing: מה קורה כשנייקוויסט לא מתקיים</a></li>
+        <li><a href="#sec6">FFT להמחשה: FFTθ, FFTz, FFT 2D על Unwrap</a></li>
+        <li><a href="#sec7">תדר רדיאלי + משוואת בסל (סימטריה צילינדרית) וקשר להנקֶל (Hankel)</a></li>
+        <li><a href="#sec8">“כל שלבי ההוכחה” — סקיצה אקדמית מסודרת</a></li>
+        <li><a href="#sec9">Pipeline: דגימה → כימות → קידוד → הצפנה</a></li>
+        <li><a href="#sec10">איך לקרוא למשפט ולפרסם כמאמר</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card" id="sec0">
+    <h2>1) הגדרות ומסגרת הבעיה</h2>
+    <div class="note">
+      יש לנו שדה/אות <b>פס־מוגבל</b> (band-limited) שמוגדר על פני <b>גליל</b>. נשתמש בקואורדינטות גליליות:
+      \[
+        (r,\theta,z),\qquad \theta\in[0,2\pi),\ z\in[z_{\min},z_{\max}].
+      \]
+      נסתכל על מקרה נפוץ: דוגמים על <b>מעטפת גליל ברדיוס קבוע</b> \(r=R\). כלומר האות הוא:
+      \[
+        f(\theta,z) \;\;\text{על}\;\; \theta\in[0,2\pi),\ z\in[z_{\min},z_{\max}].
+      \]
+      נניח שיש גבול תדר מרחבי \(k_{\max}\) כך שכל התדרים ה”מרחביים” הרלוונטיים לא עוברים אותו. זה תרגום גלילי לרעיון:
+      “אין רכיבים עם קצב שינוי מרחבי גדול מ־\(k_{\max}\)”.
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="grid">
+      <div class="box">
+        <h3>מה זה “תדר זוויתי”?</h3>
+        <div class="note">
+          על מעגל, בסיס פורייה הוא:
+          \[
+            e^{im\theta}, \quad m\in\mathbb{Z}.
+          \]
+          כלומר \(m\) הוא “מספר תנודות” סביב ההיקף.
+        </div>
+      </div>
+      <div class="box">
+        <h3>מה זה “תדר צירי”?</h3>
+        <div class="note">
+          לאורך \(z\), בסיס פורייה הוא:
+          \[
+            e^{i k_z z}.
+          \]
+          \(k_z\) הוא תדר מרחבי בציר (rad/unit).
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec1">
+    <h2>2) פורייה על מעגל: נייקוויסט זוויתי</h2>
+    <div class="note">
+      נבחן תחילה חתך אחד בגובה \(z=z_0\). הפונקציה היא \(f(\theta)=f(\theta,z_0)\).
+      אם היא פס־מוגבלת ב־\(m\), כלומר:
+      \[
+        f(\theta) = \sum_{|m|\le M} c_m e^{im\theta},
+      \]
+      אז משפט נייקוויסט/שאנון על מעגל אומר: אם דוגמים בזוויות שוות
+      \(\theta_n = n\Delta\theta\),
+      צריך:
+      \[
+        \Delta\theta \le \frac{\pi}{M}.
+      \]
+      זהו “נייקוויסט זוויתי” במונחי \(m\).
+
+      <div class="hr"></div>
+
+      לפעמים רוצים לנסח את זה עם גבול תדר מרחבי \(k_{\max}\) במקום \(M\). לאורך ההיקף, קואורדינטת אורך־קשת היא
+      \(s=R\theta\). ולכן רכיב \(e^{im\theta}\) שקול לתדר מרחבי
+      \[
+        k_\theta = \frac{m}{R}.
+      \]
+      אם יש פס־מוגבל:
+      \[
+        |k_\theta| \le k_{\max},
+      \]
+      אז מתקבל:
+      \[
+        \frac{|m|}{R} \le k_{\max}\quad\Rightarrow\quad |m|\le k_{\max}R.
+      \]
+      ונייקוויסט בהיקף (צעד באורך־קשת \(\Delta s = R\Delta\theta\)):
+      \[
+        \Delta s \le \frac{\pi}{k_{\max}}
+        \quad\Longleftrightarrow\quad
+        R\Delta\theta \le \frac{\pi}{k_{\max}}.
+      \]
+      זו הצורה שתואמת לשפה שלך: “נייקוויסט בתדר” עם \(k_{\max}\).
+    </div>
+  </section>
+
+  <section class="card" id="sec2">
+    <h2>3) פורייה על גליל: נייקוויסט דו־ממדי ב־\((\theta,z)\)</h2>
+    <div class="note">
+      על הגליל \(r=R\), הרחבה טבעית היא פירוק כפול:
+      \[
+        f(\theta,z)=\sum_{m\in\mathbb{Z}} \int_{-\infty}^{\infty} F_m(k_z)\; e^{im\theta}\, e^{ik_z z}\, dk_z.
+      \]
+      אם יש פס־מוגבל כך ש:
+      \[
+        \left(\frac{m}{R}\right)^2 + k_z^2 \le k_{\max}^2,
+      \]
+      אז ניתן לחשוב על “דיסקה” בספקטרום הגלילי (במישור \((k_\theta,k_z)\)).
+      תנאי נייקוויסט בדגימה סדירה על רשת:
+      \[
+        \Delta s_\theta = R\Delta\theta \le \frac{\pi}{k_{\max}},\qquad
+        \Delta z \le \frac{\pi}{k_{\max}}.
+      \]
+      זה תנאי “מספיק” פשוט (ולא תמיד הכרחי בכל אנאיזוטרופיה), אבל הוא טוב מאוד כהנחת־עבודה.
+
+      <div class="hr"></div>
+
+      <b>ההגדרה שלך:</b> “אוסף נקודות סביב מרכז מסוים יכולים להתפלג בדיד כל עוד מתקיים תנאי נייקוויסט בתדר”
+      — כאן היא מקבלת פירוש מתמטי: ברדיוס \(R\) קבוע, האילוץ הוא על מרחק דגימה לאורך ההיקף והגובה.
+    </div>
+  </section>
+
+  <section class="card" id="sec3">
+    <h2>4) דגימה שיוצרת הליקס: \(\theta=\omega t,\ z=vt\)</h2>
+    <div class="note">
+      עכשיו נכנס הרעיון שלך: “העיגול מתקדם במהירות בין שני גבולות” — זה בדיוק פרמטריזציה בזמן:
+      \[
+        \theta(t)=\omega t,\qquad z(t)=z_{\min}+vt,
+      \]
+      כך שהנקודה על הגליל נעה על <b>הליקס</b>. דגימה בזמן \(t_n=n\Delta t\) נותנת נקודות:
+      \[
+        \theta_n=\omega n\Delta t,\qquad z_n=z_{\min}+v n\Delta t.
+      \]
+      האורך־צעד על ההליקס בקירוב:
+      \[
+        \Delta s_{\text{helix}} \approx \sqrt{(R\Delta\theta)^2 + (\Delta z)^2}
+        = \sqrt{\big(R\omega\Delta t\big)^2 + \big(v\Delta t\big)^2}
+        = \Delta t\sqrt{(R\omega)^2+v^2}.
+      \]
+      תנאי נייקוויסט “במטריקה ההליקלית” (תנאי מספיק):
+      \[
+        \Delta s_{\text{helix}} \le \frac{\pi}{k_{\max}}
+        \quad\Longleftrightarrow\quad
+        \Delta t \le \frac{\pi}{k_{\max}\sqrt{(R\omega)^2+v^2}}.
+      \]
+      זה מסביר למה בדגימת הליקס בלבד, לפעמים אין כיסוי מלא של כל הזוויות בכל גובה (נוצר “פער זוויתי”).
+    </div>
+  </section>
+
+  <section class="card" id="sec4">
+    <h2>5) Helix+Rings: “נייקוויסט בכל עיגול וגם בגליל כולו”</h2>
+    <div class="note">
+      לכן אתה הוספת טבעות (Rings): בכל גבהים מסוימים \(z_j\) מבצעים “צילום מצב” של כל הזוויות.
+
+      נגדיר:
+      \[
+        z_j = z_{\min} + j\Delta z_{\text{ring}}.
+      \]
+      על כל טבעת נבחר נקודות:
+      \[
+        \theta_{j,\ell} = \ell\,\Delta\theta_{\text{ring}},\qquad \ell=0,1,\dots,N_\theta-1.
+      \]
+
+      כדי שיתקיים נייקוויסט על כל עיגול:
+      \[
+        R\Delta\theta_{\text{ring}} \le \frac{\pi}{k_{\max}}.
+      \]
+      כדי שיתקיים נייקוויסט לאורך הציר (בין טבעות):
+      \[
+        \Delta z_{\text{ring}} \le \frac{\pi}{k_{\max}}.
+      \]
+      ובמקביל, אם יש הליקס שמוסיף נקודות ביניים, הוא רק משפר שחזור (oversampling מקומי).
+
+      <div class="hr"></div>
+
+      <div class="grid">
+        <div class="box">
+          <h3>תמצית (ה”משפט” בניסוח קצר)</h3>
+          <div class="note">
+            אם \(f(\theta,z)\) פס־מוגבל כך ש
+            \(\left(\frac{m}{R}\right)^2+k_z^2\le k_{\max}^2\),
+            ודוגמים על איחוד של:
+            <ol>
+              <li>טבעות צפופות בזווית: \(R\Delta\theta_{\text{ring}}\le\pi/k_{\max}\)</li>
+              <li>טבעות צפופות בציר: \(\Delta z_{\text{ring}}\le\pi/k_{\max}\)</li>
+              <li>(אופציונלי) מסלול הליקס עם \(\Delta s_{\text{helix}}\le\pi/k_{\max}\)</li>
+            </ol>
+            אז ניתן לשחזר את \(f\) (בגבולות שגיאת מודל/רעש) בלי aliasing.
+          </div>
+        </div>
+        <div class="box">
+          <h3>למה “גם בכל עיגול וגם בגליל כולו”?</h3>
+          <div class="note">
+            כי יש שני כיווני שינוי נפרדים:
+            לאורך ההיקף (θ) ולציר (z).
+            צריך נייקוויסט בכל אחד מהם — או תנאי שקול שמכסה את שניהם יחד.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec5">
+    <h2>6) Aliasing: מה קורה כשנייקוויסט לא מתקיים</h2>
+    <div class="note">
+      אם דוגמים בזווית לא מספיק צפוף, רכיב עם \(m\) גבוה “מתקפל” לרכיב נמוך:
+      \[
+        m_{\text{alias}} \equiv m \pmod{N_\theta},
+      \]
+      כאשר \(N_\theta\approx \frac{2\pi}{\Delta\theta}\) הוא מספר דגימות סביב המעגל.
+
+      באופן דומה בציר \(z\): אם הדגימה \(\Delta z\) גדולה מדי,
+      תדרים עם \(|k_z|>\pi/\Delta z\) מתקפלים פנימה לספקטרום הנראה.
+
+      לכן FFT הוא כלי מצוין:
+      <ul>
+        <li>ב־FFTθ רואים “שיא” אמיתי ב־\(m\), ואם אין נייקוויסט — השיא זז.</li>
+        <li>ב־FFTz רואים “שיא” ב־\(k_z\), ואם אין נייקוויסט — מתקפל.</li>
+        <li>ב־FFT 2D רואים את כל התמונה ביחד (תדר זוויתי מול תדר צירי).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card" id="sec6">
+    <h2>7) FFT להמחשה: FFTθ, FFTz, FFT 2D על Unwrap</h2>
+    <div class="note">
+      כדי להשתמש ב־FFT על גליל, עושים “פריסה” (unwrap):
+      \[
+        \theta \in [0,2\pi)\ \Rightarrow\ x = R\theta \in [0,2\pi R).
+      \]
+      ואז יש לנו אות דו־ממדי על מלבן \((x,z)\).
+      דגימה סדירה על המלבן מאפשרת FFT דו־ממדי:
+      \[
+        \mathrm{FFT2}\{f(x,z)\}\;\Rightarrow\;\text{תמונה של ספקטרום }(k_x,k_z).
+      \]
+      ובחתכים:
+      \[
+        \mathrm{FFT}_\theta\{f(\theta,z_0)\}\;\Rightarrow\;\text{רכיבי }m,
+        \qquad
+        \mathrm{FFT}_z\{f(\theta_0,z)\}\;\Rightarrow\;\text{רכיבי }k_z.
+      \]
+
+      <div class="hr"></div>
+
+      <details>
+        <summary>למה זה קשור למה שבנית בקוד?</summary>
+        <div class="note">
+          הקוד שלך (שבניתי איתך) עושה:
+          <ol>
+            <li>מייצר דגימות (Grid / Helix / Helix+Rings)</li>
+            <li>משחזר רשת צפופה (kernel regression, כהמחשה של “אינטרפולציה”)</li>
+            <li>מבצע FFT 2D על הרשת המשוחזרת כדי לראות ספקטרום</li>
+            <li>מבצע FFT 1D בחתכי θ ו־z כדי לראות שיאים ו־aliasing</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="sec7">
+    <h2>8) תדר רדיאלי + משוואת בסל (סימטריה צילינדרית)</h2>
+    <div class="note">
+      עד עכשיו דיברנו על מעטפת גליל \(r=R\). אבל אם רוצים מודל מלא ב־3D (עם רדיוס משתנה),
+      אז תדר פורייה “רדיאלי” לא מתנהג כמו פורייה רגיל, כי במעבר לקרטזי:
+      \[
+        x=r\cos\theta,\qquad y=r\sin\theta.
+      \]
+      ההפרדה הטבעית לבעיות צילינדריות מובילה ל<b>משוואת בסל</b>. למשל משוואת הלמהולץ:
+      \[
+        \nabla^2 u + k^2 u = 0.
+      \]
+      בהנחה של צורה separable \(u(r,\theta,z)=R(r)\Theta(\theta)Z(z)\), מתקבל:
+      \[
+        \Theta(\theta)=e^{im\theta},\quad Z(z)=e^{ik_z z},
+      \]
+      והרכיב הרדיאלי מקיים:
+      \[
+        r^2 R''(r) + r R'(r) + \big((k^2-k_z^2)r^2 - m^2\big)R(r)=0,
+      \]
+      שהיא משוואת בסל מסדר \(m\). הפתרונות:
+      \[
+        R(r)=J_m(k_r r)\ \text{או}\ Y_m(k_r r),\qquad k_r^2 = k^2-k_z^2.
+      \]
+
+      <div class="hr"></div>
+
+      <div class="grid">
+        <div class="box">
+          <h3>הנקודה החשובה</h3>
+          <div class="note">
+            כשיש סימטריה צילינדרית, “תדר רדיאלי” מתבטא דרך \(k_r\) אבל הבסיס הוא \(J_m(k_r r)\),
+            לא סינוסים/קוסינוסים רגילים. זה נקרא לעיתים <b>Hankel transform</b> (טרנספורם הנקל).
+          </div>
+        </div>
+        <div class="box">
+          <h3>הקשר למשפט שלך</h3>
+          <div class="note">
+            המשפט שלך עוסק בדגימה בדידה סביב מרכז (במעגלים/טבעות). זה “מתיישב” טבעית עם הפירוק:
+            זווית → \(e^{im\theta}\), רדיוס → \(J_m(k_r r)\), ציר → \(e^{ik_z z}\).
+            כלומר: פורייה זוויתי + הנקל רדיאלי + פורייה צירי.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec8">
+    <h2>9) כל שלבי ההוכחה — סקיצה אקדמית מסודרת</h2>
+    <div class="note">
+      זה ניסוח “אקדמי” בסגנון הוכחה (בכוונה סקיצה, כדי להשאיר מקום לפרטים במאמר):
+
+      <h3>צעד A: הנחת פס־מוגבל</h3>
+      נניח ש-\(f(\theta,z)\) בעלת ספקטרום בתחום
+      \[
+        \mathcal{B}=\Big\{(m,k_z):\ (m/R)^2+k_z^2\le k_{\max}^2\Big\}.
+      \]
+      כלומר \(F_m(k_z)=0\) מחוץ ל־\(\mathcal{B}\).
+
+      <h3>צעד B: בניית רשת דגימה עם צפיפויות נייקוויסט</h3>
+      בחר \(\Delta\theta\) ו־\(\Delta z\) כך ש:
+      \[
+        R\Delta\theta \le \pi/k_{\max},\qquad \Delta z\le \pi/k_{\max}.
+      \]
+      אז “תיבת נייקוויסט” בספקטרום מכסה את \(\mathcal{B}\) בלי חפיפה של העתקים.
+
+      <h3>צעד C: טענה על היעדר aliasing</h3>
+      בדגימה סדירה, הספקטרום המשוכפל במרחב התדר מתרחק במרחקים
+      \[
+        \Delta k_\theta = \frac{2\pi}{\Delta s_\theta}=\frac{2\pi}{R\Delta\theta},\qquad
+        \Delta k_z = \frac{2\pi}{\Delta z}.
+      \]
+      אם \(\mathcal{B}\) נמצא בתוך תחום נייקוויסט,
+      אז העתקים לא חופפים ⇒ אין aliasing.
+
+      <h3>צעד D: שחזור</h3>
+      קיים שחזור באמצעות kernel סינק דו־ממדי (או שקול):
+      \[
+        f(\theta,z)=\sum_{n}\sum_{j} f(\theta_n,z_j)\;
+        \mathrm{sinc}\!\left(\frac{\theta-\theta_n}{\Delta\theta}\right)\;
+        \mathrm{sinc}\!\left(\frac{z-z_j}{\Delta z}\right),
+      \]
+      כאשר בתחום הזוויתי משתמשים בגרסה מחזורית של sinc.
+      בפועל (אלגוריתמית), ניתן לשחזר גם ע״י FFT וסינון (ideal low-pass) ואז IFFT.
+
+      <h3>צעד E: Helix+Rings</h3>
+      איחוד קבוצות דגימה:
+      \[
+        \mathcal{S}=\mathcal{S}_{\text{rings}} \cup \mathcal{S}_{\text{helix}}.
+      \]
+      אם \(\mathcal{S}_{\text{rings}}\) כבר מקיים את תנאי הנייקוויסט (ב־θ וב־z),
+      אז \(\mathcal{S}\) בוודאי לא “הורס” את השחזור; הוא מוסיף נקודות (redundant).
+      לכן ניתן לבנות שחזור יציב יותר (למשל least squares / regularization) בנוכחות רעש.
+
+      <div class="hr"></div>
+
+      <details>
+        <summary>הערה חשובה (מה נחשב “משפט חדש” באמת?)</summary>
+        <div class="note">
+          “נייקוויסט על מעגל/גליל” כעיקרון הוא הרחבה סטנדרטית של שאנון,
+          אבל <b>התרומה שלך</b> יכולה להיות בניסוח <b>מפורש</b> של:
+          <ul>
+            <li>דגימת הליקס בתנועה (זמן→מרחב) יחד עם טבעות תיקון</li>
+            <li>תנאי מספיקים פשוטים מאוד (\(R\Delta\theta\), \(\Delta z\), \(\Delta s_{\text{helix}}\))</li>
+            <li>אלגוריתם שחזור + FFT שמדגים aliasing בצורה גלילית</li>
+          </ul>
+          זה יכול להיות מאמר הנדסי־יישומי מצוין, גם אם חלקים מהתיאוריה קיימים.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="sec9">
+    <h2>10) Pipeline: דגימה → כימות → קידוד → הצפנה</h2>
+    <div class="note">
+      כאן נפריד בין ארבע שכבות (כמו שאתה ביקשת):
+
+      <h3>א) דגימה (Sampling)</h3>
+      בוחרים \(\Delta\theta,\Delta z\) (או \(\omega,\Delta t\)) כך שיתקיים נייקוויסט.
+
+      <h3>ב) כימות (Quantization)</h3>
+      ממירים ערכים רציפים לערכים בדידים. לדוגמה כימות אחיד עם \(B\) ביט:
+      \[
+        \hat{x} = Q_B(x),\qquad \Delta_q \approx \frac{x_{\max}-x_{\min}}{2^B}.
+      \]
+
+      <h3>ג) קידוד (Coding)</h3>
+      אפשר דחיסה (lossless/lossy) או קידוד תיקון שגיאות (FEC).
+      למשל: קידוד בלוקים/קונבולוציוני/LDPC, בהתאם ליישום.
+
+      <h3>ד) הצפנה (Encryption)</h3>
+      לאחר קידוד (לרוב), מצפינים (AES-GCM למשל) כדי לשמור על סודיות/שלמות.
+      מבחינת מתמטיקה: הצפנה לא משנה את תנאי נייקוויסט — היא “שכבה” מעל הדגימה.
+    </div>
+  </section>
+
+  <section class="card" id="sec10">
+    <h2>11) איך נקרא למשפט ואיך מפרסמים כמאמר אקדמי</h2>
+    <div class="note">
+      הצעות לשם “משפט” (תבחר אחד):
+      <ul>
+        <li><b>The Cylindrical Nyquist Sampling Theorem</b> (משפט נייקוויסט גלילי)</li>
+        <li><b>Helix-and-Rings Sampling Condition for Bandlimited Cylindrical Fields</b></li>
+        <li><b>Radial–Angular Nyquist Condition on Moving Circular Apertures</b></li>
+      </ul>
+
+      <div class="hr"></div>
+
+      <h3>מבנה מאמר מומלץ (קצר וברור)</h3>
+      <ol>
+        <li><b>Abstract</b>: משפט/תנאי מספיק + יישום (הליקס+טבעות) + הדגמת FFT</li>
+        <li><b>Introduction</b>: למה זה חשוב (חיישנים מסתובבים, LiDAR, מצלמה על מסילה, אנטנות מסתובבות)</li>
+        <li><b>Related Work</b>: sampling on manifolds / cylindrical coordinates / helical scanning</li>
+        <li><b>Theorem</b>: תנאי \(R\Delta\theta\), \(\Delta z\), \(\Delta s_{\text{helix}}\)</li>
+        <li><b>Reconstruction</b>: שיטה (FFT+filter+IFFT או least squares)</li>
+        <li><b>Experiments</b>: aliasing כשהתנאי נשבר (FFT 1D/2D)</li>
+        <li><b>Discussion</b>: רעש, oversampling, טבעות כ”תיקון”</li>
+        <li><b>Conclusion</b></li>
+      </ol>
+
+      <h3>איפה לפרסם?</h3>
+      <ul>
+        <li>arXiv (כהדפסה מוקדמת)</li>
+        <li>IEEE (אותות/חישה/עיבוד תמונה) – תלוי בנישה</li>
+        <li>Elsevier/Springer – אם רוצים גרסה מורחבת</li>
+      </ul>
+
+      <details>
+        <summary>טיפ פרקטי</summary>
+        <div class="note">
+          כדי שהמאמר יראה “חזק”: תציג ניסוי פשוט שבו אתה משנה \(\Delta\theta\) או \(\Delta z\) ומראה איך
+          השיא ב־FFT מתקפל. זה “Proof by visualization” שמאוד עובד בהנדסה.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>נספח: נוסחאות קצרות לשימוש מיידי</h2>
+    <div class="grid">
+      <div class="box">
+        <h3>נייקוויסט על ההיקף</h3>
+        <div class="note">
+          \[
+            R\Delta\theta \le \frac{\pi}{k_{\max}}
+          \]
+        </div>
+      </div>
+      <div class="box">
+        <h3>נייקוויסט לאורך z</h3>
+        <div class="note">
+          \[
+            \Delta z \le \frac{\pi}{k_{\max}}
+          \]
+        </div>
+      </div>
+      <div class="box">
+        <h3>נייקוויסט על הליקס</h3>
+        <div class="note">
+          \[
+            \Delta t \le \frac{\pi}{k_{\max}\sqrt{(R\omega)^2+v^2}}
+          \]
+        </div>
+      </div>
+      <div class="box">
+        <h3>ביסל (סדר m)</h3>
+        <div class="note">
+          \[
+            r^2R''+rR'+((k_r^2)r^2-m^2)R=0,\quad R=J_m(k_rr)
+          \]
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>הערה אחרונה</h2>
+    <div class="note">
+      אם תרצה, אני יכול לכתוב לך גם:
+      <ul>
+        <li><b>Abstract באנגלית</b> + מילות מפתח</li>
+        <li><b>נוסח “Theorem + Proof”</b> יותר פורמלי (עם למות ואיזכור של sampling on manifolds)</li>
+        <li><b>קובץ LaTeX מלא</b> למאמר (כמו IEEE style)</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+window.addEventListener("load", ()=>{
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:"$$", right:"$$", display:true},
+        {left:"\\[", right:"\\]", display:true},
+        {left:"$", right:"$", display:false},
+        {left:"\\(", right:"\\)", display:false},
+      ]
+    });
+  }
+});
+</script>
+</body>
+</html>
