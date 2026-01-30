@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-lang="he">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>אוטובוס/משאית — איסוף אנרגיה + חלוקת עומסים + דיאגרמת זרימה</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f6f8ff; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --accent:#2563eb; --accent2:#06b6d4;
+      --good:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1b2e; --bg2:#081b1a;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --text:#e5e7eb; --muted:#9ca3af;
+        --line:rgba(148,163,184,.18);
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --shadow2: 0 10px 28px rgba(0,0,0,.30);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 0%, var(--bg1), transparent 60%),
+        radial-gradient(1000px 600px at 92% 15%, var(--bg2), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    header{padding:22px 16px 10px; max-width:1250px; margin:0 auto;}
+    .topbar{display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;}
+    h1{margin:0; font-size: clamp(20px, 3.0vw, 34px); letter-spacing:.2px;}
+    .subtitle{color:var(--muted); line-height:1.6; margin:10px 0 0; max-width: 100ch;}
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .pill{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: var(--shadow2);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .dot{width:8px; height:8px; border-radius:50%;}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    main{
+      max-width:1250px;
+      margin:0 auto;
+      padding: 0 16px 44px;
+      display:grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ main{grid-template-columns: 1fr;} }
+
+    section.card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:14px;
+    }
+    h2{margin:0 0 10px; font-size:18px}
+    h3{margin:14px 0 8px; font-size:15px}
+    p{margin:8px 0; line-height:1.65}
+    ul{margin:8px 0 8px; padding:0 18px 0 0; line-height:1.7}
+    html[dir="ltr"] ul{padding:0 0 0 18px;}
+    .note{
+      border:1px dashed var(--line);
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .sep{height:1px; background:var(--line); margin:12px 0}
+
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width:720px){ .grid2{grid-template-columns:1fr} }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:8px 12px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+    }
+    .kv .k{color:var(--muted); font-size:12px}
+    .kv .v{font-weight:900; font-size:14px}
+    .kv .mini{font-weight:600; font-size:12px; color:var(--muted)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--line);
+      padding:5px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tag strong{color:var(--text)}
+
+    .controls{display:grid; grid-template-columns: 1fr; gap:10px;}
+    .control{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.05);
+    }
+    .control .row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
+    .control label{font-weight:900}
+    .control output{font-family:var(--mono); color:var(--muted)}
+    input[type="range"]{width:100%}
+    select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:800;
+    }
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37,99,235,.20), rgba(37,99,235,.10));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      font-weight:900;
+    }
+    button.secondary{ background: linear-gradient(180deg, rgba(6,182,212,.18), rgba(6,182,212,.08)); }
+    button.ghost{ background: transparent; }
+    button:active{transform: translateY(1px)}
+
+    .monoBox{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.03);
+      overflow:auto;
+      white-space:pre;
+    }
+    .katex{direction:ltr}
+    .small{font-size:12px; color:var(--muted)}
+
+    /* language blocks */
+    [data-lang-block]{display:none;}
+    html[data-lang="he"] [data-lang-block="he"]{display:block;}
+    html[data-lang="en"] [data-lang-block="en"]{display:block;}
+
+    /* bars */
+    .bars{display:grid; gap:10px; margin-top:10px}
+    .bar{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.05);
+    }
+    .bar .top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;}
+    .track{
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    .fill{height:100%; width:0%; background: linear-gradient(90deg, rgba(37,99,235,.55), rgba(6,182,212,.55));}
+
+    /* diagram */
+    .diagramWrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background: rgba(255,255,255,.04);
+    }
+    .legend{
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      align-items:center;
+    }
+    .lg{display:inline-flex; align-items:center; gap:8px}
+    .swatch{width:14px; height:10px; border-radius:4px; display:inline-block}
+    .swW{background: rgba(37,99,235,.55)}
+    .swS{background: rgba(6,182,212,.55)}
+    .swH{background: rgba(245,158,11,.55)}
+    .swSeat{background: rgba(147,51,234,.55)}
+    .swFloor{background: rgba(236,72,153,.55)}
+    .swCore{background: rgba(22,163,74,.55)}
+    .swLoad{background: rgba(100,116,139,.55)}
+
+    @media print{
+      button{display:none}
+      section.card{box-shadow:none}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1 data-lang-block="he">אוטובוס/משאית — איסוף אנרגיה + חלוקת עומסים + דיאגרמת זרימה</h1>
+      <h1 data-lang-block="en">Bus/Truck — Energy Recovery + Load Allocation + Flow Diagram</h1>
+
+      <p class="subtitle" data-lang-block="he">
+        5 ערוצי קצירה: <b>בלימה רגנרטיבית</b> (הכי גדול), <b>מתלים</b>, <b>מצבר לחץ הידראולי</b>,
+        <b>לחץ מושבים</b>, ו<b>רצפה חכמה</b>.  
+        כאן גם מוסיפים: <b>חלוקת אנרגיה לעומסים (Wi-Fi/מסכים/תאורה/חיישנים/דלתות/HVAC)</b> + <b>מצב סוללה</b> יומי.
+      </p>
+      <p class="subtitle" data-lang-block="en">
+        5 harvesting channels: <b>regen braking</b> (largest), <b>suspension</b>, <b>hydraulic accumulator</b>,
+        <b>seat pressure</b>, and <b>smart floor</b>.  
+        This version adds: <b>load allocation (Wi-Fi/displays/lighting/sensors/doors/HVAC)</b> + a simple daily <b>battery SOC</b>.
+      </p>
+
+      <div class="pillrow">
+        <span class="pill"><span class="dot good"></span><span data-lang-block="he">גדול: בלימה</span><span data-lang-block="en">Big: braking</span></span>
+        <span class="pill"><span class="dot good"></span><span data-lang-block="he">בינוני: מתלים/לחץ</span><span data-lang-block="en">Medium: suspension/pressure</span></span>
+        <span class="pill"><span class="dot warn"></span><span data-lang-block="he">קטן-שימושי: מושבים/רצפה</span><span data-lang-block="en">Small-useful: seats/floor</span></span>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="secondary" id="langBtn">EN</button>
+      <button class="ghost" id="printBtn" data-lang-block="he">הדפס / שמור כ־PDF</button>
+      <button class="ghost" id="printBtn2" data-lang-block="en">Print / Save PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: diagram + explanation -->
+  <section class="card">
+    <h2 data-lang-block="he">1) דיאגרמת זרימת אנרגיה (דינמית)</h2>
+    <h2 data-lang-block="en">1) Dynamic energy flow diagram</h2>
+
+    <div class="diagramWrap">
+      <svg viewBox="0 0 1040 520" width="100%" height="auto" role="img" aria-label="Energy flow diagram">
+        <defs>
+          <linearGradient id="gW" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(37,99,235,.20)"/>
+            <stop offset="1" stop-color="rgba(37,99,235,.06)"/>
+          </linearGradient>
+          <linearGradient id="gS" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(6,182,212,.20)"/>
+            <stop offset="1" stop-color="rgba(6,182,212,.06)"/>
+          </linearGradient>
+          <linearGradient id="gH" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(245,158,11,.22)"/>
+            <stop offset="1" stop-color="rgba(245,158,11,.07)"/>
+          </linearGradient>
+          <linearGradient id="gSeat" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(147,51,234,.22)"/>
+            <stop offset="1" stop-color="rgba(147,51,234,.07)"/>
+          </linearGradient>
+          <linearGradient id="gFloor" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(236,72,153,.22)"/>
+            <stop offset="1" stop-color="rgba(236,72,153,.07)"/>
+          </linearGradient>
+          <linearGradient id="gCore" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(22,163,74,.18)"/>
+            <stop offset="1" stop-color="rgba(22,163,74,.06)"/>
+          </linearGradient>
+          <linearGradient id="gLoad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(100,116,139,.16)"/>
+            <stop offset="1" stop-color="rgba(100,116,139,.05)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- sources -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="35" y="60" width="260" height="90" rx="16" fill="url(#gW)" stroke="rgba(148,163,184,.45)"/>
+          <text x="165" y="92" text-anchor="middle" font-weight="900">🛞 גלגלים / בלימה</text>
+          <text x="165" y="118" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtWheels">— kWh/יום</text>
+
+          <rect x="35" y="165" width="260" height="80" rx="16" fill="url(#gS)" stroke="rgba(148,163,184,.45)"/>
+          <text x="165" y="195" text-anchor="middle" font-weight="900">🧩 מתלים</text>
+          <text x="165" y="220" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtSusp">— kWh/יום</text>
+
+          <rect x="35" y="260" width="260" height="80" rx="16" fill="url(#gH)" stroke="rgba(148,163,184,.45)"/>
+          <text x="165" y="290" text-anchor="middle" font-weight="900">🫧 מצבר לחץ</text>
+          <text x="165" y="315" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtHyd">— kWh/יום</text>
+
+          <rect x="35" y="355" width="260" height="80" rx="16" fill="url(#gSeat)" stroke="rgba(148,163,184,.45)"/>
+          <text x="165" y="385" text-anchor="middle" font-weight="900">💺 מושבים</text>
+          <text x="165" y="410" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtSeats">— kWh/יום</text>
+
+          <rect x="35" y="450" width="260" height="60" rx="16" fill="url(#gFloor)" stroke="rgba(148,163,184,.45)"/>
+          <text x="165" y="480" text-anchor="middle" font-weight="900">🧱 רצפה</text>
+          <text x="165" y="504" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtFloor">— kWh/יום</text>
+        </g>
+
+        <!-- core -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="390" y="175" width="290" height="190" rx="18" fill="url(#gCore)" stroke="rgba(148,163,184,.45)"/>
+          <text x="535" y="210" text-anchor="middle" font-weight="950">🔋 Energy Core</text>
+          <text x="535" y="236" text-anchor="middle" fill="rgba(100,116,139,.95)">אגירה + DC/DC + איזון</text>
+          <text x="535" y="262" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtRecovered">נאסף: — kWh/יום</text>
+          <text x="535" y="288" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtLoad">צריכה: — kWh/יום</text>
+          <text x="535" y="314" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtNet">נטו: — kWh/יום</text>
+          <text x="535" y="340" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtSOC">SOC סוף יום: —%</text>
+        </g>
+
+        <!-- loads -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="770" y="130" width="235" height="260" rx="18" fill="url(#gLoad)" stroke="rgba(148,163,184,.45)"/>
+          <text x="888" y="162" text-anchor="middle" font-weight="950">⚙️ עומסים</text>
+          <text x="888" y="190" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtWiFi">Wi-Fi: — kWh/יום</text>
+          <text x="888" y="215" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtDisp">מסכים: — kWh/יום</text>
+          <text x="888" y="240" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtLight">תאורה: — kWh/יום</text>
+          <text x="888" y="265" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtSens">חיישנים: — kWh/יום</text>
+          <text x="888" y="290" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtDoors">דלתות/בקרה: — kWh/יום</text>
+          <text x="888" y="315" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtHVAC">HVAC: — kWh/יום</text>
+          <text x="888" y="350" text-anchor="middle" fill="rgba(100,116,139,.95)" id="txtTotalLoads">סה״כ: — kWh/יום</text>
+        </g>
+
+        <!-- arrows -->
+        <g stroke="rgba(37,99,235,.70)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 295 105 C 335 105, 350 130, 390 220" />
+        </g>
+        <g stroke="rgba(6,182,212,.70)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 295 205 C 335 205, 350 210, 390 250" />
+        </g>
+        <g stroke="rgba(245,158,11,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 295 300 C 335 300, 350 280, 390 280" />
+        </g>
+        <g stroke="rgba(147,51,234,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 295 395 C 335 395, 355 350, 390 310" />
+        </g>
+        <g stroke="rgba(236,72,153,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 295 480 C 335 480, 365 400, 390 335" />
+        </g>
+
+        <g stroke="rgba(100,116,139,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 680 270 C 720 270, 735 260, 770 250" />
+        </g>
+
+      </svg>
+
+      <div class="legend">
+        <span class="lg"><span class="swatch swW"></span> בלימה</span>
+        <span class="lg"><span class="swatch swS"></span> מתלים</span>
+        <span class="lg"><span class="swatch swH"></span> לחץ</span>
+        <span class="lg"><span class="swatch swSeat"></span> מושבים</span>
+        <span class="lg"><span class="swatch swFloor"></span> רצפה</span>
+        <span class="lg"><span class="swatch swCore"></span> Energy Core</span>
+        <span class="lg"><span class="swatch swLoad"></span> עומסים</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <h2 data-lang-block="he">2) הסבר קצר: למה מושבים/רצפה כן שווה</h2>
+    <h2 data-lang-block="en">2) Why seats/floor still matter</h2>
+
+    <div data-lang-block="he">
+      <ul>
+        <li><b>זה לא מנוע הנעה</b> — זה “טריקל” אנרגיה שמאוד מתאים ל־Wi-Fi, חיישנים, תאורה, ומסכים.</li>
+        <li>הערך הגדל הוא גם <b>פונקציונלי</b>: חיישני תפוסה/ספירה, ניטור עומסים, אבטחה, תחזוקה חזויה.</li>
+        <li>ביחד עם בלימה/לחץ, מתקבלת מערכת <b>מבוזרת ויתירה</b> שממשיכה לעבוד גם אם יש תקלה במקור אחד.</li>
+      </ul>
+    </div>
+    <div data-lang-block="en">
+      <ul>
+        <li><b>Not propulsion</b> — it’s a trickle that fits Wi-Fi, sensors, lighting, small displays.</li>
+        <li>Also <b>functional value</b>: occupancy counting, load monitoring, security, predictive maintenance.</li>
+        <li>Combined with braking/pressure, you get <b>distributed redundancy</b> if one source is unavailable.</li>
+      </ul>
+    </div>
+
+    <div class="note" data-lang-block="he">
+      כלל: משקל סטטי כמעט לא מייצר אנרגיה. האנרגיה מגיעה מ<b>שינוי לחץ/רטט</b> (מהמורות, תזוזות, דריכות).
+    </div>
+    <div class="note" data-lang-block="en">
+      Rule: static weight yields little. Energy comes from <b>pressure change/vibration</b>.
+    </div>
+  </section>
+
+  <!-- RIGHT: interactive sizing + loads -->
+  <section class="card">
+    <h2 data-lang-block="he">3) סימולציה + חלוקת עומסים</h2>
+    <h2 data-lang-block="en">3) Sizing + load allocation</h2>
+
+    <div class="controls">
+      <div class="control">
+        <div class="row">
+          <label for="preset" data-lang-block="he">תצורה מוכנה</label>
+          <label for="preset" data-lang-block="en">Preset</label>
+          <output id="presetOut" class="small"></output>
+        </div>
+        <select id="preset">
+          <option value="bus_urban">Urban Bus (stop-and-go)</option>
+          <option value="bus_coach">Coach Bus (intercity)</option>
+          <option value="truck_delivery">Delivery Truck (stop-and-go)</option>
+          <option value="truck_highway">Highway Truck (mostly cruise)</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="mass" data-lang-block="he">מסה \(m\) [ק״ג]</label>
+            <label for="mass" data-lang-block="en">Mass \(m\) [kg]</label>
+            <output id="massOut">14000</output>
+          </div>
+          <input id="mass" type="range" min="2000" max="40000" step="100" value="14000">
+        </div>
+
+        <div class="control">
+          <div class="row">
+            <label for="etaE" data-lang-block="he">יעילות בלימה \(\eta_e\) [%]</label>
+            <label for="etaE" data-lang-block="en">Braking efficiency \(\eta_e\) [%]</label>
+            <output id="etaEOut">55</output>
+          </div>
+          <input id="etaE" type="range" min="10" max="85" step="1" value="55">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="v0" data-lang-block="he">מהירות לפני \(v_0\) [קמ״ש]</label>
+            <label for="v0" data-lang-block="en">Speed before \(v_0\) [km/h]</label>
+            <output id="v0Out">45</output>
+          </div>
+          <input id="v0" type="range" min="10" max="120" step="1" value="45">
+        </div>
+        <div class="control">
+          <div class="row">
+            <label for="v1" data-lang-block="he">מהירות אחרי \(v_1\) [קמ״ש]</label>
+            <label for="v1" data-lang-block="en">Speed after \(v_1\) [km/h]</label>
+            <output id="v1Out">0</output>
+          </div>
+          <input id="v1" type="range" min="0" max="120" step="1" value="0">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="stops" data-lang-block="he">עצירות/בלימות ביום</label>
+            <label for="stops" data-lang-block="en">Stops/day</label>
+            <output id="stopsOut">260</output>
+          </div>
+          <input id="stops" type="range" min="0" max="600" step="1" value="260">
+        </div>
+        <div class="control">
+          <div class="row">
+            <label for="suspWh" data-lang-block="he">מתלים/יום [Wh]</label>
+            <label for="suspWh" data-lang-block="en">Susp/day [Wh]</label>
+            <output id="suspWhOut">900</output>
+          </div>
+          <input id="suspWh" type="range" min="0" max="6000" step="50" value="900">
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="hydWh" data-lang-block="he">מצבר לחץ/יום [Wh]</label>
+          <label for="hydWh" data-lang-block="en">Hydraulic/day [Wh]</label>
+          <output id="hydWhOut">1800</output>
+        </div>
+        <input id="hydWh" type="range" min="0" max="12000" step="100" value="1800">
+      </div>
+
+      <div class="sep"></div>
+
+      <h3 data-lang-block="he">💺 מושבים + 🧱 רצפה</h3>
+      <h3 data-lang-block="en">💺 Seats + 🧱 Floor</h3>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="seats" data-lang-block="he">מספר מושבים</label>
+            <label for="seats" data-lang-block="en">Seats</label>
+            <output id="seatsOut">40</output>
+          </div>
+          <input id="seats" type="range" min="0" max="80" step="1" value="40">
+        </div>
+
+        <div class="control">
+          <div class="row">
+            <label for="hours" data-lang-block="he">שעות פעילות/יום</label>
+            <label for="hours" data-lang-block="en">Hours/day</label>
+            <output id="hoursOut">10</output>
+          </div>
+          <input id="hours" type="range" min="0" max="24" step="0.5" value="10">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="seatW" data-lang-block="he">הספק למושב [W]</label>
+            <label for="seatW" data-lang-block="en">W/seat</label>
+            <output id="seatWOut">0.20</output>
+          </div>
+          <input id="seatW" type="range" min="0" max="3" step="0.05" value="0.20">
+        </div>
+
+        <div class="control">
+          <div class="row">
+            <label for="etaSeat" data-lang-block="he">יעילות מושבים [%]</label>
+            <label for="etaSeat" data-lang-block="en">Seat eff. [%]</label>
+            <output id="etaSeatOut">60</output>
+          </div>
+          <input id="etaSeat" type="range" min="10" max="85" step="1" value="60">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="steps" data-lang-block="he">דריכות/יום</label>
+            <label for="steps" data-lang-block="en">Steps/day</label>
+            <output id="stepsOut">12000</output>
+          </div>
+          <input id="steps" type="range" min="0" max="80000" step="100" value="12000">
+        </div>
+
+        <div class="control">
+          <div class="row">
+            <label for="whPerStep" data-lang-block="he">mWh לדריכה</label>
+            <label for="whPerStep" data-lang-block="en">mWh/step</label>
+            <output id="whPerStepOut">2.0</output>
+          </div>
+          <input id="whPerStep" type="range" min="0" max="20" step="0.1" value="2.0">
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="etaFloor" data-lang-block="he">יעילות רצפה [%]</label>
+          <label for="etaFloor" data-lang-block="en">Floor eff. [%]</label>
+          <output id="etaFloorOut">60</output>
+        </div>
+        <input id="etaFloor" type="range" min="10" max="85" step="1" value="60">
+      </div>
+
+      <div class="sep"></div>
+
+      <h3 data-lang-block="he">⚙️ עומסים (kWh/יום) + חלוקה</h3>
+      <h3 data-lang-block="en">⚙️ Loads (kWh/day) + allocation</h3>
+
+      <div class="note" data-lang-block="he">
+        כאן אתה קובע כמה כל מערכת צורכת ביום. אם יש “נטו חיובי” — הסוללה נטענת. אם שלילי — הסוללה מתרוקנת.
+      </div>
+      <div class="note" data-lang-block="en">
+        Set daily consumption per subsystem. If net is positive, battery charges; if negative, it discharges.
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row"><label for="loadWifi">Wi-Fi</label><output id="loadWifiOut">1.2</output></div>
+          <input id="loadWifi" type="range" min="0" max="12" step="0.1" value="1.2">
+        </div>
+        <div class="control">
+          <div class="row"><label for="loadDisp" data-lang-block="he">מסכים/שילוט</label><label for="loadDisp" data-lang-block="en">Displays</label><output id="loadDispOut">1.0</output></div>
+          <input id="loadDisp" type="range" min="0" max="20" step="0.1" value="1.0">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row"><label for="loadLight" data-lang-block="he">תאורה</label><label for="loadLight" data-lang-block="en">Lighting</label><output id="loadLightOut">0.8</output></div>
+          <input id="loadLight" type="range" min="0" max="20" step="0.1" value="0.8">
+        </div>
+        <div class="control">
+          <div class="row"><label for="loadSens" data-lang-block="he">חיישנים/IoT</label><label for="loadSens" data-lang-block="en">Sensors/IoT</label><output id="loadSensOut">0.3</output></div>
+          <input id="loadSens" type="range" min="0" max="10" step="0.1" value="0.3">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row"><label for="loadDoors" data-lang-block="he">דלתות/בקרה</label><label for="loadDoors" data-lang-block="en">Doors/Control</label><output id="loadDoorsOut">0.6</output></div>
+          <input id="loadDoors" type="range" min="0" max="20" step="0.1" value="0.6">
+        </div>
+        <div class="control">
+          <div class="row"><label for="loadHVAC">HVAC</label><output id="loadHVACOut">8.0</output></div>
+          <input id="loadHVAC" type="range" min="0" max="80" step="0.5" value="8.0">
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <h3 data-lang-block="he">🔋 סוללה מרכזית (Energy Core)</h3>
+      <h3 data-lang-block="en">🔋 Main battery (Energy Core)</h3>
+
+      <div class="grid2">
+        <div class="control">
+          <div class="row">
+            <label for="batCap" data-lang-block="he">קיבולת סוללה [kWh]</label>
+            <label for="batCap" data-lang-block="en">Battery capacity [kWh]</label>
+            <output id="batCapOut">80</output>
+          </div>
+          <input id="batCap" type="range" min="5" max="400" step="5" value="80">
+        </div>
+        <div class="control">
+          <div class="row">
+            <label for="soc0" data-lang-block="he">SOC תחילת יום [%]</label>
+            <label for="soc0" data-lang-block="en">Start SOC [%]</label>
+            <output id="soc0Out">70</output>
+          </div>
+          <input id="soc0" type="range" min="0" max="100" step="1" value="70">
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="grid2">
+        <div class="kv">
+          <div>
+            <div class="k" data-lang-block="he">אנרגיה נאספת ביום</div>
+            <div class="k" data-lang-block="en">Recovered/day</div>
+            <div class="v" id="kwhRecovered">—</div>
+            <div class="mini" data-lang-block="he">בלימה + מתלים + לחץ + מושבים + רצפה</div>
+            <div class="mini" data-lang-block="en">brake + susp + hyd + seats + floor</div>
+          </div>
+          <span class="tag">📥</span>
+        </div>
+
+        <div class="kv">
+          <div>
+            <div class="k" data-lang-block="he">צריכת עומסים ביום</div>
+            <div class="k" data-lang-block="en">Loads/day</div>
+            <div class="v" id="kwhLoads">—</div>
+            <div class="mini" data-lang-block="he">Wi-Fi/מסכים/תאורה/חיישנים/דלתות/HVAC</div>
+            <div class="mini" data-lang-block="en">Wi-Fi/displays/lighting/sensors/doors/HVAC</div>
+          </div>
+          <span class="tag">📤</span>
+        </div>
+      </div>
+
+      <div class="kv" style="margin-top:12px;">
+        <div>
+          <div class="k" data-lang-block="he">נטו + מצב סוללה</div>
+          <div class="k" data-lang-block="en">Net + battery</div>
+          <div class="v" id="kwhNet">—</div>
+          <div class="mini" id="socLine">—</div>
+        </div>
+        <span class="tag" id="netTag"><strong>NET</strong> ⚖️</span>
+      </div>
+
+      <h3 data-lang-block="he" style="margin-top:14px;">תרומה יחסית (אחוזים מכלל האיסוף)</h3>
+      <h3 data-lang-block="en" style="margin-top:14px;">Contribution share (of recovery)</h3>
+      <div class="bars" id="bars"></div>
+
+      <div class="btnrow">
+        <button id="copyBtn" data-lang-block="he">העתק טקסט להצעה/פטנט</button>
+        <button id="copyBtn2" data-lang-block="en">Copy proposal/patent text</button>
+        <button class="secondary" id="toggleMathBtn" data-lang-block="he">הצג/הסתר נוסחאות</button>
+        <button class="secondary" id="toggleMathBtn2" data-lang-block="en">Show/Hide math</button>
+      </div>
+
+      <div class="monoBox" id="mathBox" style="margin-top:10px;">
+Braking (per stop):
+ΔE_k = 1/2 · m · (v0^2 - v1^2)
+E_brake ≈ ηe · max(0, ΔE_k)
+
+Seats (per day):
+E_seat/day [Wh] ≈ seats · W_seat · hours · ηseat
+
+Floor (per day):
+E_floor/day [Wh] ≈ steps · (mWh_per_step/1000) · ηfloor
+
+Total recovered:
+E_rec/day ≈ (E_brake·stops) + E_susp/day + E_hyd/day + E_seat/day + E_floor/day
+
+Loads:
+E_load/day = Σ subsystems (kWh/day)
+
+Net and SOC:
+E_net/day = E_rec/day - E_load/day
+SOC_end = clamp( SOC_start + 100·E_net/day / Battery_kWh , 0..100 )
+      </div>
+
+      <div class="monoBox" id="snippet" style="margin-top:10px; display:none;"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // KaTeX render
+  window.addEventListener("DOMContentLoaded", () => {
+    try{
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    }catch(e){}
+    init();
+  });
+
+  const el = (id)=>document.getElementById(id);
+  function kmhToMs(kmh){ return kmh/3.6; }
+  function JToKWh(J){ return J/3.6e6; } // 1 kWh = 3.6e6 J
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function fmt(x, d=2){ return Number(x).toFixed(d); }
+
+  const presets = {
+    bus_urban: {
+      mass: 14000, v0: 45, v1: 0, stops: 260, etaE: 55,
+      suspWh: 900, hydWh: 1800,
+      seats: 40, seatW: 0.20, hours: 10, etaSeat: 60,
+      steps: 12000, whPerStep: 2.0, etaFloor: 60,
+      loads: { wifi: 1.2, disp: 1.0, light: 0.8, sens: 0.3, doors: 0.6, hvac: 8.0 },
+      batCap: 80, soc0: 70,
+      label_he: "אוטובוס עירוני (עצור־וסע)", label_en: "Urban Bus (stop-and-go)"
+    },
+    bus_coach: {
+      mass: 16000, v0: 80, v1: 0, stops: 40, etaE: 55,
+      suspWh: 450, hydWh: 300,
+      seats: 50, seatW: 0.12, hours: 8, etaSeat: 55,
+      steps: 4000, whPerStep: 1.5, etaFloor: 55,
+      loads: { wifi: 1.0, disp: 1.2, light: 1.2, sens: 0.4, doors: 0.4, hvac: 10.0 },
+      batCap: 120, soc0: 70,
+      label_he: "אוטובוס בין־עירוני", label_en: "Coach Bus (intercity)"
+    },
+    truck_delivery: {
+      mass: 12000, v0: 40, v1: 0, stops: 140, etaE: 50,
+      suspWh: 700, hydWh: 1000,
+      seats: 3, seatW: 0.25, hours: 10, etaSeat: 60,
+      steps: 600, whPerStep: 2.0, etaFloor: 60,
+      loads: { wifi: 0.4, disp: 0.2, light: 0.4, sens: 0.6, doors: 0.4, hvac: 4.0 },
+      batCap: 30, soc0: 70,
+      label_he: "משאית חלוקה (עצור־וסע)", label_en: "Delivery Truck (stop-and-go)"
+    },
+    truck_highway: {
+      mass: 32000, v0: 90, v1: 0, stops: 25, etaE: 45,
+      suspWh: 600, hydWh: 400,
+      seats: 2, seatW: 0.15, hours: 10, etaSeat: 55,
+      steps: 250, whPerStep: 1.0, etaFloor: 55,
+      loads: { wifi: 0.6, disp: 0.3, light: 0.5, sens: 0.9, doors: 0.2, hvac: 6.0 },
+      batCap: 60, soc0: 70,
+      label_he: "משאית כביש מהיר", label_en: "Highway Truck (mostly cruise)"
+    }
+  };
+
+  function setLang(lang){
+    document.documentElement.dataset.lang = lang;
+    document.documentElement.dir = (lang === "he") ? "rtl" : "ltr";
+    document.documentElement.lang = (lang === "he") ? "he" : "en";
+    el("langBtn").textContent = (lang === "he") ? "EN" : "HE";
+
+    // refresh preset label
+    const key = el("preset").value;
+    if(key !== "custom" && presets[key]){
+      el("presetOut").textContent = (lang === "he") ? presets[key].label_he : presets[key].label_en;
+    }else{
+      el("presetOut").textContent = (lang === "he") ? "מותאם אישית" : "Custom";
+    }
+    refresh();
+  }
+
+  function setPreset(key){
+    const p = presets[key];
+    if(!p) return;
+
+    el("mass").value = p.mass;
+    el("v0").value = p.v0;
+    el("v1").value = p.v1;
+    el("stops").value = p.stops;
+    el("etaE").value = p.etaE;
+
+    el("suspWh").value = p.suspWh;
+    el("hydWh").value = p.hydWh;
+
+    el("seats").value = p.seats;
+    el("seatW").value = p.seatW;
+    el("hours").value = p.hours;
+    el("etaSeat").value = p.etaSeat;
+
+    el("steps").value = p.steps;
+    el("whPerStep").value = p.whPerStep;
+    el("etaFloor").value = p.etaFloor;
+
+    el("loadWifi").value = p.loads.wifi;
+    el("loadDisp").value = p.loads.disp;
+    el("loadLight").value = p.loads.light;
+    el("loadSens").value = p.loads.sens;
+    el("loadDoors").value = p.loads.doors;
+    el("loadHVAC").value = p.loads.hvac;
+
+    el("batCap").value = p.batCap;
+    el("soc0").value = p.soc0;
+
+    const lang = document.documentElement.dataset.lang || "he";
+    el("presetOut").textContent = (lang === "he") ? p.label_he : p.label_en;
+  }
+
+  function refresh(){
+    const mass = +el("mass").value;
+    const v0 = +el("v0").value;
+    const v1 = +el("v1").value;
+    const stops = +el("stops").value;
+    const etaE = (+el("etaE").value)/100;
+
+    const suspWh = +el("suspWh").value;
+    const hydWh = +el("hydWh").value;
+
+    const seats = +el("seats").value;
+    const seatW = +el("seatW").value;
+    const hours = +el("hours").value;
+    const etaSeat = (+el("etaSeat").value)/100;
+
+    const steps = +el("steps").value;
+    const mWhPerStep = +el("whPerStep").value;
+    const etaFloor = (+el("etaFloor").value)/100;
+
+    const loadWifi = +el("loadWifi").value;
+    const loadDisp = +el("loadDisp").value;
+    const loadLight = +el("loadLight").value;
+    const loadSens = +el("loadSens").value;
+    const loadDoors = +el("loadDoors").value;
+    const loadHVAC = +el("loadHVAC").value;
+
+    const batCap = +el("batCap").value;
+    const soc0 = +el("soc0").value;
+
+    // outputs
+    el("massOut").textContent = mass;
+    el("v0Out").textContent = v0;
+    el("v1Out").textContent = v1;
+    el("stopsOut").textContent = stops;
+    el("etaEOut").textContent = Math.round(etaE*100);
+
+    el("suspWhOut").textContent = suspWh;
+    el("hydWhOut").textContent = hydWh;
+
+    el("seatsOut").textContent = seats;
+    el("seatWOut").textContent = fmt(seatW, 2);
+    el("hoursOut").textContent = hours;
+    el("etaSeatOut").textContent = Math.round(etaSeat*100);
+
+    el("stepsOut").textContent = steps;
+    el("whPerStepOut").textContent = fmt(mWhPerStep, 1);
+    el("etaFloorOut").textContent = Math.round(etaFloor*100);
+
+    el("loadWifiOut").textContent = fmt(loadWifi, 1);
+    el("loadDispOut").textContent = fmt(loadDisp, 1);
+    el("loadLightOut").textContent = fmt(loadLight, 1);
+    el("loadSensOut").textContent = fmt(loadSens, 1);
+    el("loadDoorsOut").textContent = fmt(loadDoors, 1);
+    el("loadHVACOut").textContent = fmt(loadHVAC, 1);
+
+    el("batCapOut").textContent = batCap;
+    el("soc0Out").textContent = soc0;
+
+    // recovered energies
+    const v0ms = kmhToMs(v0), v1ms = kmhToMs(v1);
+    const dEkJ = 0.5 * mass * (v0ms*v0ms - v1ms*v1ms); // J
+    const perStopKWh = Math.max(0, JToKWh(dEkJ)) * etaE;
+    const wheelsKWh = perStopKWh * stops;
+
+    const suspKWh  = suspWh / 1000;
+    const hydKWh   = hydWh / 1000;
+    const seatsKWh = (seats * seatW * hours * etaSeat) / 1000;
+    const floorKWh = (steps * (mWhPerStep/1000) * etaFloor) / 1000;
+
+    const recoveredKWh = wheelsKWh + suspKWh + hydKWh + seatsKWh + floorKWh;
+
+    // loads
+    const loadsKWh = loadWifi + loadDisp + loadLight + loadSens + loadDoors + loadHVAC;
+
+    // net
+    const netKWh = recoveredKWh - loadsKWh;
+
+    // SOC
+    const socEnd = clamp(soc0 + (batCap > 0 ? (100*netKWh/batCap) : 0), 0, 100);
+
+    // UI summary
+    el("kwhRecovered").textContent = fmt(recoveredKWh, 2) + " kWh";
+    el("kwhLoads").textContent = fmt(loadsKWh, 2) + " kWh";
+    el("kwhNet").textContent = (netKWh >= 0 ? "+" : "") + fmt(netKWh, 2) + " kWh";
+
+    const lang = document.documentElement.dataset.lang || "he";
+    const socLine = (lang === "he")
+      ? `SOC: ${soc0}% → ${fmt(socEnd, 1)}% (קיבולת ${batCap} kWh)`
+      : `SOC: ${soc0}% → ${fmt(socEnd, 1)}% (capacity ${batCap} kWh)`;
+    el("socLine").textContent = socLine;
+
+    // net tag color
+    const netTag = el("netTag");
+    netTag.style.borderColor = "rgba(148,163,184,.35)";
+    if(netKWh > 0.01) netTag.style.boxShadow = "0 0 0 2px rgba(22,163,74,.20) inset";
+    else if(netKWh < -0.01) netTag.style.boxShadow = "0 0 0 2px rgba(239,68,68,.20) inset";
+    else netTag.style.boxShadow = "0 0 0 2px rgba(245,158,11,.18) inset";
+
+    // contribution bars
+    const parts = [
+      {name_he:"בלימה", name_en:"Braking", kWh:wheelsKWh},
+      {name_he:"מתלים", name_en:"Suspension", kWh:suspKWh},
+      {name_he:"לחץ", name_en:"Hydraulic", kWh:hydKWh},
+      {name_he:"מושבים", name_en:"Seats", kWh:seatsKWh},
+      {name_he:"רצפה", name_en:"Floor", kWh:floorKWh},
+    ];
+    const bars = el("bars");
+    bars.innerHTML = "";
+    const denom = Math.max(1e-9, recoveredKWh);
+    parts.forEach(p=>{
+      const pct = (p.kWh/denom)*100;
+      const title = (lang === "he") ? p.name_he : p.name_en;
+      const div = document.createElement("div");
+      div.className = "bar";
+      div.innerHTML = `
+        <div class="top">
+          <div style="font-weight:900">${title}</div>
+          <div style="font-family:var(--mono); color:var(--muted)">${fmt(p.kWh,2)} kWh (${fmt(pct,1)}%)</div>
+        </div>
+        <div class="track"><div class="fill" style="width:${clamp(pct,0,100)}%"></div></div>
+      `;
+      bars.appendChild(div);
+    });
+
+    // diagram texts
+    el("txtWheels").textContent = `${fmt(wheelsKWh,2)} kWh/יום`;
+    el("txtSusp").textContent   = `${fmt(suspKWh,2)} kWh/יום`;
+    el("txtHyd").textContent    = `${fmt(hydKWh,2)} kWh/יום`;
+    el("txtSeats").textContent  = `${fmt(seatsKWh,2)} kWh/יום`;
+    el("txtFloor").textContent  = `${fmt(floorKWh,2)} kWh/יום`;
+
+    el("txtRecovered").textContent = `נאסף: ${fmt(recoveredKWh,2)} kWh/יום`;
+    el("txtLoad").textContent      = `צריכה: ${fmt(loadsKWh,2)} kWh/יום`;
+    el("txtNet").textContent       = `נטו: ${(netKWh>=0?"+":"")}${fmt(netKWh,2)} kWh/יום`;
+    el("txtSOC").textContent       = `SOC סוף יום: ${fmt(socEnd,1)}%`;
+
+    el("txtWiFi").textContent      = `Wi-Fi: ${fmt(loadWifi,2)} kWh/יום`;
+    el("txtDisp").textContent      = `מסכים: ${fmt(loadDisp,2)} kWh/יום`;
+    el("txtLight").textContent     = `תאורה: ${fmt(loadLight,2)} kWh/יום`;
+    el("txtSens").textContent      = `חיישנים: ${fmt(loadSens,2)} kWh/יום`;
+    el("txtDoors").textContent     = `דלתות/בקרה: ${fmt(loadDoors,2)} kWh/יום`;
+    el("txtHVAC").textContent      = `HVAC: ${fmt(loadHVAC,2)} kWh/יום`;
+    el("txtTotalLoads").textContent= `סה״כ: ${fmt(loadsKWh,2)} kWh/יום`;
+
+    // snippet
+    const snippetHE =
+`תיאור להצעה/פטנט — מערכת איסוף אנרגיה רב־ערוצית לאוטובוס/משאית עם חלוקת עומסים:
+
+(א) ערוצי קצירה:
+1) בלימה רגנרטיבית: המרת ירידת אנרגיה קינטית בעת בלימה לאנרגיה חשמלית/אגירה.
+2) מתלים רגנרטיביים: המרת רטט/תנועה אנכית במתלים לאנרגיה חשמלית.
+3) מצבר לחץ הידראולי (אופציונלי): אגירת אנרגיה כ־Pressure בעת בלימה ושחרור בהאצה.
+4) מושבים: שכבת קצירה בלחץ/רטט + מיקרו־באפר, כולל יכולת חיישני תפוסה.
+5) רצפה חכמה: מודולים בדריכה/עלייה/ירידה + מיקרו־באפר, כולל ספירת נוסעים/עומסים.
+
+(ב) איסוף ואיזון:
+כל הערוצים מוזנים ל־Energy Core מרכזי (סוללה/סופרקבלים, DC/DC, הגנות/בידוד, איזון),
+ובנוסף קיימים מאגרים מבוזרים קטנים במודולים לשם יתירות והמשכיות אספקה.
+
+(ג) חלוקת עומסים:
+המערכת מספקת אנרגיה לעומסים פנימיים (Wi-Fi, מסכים/שילוט, תאורה, חיישנים/IoT, דלתות/בקרה, HVAC),
+ומבצעת בקרה על SOC והקצאה לפי עדיפויות (קריטי→עזר).
+
+מספרים לדוגמה (מהסימולציה כאן):
+נאסף=${fmt(recoveredKWh,2)} kWh/יום, עומסים=${fmt(loadsKWh,2)} kWh/יום, נטו=${(netKWh>=0?"+":"")}${fmt(netKWh,2)} kWh/יום,
+SOC: ${soc0}% → ${fmt(socEnd,1)}% (קיבולת ${batCap} kWh).`;
+
+    const snippetEN =
+`Proposal/Patent text — Multi-channel energy recovery for bus/truck with load allocation:
+
+(A) Harvesting channels:
+1) Regenerative braking (kinetic energy reduction converted to stored electrical energy).
+2) Regenerative suspension damping (vibration/vertical motion converted to energy).
+3) Optional hydraulic accumulator (store braking energy as pressure, release during launch).
+4) Seat pressure/vibration modules with micro-buffer, optionally providing occupancy sensing.
+5) Smart floor modules harvesting footsteps/boarding, optionally enabling passenger/load counting.
+
+(B) Aggregation and balancing:
+All channels feed a central Energy Core (battery/supercaps, DC/DC, protection/isolation, balancing),
+with distributed micro-buffers to support redundancy and continuity.
+
+(C) Load allocation:
+Recovered energy supplies onboard loads (Wi-Fi, displays, lighting, sensors/IoT, doors/control, HVAC),
+with SOC monitoring and priority-based power allocation (critical → auxiliary).
+
+Example numbers (from this page):
+Recovered=${fmt(recoveredKWh,2)} kWh/day, Loads=${fmt(loadsKWh,2)} kWh/day, Net=${(netKWh>=0?"+":"")}${fmt(netKWh,2)} kWh/day,
+SOC: ${soc0}% → ${fmt(socEnd,1)}% (capacity ${batCap} kWh).`;
+
+    el("snippet").textContent = (lang === "he") ? snippetHE : snippetEN;
+  }
+
+  function init(){
+    // default language
+    setLang("he");
+
+    el("printBtn").addEventListener("click", ()=> window.print());
+    el("printBtn2").addEventListener("click", ()=> window.print());
+
+    el("langBtn").addEventListener("click", ()=>{
+      const cur = document.documentElement.dataset.lang || "he";
+      setLang(cur === "he" ? "en" : "he");
+    });
+
+    // preset change
+    el("preset").addEventListener("change", ()=>{
+      const key = el("preset").value;
+      if(key !== "custom") setPreset(key);
+      refresh();
+    });
+
+    // any input switches to custom
+    const ids = [
+      "mass","v0","v1","stops","etaE","suspWh","hydWh","seats","seatW","hours","etaSeat","steps","whPerStep","etaFloor",
+      "loadWifi","loadDisp","loadLight","loadSens","loadDoors","loadHVAC",
+      "batCap","soc0"
+    ];
+    ids.forEach(id=>{
+      el(id).addEventListener("input", ()=>{
+        el("preset").value = "custom";
+        el("presetOut").textContent = (document.documentElement.dataset.lang === "he") ? "מותאם אישית" : "Custom";
+        refresh();
+      });
+    });
+
+    // copy
+    async function doCopy(){
+      el("snippet").style.display = "block";
+      try{
+        await navigator.clipboard.writeText(el("snippet").textContent);
+      }catch(e){
+        alert(document.documentElement.dataset.lang === "he"
+          ? "העתקה אוטומטית נכשלה. אפשר לסמן ולהעתיק ידנית מהתיבה."
+          : "Clipboard copy failed. You can select and copy manually from the box.");
+      }
+    }
+    el("copyBtn").addEventListener("click", doCopy);
+    el("copyBtn2").addEventListener("click", doCopy);
+
+    // toggle math visibility
+    let mathVisible = true;
+    function toggleMath(){
+      mathVisible = !mathVisible;
+      el("mathBox").style.display = mathVisible ? "block" : "none";
+    }
+    el("toggleMathBtn").addEventListener("click", toggleMath);
+    el("toggleMathBtn2").addEventListener("click", toggleMath);
+
+    // init with preset
+    el("preset").value = "bus_urban";
+    setPreset("bus_urban");
+    refresh();
+  }
+</script>
+
+</body>
+</html>
