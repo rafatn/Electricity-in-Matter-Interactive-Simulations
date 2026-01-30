@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>טיוטת פטנט — כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי וביטול אוטומטי</title>
+  <meta name="description" content="מסמך HTML מעוצב להצגת רעיון פטנט: כרטיס טיסה דיגיטלי חכם (Token דינמי) עם אימות רב־שלבי וביטול אוטומטי לאחר העלייה למטוס."/>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#e5e7eb;
+
+      --brand:#2563eb;
+      --brand2:#111827;
+
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --shadow: 0 12px 34px rgba(2,6,23,.10);
+      --shadow2: 0 8px 22px rgba(2,6,23,.08);
+
+      --radius:18px;
+      --radius2:14px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 8%, rgba(37,99,235,.12), transparent 55%),
+        radial-gradient(900px 550px at 92% 0%, rgba(16,185,129,.10), transparent 52%),
+        radial-gradient(900px 600px at 78% 96%, rgba(245,158,11,.08), transparent 50%),
+        var(--bg);
+      line-height:1.7;
+    }
+
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
+    code, pre{font-family:var(--mono)}
+    .wrap{
+      max-width:1180px;
+      margin:28px auto 42px;
+      padding:0 16px;
+    }
+
+    /* Top header */
+    header{
+      position:relative;
+      border-radius: var(--radius);
+      padding:22px 18px 18px;
+      color:#fff;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      background:
+        linear-gradient(135deg, rgba(17,24,39,.98), rgba(37,99,235,.92));
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-140px -140px auto auto;
+      width:420px;
+      height:420px;
+      background: radial-gradient(circle at 28% 30%, rgba(255,255,255,.26), transparent 62%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    header:after{
+      content:"";
+      position:absolute;
+      left:-60px; bottom:-90px;
+      width:320px; height:320px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.13), transparent 60%);
+      pointer-events:none;
+    }
+
+    .head-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      position:relative;
+      z-index:1;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      backdrop-filter: blur(6px);
+      font-weight:700;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .badge small{
+      opacity:.9;
+      font-weight:600;
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size: clamp(22px, 2.3vw, 34px);
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin:0;
+      opacity:.92;
+      max-width: 980px;
+    }
+
+    .head-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.30);
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      font-weight:700;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: .2s transform ease, .2s background ease, .2s border ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.42);
+      transform: translateY(-1px);
+    }
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn svg{width:18px;height:18px;opacity:.95}
+
+    /* Layout */
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+    }
+
+    /* Cards */
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(2,6,23,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37,99,235,.06), transparent);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .card .bd{
+      padding:14px;
+    }
+
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      font-weight:700;
+      color:#0f172a;
+      margin:4px 6px 0 0;
+      white-space:nowrap;
+    }
+    .pill i{
+      width:10px;height:10px;border-radius:999px;display:inline-block;
+      background: var(--brand);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.14);
+    }
+
+    .toc a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid transparent;
+      color:var(--text);
+      text-decoration:none;
+      font-weight:700;
+    }
+    .toc a:hover{
+      background:#f8fafc;
+      border-color: var(--line);
+      text-decoration:none;
+    }
+    .toc small{color:var(--muted); font-weight:700}
+
+    /* Sections */
+    section{
+      scroll-margin-top: 14px;
+    }
+    .sec{
+      padding:14px;
+      border-top:1px dashed rgba(2,6,23,.10);
+    }
+    .sec:first-child{border-top:none}
+    .sec h3{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .sec p{margin:8px 0}
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 720px){
+      .kpi{grid-template-columns: 1fr}
+    }
+    .kpi .box{
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#ffffff;
+      padding:12px;
+    }
+    .kpi .box b{
+      display:block;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+    .kpi .box span{
+      color:var(--muted);
+      font-weight:700;
+      font-size:13px;
+    }
+
+    /* Callouts */
+    .callout{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#f8fafc;
+      margin:10px 0;
+    }
+    .callout strong{display:flex;align-items:center;gap:8px}
+    .dot{
+      width:10px;height:10px;border-radius:999px;display:inline-block;
+    }
+    .dot.good{background:var(--good); box-shadow: 0 0 0 4px rgba(22,163,74,.16)}
+    .dot.warn{background:var(--warn); box-shadow: 0 0 0 4px rgba(245,158,11,.18)}
+    .dot.bad{background:var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.16)}
+
+    /* Tables */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    th, td{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th{
+      background: #0b1220;
+      color:#fff;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    tr:last-child td{border-bottom:none}
+
+    /* Flow diagram */
+    .flow{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: linear-gradient(180deg, rgba(37,99,235,.05), transparent);
+      padding:10px;
+      overflow:auto;
+    }
+    .flow svg{
+      min-width: 920px;
+      width:100%;
+      height:auto;
+      display:block;
+    }
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .legend .tag{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:800;
+      color:var(--text);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+    }
+    .legend .tag .dot{width:10px;height:10px;border-radius:999px}
+
+    /* Accordions */
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:10px 12px;
+      margin:10px 0;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      user-select:none;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary .chev{
+      width:24px;height:24px;
+      display:grid;place-items:center;
+      border-radius:10px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      flex:0 0 auto;
+      transition: .2s transform ease;
+    }
+    details[open] summary .chev{transform: rotate(180deg)}
+    .details-body{margin-top:10px;color:var(--muted);font-weight:700}
+
+    /* Claims list */
+    .claims{
+      counter-reset: claim;
+      padding:0;
+      margin:8px 0 0;
+      list-style:none;
+    }
+    .claims li{
+      counter-increment: claim;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+      margin:10px 0;
+      position:relative;
+    }
+    .claims li:before{
+      content: counter(claim);
+      position:absolute;
+      top:10px; right:10px;
+      width:30px;height:30px;
+      border-radius:12px;
+      background: rgba(37,99,235,.10);
+      border:1px solid rgba(37,99,235,.25);
+      display:grid;place-items:center;
+      font-weight:900;
+      color: var(--brand);
+    }
+    .claims li p{
+      margin:0;
+      padding-right:42px;
+      color:var(--text);
+      font-weight:800;
+    }
+    .claims li p span{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+      font-weight:700;
+      font-size:13.5px;
+    }
+
+    /* Footer */
+    footer{
+      margin-top:16px;
+      padding:14px;
+      border-radius: var(--radius);
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow2);
+    }
+    .foot-row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .tiny{font-size:12.5px;color:var(--muted);font-weight:700}
+
+    /* Print */
+    @media print{
+      body{background:#fff}
+      header, .btn, .toc, .legend, details summary .chev { display:none !important; }
+      .grid{grid-template-columns:1fr}
+      .card{box-shadow:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-top">
+        <div class="badge" title="טיוטת מסמך רעיון פטנט">
+          <span>📄 טיוטת פטנט</span>
+          <small>Patent Draft</small>
+        </div>
+
+        <div class="head-actions">
+          <button class="btn" type="button" onclick="scrollToTop()" title="חזרה לראש הדף">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7 10l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            לראש הדף
+          </button>
+          <button class="btn" type="button" onclick="toggleAllDetails()" title="פתיחה/סגירה של כל הסעיפים המתקדמים">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            פתיחה/סגירה
+          </button>
+        </div>
+      </div>
+
+      <h1>כרטיס טיסה דיגיטלי חכם עם אימות רב־שלבי וביטול אוטומטי לאחר העלייה למטוס</h1>
+      <p class="subtitle">
+        מסמך זה מציג רעיון פטנט למערכת שבה כרטיס טיסה אינו רק ברקוד סטטי, אלא <b>Token דינמי מוצפן</b> שעובר אימות רב־שלבי
+        (Check-in → אבטחה → Gate) ומבצע <b>ביטול עצמי (Self-Revocation)</b> ברגע העלייה למטוס.
+      </p>
+    </header>
+
+    <div class="grid">
+      <!-- Left / TOC -->
+      <aside class="card">
+        <div class="hd">
+          <h2>ניווט מהיר</h2>
+        </div>
+        <div class="bd toc">
+          <a href="#field"><span>תחום ההמצאה</span><small>§1</small></a>
+          <a href="#background"><span>רקע והבעיה הקיימת</span><small>§2</small></a>
+          <a href="#summary"><span>סיכום ההמצאה</span><small>§3</small></a>
+          <a href="#system"><span>תיאור מערכת ורכיבים</span><small>§4</small></a>
+          <a href="#flow"><span>תרשים זרימה רב־שלבי</span><small>§5</small></a>
+          <a href="#novelty"><span>חידוש ויתרונות</span><small>§6</small></a>
+          <a href="#embodiments"><span>דוגמאות יישום</span><small>§7</small></a>
+          <a href="#claims"><span>תביעות (Claims)</span><small>§8</small></a>
+          <a href="#notes"><span>הערות שימושיות</span><small>§9</small></a>
+
+          <div class="callout" style="margin-top:14px">
+            <strong><span class="dot warn"></span>הערה חשובה</strong>
+            <div class="muted" style="font-weight:700;margin-top:6px">
+              זהו מסמך הצגה/טיוטה טכנית. להגשה משפטית רשמית מומלץ עורך פטנטים.
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <span class="pill"><i></i>Token דינמי</span>
+            <span class="pill"><i style="background:var(--good); box-shadow:0 0 0 4px rgba(22,163,74,.16)"></i>TTL</span>
+            <span class="pill"><i style="background:var(--warn); box-shadow:0 0 0 4px rgba(245,158,11,.18)"></i>רב־שלבי</span>
+            <span class="pill"><i style="background:var(--bad); box-shadow:0 0 0 4px rgba(239,68,68,.16)"></i>Revocation</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right / Content -->
+      <main class="card">
+        <div class="hd">
+          <h2>מסמך טכני להצגת רעיון פטנט</h2>
+        </div>
+
+        <div class="bd">
+          <!-- Section 1 -->
+          <section id="field" class="sec">
+            <h3>§1 תחום ההמצאה</h3>
+            <p class="muted" style="font-weight:700">
+              ההמצאה נוגעת לתחומי תעופה, אבטחת נמלי תעופה, מערכות זהות דיגיטליות, Tokenization, תקשורת אלחוטית, וממשקי אימות.
+              המערכת מיועדת להפחתת זיוף/העתקה של כרטיסי טיסה ולהקשחת שרשרת האימות עד לרגע העלייה למטוס.
+            </p>
+
+            <div class="kpi">
+              <div class="box">
+                <b>מטרה מרכזית</b>
+                <span>כרטיס טיסה כישות דינמית ולא קוד סטטי</span>
+              </div>
+              <div class="box">
+                <b>אבטחה</b>
+                <span>Token מתחלף + חתימה קריפטוגרפית</span>
+              </div>
+              <div class="box">
+                <b>בקרה</b>
+                <span>ביטול אוטומטי לאחר אימות סופי (Boarded)</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 2 -->
+          <section id="background" class="sec">
+            <h3>§2 רקע והבעיה הקיימת</h3>
+
+            <div class="callout">
+              <strong><span class="dot bad"></span>בעיה: כרטיס סטטי קל לשכפול</strong>
+              <div class="muted" style="font-weight:700;margin-top:6px">
+                ברוב המערכות כיום, כרטיס טיסה הוא ברקוד דו־ממדי (QR/Aztec) עם מידע סטטי או מזהה שמייצג רשומה בשרת.
+                צילום מסך/העתקה עלולים לאפשר שימוש לא מורשה אם לא קיימת הקשחה מספקת.
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>היבט</th>
+                  <th>מצב נפוץ כיום</th>
+                  <th>פער אבטחתי</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>מבנה הכרטיס</b></td>
+                  <td>ברקוד פסיבי (QR/Aztec)</td>
+                  <td>קל לצילום/שכפול</td>
+                </tr>
+                <tr>
+                  <td><b>אימות לאורך המסלול</b></td>
+                  <td>סריקות נקודתיות</td>
+                  <td>אין Token דינמי מתחלף</td>
+                </tr>
+                <tr>
+                  <td><b>ביטול לאחר העלייה</b></td>
+                  <td>סטטוס בשרת בלבד</td>
+                  <td>אין “ביטול עצמי” של המזהה</td>
+                </tr>
+                <tr>
+                  <td><b>ריבוי ערוצים</b></td>
+                  <td>אופטיקה בלבד (סריקת קוד)</td>
+                  <td>אין אימות רב־ערוצי (NFC/BLE/UWB)</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 3 -->
+          <section id="summary" class="sec">
+            <h3>§3 סיכום ההמצאה (Summary)</h3>
+            <p class="muted" style="font-weight:700">
+              ההמצאה מציעה מערכת ליצירת כרטיס טיסה דיגיטלי חכם המבוסס על Token מוצפן מתחלף (Dynamic Token) עם TTL,
+              מונה סריקות (Scan Counter), וקביעה לוגית של מצב (State Machine). המערכת תומכת באימות רב־שלבי לאורך שרשרת
+              הבידוק ומבצעת ביטול אוטומטי של המזהה ברגע העלייה למטוס.
+            </p>
+
+            <div class="callout">
+              <strong><span class="dot good"></span>רעיון ליבה</strong>
+              <div class="muted" style="font-weight:700;margin-top:6px">
+                כרטיס הטיסה = <b>Token חי</b> (מתחלף/נחתם/מתבטל), ולא רק קוד סטטי.
+              </div>
+            </div>
+
+            <details>
+              <summary>
+                מה זה “Token דינמי” בהקשר הזה?
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                Token דינמי הוא מזהה קצר־חיים שמופק מהשרת (או בצורה מבוזרת) ומכיל חתימה קריפטוגרפית/קישור לרשומה.
+                הוא יכול להתחלף בזמן/בשלב (Rolling Token) כך שצילום מסך ישן מאבד תוקף.
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                מה זה “ביטול עצמי” (Self-Revocation)?
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                ביטול עצמי הוא מנגנון שבו לאחר אימות סופי בשער העלייה (Gate),
+                המערכת מחליפה סטטוס ל-Boarded ומבטלת את המזהה/המפתח כך שאי אפשר להשתמש בו שוב.
+              </div>
+            </details>
+          </section>
+
+          <!-- Section 4 -->
+          <section id="system" class="sec">
+            <h3>§4 תיאור מערכת ורכיבים (System)</h3>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>רכיב</th>
+                  <th>תפקיד</th>
+                  <th>הערות</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>אפליקציית נוסע / Wallet</b></td>
+                  <td>תצוגת הכרטיס, הפקת Token/קוד, עדכון סטטוס</td>
+                  <td>יכול לעבוד גם Offline לזמן מוגבל (TTL)</td>
+                </tr>
+                <tr>
+                  <td><b>שרת כרטיסים (Token Server)</b></td>
+                  <td>הפקה/חתימה/ניהול TTL/Revocation</td>
+                  <td>יומן אירועים (Audit Trail) לכל שלב</td>
+                </tr>
+                <tr>
+                  <td><b>עמדות סריקה</b></td>
+                  <td>סריקת קוד אופטי + אפשרות לערוץ נוסף</td>
+                  <td>Gate / Security / Lounge</td>
+                </tr>
+                <tr>
+                  <td><b>מדיניות מצב (State Machine)</b></td>
+                  <td>Active → Cleared → Boarded → Revoked</td>
+                  <td>מונע שימוש חוזר/מחוץ לזמן</td>
+                </tr>
+                <tr>
+                  <td><b>ערוצי תקשורת (אופציונלי)</b></td>
+                  <td>NFC / BLE / UWB לצד ברקוד</td>
+                  <td>אימות רב־ערוצי להפחתת זיופים</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <details>
+              <summary>
+                דוגמה למבנה נתונים לוגי (Conceptual)
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                <pre style="margin:0; white-space:pre-wrap; background:#0b1220; color:#e5e7eb; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.10)">
+TicketToken {
+  token_id: "…",
+  passenger_ref: "…",
+  flight_ref: "…",
+  issued_at: timestamp,
+  expires_at: timestamp,   // TTL
+  scan_count: integer,
+  state: Active|Cleared|Boarded|Revoked,
+  signature: "…"
+}</pre>
+                <div style="margin-top:8px">
+                  <span class="muted">הערה:</span> זהו ייצוג רעיוני; בפועל ההטמעה תלויה בתקני תעופה/רגולציה/ספק.
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- Section 5 -->
+          <section id="flow" class="sec">
+            <h3>§5 תרשים זרימה — אימות רב־שלבי וביטול אוטומטי</h3>
+
+            <div class="flow" aria-label="תרשים זרימה">
+              <svg viewBox="0 0 1100 360" role="img" aria-label="Flow: Check-in -> Security -> Gate -> Boarded/Revoked">
+                <defs>
+                  <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0b1220" flood-opacity=".14"/>
+                  </filter>
+                  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+                  </marker>
+                </defs>
+
+                <!-- Nodes -->
+                <g filter="url(#s)">
+                  <rect x="40" y="70" rx="18" ry="18" width="240" height="130" fill="#ffffff" stroke="#e5e7eb"/>
+                  <text x="160" y="112" text-anchor="middle" font-family="Arial" font-size="18" fill="#0f172a" font-weight="800">שלב א — Check-in</text>
+                  <text x="160" y="142" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">הפקת Token + חתימה</text>
+                  <text x="160" y="164" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">TTL + מצב Active</text>
+
+                  <rect x="330" y="70" rx="18" ry="18" width="240" height="130" fill="#ffffff" stroke="#e5e7eb"/>
+                  <text x="450" y="112" text-anchor="middle" font-family="Arial" font-size="18" fill="#0f172a" font-weight="800">שלב ב — אבטחה</text>
+                  <text x="450" y="142" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">סריקה אופטי + ערוץ נוסף</text>
+                  <text x="450" y="164" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">עדכון ל-Cleared</text>
+
+                  <rect x="620" y="70" rx="18" ry="18" width="240" height="130" fill="#ffffff" stroke="#e5e7eb"/>
+                  <text x="740" y="112" text-anchor="middle" font-family="Arial" font-size="18" fill="#0f172a" font-weight="800">שלב ג — Gate</text>
+                  <text x="740" y="142" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">אימות סופי + Anti-Replay</text>
+                  <text x="740" y="164" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">שינוי ל-Boarded</text>
+
+                  <rect x="910" y="55" rx="18" ry="18" width="170" height="70" fill="#ecfdf5" stroke="#bbf7d0"/>
+                  <text x="995" y="98" text-anchor="middle" font-family="Arial" font-size="16" fill="#166534" font-weight="900">Boarded ✅</text>
+
+                  <rect x="910" y="140" rx="18" ry="18" width="170" height="90" fill="#fff7ed" stroke="#fed7aa"/>
+                  <text x="995" y="178" text-anchor="middle" font-family="Arial" font-size="16" fill="#9a3412" font-weight="900">Revoked ⚠</text>
+                  <text x="995" y="204" text-anchor="middle" font-family="Arial" font-size="12.5" fill="#9a3412" font-weight="800">TTL פג / חריגה / שימוש חוזר</text>
+                </g>
+
+                <!-- Arrows -->
+                <path d="M 280 135 C 300 135 310 135 330 135" stroke="#2563eb" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 570 135 C 590 135 600 135 620 135" stroke="#2563eb" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 860 110 C 885 100 892 95 910 90" stroke="#16a34a" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 860 150 C 885 160 892 168 910 182" stroke="#f59e0b" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+
+                <!-- Caption -->
+                <text x="550" y="305" text-anchor="middle" font-family="Arial" font-size="13" fill="#475569" font-weight="700">
+                  הרעיון: Token דינמי + ניהול מצבים + ביטול אוטומטי לאחר העלייה למטוס
+                </text>
+              </svg>
+            </div>
+
+            <div class="legend" aria-label="מקרא">
+              <div class="tag"><span class="dot good"></span> הצלחה: Boarded</div>
+              <div class="tag"><span class="dot warn"></span> חריגה: Revoked</div>
+              <div class="tag"><span class="dot" style="background:var(--brand); box-shadow:0 0 0 4px rgba(37,99,235,.14)"></span> שרשרת אימות רב־שלבית</div>
+            </div>
+
+            <details>
+              <summary>
+                מדיניות Anti-Replay (רעיון)
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                ניתן לשלב מונה סריקות, חותמת זמן קצרה, וקישור לנקודת מעבר (Checkpoint ID),
+                כך שניסיון שימוש חוזר של אותו Token או Token ישן יידחה מיד (Replay Attack Mitigation).
+              </div>
+            </details>
+          </section>
+
+          <!-- Section 6 -->
+          <section id="novelty" class="sec">
+            <h3>§6 חידוש ויתרונות</h3>
+
+            <div class="callout">
+              <strong><span class="dot good"></span>חידוש (Novelty)</strong>
+              <div class="muted" style="font-weight:700;margin-top:6px">
+                (1) כרטיס כישות דינמית, (2) Token מתחלף קצר־חיים, (3) אימות רב־שלבי/רב־ערוצי,
+                (4) ביטול אוטומטי לאחר Gate, (5) מנגנוני Anti-Replay מובנים.
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>נושא</th>
+                  <th>כיום (ברוב המקרים)</th>
+                  <th>בהמצאה</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>שכפול צילום מסך</b></td>
+                  <td>עלול לעבוד אם לא קשיח מספיק</td>
+                  <td><b>Token מתחלף</b> → צילום ישן לא רלוונטי</td>
+                </tr>
+                <tr>
+                  <td><b>בקרה לאורך שרשרת</b></td>
+                  <td>אימות נקודתי</td>
+                  <td><b>State Machine</b> + לוג אירועים לכל שלב</td>
+                </tr>
+                <tr>
+                  <td><b>שימוש חוזר</b></td>
+                  <td>נחסם לפי סטטוס, לא תמיד קשיח</td>
+                  <td><b>Revocation</b> + Anti-Replay מובנה</td>
+                </tr>
+                <tr>
+                  <td><b>אחרי העלייה</b></td>
+                  <td>לא תמיד “נעלם”</td>
+                  <td><b>ביטול אוטומטי</b> של המזהה/מפתח</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 7 -->
+          <section id="embodiments" class="sec">
+            <h3>§7 דוגמאות יישום (Embodiments)</h3>
+
+            <details open>
+              <summary>
+                יישום 1 — אפליקציה/Wallet עם Token מתחלף
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                הכרטיס מוצג באפליקציה עם קוד (QR/Aztec) שמתעדכן כל X שניות/דקות. בכל עדכון מתקבלת חתימה חדשה
+                או נגזרת חתימה מקומית ממפתח מוגבל־זמן. בשער העלייה מתבצע אימות סופי והכרטיס עובר ל-Boarded.
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                יישום 2 — אימות רב־ערוצי (אופטי + NFC/BLE/UWB)
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                לצד סריקת קוד אופטי, העמדה קוראת “אות קרוב” (NFC/BLE/UWB) כדי לחזק זיהוי (במיוחד נגד צילום מסך).
+                הערוץ הנוסף יכול לשדר מזהה קצר/Nonce שנקשר לקוד האופטי.
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                יישום 3 — מודל Offline-First קצר־זמן
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                במקרה של ניתוק אינטרנט זמני, ניתן להעניק חלון תוקף קצר שבו כרטיס מקומי ממשיך להציג Token חתום
+                מראש (Pre-Signed Window). לאחר חזרה לרשת, מתבצעת סנכרון מלא ובקרת שימוש חוזר.
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                הרחבה — התאמה לרכבות/אוניות/אירועים
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                אותו עיקרון Token+TTL+Revocation מתאים לכל “כרטיס כניסה” שבו נדרש אימות רב־שלבי ומניעת שכפול:
+                תחבורה ציבורית, כניסה לאצטדיון, כנס, או שערי גבול.
+              </div>
+            </details>
+          </section>
+
+          <!-- Section 8 -->
+          <section id="claims" class="sec">
+            <h3>§8 תביעות (Claims) — נוסח ראשוני</h3>
+
+            <ol class="claims">
+              <li>
+                <p>
+                  מערכת כרטיס טיסה דיגיטלי הכוללת מזהה אלקטרוני מוצפן קצר־חיים, המיועד לאימות רב־שלבי לאורך שרשרת הבידוק.
+                  <span>המזהה כולל TTL ו/או חתימה קריפטוגרפית ומקושר לרשומת טיסה בשרת.</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  המערכת לפי תביעה 1, שבה המזהה מתחלף באופן מחזורי בזמן (Rolling Token) כדי לצמצם שימוש בצילום מסך.
+                  <span>החלפה יכולה להתבצע כל פרק זמן מוגדר או בהתאם לשלב (Checkpoint).</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  המערכת לפי תביעה 1, הכוללת מכונת מצבים (State Machine) לניהול Active/Cleared/Boarded/Revoked.
+                  <span>מעבר המצבים מתבצע על פי סריקה מאומתת ונרשם ליומן אירועים.</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  המערכת לפי תביעה 1, שבה מתבצע ביטול אוטומטי (Self-Revocation) של המזהה לאחר אימות סופי בשער העלייה.
+                  <span>לאחר ביטול, כל ניסיון שימוש חוזר נדחה אוטומטית.</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  המערכת לפי תביעה 1, שבה האימות כולל ערוץ נוסף לצד הסריקה האופטית, הכולל NFC ו/או BLE ו/או UWB.
+                  <span>הערוץ הנוסף מספק Nonce/אימות קרוב למניעת Replay.</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  המערכת לפי תביעה 1, הכוללת מנגנון Anti-Replay המבוסס על מונה סריקות ו/או חותמת זמן ו/או מזהה נקודת מעבר.
+                  <span>Token שנעשה בו שימוש חוזר או חרג מזמן התוקף מסומן כ-Revoked.</span>
+                </p>
+              </li>
+            </ol>
+
+            <details>
+              <summary>
+                תבנית הרחבה לתביעות תלויות (Dependent Claims)
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                ניתן להוסיף תביעות תלויות עבור: מנגנון Offline-First, שילוב ביומטריה, ניהול חריגות, התאמת רגולציה, ועוד.
+              </div>
+            </details>
+          </section>
+
+          <!-- Section 9 -->
+          <section id="notes" class="sec">
+            <h3>§9 הערות שימושיות</h3>
+
+            <div class="callout">
+              <strong><span class="dot warn"></span>דגשים לכתיבה משפטית</strong>
+              <div class="muted" style="font-weight:700;margin-top:6px">
+                למסמך הגשה רשמי נהוג להוסיף: הגדרות מונחים, רשימת שרטוטים (Figures), תיאור מפורט של מימושים,
+                וניסוח תביעות בפורמט משפטי מלא.
+              </div>
+            </div>
+
+            <details>
+              <summary>
+                מה כדאי להכין אם רוצים להגיש בפועל?
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                1) גרסת אנגלית משפטית, 2) Figures (תרשימים) ממוספרים, 3) תרחישי קצה (Offline/Replay/TTL),
+                4) אפיון Threat Model בסיסי, 5) בידול מול תקני BCBP/ברקודים קיימים.
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                משפט קצר “בשפה של משקיעים” (Pitch)
+                <span class="chev" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="details-body">
+                כרטיס טיסה הופך ל-Token דינמי קצר־חיים עם ניהול מצבים וביטול עצמי לאחר עלייה — מפחית זיופים,
+                מצמצם הונאות צילום מסך, ומקשיח את שרשרת האימות מנקודת ה-Check-in ועד ה-Gate.
+              </div>
+            </details>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <div class="foot-row">
+        <div class="tiny">
+          מסמך HTML מעוצב — ניתן להעתקה לקובץ <code>patent_smart_boarding_token_he.html</code>
+        </div>
+        <div class="tiny">
+          גרסה: <b>1.0</b> · מצב: <b>Draft</b>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function toggleAllDetails(){
+      const details = Array.from(document.querySelectorAll("details"));
+      const anyClosed = details.some(d => !d.open);
+      details.forEach(d => d.open = anyClosed);
+    }
+
+    // Optional: highlight current section in TOC (lightweight)
+    const tocLinks = Array.from(document.querySelectorAll(".toc a"));
+    const sections = tocLinks
+      .map(a => document.querySelector(a.getAttribute("href")))
+      .filter(Boolean);
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        const id = "#" + e.target.id;
+        const link = tocLinks.find(a => a.getAttribute("href") === id);
+        if(!link) return;
+        if(e.isIntersecting){
+          tocLinks.forEach(x => x.style.background = "");
+          tocLinks.forEach(x => x.style.borderColor = "transparent");
+          link.style.background = "#f8fafc";
+          link.style.borderColor = "var(--line)";
+        }
+      });
+    }, {rootMargin:"-45% 0px -50% 0px", threshold:0.02});
+
+    sections.forEach(s => io.observe(s));
+  </script>
+</body>
+</html>
