@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>הוכחה מלאה — בסל כדורי (3D רדיאלי) + נייקוויסט רדיאלי + שרשרת דגימה→כימות→קידוד→הצפנה</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82); --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b; --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --ok:#0a7a2f; --bad:#b42318;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,"Segoe UI",Arial;
+      background:
+        radial-gradient(1200px 700px at 90% 12%, var(--bg2), transparent 60%),
+        radial-gradient(900px 520px at 10% 22%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #fff);
+    }
+    header{
+      max-width:1100px; margin:0 auto; padding:24px 16px 10px;
+    }
+    h1{margin:0 0 6px; font-size:22px}
+    .sub{color:var(--muted); line-height:1.55; max-width:980px}
+    main{
+      max-width:1100px; margin:0 auto; padding:0 16px 28px;
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+    .card h2{margin:0 0 10px; font-size:16px}
+    .card h3{margin:14px 0 8px; font-size:14px}
+    .note{color:var(--muted); line-height:1.6; font-size:14px}
+    .mono{font-family:var(--mono); direction:ltr; text-align:left; font-size:12.5px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.6);
+      font-size:12px; color:var(--muted);
+    }
+    .hr{height:1px; background:var(--line); margin:12px 0}
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.55);
+      padding:10px;
+      margin-top:10px;
+    }
+    summary{cursor:pointer; font-weight:800}
+    ol, ul{margin:8px 0 0 18px}
+    li{margin:6px 0}
+    .theorem{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:var(--card2);
+      box-shadow:var(--shadow2);
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.65);
+      font-size:12px;
+      color:var(--muted);
+      margin-left:6px;
+    }
+    .ok{color:var(--ok); font-weight:800}
+    .bad{color:var(--bad); font-weight:800}
+    .grid2{
+      display:grid; gap:12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
+    code{font-family:var(--mono)}
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>הוכחה מלאה: בסל כדורי (סימטריה כדורית ב־3D) + נייקוויסט רדיאלי + צינור מידע</h1>
+  <div class="sub">
+    המסמך הזה מציג <b>את כל שלבי ההוכחה</b> בצורה מסודרת:
+    <span class="pill">1) הלמהולץ → ODE רדיאלי</span>
+    <span class="pill">2) הצבה → פתרון בסל־כדורי</span>
+    <span class="pill">3) סדירות ב־0</span>
+    <span class="pill">4) ספקטרום רדיאלי 3D</span>
+    <span class="pill">5) נייקוויסט רדיאלי</span>
+    <span class="pill">6) דגימה→כימות→קידוד→הצפנה</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- 0. Definitions -->
+  <section class="card">
+    <h2>0) הגדרות ותחום הבעיה</h2>
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">מטרה</span>
+        נרצה להבין שדה \(u(\mathbf{x})\) ב־\(\mathbb{R}^3\) כאשר הוא סימטרי־כדורית, כלומר תלוי רק ב־\(r=\|\mathbf{x}\|\).
+      </div>
+      <div class="note" style="margin-top:8px">
+        <span class="tag">הנחה מרכזית</span>
+        <b>סימטריה כדורית:</b> \(u(\mathbf{x}) = g(r)\).
+      </div>
+      <div class="note" style="margin-top:8px">
+        <span class="tag">משוואה</span>
+        נשתמש במשוואת הלמהולץ (כוללת גלים הרמוניים):
+        \[
+          \nabla^2 u + k^2 u = 0
+        \]
+        כאשר \(k>0\) הוא “תדר מרחבי” (מספר גל).
+      </div>
+    </div>
+
+    <details>
+      <summary>הערה: למה דווקא הלמהולץ?</summary>
+      <div class="note">
+        משוואת הלמהולץ מתקבלת מהפרדת זמן במשוואת הגלים \(\partial_t^2 u = c^2\nabla^2 u\) עבור פתרון הרמוני בזמן
+        \(u(\mathbf{x},t)=\Re\{U(\mathbf{x})e^{-i\omega t}\}\), ואז \(U\) מקיים \(\nabla^2 U + (\omega/c)^2U=0\).
+      </div>
+    </details>
+  </section>
+
+  <!-- 1. Laplacian in spherical coordinates -->
+  <section class="card">
+    <h2>1) שלב ראשון: הלפלסיאן בשדה רדיאלי ב־3D</h2>
+
+    <div class="note">
+      נתחיל מהידוע בלפלסיאן בקואורדינטות כדוריות \((r,\theta,\varphi)\):
+      \[
+        \nabla^2 u =
+        \frac{1}{r^2}\frac{\partial}{\partial r}\!\left(r^2 \frac{\partial u}{\partial r}\right)
+        +\frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\!\left(\sin\theta\frac{\partial u}{\partial \theta}\right)
+        +\frac{1}{r^2\sin^2\theta}\frac{\partial^2 u}{\partial \varphi^2}.
+      \]
+    </div>
+
+    <div class="note">
+      אבל אם \(u(\mathbf{x}) = g(r)\), אז אין תלות בזוויות, ולכן:
+      \[
+        \frac{\partial u}{\partial \theta}=0,\qquad \frac{\partial u}{\partial \varphi}=0
+      \]
+      ומתקבל:
+      \[
+        \boxed{\nabla^2 u = \frac{1}{r^2}\frac{d}{dr}\!\left(r^2 \frac{dg}{dr}\right)}.
+      \]
+    </div>
+
+    <details>
+      <summary>הוכחת ביניים קצרה (למי שרוצה)</summary>
+      <div class="note">
+        מכיוון ש-\(u=g(r)\), כל האיברים הזוויתיים מתאפסים. נשאר רק האיבר הרדיאלי שהוא נגזרת של \(r^2 g'(r)\) חלקי \(r^2\).
+      </div>
+    </details>
+  </section>
+
+  <!-- 2. Derive the radial ODE -->
+  <section class="card">
+    <h2>2) שלב שני: הצבת סימטריה במשוואת הלמהולץ → ODE רדיאלי</h2>
+
+    <div class="note">
+      מציבים \(u(\mathbf{x})=g(r)\) במשוואת הלמהולץ:
+      \[
+        \nabla^2 u + k^2 u = 0
+      \]
+      ומקבלים:
+      \[
+        \frac{1}{r^2}\frac{d}{dr}\!\left(r^2 g'(r)\right) + k^2 g(r)=0.
+      \]
+      זהו ה־ODE הרדיאלי ב־3D.
+    </div>
+
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">משוואה רדיאלית (3D)</span>
+        \[
+          \boxed{ \frac{1}{r^2}\frac{d}{dr}\!\left(r^2 \frac{dg}{dr}\right) + k^2 g = 0. }
+        \]
+      </div>
+    </div>
+
+    <details>
+      <summary>צורה מפורשת של ה־ODE</summary>
+      <div class="note">
+        נפתח:
+        \[
+          \frac{d}{dr}\left(r^2 g'(r)\right)=2r g'(r)+r^2 g''(r)
+        \]
+        ולכן:
+        \[
+          g''(r) + \frac{2}{r}g'(r) + k^2 g(r)=0.
+        \]
+        זו צורה קלאסית של משוואת בסל־כדורי מסדר 0 (עוד רגע נראה זאת).
+      </div>
+    </details>
+  </section>
+
+  <!-- 3. Substitution g=psi/r -->
+  <section class="card">
+    <h2>3) שלב שלישי: הצבה שמורידה את ה־ODE למשוואה פשוטה</h2>
+
+    <div class="note">
+      הטריק הידוע ב־3D: נציב
+      \[
+        g(r)=\frac{\psi(r)}{r}.
+      \]
+      נחשב נגזרות:
+      \[
+        g'(r)=\frac{\psi'(r)}{r}-\frac{\psi(r)}{r^2},
+      \qquad
+        g''(r)=\frac{\psi''(r)}{r}-\frac{2\psi'(r)}{r^2}+\frac{2\psi(r)}{r^3}.
+      \]
+    </div>
+
+    <div class="note">
+      נציב בצורת ה־ODE:
+      \[
+        g'' + \frac{2}{r}g' + k^2 g = 0
+      \]
+      נקבל:
+      \[
+        \left(\frac{\psi''}{r}-\frac{2\psi'}{r^2}+\frac{2\psi}{r^3}\right)
+        +\frac{2}{r}\left(\frac{\psi'}{r}-\frac{\psi}{r^2}\right)
+        +k^2\left(\frac{\psi}{r}\right)=0.
+      \]
+    </div>
+
+    <div class="note">
+      כעת מבטלים איברים:
+      \[
+        -\frac{2\psi'}{r^2}+\frac{2\psi}{r^3}
+        +\frac{2\psi'}{r^2}-\frac{2\psi}{r^3} = 0
+      \]
+      ולכן נשאר:
+      \[
+        \frac{\psi''(r)}{r} + k^2\frac{\psi(r)}{r}=0
+      \]
+      נכפיל ב־\(r\neq 0\):
+      \[
+        \boxed{\psi''(r) + k^2 \psi(r)=0.}
+      \]
+    </div>
+
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">תוצאה</span>
+        הבעיה הרדיאלית ב־3D שקולה למשוואת מתנד הרמוני פשוטה עבור \(\psi\).
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Solve psi and thus g -->
+  <section class="card">
+    <h2>4) שלב רביעי: פתרון מלא + תנאי סדירות במרכז \(r=0\)</h2>
+
+    <div class="note">
+      משוואת \(\psi''+k^2\psi=0\) נותנת:
+      \[
+        \psi(r)=A\sin(kr)+B\cos(kr).
+      \]
+      ולכן:
+      \[
+        g(r)=\frac{\psi(r)}{r}=\frac{A\sin(kr)+B\cos(kr)}{r}.
+      \]
+    </div>
+
+    <div class="note">
+      כעת “תנאי פיזיקלי/גיאומטרי” טבעי: <b>הפתרון צריך להיות חסום במרכז</b>.
+      נבדוק את הגבולות ב־\(r\to 0\):
+      \[
+        \sin(kr)\sim kr \quad\Rightarrow\quad \frac{\sin(kr)}{r}\sim k \quad (\text{חסום})
+      \]
+      אבל:
+      \[
+        \cos(kr)\sim 1 \quad\Rightarrow\quad \frac{\cos(kr)}{r}\sim \frac{1}{r} \quad (\text{מתבדר}).
+      \]
+      לכן חייבים לבחור:
+      \[
+        B=0.
+      \]
+    </div>
+
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">פתרון רגיל במרכז</span>
+        \[
+          \boxed{g(r)=A\,\frac{\sin(kr)}{r}.}
+        \]
+      </div>
+      <div class="note" style="margin-top:6px">
+        זה שקול ל־<b>פונקציית בסל כדורית</b> מסדר \(0\):
+        \[
+          j_0(kr)=\frac{\sin(kr)}{kr}
+          \quad\Rightarrow\quad
+          g(r)=C\,j_0(kr).
+        \]
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Generalization to l -->
+  <section class="card">
+    <h2>5) (אופציונלי) הכללה: אם יש תלות זוויתית → \(j_\ell\) ו־\(y_\ell\)</h2>
+
+    <div class="note">
+      אם לא מניחים סימטריה מלאה, אלא הפרדת משתנים עם הרמוניות ספריות \(Y_{\ell m}\):
+      \[
+        u(r,\theta,\varphi)=R_\ell(r)\,Y_{\ell m}(\theta,\varphi),
+      \]
+      אז מתקבל ה־ODE הרדיאלי:
+      \[
+        \boxed{
+        \frac{1}{r^2}\frac{d}{dr}\!\left(r^2 \frac{dR_\ell}{dr}\right)
+        +\left(k^2-\frac{\ell(\ell+1)}{r^2}\right)R_\ell=0.}
+      \]
+    </div>
+
+    <div class="note">
+      הפתרונות הם:
+      \[
+        R_\ell(r)=A\,j_\ell(kr)+B\,y_\ell(kr),
+      \]
+      כאשר \(j_\ell\) רגיל ב־\(r=0\) ואילו \(y_\ell\) סינגולרי.
+      במקרה שלנו \(\ell=0\) ולכן \(j_0(kr)=\sin(kr)/(kr)\).
+    </div>
+  </section>
+
+  <!-- 6. Radial Fourier (spherical) representation -->
+  <section class="card">
+    <h2>6) שלב חמישי: “תדר רדיאלי” ב־3D (פורייה כדורי / Hankel מסדר 0)</h2>
+
+    <div class="note">
+      עבור פונקציה רדיאלית \(u(\mathbf{x})=g(r)\), גם הטרנספורם המרחבי שלה \(\widehat{u}(\mathbf{k})\) יהיה רדיאלי:
+      \(\widehat{u}(\mathbf{k})=G(k)\), \(k=\|\mathbf{k}\|\).
+    </div>
+
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">זוג טרנספורם רדיאלי 3D</span>
+        (צורה סטנדרטית שקולה ל־Fourier–Bessel)
+        \[
+          g(r)=\frac{1}{2\pi^2}\int_{0}^{\infty} G(k)\,\frac{\sin(kr)}{kr}\,k^2\,dk,
+        \]
+        \[
+          G(k)=4\pi\int_{0}^{\infty} g(r)\,\frac{\sin(kr)}{kr}\,r^2\,dr.
+        \]
+      </div>
+    </div>
+
+    <details>
+      <summary>מה המשמעות של \(G(k)\)?</summary>
+      <div class="note">
+        \(G(k)\) הוא “הספקטרום הרדיאלי” של \(g(r)\) במרחב התדר (המרחב הדואלי).
+        הגרעין \(\sin(kr)/(kr)\) הוא בדיוק \(j_0(kr)\), ולכן שוב מופיע בסל־כדורי.
+      </div>
+    </details>
+  </section>
+
+  <!-- 7. Nyquist radial theorem -->
+  <section class="card">
+    <h2>7) שלב שישי: משפט נייקוויסט רדיאלי ב־3D (הוכחת רעיון)</h2>
+
+    <div class="theorem">
+      <div class="note">
+        <span class="tag">הנחה</span>
+        השדה הרדיאלי פס־מוגבל: \(G(k)=0\) לכל \(k>k_{\max}\).
+      </div>
+      <div class="note" style="margin-top:6px">
+        <span class="tag">מסקנה</span>
+        דגימה רדיאלית \(r_n=n\Delta r\) מספיקה ללא aliasing אם:
+        \[
+          \boxed{\Delta r \le \frac{\pi}{k_{\max}}.}
+        \]
+      </div>
+    </div>
+
+    <div class="note">
+      <b>רעיון ההוכחה (שלב־אחר־שלב):</b>
+    </div>
+
+    <ol class="note">
+      <li>
+        מאחר ש-\(G(k)\) מתאפס מעל \(k_{\max}\), האינטגרל לשחזור נהיה:
+        \[
+          g(r)=\frac{1}{2\pi^2}\int_{0}^{k_{\max}} G(k)\,\frac{\sin(kr)}{kr}\,k^2\,dk.
+        \]
+      </li>
+
+      <li>
+        כשדוגמים ב-\(r_n=n\Delta r\), אנחנו בעצם מכפילים את \(g(r)\) ב”מסרק דלתא”:
+        \[
+          g_s(r)=\sum_{n\in\mathbb{Z}} g(n\Delta r)\,\delta(r-n\Delta r).
+        \]
+        במרחב התדר (במובן 1D עבור המשתנה \(r\) כציר דגימה), פעולת הדגימה מייצרת שכפולים מחזוריים של הספקטרום במרווח
+        \(\Omega_s=\frac{2\pi}{\Delta r}\).
+      </li>
+
+      <li>
+        תנאי “אין חפיפה” בין שכפולים הוא:
+        \[
+          k_{\max} < \frac{\Omega_s}{2}=\frac{\pi}{\Delta r}.
+        \]
+        שזה שקול ל:
+        \[
+          \Delta r < \frac{\pi}{k_{\max}}.
+        \]
+        (בגבול שוויון עובדים “על הסף”; בפועל לוקחים מרווח בטיחות.)
+      </li>
+
+      <li>
+        כאשר אין חפיפה, ניתן לסנן (Low-pass) כדי להחזיר את \(G(k)\) המקורי, ואז להחזיר את \(g(r)\).
+      </li>
+    </ol>
+
+    <details>
+      <summary>הערה חשובה (דיוק מתמטי)</summary>
+      <div class="note">
+        ההצדקה המלאה מערבת התאמה בין “דגימה ב־r” לבין פירוק רדיאלי ב־3D.
+        ההיגיון המרכזי נשאר: <b>הצפיפות הרדיאלית</b> חייבת להתאים ל־\(k_{\max}\) כדי לא לייצר aliasing לאורך \(r\).
+      </div>
+    </details>
+  </section>
+
+  <!-- 8. The information pipeline -->
+  <section class="card">
+    <h2>8) צינור מידע מלא: דגימה → כימות → קידוד → הצפנה (עם הצדקה)</h2>
+
+    <div class="grid2">
+      <div class="theorem">
+        <div class="note">
+          <span class="tag">A) Sampling</span><br>
+          בוחרים \(\Delta r\) כך ש:
+          \[
+            \Delta r \le \frac{\pi}{k_{\max}}
+          \]
+          ואז אוספים:
+          \[
+            s[n]=g(n\Delta r).
+          \]
+        </div>
+      </div>
+
+      <div class="theorem">
+        <div class="note">
+          <span class="tag">B) Quantization</span><br>
+          בוחרים \(B\) ביטים, \(L=2^B\), טווח \([g_{\min},g_{\max}]\):
+          \[
+            \Delta_q=\frac{g_{\max}-g_{\min}}{L-1},\quad
+            q[n]=\text{round}\left(\frac{s[n]-g_{\min}}{\Delta_q}\right).
+          \]
+        </div>
+      </div>
+
+      <div class="theorem">
+        <div class="note">
+          <span class="tag">C) Encoding</span><br>
+          בגלל שברדיאלי יש “רציפות”, עושים דלתא:
+          \[
+            d[0]=q[0],\quad d[n]=q[n]-q[n-1].
+          \]
+          ואז מקודדים חסום־אורך (Varint) אחרי ZigZag לדלתאות חתומות.
+        </div>
+      </div>
+
+      <div class="theorem">
+        <div class="note">
+          <span class="tag">D) Encryption</span><br>
+          מצפינים את ה־payload ב־AES-256-GCM: מקבלים nonce + ciphertext + tag.
+          ה־GCM מספק גם אימות שלמות (authentication).
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="note">
+      <b>למה הסדר הזה נכון?</b>
+      <ul>
+        <li><b>דגימה</b> תלויה בפיזיקה/תדרים: אם לא עומדים בנייקוויסט—אין מה “לתקן” אחרי זה.</li>
+        <li><b>כימות</b> הופך רציף לבדיד ומייצר שגיאת כימות מבוקרת (נשלטת ע״י \(B\)).</li>
+        <li><b>קידוד</b> מנצל סטטיסטיקה (דלתאות קטנות) כדי לחסוך נפח.</li>
+        <li><b>הצפנה</b> אחרונה: אם מצפינים לפני דחיסה—הנתונים נראים אקראיים ולא נדחסים.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 9. A minimal JS reference (not full demo, just steps) -->
+  <section class="card">
+    <h2>9) תבנית JavaScript קצרה לכל שלב (כדי לחבר לפרויקט שלך)</h2>
+    <div class="note">
+      זה לא “הדמו המלא” (שכבר נתתי לך קודם), אלא תמצית של השלבים עם שמות פונקציות.
+      אפשר להעתיק לתוך פרויקט Node.js או Browser (WebCrypto בדפדפן).
+    </div>
+
+    <pre class="mono">// 1) Sampling
+const dr = Math.PI / kMax;              // Nyquist radial step
+for (let n=0; n&lt;N; n++){
+  const r = n*dr;
+  s[n] = g(r);                          // your radial field
+}
+
+// 2) Quantization (uniform)
+const L = 1 &lt;&lt; B;
+const dq = (gmax - gmin) / (L-1);
+q[n] = Math.round((s[n]-gmin)/dq);
+
+// 3) Encoding (delta + zigzag + varint)
+d[0] = q[0];
+d[n] = q[n] - q[n-1];
+zz = (d&lt;&lt;1) ^ (d&gt;&gt;31);                  // zigzag (int32)
+bytes.push(...varintEncode(zz));
+
+// 4) Encryption (AES-GCM, browser)
+nonce = crypto.getRandomValues(new Uint8Array(12));
+cipher = await crypto.subtle.encrypt({name:"AES-GCM", iv: nonce}, key, payload);
+
+// 5) Decrypt + Decode + Reconstruct
+plain = await crypto.subtle.decrypt({name:"AES-GCM", iv: nonce}, key, cipher);
+q = decodeVarintsToQ(plain);
+sHat[n] = gmin + q[n]*dq;</pre>
+
+    <details>
+      <summary>הערה: Node.js</summary>
+      <div class="note">
+        בדפדפן יש WebCrypto מובנה. ב־Node.js מודרני יש <code>crypto.webcrypto.subtle</code> או שתשתמש במודול <code>crypto</code> עם AES-GCM.
+        אם תרצה, אני אתן לך קובץ Node.js מלא תואם 1:1 לדמו.
+      </div>
+    </details>
+  </section>
+
+  <!-- 10. End -->
+  <section class="card">
+    <h2>סיכום</h2>
+    <div class="note">
+      הראינו בצורה מלאה:
+      <ol>
+        <li>איך סימטריה כדורית ב־3D הופכת את הלמהולץ ל־ODE רדיאלי.</li>
+        <li>איך ההצבה \(g=\psi/r\) מורידה למשוואה \(\psi''+k^2\psi=0\).</li>
+        <li>איך תנאי סדירות ב־0 נותן פתרון \(g(r)\propto \sin(kr)/r\), שהוא \(j_0\).</li>
+        <li>איך הספקטרום הרדיאלי 3D משתמש בגרעין \(\sin(kr)/(kr)\).</li>
+        <li>איך מתקבל תנאי נייקוויסט רדיאלי \(\Delta r \le \pi/k_{\max}\).</li>
+        <li>איך בונים שרשרת תקשורת/אחסון: דגימה→כימות→קידוד→הצפנה.</li>
+      </ol>
+    </div>
+    <div class="note">
+      אם תרצה, אני יכול לאחד את “הדמו המלא” (הקובץ עם גרף + AES-GCM + encode/decode) יחד עם ההוכחה הזאת בתוך <b>קובץ HTML אחד ענק</b>.
+    </div>
+  </section>
+
+</main>
+
+<script>
+window.addEventListener("load", () => {
+  if (window.renderMathInElement){
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false},
+      ]
+    });
+  }
+});
+</script>
+
+</body>
+</html>
