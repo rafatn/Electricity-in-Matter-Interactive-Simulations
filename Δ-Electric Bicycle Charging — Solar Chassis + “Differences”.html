@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Δ-טעינה לאופניים חשמליים — שלדה סולארית + “הבדלים”</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg0:#f4f6fb; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.55);
+      --line:rgba(148,163,184,.35);
+      --text:#0f172a; --muted:#64748b;
+      --shadow:0 18px 50px rgba(2,6,23,.12);
+      --shadow2:0 10px 28px rgba(2,6,23,.10);
+      --accent:#2563eb; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0f172a; --bg2:#0b1a2b;
+        --card:rgba(15,23,42,.72); --card2:rgba(15,23,42,.52);
+        --line:rgba(148,163,184,.22);
+        --text:#e5e7eb; --muted:#9ca3af;
+        --shadow:0 18px 50px rgba(0,0,0,.45);
+        --shadow2:0 10px 28px rgba(0,0,0,.35);
+        --accent:#60a5fa;
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 700px at 10% 10%, var(--bg2), transparent 60%),
+        radial-gradient(1000px 650px at 90% 20%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+    }
+    header{max-width:1150px; margin:0 auto; padding:26px 16px 10px}
+    h1{margin:0 0 8px; font-size:clamp(20px,3.2vw,34px)}
+    .sub{margin:0; color:var(--muted); line-height:1.6}
+    main{max-width:1150px; margin:0 auto; padding:14px 16px 44px}
+    .grid{display:grid; grid-template-columns:1.15fr .95fr; gap:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    h2{margin:0; font-size:18px}
+    h3{margin:14px 0 6px; font-size:15px}
+    .hr{height:1px; background:var(--line); margin:10px 0}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.18);
+      font-size:12.5px; color:var(--muted);
+    }
+    @media (prefers-color-scheme: dark){ .pill{background: rgba(255,255,255,.05)} }
+    .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+    @media (max-width: 720px){ .kpis{grid-template-columns:1fr} }
+    .kpi{
+      padding:12px; border-radius:14px; border:1px solid var(--line);
+      background: rgba(255,255,255,.18); box-shadow: var(--shadow2);
+    }
+    @media (prefers-color-scheme: dark){ .kpi{background: rgba(255,255,255,.05)} }
+    .kpi .label{font-size:12px; color:var(--muted)}
+    .kpi .value{font-size:22px; font-weight:750; margin-top:6px; font-family:var(--mono)}
+    .kpi .mini{font-size:12px; color:var(--muted); margin-top:2px}
+    .controls{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 760px){ .controls{grid-template-columns:1fr} }
+    .ctl{
+      border:1px solid var(--line); border-radius:14px;
+      padding:10px 10px 8px; background: rgba(255,255,255,.14);
+    }
+    @media (prefers-color-scheme: dark){ .ctl{background: rgba(255,255,255,.04)} }
+    .ctl .top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+    .ctl label{font-size:13px; color:var(--muted)}
+    .ctl output{font-family:var(--mono); font-size:12px}
+    input[type="range"]{width:100%}
+    .tog{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+    .switch{
+      display:flex; align-items:center; gap:8px;
+      padding:8px 10px; border:1px solid var(--line);
+      border-radius:999px; cursor:pointer; user-select:none;
+      background: rgba(255,255,255,.14); font-size:13px;
+    }
+    @media (prefers-color-scheme: dark){ .switch{background: rgba(255,255,255,.04)} }
+    .switch input{accent-color:var(--accent)}
+    .note{color:var(--muted); font-size:13px; line-height:1.65}
+    .mono{font-family:var(--mono)}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); font-size:12px;
+      background: rgba(255,255,255,.12);
+    }
+    @media (prefers-color-scheme: dark){ .badge{background: rgba(255,255,255,.03)} }
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+    button{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.14);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+    }
+    @media (prefers-color-scheme: dark){ button{background: rgba(255,255,255,.04)} }
+    button:hover{transform: translateY(-1px)}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .diagram{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    @media (prefers-color-scheme: dark){ .diagram{background: rgba(255,255,255,.03)} }
+    .math{
+      font-family:var(--mono);
+      border:1px dashed var(--line);
+      padding:10px;
+      border-radius:12px;
+      overflow:auto;
+      background: rgba(255,255,255,.10);
+    }
+    @media (prefers-color-scheme: dark){ .math{background: rgba(255,255,255,.03)} }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Δ-טעינה לאופניים חשמליים — שלדה סולארית + “הבדלים”</h1>
+  <p class="sub">
+    כל “הבדל” פיזיקלי Δ (מהירות/בלימה, מומנט דיווש, אור, טמפרטורה) → מומר לחשמל →
+    מתאחד ב־<b>DC Bus</b> → נכנס לסוללה דרך מטען <b>CC/CV</b> וה־<b>BMS</b>.
+  </p>
+</header>
+
+<main class="grid">
+
+  <!-- LEFT: Concept + Diagram -->
+  <section class="card">
+    <div class="row">
+      <h2>רעיון המערכת (הכל ביחד)</h2>
+      <span class="pill">Δ → P → DC BUS → CC/CV → BMS → Battery</span>
+    </div>
+    <div class="hr"></div>
+
+    <svg class="diagram" viewBox="0 0 980 360" aria-label="דיאגרמת איחוד מקורות טעינה">
+      <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="rgba(37,99,235,.18)"/>
+          <stop offset="1" stop-color="rgba(16,185,129,.12)"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="980" height="360" fill="url(#bg)"/>
+
+      <!-- Sources -->
+      <g font-family="system-ui,Segoe UI,Arial" font-size="14" fill="currentColor">
+        <rect x="30" y="40" width="300" height="70" rx="14" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="180" y="70" text-anchor="middle" font-weight="700">Δv / Δω (בלימה/ירידה)</text>
+        <text x="180" y="94" text-anchor="middle" opacity=".8">מנוע כגנרטור (Regeneration)</text>
+
+        <rect x="30" y="130" width="300" height="70" rx="14" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="180" y="160" text-anchor="middle" font-weight="700">Δτ (דיווש מול התנגדות)</text>
+        <text x="180" y="184" text-anchor="middle" opacity=".8">גנרטור דיווש + מיישר</text>
+
+        <rect x="30" y="220" width="300" height="70" rx="14" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="180" y="250" text-anchor="middle" font-weight="700">ΔΦ (אור)</text>
+        <text x="180" y="274" text-anchor="middle" opacity=".8">שלדה סולארית + MPPT</text>
+
+        <rect x="30" y="305" width="300" height="40" rx="14" fill="rgba(255,255,255,.14)" stroke="rgba(148,163,184,.45)"/>
+        <text x="180" y="332" text-anchor="middle" opacity=".85">ΔT (תרמו) — אופציונלי/קטן</text>
+
+        <!-- DC BUS -->
+        <rect x="385" y="135" width="220" height="90" rx="16" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="495" y="170" text-anchor="middle" font-weight="800">DC BUS</text>
+        <text x="495" y="194" text-anchor="middle" opacity=".8">OR-ing + הגנות</text>
+        <text x="495" y="216" text-anchor="middle" opacity=".8">מקורות לא “נלחמים”</text>
+
+        <!-- Charger -->
+        <rect x="650" y="140" width="250" height="80" rx="16" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="775" y="172" text-anchor="middle" font-weight="800">מטען CC/CV</text>
+        <text x="775" y="196" text-anchor="middle" opacity=".8">מגביל זרם לפי Imax</text>
+
+        <!-- Battery -->
+        <rect x="650" y="245" width="250" height="80" rx="16" fill="rgba(255,255,255,.18)" stroke="rgba(148,163,184,.55)"/>
+        <text x="775" y="277" text-anchor="middle" font-weight="800">Battery + BMS</text>
+        <text x="775" y="301" text-anchor="middle" opacity=".8">טעינה בטוחה</text>
+
+        <!-- Arrows -->
+        <g stroke="rgba(37,99,235,.85)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M330 75 C360 82, 365 110, 385 160"/>
+          <path d="M330 165 L385 175"/>
+          <path d="M330 255 C360 245, 365 230, 385 200"/>
+          <path d="M330 325 C360 315, 365 265, 385 215"/>
+          <path d="M605 180 L650 180"/>
+          <path d="M775 220 L775 245"/>
+        </g>
+
+        <text x="350" y="120" font-size="12" opacity=".75">ΔE → ΔV → I</text>
+      </g>
+    </svg>
+
+    <h3>מודל מתמטי קצר</h3>
+    <div class="math" dir="ltr">
+      P_in = P_regen + P_pedal + P_solar + P_thermo<br/>
+      I_est ≈ P_in / V_batt<br/>
+      I_chg = min(I_est, I_max)<br/>
+      P_chg = I_chg · V_batt<br/>
+      ΔE_batt(Wh) = P_chg · t(h)<br/>
+      ΔSOC(%) = 100 · ΔE_batt / E_batt
+    </div>
+
+    <p class="note">
+      כדי שזה יהיה “אמיתי”: רגנרציה קיימת רק אם <b>המנוע + הבקר</b> תומכים.
+      שלדה־סולארית עובדת הכי טוב כשהאופניים עומדים בשמש (פחות צל מהרוכב).
+    </p>
+  </section>
+
+  <!-- RIGHT: Simulator -->
+  <section class="card">
+    <div class="row">
+      <h2>סימולטור Δ (הבדלים) — שלדה סולארית + שילוב מקורות</h2>
+      <span class="badge" id="statusBadge">מצב: <span class="mono" id="statusTxt">—</span></span>
+    </div>
+    <div class="hr"></div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="label">הספק טעינה בפועל (לאחר הגבלת Imax)</div>
+        <div class="value" id="kpiP">0 W</div>
+        <div class="mini" id="kpiBreak">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">זרם טעינה</div>
+        <div class="value" id="kpiI">0.00 A</div>
+        <div class="mini">I = P / V</div>
+      </div>
+      <div class="kpi">
+        <div class="label">תוצאה לנסיעה/עמידה</div>
+        <div class="value" id="kpiSOC">+0.00%</div>
+        <div class="mini" id="kpiWH">0 Wh</div>
+      </div>
+    </div>
+
+    <h3>הפעלת מקורות (במקביל)</h3>
+    <div class="tog">
+      <label class="switch"><input type="checkbox" id="enRegen" checked> Δv/Δω רגנרציה</label>
+      <label class="switch"><input type="checkbox" id="enPedal" checked> Δτ גנרטור דיווש</label>
+      <label class="switch"><input type="checkbox" id="enSolar" checked> ΔΦ שלדה־סולארית</label>
+      <label class="switch"><input type="checkbox" id="enThermo"> ΔT תרמו (ניסיוני)</label>
+    </div>
+
+    <h3>פרמטרים</h3>
+    <div class="controls">
+      <div class="ctl">
+        <div class="top"><label for="v">מהירות (קמ״ש)</label><output id="vOut">18</output></div>
+        <input id="v" type="range" min="0" max="45" step="1" value="18"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="slope">שיפוע (°)</label><output id="slopeOut">-2</output></div>
+        <input id="slope" type="range" min="-12" max="12" step="1" value="-2"/>
+        <div class="note" style="font-size:12px">שלילי=ירידה, חיובי=עלייה</div>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="brake">בלימה (0–100)</label><output id="brakeOut">20</output></div>
+        <input id="brake" type="range" min="0" max="100" step="1" value="20"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="pedalW">דיווש לגנרטור (W)</label><output id="pedalOut">90</output></div>
+        <input id="pedalW" type="range" min="0" max="250" step="5" value="90"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="sun">שמש G (W/m²)</label><output id="sunOut">700</output></div>
+        <input id="sun" type="range" min="0" max="1000" step="10" value="700"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="A">שטח שלדה סולארי (m²)</label><output id="aOut">0.35</output></div>
+        <input id="A" type="range" min="0.00" max="0.80" step="0.01" value="0.35"/>
+        <div class="note" style="font-size:12px">0.25–0.6 אופייני (תלוי עיצוב)</div>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="shade">הצללה S (0–1)</label><output id="shadeOut">0.70</output></div>
+        <input id="shade" type="range" min="0" max="1" step="0.01" value="0.70"/>
+        <div class="note" style="font-size:12px">1=אין צל, 0=צל מלא</div>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="etaPV">נצילות PV (%)</label><output id="etaOut">18</output></div>
+        <input id="etaPV" type="range" min="8" max="28" step="1" value="18"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="dT">Δטמפרטורה (°C)</label><output id="dTOut">12</output></div>
+        <input id="dT" type="range" min="0" max="60" step="1" value="12"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="vb">מתח סוללה (V)</label><output id="vbOut">48</output></div>
+        <input id="vb" type="range" min="24" max="60" step="1" value="48"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="eb">קיבולת סוללה (Wh)</label><output id="ebOut">720</output></div>
+        <input id="eb" type="range" min="240" max="1400" step="10" value="720"/>
+        <div class="note" style="font-size:12px">למשל 48V×15Ah≈720Wh</div>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="imax">Imax טעינה (A)</label><output id="imaxOut">6.0</output></div>
+        <input id="imax" type="range" min="1" max="15" step="0.5" value="6"/>
+      </div>
+
+      <div class="ctl">
+        <div class="top"><label for="mins">משך (דקות)</label><output id="minsOut">45</output></div>
+        <input id="mins" type="range" min="1" max="240" step="1" value="45"/>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button id="presetRide">Preset: נסיעה רגילה</button>
+      <button id="presetStopSun">Preset: עמידה בשמש</button>
+      <button id="presetDownhill">Preset: ירידה + בלימה</button>
+      <button id="calc">חשב / עדכן</button>
+    </div>
+
+    <div class="hr"></div>
+    <p class="note">
+      ✅ כאן רואים את הרעיון שלך בפועל: שלדה סולארית (ΔΦ) עובדת יחד עם רגנרציה (Δv/Δω) ועם דיווש (Δτ).<br/>
+      ⚠️ הגבלת <span class="mono">Imax</span> מדמה את ההגנות של מטען/סוללה.
+    </p>
+  </section>
+
+</main>
+
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const fmt=(n,d=0)=>Number(n).toFixed(d);
+
+  const binds = [
+    ["v","vOut",(x)=>x],
+    ["slope","slopeOut",(x)=>x],
+    ["brake","brakeOut",(x)=>x],
+    ["pedalW","pedalOut",(x)=>x],
+    ["sun","sunOut",(x)=>x],
+    ["A","aOut",(x)=>fmt(x,2)],
+    ["shade","shadeOut",(x)=>fmt(x,2)],
+    ["etaPV","etaOut",(x)=>x],
+    ["dT","dTOut",(x)=>x],
+    ["vb","vbOut",(x)=>x],
+    ["eb","ebOut",(x)=>x],
+    ["imax","imaxOut",(x)=>fmt(x,1)],
+    ["mins","minsOut",(x)=>x],
+  ];
+
+  binds.forEach(([id,outId,f])=>{
+    const el=$(id), out=$(outId);
+    const upd=()=>out.value=f(el.value);
+    el.addEventListener("input", ()=>{upd(); compute();});
+    upd();
+  });
+
+  function compute(){
+    const enRegen=$("enRegen").checked;
+    const enPedal=$("enPedal").checked;
+    const enSolar=$("enSolar").checked;
+    const enThermo=$("enThermo").checked;
+
+    const v_kmh=+$("v").value;
+    const v=v_kmh/3.6;
+    const slopeDeg=+$("slope").value;
+    const brake=+$("brake").value/100;
+
+    const pedalIn=+$("pedalW").value;
+
+    const G=+$("sun").value;
+    const A=+$("A").value;
+    const S=+$("shade").value;
+    const etaPV=+$("etaPV").value/100;
+
+    const dT=+$("dT").value;
+
+    const Vb=+$("vb").value;
+    const Eb=+$("eb").value;
+    const Imax=+$("imax").value;
+    const mins=+$("mins").value;
+    const hours=mins/60;
+
+    // ---- Efficiencies / assumptions (simple educational model)
+    const eta_regen = 0.55;      // chain efficiency during regen
+    const eta_pedal = 0.70;      // generator+rectifier
+    const eta_mppt  = 0.92;      // solar dc-dc
+    const eta_thermo_chain = 0.25; // toy chain efficiency
+
+    // ---- Regen model: depends on downhill (negative slope) and braking
+    const slopeDown = Math.max(-slopeDeg, 0);
+
+    // Tuned coefficients for plausible power
+    const K1 = 18;  // W per (deg*m/s)
+    const K2 = 9;   // W per (brake*(m/s)^2)
+
+    let P_regen=0;
+    if(enRegen){
+      const P_raw = (K1 * slopeDown * v) + (K2 * brake * v * v);
+      const P_cap = 250; // typical conservative cap
+      P_regen = clamp(P_raw, 0, P_cap) * eta_regen;
+    }
+
+    // ---- Pedal generator
+    let P_pedal=0;
+    if(enPedal){
+      P_pedal = clamp(pedalIn, 0, 300) * eta_pedal;
+    }
+
+    // ---- Solar frame: P = G*A*etaPV*eta_mppt*S ; cap for small system realism
+    let P_solar=0;
+    if(enSolar){
+      P_solar = G * A * etaPV * eta_mppt * S;
+      P_solar = clamp(P_solar, 0, 250);
+    }
+
+    // ---- Thermo (tiny): proportional to ΔT, capped low
+    let P_thermo=0;
+    if(enThermo){
+      const P_raw = dT * 0.35;   // W per °C (toy)
+      P_thermo = clamp(P_raw, 0, 25) * eta_thermo_chain;
+      P_thermo = clamp(P_thermo, 0, 8);
+    }
+
+    // ---- Combine
+    const P_in = P_regen + P_pedal + P_solar + P_thermo;
+
+    // ---- Current limit
+    const I_est = (Vb>0) ? (P_in / Vb) : 0;
+    const I_chg = Math.min(I_est, Imax);
+    const P_chg = I_chg * Vb;
+
+    // ---- Energy gain
+    const Wh = P_chg * hours;
+    const socGain = (Eb>0) ? (100 * Wh / Eb) : 0;
+
+    // KPIs
+    $("kpiP").textContent = `${fmt(P_chg,0)} W`;
+    $("kpiI").textContent = `${fmt(I_chg,2)} A`;
+    $("kpiSOC").textContent = `+${fmt(socGain,2)}%`;
+    $("kpiWH").textContent = `${fmt(Wh,0)} Wh ב-${mins} דק׳`;
+
+    const parts = [
+      ["Regen", P_regen],
+      ["Pedal", P_pedal],
+      ["Solar(frame)", P_solar],
+      ["Thermo", P_thermo],
+    ].filter(([,p])=>p>0.5);
+
+    $("kpiBreak").textContent = parts.length
+      ? parts.map(([n,p])=>`${n}:${fmt(p,0)}W`).join(" • ") + (I_est>Imax ? " (מוגבל Imax)" : "")
+      : "אין מקור משמעותי פעיל";
+
+    // Status
+    let status="—", cls="warn";
+    if(P_chg < 5){ status="כמעט אין טעינה"; cls="warn"; }
+    else if(P_chg < 60){ status="טעינה נמוכה"; cls="warn"; }
+    else if(P_chg < 160){ status="טעינה בינונית"; cls="ok"; }
+    else { status="טעינה חזקה יחסית"; cls="ok"; }
+
+    // Uphill note for regen
+    if(slopeDeg > 4 && enRegen && P_regen > 0){
+      status="הערה: בעלייה רגנרציה כמעט לא מתרחשת";
+      cls="bad";
+    }
+
+    $("statusTxt").textContent = `${status} | P_in=${fmt(P_in,0)}W → P_chg=${fmt(P_chg,0)}W`;
+    const badge = $("statusBadge");
+    badge.classList.remove("ok","warn","bad");
+    badge.classList.add(cls);
+  }
+
+  // Presets
+  $("presetRide").addEventListener("click", ()=>{
+    $("enRegen").checked=true; $("enPedal").checked=true; $("enSolar").checked=true; $("enThermo").checked=false;
+    $("v").value=18; $("vOut").value=18;
+    $("slope").value=0; $("slopeOut").value=0;
+    $("brake").value=20; $("brakeOut").value=20;
+    $("pedalW").value=90; $("pedalOut").value=90;
+    $("sun").value=650; $("sunOut").value=650;
+    $("A").value=0.35; $("aOut").value="0.35";
+    $("shade").value=0.70; $("shadeOut").value="0.70";
+    $("etaPV").value=18; $("etaOut").value=18;
+    $("vb").value=48; $("vbOut").value=48;
+    $("eb").value=720; $("ebOut").value=720;
+    $("imax").value=6; $("imaxOut").value="6.0";
+    $("mins").value=45; $("minsOut").value=45;
+    compute();
+  });
+
+  $("presetStopSun").addEventListener("click", ()=>{
+    $("enRegen").checked=false; $("enPedal").checked=false; $("enSolar").checked=true; $("enThermo").checked=false;
+    $("v").value=0; $("vOut").value=0;
+    $("slope").value=0; $("slopeOut").value=0;
+    $("brake").value=0; $("brakeOut").value=0;
+    $("sun").value=950; $("sunOut").value=950;
+    $("A").value=0.55; $("aOut").value="0.55";
+    $("shade").value=0.95; $("shadeOut").value="0.95";
+    $("etaPV").value=20; $("etaOut").value=20;
+    $("mins").value=180; $("minsOut").value=180;
+    compute();
+  });
+
+  $("presetDownhill").addEventListener("click", ()=>{
+    $("enRegen").checked=true; $("enPedal").checked=false; $("enSolar").checked=true; $("enThermo").checked=false;
+    $("v").value=28; $("vOut").value=28;
+    $("slope").value=-8; $("slopeOut").value=-8;
+    $("brake").value=55; $("brakeOut").value=55;
+    $("sun").value=700; $("sunOut").value=700;
+    $("A").value=0.30; $("aOut").value="0.30";
+    $("shade").value=0.75; $("shadeOut").value="0.75";
+    $("etaPV").value=18; $("etaOut").value=18;
+    $("mins").value=25; $("minsOut").value=25;
+    compute();
+  });
+
+  $("calc").addEventListener("click", compute);
+
+  // First run
+  compute();
+</script>
+
+</body>
+</html>
