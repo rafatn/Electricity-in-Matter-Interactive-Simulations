@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bus & Truck Distributed Wheel Energy Recovery (Hybrid Electric + Hydraulic)</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f6f8ff; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --accent:#2563eb; --accent2:#06b6d4;
+      --good:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1b2e; --bg2:#081b1a;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --text:#e5e7eb; --muted:#9ca3af;
+        --line:rgba(148,163,184,.18);
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --shadow2: 0 10px 28px rgba(0,0,0,.30);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 0%, var(--bg1), transparent 60%),
+        radial-gradient(1000px 600px at 92% 15%, var(--bg2), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    header{
+      padding:28px 16px 10px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3.0vw, 34px);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      line-height:1.55;
+      margin:10px 0 0;
+      max-width: 88ch;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .pill{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: var(--shadow2);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+    }
+    .dot{width:8px; height:8px; border-radius:50%;}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding: 0 16px 40px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr; }
+    }
+    section.card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:14px;
+    }
+    h2{margin:0 0 10px; font-size:18px}
+    h3{margin:14px 0 8px; font-size:15px}
+    p{margin:8px 0; line-height:1.65}
+    ul{margin:8px 0 8px; padding-left:18px; line-height:1.7}
+    code, pre{font-family: var(--mono);}
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:720px){ .grid2{grid-template-columns:1fr} }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:8px 12px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+    }
+    .kv .k{color:var(--muted); font-size:12px}
+    .kv .v{font-weight:800; font-size:14px}
+    .kv .mini{font-weight:600; font-size:12px; color:var(--muted)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--line);
+      padding:5px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tag strong{color:var(--text)}
+    .note{
+      border:1px dashed var(--line);
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .sep{height:1px; background:var(--line); margin:12px 0}
+
+    /* controls */
+    .controls{display:grid; grid-template-columns: 1fr; gap:10px;}
+    .control{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.05);
+    }
+    .control .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+    }
+    .control label{font-weight:800}
+    .control output{font-family:var(--mono); color:var(--muted)}
+    input[type="range"]{width:100%}
+    select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .diagramWrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background: rgba(255,255,255,.04);
+    }
+    .legend{
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      align-items:center;
+    }
+    .lg{display:inline-flex; align-items:center; gap:8px}
+    .swatch{width:14px; height:10px; border-radius:4px; display:inline-block}
+    .sw1{background: rgba(37,99,235,.55)}
+    .sw2{background: rgba(22,163,74,.55)}
+    .sw3{background: rgba(245,158,11,.55)}
+    .sw4{background: rgba(6,182,212,.55)}
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .table th,.table td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+    .table th{color:var(--muted); font-weight:800; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:none}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37,99,235,.20), rgba(37,99,235,.10));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      font-weight:800;
+    }
+    button.secondary{
+      background: linear-gradient(180deg, rgba(6,182,212,.18), rgba(6,182,212,.08));
+    }
+    button.ghost{background: transparent;}
+    button:active{transform: translateY(1px)}
+    .monoBox{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.03);
+      overflow:auto;
+      white-space:pre;
+    }
+    .katex{direction:ltr}
+
+    /* wheel bars */
+    .bars{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .bar{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.05);
+    }
+    .bar .top{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      margin-bottom:8px;
+    }
+    .bar .name{font-weight:900}
+    .bar .val{font-family:var(--mono); color:var(--muted)}
+    .track{
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(37,99,235,.55), rgba(6,182,212,.55));
+    }
+
+    @media print{
+      header, main{max-width: 100%}
+      button{display:none}
+      .control{break-inside: avoid}
+      section.card{box-shadow:none}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Bus & Truck: Distributed Wheel Energy Recovery + Central Battery + Hydraulic Accumulator</h1>
+  <p class="subtitle">
+    A single-file HTML that formalizes your concept for <b>heavy vehicles</b> (bus / truck):
+    per-wheel modules (generator + local buffer battery + controller), a central energy core,
+    and an optional <b>hydraulic pressure accumulator</b> for stop-and-go routes. This is designed as
+    <b>energy recovery</b> (braking + suspension vibration), not “free energy”.
+  </p>
+  <div class="pillrow">
+    <span class="pill"><span class="dot good"></span> Best case: urban bus, frequent stops</span>
+    <span class="pill"><span class="dot good"></span> Strong recovery source: braking energy</span>
+    <span class="pill"><span class="dot good"></span> Extra recovery: regenerative suspension</span>
+    <span class="pill"><span class="dot warn"></span> Taking power from steady rolling adds drag</span>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: concept + diagram + equations -->
+  <section class="card">
+    <h2>1) System Overview (for heavy vehicles)</h2>
+    <div class="grid2">
+      <div class="kv">
+        <div>
+          <div class="k">Per-Wheel Module (×N wheels)</div>
+          <div class="v">Generator + Local Buffer Battery + Wheel ECU</div>
+          <div class="mini">Collects from braking and/or suspension; buffers locally</div>
+        </div>
+        <span class="tag"><strong>Wheel-ECU</strong> 🛞</span>
+      </div>
+      <div class="kv">
+        <div>
+          <div class="k">Energy Core (central)</div>
+          <div class="v">Main Battery + DC/DC + Safety + Balancing</div>
+          <div class="mini">Balances modules, powers drivetrain & auxiliaries</div>
+        </div>
+        <span class="tag"><strong>Energy-Core</strong> 🔋</span>
+      </div>
+    </div>
+
+    <h3>Recovery channels (what you can realistically harvest)</h3>
+    <ul>
+      <li><b>Regenerative braking (primary)</b>: convert braking energy into electrical energy (or hydraulic pressure).</li>
+      <li><b>Regenerative suspension (secondary)</b>: harvest from vertical motion/shocks; good on rough roads.</li>
+      <li><b>Thermal (optional)</b>: heat gradients (brake disks / exhaust) via TEG; usually lower yield.</li>
+      <li><b>Steady rolling harvesting</b>: possible but introduces drag; only makes sense if it replaces existing losses.</li>
+    </ul>
+
+    <div class="note">
+      <b>Key rule:</b> You can recover energy that would otherwise be dissipated (brakes, suspension damping).
+      If you extract energy continuously from wheel rotation in cruise, you add resistive torque, and the engine must compensate.
+    </div>
+
+    <div class="sep"></div>
+
+    <h2>2) Flow Diagram</h2>
+    <div class="diagramWrap">
+      <svg viewBox="0 0 980 430" width="100%" height="auto" role="img" aria-label="Energy flow diagram">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(37,99,235,.18)"/>
+            <stop offset="1" stop-color="rgba(6,182,212,.10)"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(22,163,74,.16)"/>
+            <stop offset="1" stop-color="rgba(22,163,74,.06)"/>
+          </linearGradient>
+          <linearGradient id="g3" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(245,158,11,.18)"/>
+            <stop offset="1" stop-color="rgba(245,158,11,.06)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- wheels -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="35" y="70" width="240" height="135" rx="16" fill="url(#g1)" stroke="rgba(148,163,184,.45)"/>
+          <text x="155" y="102" text-anchor="middle" font-weight="900">Wheel Modules (×N)</text>
+          <text x="155" y="128" text-anchor="middle" fill="rgba(100,116,139,.95)">Generator + Buffer Battery</text>
+          <text x="155" y="152" text-anchor="middle" fill="rgba(100,116,139,.95)">Wheel ECU (CAN/LIN)</text>
+          <text x="155" y="176" text-anchor="middle" fill="rgba(100,116,139,.95)">Inputs: braking / suspension</text>
+
+          <rect x="35" y="235" width="240" height="125" rx="16" fill="rgba(6,182,212,.12)" stroke="rgba(148,163,184,.45)"/>
+          <text x="155" y="265" text-anchor="middle" font-weight="900">Suspension Channel</text>
+          <text x="155" y="290" text-anchor="middle" fill="rgba(100,116,139,.95)">Hydraulic / EM damper</text>
+          <text x="155" y="315" text-anchor="middle" fill="rgba(100,116,139,.95)">Harvest vertical motion</text>
+          <text x="155" y="340" text-anchor="middle" fill="rgba(100,116,139,.95)">Buffers per-wheel</text>
+        </g>
+
+        <!-- core -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="370" y="90" width="260" height="250" rx="18" fill="url(#g2)" stroke="rgba(148,163,184,.45)"/>
+          <text x="500" y="125" text-anchor="middle" font-weight="950">Energy Core</text>
+          <text x="500" y="152" text-anchor="middle" fill="rgba(100,116,139,.95)">Main Battery + DC/DC</text>
+          <text x="500" y="178" text-anchor="middle" fill="rgba(100,116,139,.95)">Module balancing</text>
+          <text x="500" y="204" text-anchor="middle" fill="rgba(100,116,139,.95)">Safety isolation</text>
+          <text x="500" y="230" text-anchor="middle" fill="rgba(100,116,139,.95)">Fail-operational strategy</text>
+          <text x="500" y="256" text-anchor="middle" fill="rgba(100,116,139,.95)">Power for drivetrain & auxiliaries</text>
+        </g>
+
+        <!-- drivetrain + hydraulic accumulator -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="720" y="70" width="225" height="135" rx="16" fill="url(#g3)" stroke="rgba(148,163,184,.45)"/>
+          <text x="833" y="100" text-anchor="middle" font-weight="950">Drivetrain</text>
+          <text x="833" y="126" text-anchor="middle" fill="rgba(100,116,139,.95)">Electric / Hybrid assist</text>
+          <text x="833" y="150" text-anchor="middle" fill="rgba(100,116,139,.95)">Launch torque + acceleration</text>
+          <text x="833" y="176" text-anchor="middle" fill="rgba(100,116,139,.95)">Aux loads: HVAC, doors, etc.</text>
+
+          <rect x="720" y="235" width="225" height="125" rx="16" fill="rgba(6,182,212,.12)" stroke="rgba(148,163,184,.45)"/>
+          <text x="833" y="265" text-anchor="middle" font-weight="950">Hydraulic Accumulator (optional)</text>
+          <text x="833" y="290" text-anchor="middle" fill="rgba(100,116,139,.95)">Store pressure during braking</text>
+          <text x="833" y="315" text-anchor="middle" fill="rgba(100,116,139,.95)">Release during launch</text>
+          <text x="833" y="340" text-anchor="middle" fill="rgba(100,116,139,.95)">Excellent for stop-and-go</text>
+        </g>
+
+        <!-- arrows -->
+        <g stroke="rgba(37,99,235,.70)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 275 140 C 320 140, 335 140, 370 160" />
+          <path d="M 275 300 C 320 300, 335 290, 370 260" />
+        </g>
+        <g stroke="rgba(22,163,74,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 630 170 C 670 170, 690 155, 720 140" />
+        </g>
+        <g stroke="rgba(6,182,212,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 630 260 C 670 260, 690 270, 720 292" />
+        </g>
+
+        <!-- labels -->
+        <g font-family="system-ui" font-size="12" fill="rgba(100,116,139,.95)">
+          <text x="315" y="128">Recovered energy</text>
+          <text x="315" y="292">Suspension energy</text>
+          <text x="662" y="132">Electrical assist</text>
+          <text x="662" y="320">Pressure loop</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span class="lg"><span class="swatch sw1"></span> Wheel modules</span>
+        <span class="lg"><span class="swatch sw2"></span> Central energy core</span>
+        <span class="lg"><span class="swatch sw3"></span> Drivetrain loads</span>
+        <span class="lg"><span class="swatch sw4"></span> Hydraulic / suspension</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <h2>3) Compact math model</h2>
+    <p>Let \(m\) be vehicle mass, and a braking event reduces speed from \(v_0\) to \(v_1\) (m/s):</p>
+    <div class="monoBox" id="mathBox">
+(1) Kinetic energy change:
+ΔE_k = 1/2 · m · (v_0^2 - v_1^2)
+
+(2) Electrical recovered energy per event (overall efficiency η_e):
+E_e ≈ η_e · max(0, ΔE_k)
+
+(3) If split across N wheel modules:
+E_e,i ≈ w_i · E_e,  with Σ w_i = 1
+
+(4) Suspension harvesting (daily) in Wh:
+E_susp,day (input parameter)
+
+(5) Total daily recovered energy:
+E_day ≈ (E_e · stops_per_day) + E_susp,day
+    </div>
+
+    <p class="note">
+      Hydraulic accumulator (gas-charged): idealized energy capacity is roughly
+      \(E_h \approx \int P\,dV\). In practice, it strongly depends on pressure range and gas model.
+      This file treats it as a separate “bucket” you can size.
+    </p>
+
+    <div class="sep"></div>
+
+    <h2>4) Engineering notes (bus vs truck)</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Vehicle</th>
+          <th>What makes recovery strong</th>
+          <th>Recommended configuration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Urban bus</b></td>
+          <td>Very frequent stops, high mass, predictable routes</td>
+          <td>Max regen braking + hydraulic accumulator + strong balancing</td>
+        </tr>
+        <tr>
+          <td><b>Coach / intercity bus</b></td>
+          <td>Fewer stops; long cruise segments</td>
+          <td>Regen braking + suspension harvesting + reduce cruise drag harvesting</td>
+        </tr>
+        <tr>
+          <td><b>Delivery truck</b></td>
+          <td>Stop-and-go, variable loads</td>
+          <td>Regen braking + robust redundancy + per-axle tuning</td>
+        </tr>
+        <tr>
+          <td><b>Highway truck</b></td>
+          <td>Mostly cruise; long grades/braking on descents</td>
+          <td>Regen for downhill/braking + thermal management + large core</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- RIGHT: interactive sizing -->
+  <section class="card">
+    <h2>5) Interactive sizing (bus / truck)</h2>
+    <p class="subtitle" style="margin:0 0 10px">
+      Pick a vehicle type, number of wheels, and a typical stop profile. This gives an intuitive daily energy recovery estimate,
+      plus a per-wheel split and a redundancy concept snippet you can copy.
+    </p>
+
+    <div class="controls">
+      <div class="control">
+        <div class="row">
+          <label for="vehicle">Vehicle preset</label>
+          <output id="vehicleOut" class="small"></output>
+        </div>
+        <select id="vehicle">
+          <option value="bus_urban">Urban Bus (stop-and-go)</option>
+          <option value="bus_coach">Coach Bus (intercity)</option>
+          <option value="truck_delivery">Delivery Truck (stop-and-go)</option>
+          <option value="truck_highway">Highway Truck (mostly cruise)</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="wheels">Number of wheels \(N\)</label>
+          <output id="wheelsOut">6</output>
+        </div>
+        <input id="wheels" type="range" min="4" max="18" step="1" value="6">
+        <div class="note" style="margin-top:8px">
+          Typical: bus 6–10, truck 6–18 depending on axles/trailer.
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="mass">Mass \(m\) [kg]</label>
+          <output id="massOut">14000</output>
+        </div>
+        <input id="mass" type="range" min="2000" max="40000" step="100" value="14000">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="v0">Speed before braking \(v_0\) [km/h]</label>
+          <output id="v0Out">45</output>
+        </div>
+        <input id="v0" type="range" min="10" max="120" step="1" value="45">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="v1">Speed after braking \(v_1\) [km/h]</label>
+          <output id="v1Out">0</output>
+        </div>
+        <input id="v1" type="range" min="0" max="120" step="1" value="0">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="stops">Stops / major braking events per day</label>
+          <output id="stopsOut">220</output>
+        </div>
+        <input id="stops" type="range" min="0" max="600" step="1" value="220">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="etaE">Electrical recovery efficiency \(\eta_e\) [%]</label>
+          <output id="etaEOut">55</output>
+        </div>
+        <input id="etaE" type="range" min="10" max="85" step="1" value="55">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="suspWh">Suspension harvesting per day [Wh]</label>
+          <output id="suspWhOut">800</output>
+        </div>
+        <input id="suspWh" type="range" min="0" max="6000" step="50" value="800">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="hydWh">Hydraulic accumulator contribution per day [Wh]</label>
+          <output id="hydWhOut">1500</output>
+        </div>
+        <input id="hydWh" type="range" min="0" max="12000" step="100" value="1500">
+        <div class="note" style="margin-top:8px">
+          This is a “bucket” estimate you can size later from pressure/volume. Set to 0 if not used.
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="grid2">
+      <div class="kv">
+        <div>
+          <div class="k">Recovered energy per stop</div>
+          <div class="v" id="perStop">—</div>
+          <div class="mini">includes \(\eta_e\)</div>
+        </div>
+        <span class="tag">⚡</span>
+      </div>
+      <div class="kv">
+        <div>
+          <div class="k">Total recovered per day</div>
+          <div class="v" id="perDay">—</div>
+          <div class="mini">braking + suspension + hydraulic</div>
+        </div>
+        <span class="tag">📅</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <h3>Per-wheel split (equal share demo)</h3>
+    <div class="bars" id="bars"></div>
+
+    <div class="sep"></div>
+
+    <h3>Copyable spec snippet (patent / proposal)</h3>
+    <div class="btnrow">
+      <button id="copyBtn">Copy system description</button>
+      <button class="secondary" id="printBtn">Print / Save as PDF</button>
+      <button class="ghost" id="toggleMathBtn">Show/Hide math</button>
+    </div>
+
+    <div class="monoBox" id="snippet" style="margin-top:10px; display:none;"></div>
+  </section>
+</main>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    try{
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    }catch(e){}
+    init();
+  });
+
+  const el = (id)=>document.getElementById(id);
+  function kmhToMs(kmh){ return kmh/3.6; }
+  function JToWh(J){ return J/3600; }
+
+  const presets = {
+    bus_urban:   { wheels: 8,  mass: 14000, v0: 45, v1: 0,  stops: 260, etaE: 55, suspWh: 900,  hydWh: 1800, label:"Urban Bus (stop-and-go)" },
+    bus_coach:   { wheels: 6,  mass: 16000, v0: 80, v1: 0,  stops: 40,  etaE: 55, suspWh: 450,  hydWh: 300,  label:"Coach Bus (intercity)" },
+    truck_delivery:{wheels: 6, mass: 12000, v0: 40, v1: 0,  stops: 140, etaE: 50, suspWh: 700,  hydWh: 1000, label:"Delivery Truck (stop-and-go)" },
+    truck_highway:{wheels: 18, mass: 32000, v0: 90, v1: 0,  stops: 25,  etaE: 45, suspWh: 600,  hydWh: 400,  label:"Highway Truck (mostly cruise)" }
+  };
+
+  function setPreset(key){
+    const p = presets[key];
+    if(!p) return;
+    el("wheels").value = p.wheels;
+    el("mass").value = p.mass;
+    el("v0").value = p.v0;
+    el("v1").value = p.v1;
+    el("stops").value = p.stops;
+    el("etaE").value = p.etaE;
+    el("suspWh").value = p.suspWh;
+    el("hydWh").value = p.hydWh;
+    el("vehicleOut").textContent = p.label;
+  }
+
+  function calc(){
+    const wheels = +el("wheels").value;
+    const m = +el("mass").value;
+    const v0 = +el("v0").value;
+    const v1 = +el("v1").value;
+    const stops = +el("stops").value;
+    const etaE = (+el("etaE").value)/100;
+    const suspWh = +el("suspWh").value;
+    const hydWh = +el("hydWh").value;
+
+    el("wheelsOut").textContent = wheels;
+    el("massOut").textContent = m;
+    el("v0Out").textContent = v0;
+    el("v1Out").textContent = v1;
+    el("stopsOut").textContent = stops;
+    el("etaEOut").textContent = Math.round(etaE*100);
+    el("suspWhOut").textContent = suspWh;
+    el("hydWhOut").textContent = hydWh;
+
+    const v0ms = kmhToMs(v0);
+    const v1ms = kmhToMs(v1);
+
+    const dEk = 0.5*m*(v0ms*v0ms - v1ms*v1ms); // J
+    const dEkPos = Math.max(0, dEk);
+    const perStopWh = JToWh(dEkPos)*etaE;
+
+    const dayWh = perStopWh*stops + (+suspWh) + (+hydWh);
+    el("perStop").textContent = perStopWh.toFixed(1) + " Wh";
+    el("perDay").textContent = (dayWh/1000).toFixed(2) + " kWh";
+
+    // per-wheel bars (equal share demo)
+    const perWheelDayWh = wheels > 0 ? (dayWh / wheels) : 0;
+    const bars = el("bars");
+    bars.innerHTML = "";
+    const maxRef = Math.max(1, perWheelDayWh); // avoid 0
+    for(let i=1;i<=wheels;i++){
+      const pct = Math.min(100, (perWheelDayWh / maxRef) * 100); // uniform, but keeps visuals
+      const div = document.createElement("div");
+      div.className = "bar";
+      div.innerHTML = `
+        <div class="top">
+          <div class="name">Wheel ${i}</div>
+          <div class="val">${(perWheelDayWh).toFixed(0)} Wh/day</div>
+        </div>
+        <div class="track"><div class="fill" style="width:${pct}%;"></div></div>
+      `;
+      bars.appendChild(div);
+    }
+
+    // snippet
+    const snippet =
+`Heavy Vehicle Distributed Energy Recovery System (bus/truck):
+A plurality of wheel modules (N=${wheels}) are integrated at the wheels/axles. Each wheel module includes:
+(i) an energy conversion unit configured for regenerative braking and/or regenerative suspension damping,
+(ii) a local buffer battery (or supercapacitor) for fast charge/discharge,
+(iii) a wheel controller communicating over vehicle network (e.g., CAN/LIN) for balancing and safety.
+
+A central “Energy Core” includes a main battery pack, DC/DC conversion, protection/isolation, and a balancing controller.
+Recovered energy is aggregated from wheel modules into the Energy Core to supply drivetrain assist and auxiliary loads.
+The architecture is fail-operational: if the Energy Core is limited or isolated, wheel modules can continue powering
+critical functions and maintaining stability.
+
+Optional hydraulic subsystem: a pressure accumulator stores energy during braking (pressure build-up) and releases it
+during launch/acceleration, improving stop-and-go efficiency for heavy vehicles.
+
+Example sizing from this page:
+m=${m} kg, v0=${v0} km/h to v1=${v1} km/h, ηe=${Math.round(etaE*100)}%,
+per stop ≈ ${perStopWh.toFixed(1)} Wh, stops/day=${stops},
+daily recovered ≈ ${(dayWh/1000).toFixed(2)} kWh (suspension ${suspWh} Wh + hydraulic ${hydWh} Wh).`;
+    el("snippet").textContent = snippet;
+  }
+
+  function init(){
+    // preset selector
+    el("vehicle").addEventListener("change", ()=>{
+      const key = el("vehicle").value;
+      if(key !== "custom"){
+        setPreset(key);
+      }else{
+        el("vehicleOut").textContent = "Custom";
+      }
+      calc();
+    });
+
+    // initial preset
+    setPreset(el("vehicle").value);
+
+    ["wheels","mass","v0","v1","stops","etaE","suspWh","hydWh"].forEach(id=>{
+      el(id).addEventListener("input", ()=>{
+        el("vehicle").value = "custom";
+        el("vehicleOut").textContent = "Custom";
+        calc();
+      });
+    });
+
+    calc();
+
+    el("copyBtn").addEventListener("click", async ()=>{
+      el("snippet").style.display = "block";
+      try{
+        await navigator.clipboard.writeText(el("snippet").textContent);
+        el("copyBtn").textContent = "Copied ✅";
+        setTimeout(()=> el("copyBtn").textContent = "Copy system description", 1200);
+      }catch(e){
+        alert("Clipboard copy failed. You can select and copy manually from the text box.");
+      }
+    });
+
+    el("printBtn").addEventListener("click", ()=> window.print());
+
+    let mathVisible = true;
+    el("toggleMathBtn").addEventListener("click", ()=>{
+      mathVisible = !mathVisible;
+      el("mathBox").style.display = mathVisible ? "block" : "none";
+      el("toggleMathBtn").textContent = mathVisible ? "Show/Hide math" : "Show math";
+    });
+  }
+</script>
+
+</body>
+</html>
