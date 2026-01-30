@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת סולארית-תרמית משולבת עם בקרת עוצמת הארה</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Heebo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a2e38 0%, #1a5276 50%, #2e86c1 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            direction: rtl;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-bottom: 10px solid #f39c12;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #0a2e38;
+            margin-bottom: 15px;
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, #0a2e38, #f39c12);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .main-system {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            height: 700px;
+        }
+        
+        @media (max-width: 1400px) {
+            .main-system {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+        
+        .solar-panel-section {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .environment-control {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .petri-system {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .section-title {
+            color: #0a2e38;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #f39c12;
+            padding-bottom: 10px;
+        }
+        
+        .solar-array {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+            flex-grow: 1;
+            margin: 20px 0;
+            perspective: 1000px;
+        }
+        
+        .solar-cell {
+            background: linear-gradient(135deg, #1a5276, #2e86c1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .solar-cell.active {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.7);
+            animation: solarPulse 2s infinite alternate;
+        }
+        
+        @keyframes solarPulse {
+            0% { box-shadow: 0 0 20px rgba(241, 196, 15, 0.7); }
+            100% { box-shadow: 0 0 40px rgba(241, 196, 15, 0.9), 0 0 60px rgba(241, 196, 15, 0.5); }
+        }
+        
+        .cell-power {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            margin-top: 5px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .sun {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #f1c40f, #f39c12);
+            border-radius: 50%;
+            box-shadow: 0 0 80px #f1c40f;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+        
+        .light-intensity-control {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .intensity-slider-container {
+            margin: 20px 0;
+        }
+        
+        .intensity-slider {
+            width: 100%;
+            height: 30px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #2c3e50, #3498db, #f1c40f, #e74c3c);
+            border-radius: 15px;
+            outline: none;
+        }
+        
+        .intensity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0a2e38;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .intensity-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #0a2e38;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #f39c12;
+        }
+        
+        .environment-presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .env-btn {
+            padding: 18px 10px;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        
+        .night-btn {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+        }
+        
+        .night-btn:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+        
+        .cloudy-btn {
+            background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+        }
+        
+        .cloudy-btn:hover {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+        
+        .sunny-btn {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+        }
+        
+        .sunny-btn:hover {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .optimal-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .optimal-btn:hover {
+            background: linear-gradient(135deg, #27ae60, #219653);
+        }
+        
+        .petri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .petri-card {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            border: 3px solid transparent;
+        }
+        
+        .petri-card.active {
+            border-color: #f39c12;
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .petri-header {
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .solar-petri-header {
+            background: linear-gradient(90deg, #1a5276, #2e86c1);
+        }
+        
+        .thermal-petri-header {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        
+        .cryo-petri-header {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+        }
+        
+        .petri-dish-container {
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            position: relative;
+        }
+        
+        .petri-dish {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f8f9fa, #e9ecef);
+            border: 8px solid #dee2e6;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .petri-content {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .phase-indicator {
+            position: absolute;
+            top: 8px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            font-size: 0.7rem;
+        }
+        
+        .temperature-display {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            font-size: 0.8rem;
+        }
+        
+        .energy-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #f39c12;
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0a2e38;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .system-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .system-btn {
+            padding: 18px 10px;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1rem;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(135deg, #27ae60, #219653);
+        }
+        
+        .stop-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .stop-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+        
+        .auto-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .auto-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #2471a3);
+        }
+        
+        .storage-section {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+        
+        .storage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .storage-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-top: 6px solid #f39c12;
+        }
+        
+        .storage-card h3 {
+            color: #0a2e38;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .battery-container {
+            position: relative;
+            width: 150px;
+            height: 80px;
+            border: 6px solid #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+        
+        .battery-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(0deg, #2ecc71, #27ae60);
+            transition: height 0.5s ease;
+        }
+        
+        .battery-terminal {
+            position: absolute;
+            top: -12px;
+            right: 50px;
+            width: 40px;
+            height: 12px;
+            background: #333;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .carbon-credit {
+            display: inline-block;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .thermoelectric {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 12px;
+            background: linear-gradient(90deg, #7f8c8d, #95a5a6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.5rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .solar-progress {
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+        }
+        
+        .thermal-progress {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        
+        .cryo-progress {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 1rem;
+            margin-top: 40px;
+            background: rgba(10, 46, 56, 0.8);
+            border-radius: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-system {
+                grid-template-columns: 1fr;
+            }
+            
+            .solar-array {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .environment-presets {
+                grid-template-columns: 1fr;
+            }
+            
+            .petri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .energy-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            opacity: 0.7;
+            transition: all 2s ease;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            width: 3px;
+            height: 15px;
+            background: #3498db;
+            border-radius: 50%;
+            animation: rainFall 1.5s linear infinite;
+        }
+        
+        @keyframes rainFall {
+            0% { transform: translateY(-20px); opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0; }
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px white;
+            animation: twinkle 3s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+        
+        .energy-flow-line {
+            position: absolute;
+            background: #f1c40f;
+            border-radius: 2px;
+            animation: energyFlow 2s linear infinite;
+        }
+        
+        @keyframes energyFlow {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sun"></i> מערכת סולארית-תרמית משולבת עם בקרת עוצמת הארה</h1>
+            <p class="subtitle">קולטים סולאריים הרגישים לתנאי הסביבה, המשולבים עם טכנולוגיות PCM וקרוגניות</p>
+            <div class="carbon-credit">
+                <i class="fas fa-solar-panel"></i> תפוקה מותאמת לתנאי תאורה | יעילות מרבית בכל סביבה
+            </div>
+        </header>
+        
+        <div class="main-system">
+            <div class="solar-panel-section">
+                <h2 class="section-title">
+                    <i class="fas fa-solar-panel"></i> מערך סולארי רגיש
+                </h2>
+                <p>קולטים סולאריים המגיבים לעוצמת ההארה בסביבה ומתאימים את תפוקתם באופן דינמי</p>
+                
+                <div class="solar-array" id="solarArray">
+                    <!-- תאים סולאריים יוטענו דרך JavaScript -->
+                </div>
+                
+                <div class="sun" id="sun"></div>
+                
+                <div class="light-intensity-control">
+                    <h3 style="color: #0a2e38; margin-bottom: 15px; text-align: center;">
+                        <i class="fas fa-lightbulb"></i> עוצמת הארה סביבתית
+                    </h3>
+                    <div class="intensity-slider-container">
+                        <input type="range" min="0" max="1000" value="500" class="intensity-slider" id="intensitySlider">
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; color: #666;">
+                            <span>חשיכה מוחלטת (0 W/m²)</span>
+                            <span>שמש מלאה (1000 W/m²)</span>
+                        </div>
+                    </div>
+                    <div class="intensity-display" id="intensityDisplay">500 W/m²</div>
+                </div>
+            </div>
+            
+            <div class="environment-control">
+                <h2 class="section-title">
+                    <i class="fas fa-cloud-sun"></i> תנאי סביבה
+                </h2>
+                
+                <div class="environment-presets">
+                    <button class="env-btn night-btn" id="nightBtn">
+                        <i class="fas fa-moon"></i>
+                        לילה
+                        <span style="font-size: 0.8rem;">0-50 W/m²</span>
+                    </button>
+                    <button class="env-btn cloudy-btn" id="cloudyBtn">
+                        <i class="fas fa-cloud"></i>
+                        מעונן
+                        <span style="font-size: 0.8rem;">200-400 W/m²</span>
+                    </button>
+                    <button class="env-btn sunny-btn" id="sunnyBtn">
+                        <i class="fas fa-sun"></i>
+                        שמש מלאה
+                        <span style="font-size: 0.8rem;">800-1000 W/m²</span>
+                    </button>
+                    <button class="env-btn optimal-btn" id="optimalBtn">
+                        <i class="fas fa-chart-line"></i>
+                        תנאי שיא
+                        <span style="font-size: 0.8rem;">600-800 W/m²</span>
+                    </button>
+                </div>
+                
+                <div class="energy-metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">הספק סולארי נוכחי</div>
+                        <div class="metric-value" id="solarPower">0 W</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill solar-progress" id="solarProgress" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">יעילות המערכת</div>
+                        <div class="metric-value" id="systemEfficiency">0%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill solar-progress" id="efficiencyProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px;">
+                    <h3 style="color: #0a2e38; margin-bottom: 15px;">
+                        <i class="fas fa-bolt"></i> ניצול אנרגיה
+                    </h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>אנרגיה סולארית מופקת:</span>
+                        <strong id="solarEnergy">0 kWh</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>אנרגיה תרמית מאוחסנת:</span>
+                        <strong id="thermalEnergy">0 kWh</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>אנרגיה קרוגנית מאוחסנת:</span>
+                        <strong id="cryoEnergy">0 kWh</strong>
+                    </div>
+                </div>
+                
+                <div class="system-controls">
+                    <button class="system-btn start-btn" id="startBtn">
+                        <i class="fas fa-play"></i>
+                        הפעל מערכת
+                    </button>
+                    <button class="system-btn stop-btn" id="stopBtn">
+                        <i class="fas fa-stop"></i>
+                        עצור מערכת
+                    </button>
+                    <button class="system-btn auto-btn" id="autoBtn">
+                        <i class="fas fa-robot"></i>
+                        מצב אוטומטי
+                    </button>
+                </div>
+            </div>
+            
+            <div class="petri-system">
+                <h2 class="section-title">
+                    <i class="fas fa-vial"></i> צלחות פטרי תרמו-סולאריות
+                </h2>
+                <p>צלחות פטרי עם חומרים מגיבים לטמפרטורה, המונעות מאנרגיה סולארית</p>
+                
+                <div class="petri-grid" id="petriGrid">
+                    <!-- צלחות פטרי יוטענו דרך JavaScript -->
+                </div>
+                
+                <div class="energy-metrics" style="margin-top: 20px;">
+                    <div class="metric-card">
+                        <div class="metric-label">טמפרטורה ממוצעת</div>
+                        <div class="metric-value" id="avgTemperature">25°C</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill thermal-progress" id="tempProgress" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">פחמן שנחסך</div>
+                        <div class="metric-value" id="carbonSaved">0 ק"ג</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill cryo-progress" id="carbonProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="storage-section">
+            <h2 class="section-title">
+                <i class="fas fa-battery-full"></i> מערכות אגירת אנרגיה משולבות
+            </h2>
+            
+            <div class="storage-grid">
+                <div class="storage-card">
+                    <h3><i class="fas fa-sun"></i> אגירה סולארית ישירה</h3>
+                    <p>אגירת אנרגיה סולארית בסוללות לטווח קצר לשימוש מיידי</p>
+                    <div class="battery-container">
+                        <div class="battery-terminal"></div>
+                        <div class="battery-level" id="solarBattery" style="height: 60%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <span>טעינה: </span><strong id="solarCharge">60%</strong>
+                    </div>
+                </div>
+                
+                <div class="storage-card">
+                    <h3><i class="fas fa-temperature-high"></i> אגירה תרמית (PCM)</h3>
+                    <p>אגירת אנרגיה בחומרים משני-פאזה לטמפרטורות בינוניות (20-80°C)</p>
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>חומר פעיל:</span>
+                            <strong>פאראפין RT-42</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>קיבולת אגירה:</span>
+                            <strong>180 kJ/kg</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="margin-top: 20px;">
+                        <div class="progress-fill thermal-progress" id="pcmStorage" style="width: 45%"></div>
+                    </div>
+                </div>
+                
+                <div class="storage-card">
+                    <h3><i class="fas fa-snowflake"></i> אגירה קרוגנית (חנקן נוזלי)</h3>
+                    <p>אגירת אנרגיה בטמפרטורות נמוכות מאוד (-196°C) לטווח ארוך</p>
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>נפח מיכל:</span>
+                            <strong>500 ליטר LN₂</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>קיבולת אגירה:</span>
+                            <strong>200 Wh/kg</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="margin-top: 20px;">
+                        <div class="progress-fill cryo-progress" id="cryoStorage" style="width: 30%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>מערכת סולארית-תרמית משולבת עם בקרת עוצמת הארה | טכנולוגיה אדפטיבית לסביבות משתנות</p>
+            <p>© 2023 - מעבדת אנרגיה מתחדשת אדפטיבית | הפקולטה להנדסת אנרגיה, הטכניון</p>
+        </footer>
+    </div>
+
+    <script>
+        // נתוני החומרים במערכת
+        const petriMaterials = [
+            {
+                id: 1,
+                name: "קולט סולארי ננו-מבני",
+                type: "solar",
+                color: "#1a5276",
+                efficiency: 22, // אחוז
+                temperatureCoefficient: -0.3, // %/°C
+                optimalTemp: 25,
+                description: "קולט סולארי עם ננו-מבנים להגברת בליעת אור"
+            },
+            {
+                id: 2,
+                name: "פאראפין RT-25",
+                type: "thermal",
+                colorSolid: "#ffd8a8",
+                colorLiquid: "#ffa94d",
+                meltingPoint: 25,
+                heatStorage: 180,
+                carbonReduction: 0.12,
+                description: "לאגירת אנרגיה תרמית בינונית"
+            },
+            {
+                id: 3,
+                name: "פאראפין RT-42",
+                type: "thermal",
+                colorSolid: "#ffc9c9",
+                colorLiquid: "#ff6b6b",
+                meltingPoint: 42,
+                heatStorage: 200,
+                carbonReduction: 0.15,
+                description: "לאגירת אנרגיה תרמית גבוהה"
+            },
+            {
+                id: 4,
+                name: "הידראט מלח",
+                type: "thermal",
+                colorSolid: "#a3d5ff",
+                colorLiquid: "#4dabf7",
+                meltingPoint: 29,
+                heatStorage: 190,
+                carbonReduction: 0.18,
+                description: "לשימוש בתעשייה"
+            },
+            {
+                id: 5,
+                name: "חנקן נוזלי",
+                type: "cryo",
+                colorLiquid: "#a3d5ff",
+                colorGas: "#e7f5ff",
+                boilingPoint: -196,
+                energyStorage: 200,
+                carbonCapture: 0.8,
+                description: "אגירת אנרגיה קרוגנית"
+            },
+            {
+                id: 6,
+                name: "CO₂ מוצק",
+                type: "cryo",
+                colorSolid: "#ced4da",
+                colorGas: "#f8f9fa",
+                sublimationPoint: -78,
+                energyStorage: 250,
+                carbonCapture: 1.0,
+                description: "לכידת פחמן ואגירה"
+            }
+        ];
+
+        // מצב המערכת
+        let systemRunning = false;
+        let autoMode = false;
+        let lightIntensity = 500; // W/m²
+        let solarPower = 0; // W
+        let solarEnergy = 0; // kWh
+        let thermalEnergy = 0; // kWh
+        let cryoEnergy = 0; // kWh
+        let systemEfficiency = 0; // %
+        let avgTemperature = 25; // °C
+        let carbonSaved = 0; // kg
+        let solarBatteryLevel = 60; // %
+        let pcmStorageLevel = 45; // %
+        let cryoStorageLevel = 30; // %
+        let systemTimer = null;
+        let environment = "sunny"; // night, cloudy, sunny, optimal
+        let clouds = [];
+        let stars = [];
+        let rainDrops = [];
+
+        // אלמנטים DOM
+        const solarArray = document.getElementById('solarArray');
+        const sun = document.getElementById('sun');
+        const intensitySlider = document.getElementById('intensitySlider');
+        const intensityDisplay = document.getElementById('intensityDisplay');
+        const nightBtn = document.getElementById('nightBtn');
+        const cloudyBtn = document.getElementById('cloudyBtn');
+        const sunnyBtn = document.getElementById('sunnyBtn');
+        const optimalBtn = document.getElementById('optimalBtn');
+        const solarPowerDisplay = document.getElementById('solarPower');
+        const systemEfficiencyDisplay = document.getElementById('systemEfficiency');
+        const solarProgress = document.getElementById('solarProgress');
+        const efficiencyProgress = document.getElementById('efficiencyProgress');
+        const solarEnergyDisplay = document.getElementById('solarEnergy');
+        const thermalEnergyDisplay = document.getElementById('thermalEnergy');
+        const cryoEnergyDisplay = document.getElementById('cryoEnergy');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const autoBtn = document.getElementById('autoBtn');
+        const petriGrid = document.getElementById('petriGrid');
+        const avgTemperatureDisplay = document.getElementById('avgTemperature');
+        const carbonSavedDisplay = document.getElementById('carbonSaved');
+        const tempProgress = document.getElementById('tempProgress');
+        const carbonProgress = document.getElementById('carbonProgress');
+        const solarBattery = document.getElementById('solarBattery');
+        const solarChargeDisplay = document.getElementById('solarCharge');
+        const pcmStorage = document.getElementById('pcmStorage');
+        const cryoStorage = document.getElementById('cryoStorage');
+
+        // אתחול מערך סולארי
+        function initializeSolarArray() {
+            solarArray.innerHTML = '';
+            
+            // יצירת 9 תאים סולאריים (3x3)
+            for (let i = 0; i < 9; i++) {
+                const solarCell = document.createElement('div');
+                solarCell.className = 'solar-cell';
+                solarCell.dataset.id = i;
+                
+                // יצירת פסים סולאריים בתוך התא
+                for (let j = 0; j < 5; j++) {
+                    const solarStrip = document.createElement('div');
+                    solarStrip.style.width = '90%';
+                    solarStrip.style.height = '15%';
+                    solarStrip.style.margin = '2% 0';
+                    solarStrip.style.background = 'linear-gradient(90deg, #1a5276, #2e86c1)';
+                    solarStrip.style.borderRadius = '3px';
+                    solarStrip.style.transition = 'all 0.5s ease';
+                    solarStrip.dataset.strip = j;
+                    solarCell.appendChild(solarStrip);
+                }
+                
+                const cellPower = document.createElement('div');
+                cellPower.className = 'cell-power';
+                cellPower.id = `cellPower${i}`;
+                cellPower.textContent = '0 W';
+                solarCell.appendChild(cellPower);
+                
+                solarArray.appendChild(solarCell);
+            }
+            
+            updateSolarArray();
+        }
+
+        // עדכון המערך הסולארי לפי עוצמת ההארה
+        function updateSolarArray() {
+            const solarCells = document.querySelectorAll('.solar-cell');
+            const efficiency = calculateSolarEfficiency();
+            
+            solarCells.forEach((cell, index) => {
+                const strips = cell.querySelectorAll('div[data-strip]');
+                const cellPower = document.getElementById(`cellPower${index}`);
+                
+                // חישוב הספק תא בודד
+                const cellArea = 0.1; // m² (הנחה)
+                const cellEfficiency = efficiency * (0.9 + Math.random() * 0.2); // שונות בין תאים
+                const cellPowerValue = lightIntensity * cellArea * cellEfficiency;
+                
+                // עדכון תצוגת הספק
+                cellPower.textContent = `${cellPowerValue.toFixed(1)} W`;
+                
+                // עדכון צבע הפסים לפי עוצמת הארה
+                strips.forEach(strip => {
+                    if (lightIntensity > 0) {
+                        strip.style.background = `linear-gradient(90deg, 
+                            rgba(241, 196, 15, ${0.3 + lightIntensity/1000}), 
+                            rgba(243, 156, 18, ${0.5 + lightIntensity/1500}))`;
+                        strip.style.boxShadow = `0 0 10px rgba(241, 196, 15, ${0.2 + lightIntensity/2000})`;
+                    } else {
+                        strip.style.background = 'linear-gradient(90deg, #1a5276, #2e86c1)';
+                        strip.style.boxShadow = 'none';
+                    }
+                });
+                
+                // הוספת/הסרת מחלקת active
+                if (lightIntensity > 100) {
+                    cell.classList.add('active');
+                } else {
+                    cell.classList.remove('active');
+                }
+            });
+            
+            // חישוב הספק כולל
+            const totalCellArea = 0.9; // m²
+            solarPower = lightIntensity * totalCellArea * efficiency;
+            
+            // עדכון שמש
+            updateSun();
+            
+            // עדכון תצוגות
+            solarPowerDisplay.textContent = `${solarPower.toFixed(1)} W`;
+            solarProgress.style.width = `${Math.min(100, solarPower / 200 * 100)}%`;
+            
+            // עדכון מערכת לפי עוצמת הארה
+            updateSystemByLightIntensity();
+        }
+
+        // חישוב יעילות סולארית לפי תנאים
+        function calculateSolarEfficiency() {
+            let baseEfficiency = 0.22; // 22%
+            
+            // השפעת טמפרטורה (יעילות יורדת כשחם יותר)
+            const tempEffect = 1 + (avgTemperature - 25) * -0.003;
+            
+            // השפעת עוצמת הארה (יעילות מעט יורדת בעוצמות גבוהות מאוד)
+            let intensityEffect = 1;
+            if (lightIntensity > 800) {
+                intensityEffect = 0.95;
+            } else if (lightIntensity < 100) {
+                intensityEffect = 0.7;
+            }
+            
+            return baseEfficiency * tempEffect * intensityEffect;
+        }
+
+        // עדכון השמש לפי עוצמת הארה
+        function updateSun() {
+            const sunSize = 100 + (lightIntensity / 1000 * 100);
+            const sunBrightness = lightIntensity / 1000 * 100;
+            
+            sun.style.width = `${sunSize}px`;
+            sun.style.height = `${sunSize}px`;
+            sun.style.boxShadow = `0 0 ${20 + sunBrightness}px #f1c40f, 0 0 ${40 + sunBrightness}px rgba(241, 196, 15, 0.7)`;
+            
+            // מיקום שמש לפי שעה וירטואלית
+            const hour = (Date.now() / 3600000) % 24;
+            const sunX = 50 + Math.sin(hour * Math.PI / 12) * 40;
+            const sunY = 50 + Math.cos(hour * Math.PI / 12) * 30;
+            
+            sun.style.right = `${sunX}%`;
+            sun.style.top = `${sunY}px`;
+        }
+
+        // עדכון תנאי סביבה
+        function updateEnvironment(env) {
+            environment = env;
+            
+            // הסרת אפקטים קודמים
+            removeEnvironmentEffects();
+            
+            // עדכון עוצמת הארה לפי סביבה
+            switch(env) {
+                case 'night':
+                    lightIntensity = 10 + Math.random() * 40;
+                    createStars();
+                    break;
+                case 'cloudy':
+                    lightIntensity = 200 + Math.random() * 200;
+                    createClouds();
+                    createRain();
+                    break;
+                case 'sunny':
+                    lightIntensity = 800 + Math.random() * 200;
+                    break;
+                case 'optimal':
+                    lightIntensity = 600 + Math.random() * 200;
+                    break;
+            }
+            
+            // עדכון מחוון
+            intensitySlider.value = lightIntensity;
+            intensityDisplay.textContent = `${lightIntensity.toFixed(0)} W/m²`;
+            
+            // עדכון כפתורים פעילים
+            [nightBtn, cloudyBtn, sunnyBtn, optimalBtn].forEach(btn => {
+                btn.style.transform = 'scale(1)';
+                btn.style.opacity = '1';
+            });
+            
+            switch(env) {
+                case 'night':
+                    nightBtn.style.transform = 'scale(1.05)';
+                    nightBtn.style.opacity = '0.9';
+                    break;
+                case 'cloudy':
+                    cloudyBtn.style.transform = 'scale(1.05)';
+                    cloudyBtn.style.opacity = '0.9';
+                    break;
+                case 'sunny':
+                    sunnyBtn.style.transform = 'scale(1.05)';
+                    sunnyBtn.style.opacity = '0.9';
+                    break;
+                case 'optimal':
+                    optimalBtn.style.transform = 'scale(1.05)';
+                    optimalBtn.style.opacity = '0.9';
+                    break;
+            }
+            
+            // עדכון מערך סולארי
+            updateSolarArray();
+        }
+
+        // יצירת כוכבים ללילה
+        function createStars() {
+            stars = [];
+            const environmentControl = document.querySelector('.environment-control');
+            
+            for (let i = 0; i < 30; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 80 + 10;
+                const delay = Math.random() * 3;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.animationDelay = `${delay}s`;
+                
+                environmentControl.appendChild(star);
+                stars.push(star);
+            }
+        }
+
+        // יצירת עננים
+        function createClouds() {
+            clouds = [];
+            const environmentControl = document.querySelector('.environment-control');
+            
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                const size = Math.random() * 60 + 40;
+                const left = Math.random() * 100;
+                const top = Math.random() * 50 + 10;
+                const opacity = 0.5 + Math.random() * 0.3;
+                
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size * 0.5}px`;
+                cloud.style.left = `${left}%`;
+                cloud.style.top = `${top}%`;
+                cloud.style.opacity = opacity;
+                
+                // אנימציית תנועה
+                cloud.animate([
+                    { transform: `translateX(${Math.random() * 100}px)` },
+                    { transform: `translateX(${-Math.random() * 100}px)` }
+                ], {
+                    duration: 20000 + Math.random() * 20000,
+                    iterations: Infinity,
+                    direction: 'alternate'
+                });
+                
+                environmentControl.appendChild(cloud);
+                clouds.push(cloud);
+            }
+        }
+
+        // יצירת גשם
+        function createRain() {
+            rainDrops = [];
+            const environmentControl = document.querySelector('.environment-control');
+            
+            for (let i = 0; i < 20; i++) {
+                const rainDrop = document.createElement('div');
+                rainDrop.className = 'rain-drop';
+                const left = Math.random() * 100;
+                const delay = Math.random() * 2;
+                
+                rainDrop.style.left = `${left}%`;
+                rainDrop.style.animationDelay = `${delay}s`;
+                
+                environmentControl.appendChild(rainDrop);
+                rainDrops.push(rainDrop);
+            }
+        }
+
+        // הסרת אפקטי סביבה
+        function removeEnvironmentEffects() {
+            stars.forEach(star => star.remove());
+            stars = [];
+            
+            clouds.forEach(cloud => cloud.remove());
+            clouds = [];
+            
+            rainDrops.forEach(drop => drop.remove());
+            rainDrops = [];
+        }
+
+        // אתחול צלחות פטרי
+        function initializePetriGrid() {
+            petriGrid.innerHTML = '';
+            
+            petriMaterials.forEach((material, index) => {
+                const petriCard = document.createElement('div');
+                petriCard.className = 'petri-card';
+                if (index === 0) petriCard.classList.add('active');
+                petriCard.dataset.id = material.id;
+                
+                let headerClass = '';
+                switch(material.type) {
+                    case 'solar': headerClass = 'solar-petri-header'; break;
+                    case 'thermal': headerClass = 'thermal-petri-header'; break;
+                    case 'cryo': headerClass = 'cryo-petri-header'; break;
+                }
+                
+                petriCard.innerHTML = `
+                    <div class="petri-header ${headerClass}">
+                        <h4>${material.name}</h4>
+                        <p style="font-size: 0.7rem;">${material.type === 'solar' ? material.efficiency + '% יעילות' : 
+                          material.type === 'thermal' ? 'התכה: ' + material.meltingPoint + '°C' : 
+                          'רתיחה: ' + material.boilingPoint + '°C'}</p>
+                    </div>
+                    <div class="petri-dish-container">
+                        <div class="petri-dish" id="petriDish${material.id}">
+                            <div class="petri-content" id="petriContent${material.id}">
+                                <div class="phase-indicator" id="phaseIndicator${material.id}">
+                                    ${material.type === 'solar' ? 'פעיל' : 
+                                      material.type === 'thermal' ? 'מוצק' : 'נוזל'}
+                                </div>
+                                <div class="temperature-display" id="tempDisplay${material.id}">
+                                    ${material.type === 'solar' ? material.optimalTemp + '°C' : 
+                                      material.type === 'thermal' ? material.meltingPoint + '°C' : 
+                                      material.boilingPoint + '°C'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="thermoelectric" id="teg${material.id}">
+                            ${material.type === 'solar' ? 'PV' : 
+                              material.type === 'thermal' ? 'TEG' : 'CRYO'}
+                        </div>
+                    </div>
+                    <div style="padding: 12px; text-align: center; background: #f8f9fa; font-size: 0.7rem; color: #666;">
+                        ${material.description}
+                    </div>
+                `;
+                
+                petriGrid.appendChild(petriCard);
+                
+                // עדכון הצלחת
+                updatePetriDish(material.id);
+            });
+        }
+
+        // עדכון צלחת פטרי
+        function updatePetriDish(id) {
+            const material = petriMaterials.find(m => m.id === id);
+            if (!material) return;
+            
+            const content = document.getElementById(`petriContent${id}`);
+            const phaseIndicator = document.getElementById(`phaseIndicator${id}`);
+            const tempDisplay = document.getElementById(`tempDisplay${id}`);
+            const teg = document.getElementById(`teg${id}`);
+            
+            if (material.type === 'solar') {
+                // צלחת סולארית
+                const solarActivity = Math.min(1, lightIntensity / 800);
+                const solarColor = `rgba(26, 82, 118, ${0.3 + solarActivity * 0.7})`;
+                
+                content.style.background = `radial-gradient(circle at 30% 30%, ${solarColor}, #1a5276)`;
+                tempDisplay.textContent = `${avgTemperature.toFixed(1)}°C`;
+                
+                if (solarActivity > 0.1) {
+                    teg.style.background = `linear-gradient(90deg, #f1c40f, #f39c12)`;
+                    teg.style.boxShadow = `0 0 10px rgba(241, 196, 15, 0.7)`;
+                    
+                    // אנימציית זרימת אנרגיה
+                    createEnergyFlow(id);
+                } else {
+                    teg.style.background = `linear-gradient(90deg, #7f8c8d, #95a5a6)`;
+                    teg.style.boxShadow = `0 5px 15px rgba(0, 0, 0, 0.2)`;
+                }
+            } else if (material.type === 'thermal') {
+                // צלחת תרמית (PCM)
+                const phase = avgTemperature > material.meltingPoint ? 'נוזל' : 'מוצק';
+                const color = phase === 'נוזל' ? material.colorLiquid : material.colorSolid;
+                const fillLevel = Math.min(1, Math.max(0, (avgTemperature - (material.meltingPoint - 10)) / 20));
+                
+                content.style.background = `radial-gradient(circle at 30% 30%, ${color}, ${darkenColor(color, 30)})`;
+                phaseIndicator.textContent = phase;
+                tempDisplay.textContent = `${avgTemperature.toFixed(1)}°C`;
+                
+                if (phase === 'נוזל' && fillLevel > 0.5) {
+                    teg.style.background = `linear-gradient(90deg, #e74c3c, #c0392b)`;
+                    teg.style.boxShadow = `0 0 10px rgba(231, 76, 60, 0.7)`;
+                } else {
+                    teg.style.background = `linear-gradient(90deg, #7f8c8d, #95a5a6)`;
+                    teg.style.boxShadow = `0 5px 15px rgba(0, 0, 0, 0.2)`;
+                }
+            } else if (material.type === 'cryo') {
+                // צלחת קרוגנית
+                const phase = avgTemperature < material.boilingPoint ? 'נוזל' : 'גז';
+                const color = phase === 'נוזל' ? material.colorLiquid : material.colorGas;
+                
+                content.style.background = `radial-gradient(circle at 30% 30%, ${color}, ${darkenColor(color, 30)})`;
+                phaseIndicator.textContent = phase;
+                tempDisplay.textContent = `${avgTemperature.toFixed(1)}°C`;
+                
+                if (phase === 'גז' && avgTemperature > material.boilingPoint + 10) {
+                    teg.style.background = `linear-gradient(90deg, #3498db, #2980b9)`;
+                    teg.style.boxShadow = `0 0 10px rgba(52, 152, 219, 0.7)`;
+                } else {
+                    teg.style.background = `linear-gradient(90deg, #7f8c8d, #95a5a6)`;
+                    teg.style.boxShadow = `0 5px 15px rgba(0, 0, 0, 0.2)`;
+                }
+            }
+        }
+
+        // יצירת אנימציית זרימת אנרגיה
+        function createEnergyFlow(id) {
+            const content = document.getElementById(`petriContent${id}`);
+            
+            // הסרת אנימציות קודמות
+            content.querySelectorAll('.energy-flow-line').forEach(el => el.remove());
+            
+            if (lightIntensity > 100) {
+                for (let i = 0; i < 3; i++) {
+                    const flowLine = document.createElement('div');
+                    flowLine.className = 'energy-flow-line';
+                    const width = Math.random() * 4 + 2;
+                    const left = Math.random() * 80 + 10;
+                    const duration = Math.random() * 1 + 1;
+                    
+                    flowLine.style.width = `${width}px`;
+                    flowLine.style.height = '20px';
+                    flowLine.style.left = `${left}%`;
+                    flowLine.style.animationDuration = `${duration}s`;
+                    
+                    content.appendChild(flowLine);
+                }
+            }
+        }
+
+        // עדכון מערכת לפי עוצמת הארה
+        function updateSystemByLightIntensity() {
+            if (!systemRunning) return;
+            
+            // עדכון טמפרטורה ממוצעת לפי עוצמת הארה
+            const tempChange = (lightIntensity - 500) / 5000;
+            avgTemperature = Math.max(-50, Math.min(100, avgTemperature + tempChange));
+            
+            // עדכון אנרגיה מופקת
+            const timeStep = 0.1; // דקות וירטואליות
+            solarEnergy += (solarPower / 1000) * (timeStep / 60); // ל-kWh
+            thermalEnergy += (solarPower > 100 ? 0.001 : 0) * timeStep;
+            cryoEnergy += (solarPower > 300 ? 0.002 : 0) * timeStep;
+            
+            // עדכון יעילות מערכת
+            systemEfficiency = calculateSolarEfficiency() * 100;
+            
+            // עדכון פחמן שנחסך
+            carbonSaved = solarEnergy * 0.5; // הנחה: 0.5 ק"ג CO₂ ל-kWh
+            
+            // עדכון רמות אגירה
+            if (solarPower > 50) {
+                solarBatteryLevel = Math.min(100, solarBatteryLevel + 0.5);
+                pcmStorageLevel = Math.min(100, pcmStorageLevel + 0.3);
+                cryoStorageLevel = Math.min(100, cryoStorageLevel + 0.2);
+            } else {
+                solarBatteryLevel = Math.max(0, solarBatteryLevel - 0.1);
+                pcmStorageLevel = Math.max(0, pcmStorageLevel - 0.05);
+                cryoStorageLevel = Math.max(0, cryoStorageLevel - 0.03);
+            }
+            
+            // עדכון תצוגות
+            updateDisplays();
+            
+            // עדכון צלחות פטרי
+            petriMaterials.forEach(material => {
+                updatePetriDish(material.id);
+            });
+            
+            // אם במצב אוטומטי, עדכון תנאי סביבה אקראי
+            if (autoMode && Math.random() < 0.01) {
+                const environments = ['night', 'cloudy', 'sunny', 'optimal'];
+                const randomEnv = environments[Math.floor(Math.random() * environments.length)];
+                updateEnvironment(randomEnv);
+            }
+        }
+
+        // עדכון תצוגות
+        function updateDisplays() {
+            // עדכון מדדי אנרגיה
+            solarEnergyDisplay.textContent = `${solarEnergy.toFixed(3)} kWh`;
+            thermalEnergyDisplay.textContent = `${thermalEnergy.toFixed(3)} kWh`;
+            cryoEnergyDisplay.textContent = `${cryoEnergy.toFixed(3)} kWh`;
+            
+            systemEfficiencyDisplay.textContent = `${systemEfficiency.toFixed(1)}%`;
+            efficiencyProgress.style.width = `${systemEfficiency}%`;
+            
+            // עדכון מדדי טמפרטורה ופחמן
+            avgTemperatureDisplay.textContent = `${avgTemperature.toFixed(1)}°C`;
+            tempProgress.style.width = `${Math.max(0, Math.min(100, (avgTemperature + 50) / 150 * 100))}%`;
+            
+            carbonSavedDisplay.textContent = `${carbonSaved.toFixed(1)} ק"ג`;
+            carbonProgress.style.width = `${Math.min(100, carbonSaved / 10 * 100)}%`;
+            
+            // עדכון אגירה
+            solarBattery.style.height = `${solarBatteryLevel}%`;
+            solarChargeDisplay.textContent = `${solarBatteryLevel.toFixed(0)}%`;
+            pcmStorage.style.width = `${pcmStorageLevel}%`;
+            cryoStorage.style.width = `${cryoStorageLevel}%`;
+        }
+
+        // התחלת פעולת המערכת
+        function startSystem() {
+            if (systemRunning) return;
+            
+            systemRunning = true;
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // הפעלת טיימר לעדכון המערכת
+            systemTimer = setInterval(() => {
+                updateSystemByLightIntensity();
+            }, 500);
+        }
+
+        // עצירת המערכת
+        function stopSystem() {
+            systemRunning = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            autoMode = false;
+            autoBtn.innerHTML = `<i class="fas fa-robot"></i> מצב אוטומטי`;
+            autoBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+            
+            if (systemTimer) {
+                clearInterval(systemTimer);
+                systemTimer = null;
+            }
+        }
+
+        // הפעלת מצב אוטומטי
+        function toggleAutoMode() {
+            autoMode = !autoMode;
+            
+            if (autoMode) {
+                autoBtn.innerHTML = `<i class="fas fa-robot fa-spin"></i> עצור אוטומטי`;
+                autoBtn.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+                
+                // אם המערכת לא פועלת, הפעל אותה
+                if (!systemRunning) {
+                    startSystem();
+                }
+            } else {
+                autoBtn.innerHTML = `<i class="fas fa-robot"></i> מצב אוטומטי`;
+                autoBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+            }
+        }
+
+        // כהה צבע
+        function darkenColor(color, percent) {
+            // פישוט - בפועל צריך להמיר hex ל-rgb
+            return color;
+        }
+
+        // הגדרת מאזיני אירועים
+        function setupEventListeners() {
+            // מחוון עוצמת הארה
+            intensitySlider.addEventListener('input', function() {
+                lightIntensity = parseInt(this.value);
+                intensityDisplay.textContent = `${lightIntensity} W/m²`;
+                updateSolarArray();
+                updateDisplays();
+            });
+            
+            // כפתורי סביבה
+            nightBtn.addEventListener('click', () => updateEnvironment('night'));
+            cloudyBtn.addEventListener('click', () => updateEnvironment('cloudy'));
+            sunnyBtn.addEventListener('click', () => updateEnvironment('sunny'));
+            optimalBtn.addEventListener('click', () => updateEnvironment('optimal'));
+            
+            // כפתורי ניהול מערכת
+            startBtn.addEventListener('click', startSystem);
+            stopBtn.addEventListener('click', stopSystem);
+            autoBtn.addEventListener('click', toggleAutoMode);
+            
+            // עצירת מערכת בתחילה
+            stopBtn.disabled = true;
+        }
+
+        // אתחול המערכת
+        function initializeSystem() {
+            initializeSolarArray();
+            initializePetriGrid();
+            setupEventListeners();
+            updateEnvironment('sunny');
+            updateDisplays();
+            
+            // התחלת מערכת אוטומטית קלה
+            setTimeout(() => {
+                if (!systemRunning) {
+                    startSystem();
+                }
+            }, 1000);
+        }
+
+        // הפעלת המערכת כאשר הדף נטען
+        document.addEventListener('DOMContentLoaded', initializeSystem);
+    </script>
+</body>
+</html>
