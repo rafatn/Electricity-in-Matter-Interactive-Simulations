@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מודל איסוף־אנרגיה מבוזר בגלגלים + הידרו־אגירה</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX (נוסחאות) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#f6f8ff; --bg1:#eef2ff; --bg2:#ecfeff;
+      --card:rgba(255,255,255,.82);
+      --card2:rgba(255,255,255,.62);
+      --text:#0f172a; --muted:#64748b;
+      --line:rgba(148,163,184,.35);
+      --shadow: 0 18px 50px rgba(2,6,23,.10);
+      --shadow2: 0 10px 28px rgba(2,6,23,.08);
+      --accent:#2563eb; --accent2:#06b6d4;
+      --good:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg0:#0b1220; --bg1:#0b1b2e; --bg2:#081b1a;
+        --card:rgba(15,23,42,.72);
+        --card2:rgba(15,23,42,.55);
+        --text:#e5e7eb; --muted:#9ca3af;
+        --line:rgba(148,163,184,.18);
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+        --shadow2: 0 10px 28px rgba(0,0,0,.30);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 0%, var(--bg1), transparent 60%),
+        radial-gradient(1000px 600px at 95% 15%, var(--bg2), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg0));
+      min-height:100vh;
+    }
+    header{
+      padding:28px 16px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .hero{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+    }
+    .title{
+      display:flex; flex-direction:column; gap:8px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      line-height:1.5;
+      max-width: 70ch;
+      margin:0;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    .pill{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: var(--shadow2);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+    }
+    .dot{width:8px; height:8px; border-radius:50%;}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding: 0 16px 40px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr; }
+    }
+    section.card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:14px;
+    }
+    h2{margin:0 0 10px; font-size:18px}
+    h3{margin:14px 0 8px; font-size:15px}
+    p{margin:8px 0; line-height:1.65}
+    ul{margin:8px 0 8px; padding:0 18px 0 0; line-height:1.7}
+    code, pre{
+      font-family: var(--mono);
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:720px){ .grid2{grid-template-columns:1fr} }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:8px 12px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+    }
+    .kv .k{color:var(--muted); font-size:12px}
+    .kv .v{font-weight:700; font-size:14px}
+    .kv .mini{font-weight:600; font-size:12px; color:var(--muted)}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37,99,235,.20), rgba(37,99,235,.10));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      font-weight:650;
+    }
+    button.secondary{
+      background: linear-gradient(180deg, rgba(6,182,212,.18), rgba(6,182,212,.08));
+    }
+    button.ghost{
+      background: transparent;
+    }
+    button:active{transform: translateY(1px)}
+    .note{
+      border:1px dashed var(--line);
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+
+    /* controls */
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .control{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.05);
+    }
+    .control .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+    }
+    .control label{font-weight:700}
+    .control output{font-family:var(--mono); color:var(--muted)}
+    input[type="range"]{width:100%}
+
+    /* diagram */
+    .diagramWrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background: rgba(255,255,255,.04);
+    }
+    .legend{
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      align-items:center;
+    }
+    .lg{display:inline-flex; align-items:center; gap:8px}
+    .swatch{width:14px; height:10px; border-radius:4px; display:inline-block}
+    .sw1{background: rgba(37,99,235,.55)}
+    .sw2{background: rgba(22,163,74,.55)}
+    .sw3{background: rgba(245,158,11,.55)}
+    .sw4{background: rgba(6,182,212,.55)}
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .table th,.table td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+      font-size:13px;
+    }
+    .table th{color:var(--muted); font-weight:700; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:none}
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--line);
+      padding:5px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+      user-select:none;
+    }
+    .tag strong{color:var(--text)}
+    .katex{direction:ltr}
+    .small{font-size:12px; color:var(--muted)}
+    .sep{height:1px; background:var(--line); margin:12px 0}
+    .monoBox{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.03);
+      overflow:auto;
+      white-space:pre;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <div class="title">
+      <h1>מודל: איסוף־אנרגיה מבוזר בכל גלגל + סוללות יתירות + הידרו־אגירה</h1>
+      <p class="subtitle">
+        מסמך קצר שמנסח את הרעיון שלך בצורה פיזיקלית נכונה: לא “אנרגיה חופשית”, אלא
+        <b>מחזור אנרגיה</b> מבלימה/חיכוך/רעידות והמרה לאגירה חשמלית/הידראולית — עם
+        <b>סוללות קטנות בכל גלגל</b> וסוללה מרכזית גדולה לגיבוי והמשכיות.
+      </p>
+      <div class="pillrow">
+        <span class="pill"><span class="dot good"></span> עובד הכי טוב: עצור־וסע (אוטובוס עירוני)</span>
+        <span class="pill"><span class="dot warn"></span> חשוב: איסוף מסיבוב “תמידי” יוצר עומס</span>
+        <span class="pill"><span class="dot good"></span> מצוין: איסוף מזעזועים/מתלים/בלימה</span>
+      </div>
+    </div>
+    <div class="pillrow">
+      <span class="pill">גרסה: v1.0 • קובץ יחיד</span>
+      <span class="pill">RTL • KaTeX • סימולציה פשוטה</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Left: main explanation -->
+  <section class="card">
+    <h2>1) ניסוח המערכת (ארכיטקטורה)</h2>
+    <p>
+      ברכב רגיל קיימים תווכים מכניים/צנרת/חללים סביב מכלולי הגלגל והמתלה. הרעיון הוא להפוך את
+      “מה שבאמת הולך לאיבוד” (בעיקר חום בבלימה, חיכוך במתלים, רעידות)
+      לזרם טעינה — ואז לנהל אותו בצורה מבוזרת:
+    </p>
+
+    <div class="grid2">
+      <div class="kv">
+        <div>
+          <div class="k">בכל גלגל (Wheel Module)</div>
+          <div class="v">ממיר + סוללה קטנה + בקר</div>
+          <div class="mini">קולט/ממיר/מאזן עומס מקומי</div>
+        </div>
+        <span class="tag"><strong>מודול 1×4</strong> 🛞</span>
+      </div>
+      <div class="kv">
+        <div>
+          <div class="k">במרכז הרכב (Energy Core)</div>
+          <div class="v">סוללה גדולה + DC/DC + ניהול יתירות</div>
+          <div class="mini">גיבוי, איזון, הגנה, ניתוב עומסים</div>
+        </div>
+        <span class="tag"><strong>Core</strong> 🔋</span>
+      </div>
+    </div>
+
+    <h3>רכיבי המרה אפשריים (מה “קוצרים”?)</h3>
+    <ul>
+      <li><b>בלימה רגנרטיבית</b> (הכי יעיל): קצירת אנרגיית בלימה במקום להפוך אותה לחום.</li>
+      <li><b>מתלה/בולמי זעזועים</b> (מעולה): ממיר הידראולי/אלקטרומכני שמייצר חשמל מרעידות.</li>
+      <li><b>חיכוך/חום</b> (אפשרי אך פחות יעיל): תרמו־חשמלי (TEG) סביב אזורים חמים (דיסקים/אגזוז).</li>
+      <li><b>איסוף מסיבוב רציף</b>: אפשר, אך חייבים להבין שזה מוסיף התנגדות → המנוע מפצה.</li>
+    </ul>
+
+    <div class="note">
+      <b>הדגשה פיזיקלית:</b> אם אתה מייצר חשמל מהסיבוב בזמן נסיעה רגילה, אתה “לוקח” אנרגיה מהתנועה
+      ולכן מוסיף עומס. לכן המערכת משתלמת בעיקר כאשר היא לוקחת אנרגיה
+      <b>שבכל מקרה היתה מתבזבזת</b> (בלימה/זעזועים).
+    </div>
+
+    <div class="sep"></div>
+
+    <h2>2) דיאגרמת זרימת אנרגיה</h2>
+    <div class="diagramWrap">
+      <svg viewBox="0 0 980 420" width="100%" height="auto" role="img" aria-label="דיאגרמת זרימה">
+        <!-- background -->
+        <defs>
+          <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(37,99,235,.18)"/>
+            <stop offset="1" stop-color="rgba(6,182,212,.10)"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(22,163,74,.16)"/>
+            <stop offset="1" stop-color="rgba(22,163,74,.06)"/>
+          </linearGradient>
+          <linearGradient id="g3" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(245,158,11,.18)"/>
+            <stop offset="1" stop-color="rgba(245,158,11,.06)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- left blocks (wheels) -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="40" y="60" width="210" height="120" rx="16" fill="url(#g1)" stroke="rgba(148,163,184,.45)"/>
+          <text x="145" y="90" text-anchor="middle" font-weight="700">מודול גלגל (×4)</text>
+          <text x="145" y="115" text-anchor="middle" fill="rgba(100,116,139,.95)">ממיר + סוללה קטנה</text>
+          <text x="145" y="140" text-anchor="middle" fill="rgba(100,116,139,.95)">בקר מקומי</text>
+          <text x="145" y="165" text-anchor="middle" fill="rgba(100,116,139,.95)">איסוף: בלימה / מתלה</text>
+
+          <rect x="40" y="230" width="210" height="120" rx="16" fill="url(#g1)" stroke="rgba(148,163,184,.45)"/>
+          <text x="145" y="260" text-anchor="middle" font-weight="700">חיישנים (×4)</text>
+          <text x="145" y="285" text-anchor="middle" fill="rgba(100,116,139,.95)">ω, v, a, חום, לחץ</text>
+          <text x="145" y="310" text-anchor="middle" fill="rgba(100,116,139,.95)">מצב סוללה מקומית</text>
+        </g>
+
+        <!-- center: core -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="370" y="85" width="250" height="250" rx="18" fill="url(#g2)" stroke="rgba(148,163,184,.45)"/>
+          <text x="495" y="120" text-anchor="middle" font-weight="800">Energy Core</text>
+          <text x="495" y="145" text-anchor="middle" fill="rgba(100,116,139,.95)">סוללה גדולה + DC/DC</text>
+          <text x="495" y="170" text-anchor="middle" fill="rgba(100,116,139,.95)">ניהול טעינה/פריקה</text>
+          <text x="495" y="195" text-anchor="middle" fill="rgba(100,116,139,.95)">איזון בין גלגלים</text>
+          <text x="495" y="220" text-anchor="middle" fill="rgba(100,116,139,.95)">Fail-Safe (יתירות)</text>
+          <text x="495" y="245" text-anchor="middle" fill="rgba(100,116,139,.95)">הגנות: מתח/זרם/חום</text>
+          <text x="495" y="270" text-anchor="middle" fill="rgba(100,116,139,.95)">תקשורת: CAN/LIN</text>
+        </g>
+
+        <!-- right: drivetrain / hydraulic -->
+        <g font-family="system-ui" font-size="14" fill="currentColor">
+          <rect x="720" y="60" width="220" height="135" rx="16" fill="url(#g3)" stroke="rgba(148,163,184,.45)"/>
+          <text x="830" y="90" text-anchor="middle" font-weight="800">הנעה</text>
+          <text x="830" y="115" text-anchor="middle" fill="rgba(100,116,139,.95)">מנוע חשמלי/היברידי</text>
+          <text x="830" y="140" text-anchor="middle" fill="rgba(100,116,139,.95)">“דחף” בתחילת תנועה</text>
+          <text x="830" y="165" text-anchor="middle" fill="rgba(100,116,139,.95)">עזר בהאצה</text>
+
+          <rect x="720" y="225" width="220" height="125" rx="16" fill="rgba(6,182,212,.12)" stroke="rgba(148,163,184,.45)"/>
+          <text x="830" y="255" text-anchor="middle" font-weight="800">אגירה הידראולית</text>
+          <text x="830" y="280" text-anchor="middle" fill="rgba(100,116,139,.95)">Accumulator (לחץ)</text>
+          <text x="830" y="305" text-anchor="middle" fill="rgba(100,116,139,.95)">שחרור אנרגיה בהאצה</text>
+          <text x="830" y="330" text-anchor="middle" fill="rgba(100,116,139,.95)">חזק במיוחד באוטובוס</text>
+        </g>
+
+        <!-- arrows -->
+        <g stroke="rgba(37,99,235,.70)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 250 120 C 300 120, 320 120, 370 145" />
+          <path d="M 250 290 C 300 290, 320 290, 370 275" />
+        </g>
+
+        <g stroke="rgba(22,163,74,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 620 160 C 660 160, 680 150, 720 130" />
+        </g>
+
+        <g stroke="rgba(6,182,212,.75)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 620 260 C 660 260, 680 270, 720 290" />
+        </g>
+
+        <!-- labels -->
+        <g font-family="system-ui" font-size="12" fill="rgba(100,116,139,.95)">
+          <text x="310" y="108">טעינה/איזון</text>
+          <text x="310" y="280">טלמטריה</text>
+          <text x="660" y="118">פריקה להנעה</text>
+          <text x="660" y="318">אגירה/שחרור</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span class="lg"><span class="swatch sw1"></span> מודול גלגל (ממיר+סוללה)</span>
+        <span class="lg"><span class="swatch sw2"></span> סוללה מרכזית / ניהול</span>
+        <span class="lg"><span class="swatch sw3"></span> הנעה</span>
+        <span class="lg"><span class="swatch sw4"></span> הידראוליקה / לחץ</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <h2>3) מודל מתמטי קצר (פשוט אבל נכון)</h2>
+    <p>נגדיר לכל גלגל \(i\in\{1,2,3,4\}\):</p>
+    <ul>
+      <li>\(\omega_i\) — מהירות זוויתית, \(v_i\) — מהירות קווית, \(R\) — רדיוס גלגל</li>
+      <li>\(E_{k,i}\) — אנרגיה קינטית “זמינה לבלימה” (חלק מהתנועה), \(P_{rec,i}\) — הספק קצירה</li>
+      <li>\(\eta_{rec}\) — יעילות המרה כוללת (מכניקה→חשמל→אגירה)</li>
+    </ul>
+
+    <p class="small">רעיון מפתח: קוצרים בעיקר בזמן בלימה/רעידות. בנסיעה קבועה, קצירה מסיבוב מוסיפה עומס.</p>
+
+    <div class="monoBox" id="mathBox">
+נוסחאות בסיס:
+
+(1) מהירות קווית:
+v ≈ ω·R
+
+(2) אנרגיה קינטית של הרכב:
+E_k = 1/2 · m · v^2
+
+(3) אנרגיה שניתנת לשחזור בבלימה (לכלל הרכב):
+E_rec,max ≈ η_rec · (E_k,initial - E_k,final)
+
+(4) חלוקה לגלגלים (בקירוב):
+E_rec,i ≈ w_i · E_rec,max   כאשר Σ w_i = 1
+
+(5) טעינה מצטברת:
+ΔE_batt,total = Σ_i E_rec,i + E_susp - losses
+    </div>
+
+    <div class="note">
+      אם תרצה “כמו רכבת אדים” במודרני: במקום אדים — <b>מצבר לחץ (Accumulator)</b>.
+      בזמן בלימה דוחסים נוזל/גז; בהאצה משחררים לחץ ומחזירים מומנט.
+      זה עובד מעולה באוטובוסים (עצור־וסע).
+    </div>
+
+    <div class="sep"></div>
+
+    <h2>4) יתירות: “סוללות קטנות מתקנות/מגבות את הגדולה”</h2>
+    <p>
+      בפועל הסוללות הקטנות לא “מתקנות” פיזית סוללה גדולה,
+      אלא נותנות <b>המשכיות אספקה</b> ומאפשרות:
+    </p>
+    <ul>
+      <li><b>Fail-Operational</b>: אם ה־Core נופל/מתנתק — עדיין יש אנרגיה מקומית לכל גלגל/מערכת חיונית.</li>
+      <li><b>איזון עומסים</b>: חלוקת זרמי טעינה/פריקה בין מודולים כדי להקטין חום ועומס נקודתי.</li>
+      <li><b>בקרה בטיחותית</b>: בידוד מודול פגום בלי להפיל את כל הרכב.</li>
+    </ul>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>מצב</th>
+          <th>מה קורה במערכת</th>
+          <th>תוצאה</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Core תקין</td>
+          <td>מודולי גלגלים טוענים → Core מאזן → הנעה</td>
+          <td>יעילות גבוהה</td>
+        </tr>
+        <tr>
+          <td>Core מוגבל/חם</td>
+          <td>טעינה עוברת זמנית לסוללות גלגלים (Buffering)</td>
+          <td>פחות חום, יותר יציבות</td>
+        </tr>
+        <tr>
+          <td>Core כשל</td>
+          <td>מודולי גלגל מספקים מתח למערכות חיוניות/בקרה</td>
+          <td>Fail-safe</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Right: interactive calc + summary -->
+  <section class="card">
+    <h2>5) סימולציה קצרה (למספרים)</h2>
+    <p class="small">
+      זה לא “חיזוי מלא”, רק חישוב אינטואיטיבי: כמה אנרגיה אפשר לשחזר מבלימות/רעידות ביום נסיעה.
+    </p>
+
+    <div class="controls">
+      <div class="control">
+        <div class="row">
+          <label for="mass">מסה \(m\) [ק״ג]</label>
+          <output id="massOut">1600</output>
+        </div>
+        <input id="mass" type="range" min="800" max="18000" step="50" value="1600">
+        <div class="small">רכב פרטי ~ 1200–2200 • אוטובוס ~ 12000–18000</div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="v0">מהירות לפני בלימה \(v_0\) [קמ״ש]</label>
+          <output id="v0Out">50</output>
+        </div>
+        <input id="v0" type="range" min="10" max="110" step="1" value="50">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="v1">מהירות אחרי בלימה \(v_1\) [קמ״ש]</label>
+          <output id="v1Out">0</output>
+        </div>
+        <input id="v1" type="range" min="0" max="110" step="1" value="0">
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="brakes">מספר בלימות “משמעותיות” ביום</label>
+          <output id="brakesOut">40</output>
+        </div>
+        <input id="brakes" type="range" min="0" max="300" step="1" value="40">
+        <div class="small">אוטובוס עירוני יכול להגיע למאות עצירות ביום.</div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="eta">יעילות כוללת \(\eta\) [%]</label>
+          <output id="etaOut">60</output>
+        </div>
+        <input id="eta" type="range" min="10" max="85" step="1" value="60">
+        <div class="small">כולל אלקטרוניקה + טעינה + הפסדים.</div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <label for="susp">תרומה יומית מהמתלים [Wh]</label>
+          <output id="suspOut">120</output>
+        </div>
+        <input id="susp" type="range" min="0" max="1200" step="10" value="120">
+        <div class="small">זה “בונוס” מזעזועים/כביש – תלוי מאוד במסלול.</div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="grid2">
+      <div class="kv">
+        <div>
+          <div class="k">אנרגיה משוחזרת לבלימה אחת</div>
+          <div class="v" id="perBrake">—</div>
+          <div class="mini">כולל יעילות</div>
+        </div>
+        <span class="tag">⚡</span>
+      </div>
+
+      <div class="kv">
+        <div>
+          <div class="k">סה״כ אנרגיה ביום</div>
+          <div class="v" id="perDay">—</div>
+          <div class="mini">בלימות + מתלים</div>
+        </div>
+        <span class="tag">📅</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <h3>סיכום הנדסי קצר (מה כדאי לבנות בפועל)</h3>
+    <ul>
+      <li><b>להתמקד בבלימה רגנרטיבית + מתלים רגנרטיביים</b> (החזר אמיתי בלי “להכביד” על הנסיעה).</li>
+      <li><b>סוללות קטנות במודולי גלגל</b> = buffer + יתירות + יציבות.</li>
+      <li><b>Core מרכזי</b> = איזון, הגנה, ניהול עומסים, אספקה להנעה/מערכות.</li>
+      <li><b>לאוטובוס</b>: לשלב גם <b>אגירה הידראולית</b> (מצבר לחץ) לעבודה בעצור־וסע.</li>
+    </ul>
+
+    <div class="btnrow">
+      <button id="copyBtn">העתק סיכום קצר (לטקסט/פטנט)</button>
+      <button class="secondary" id="printBtn">הדפס / שמור כ־PDF</button>
+      <button class="ghost" id="toggleMathBtn">הצג/הסתר נוסחאות</button>
+    </div>
+
+    <div class="monoBox" id="patentSnippet" style="margin-top:10px; display:none;"></div>
+  </section>
+</main>
+
+<script>
+  // KaTeX render
+  window.addEventListener("DOMContentLoaded", () => {
+    try{
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+      });
+    }catch(e){}
+    init();
+  });
+
+  const el = (id)=>document.getElementById(id);
+
+  function kmhToMs(kmh){ return kmh/3.6; }
+  function JToWh(J){ return J/3600; }
+
+  function calc(){
+    const m = +el("mass").value;
+    const v0 = +el("v0").value;
+    const v1 = +el("v1").value;
+    const brakes = +el("brakes").value;
+    const eta = (+el("eta").value)/100;
+    const suspWh = +el("susp").value;
+
+    // outputs
+    el("massOut").textContent = m;
+    el("v0Out").textContent = v0;
+    el("v1Out").textContent = v1;
+    el("brakesOut").textContent = brakes;
+    el("etaOut").textContent = Math.round(eta*100);
+    el("suspOut").textContent = suspWh;
+
+    // physics
+    const v0ms = kmhToMs(v0);
+    const v1ms = kmhToMs(v1);
+    const dEk = 0.5*m*(v0ms*v0ms - v1ms*v1ms); // Joule (could be negative if v1>v0)
+    const dEkPos = Math.max(0, dEk);
+    const perBrakeWh = JToWh(dEkPos)*eta;
+    const dayWh = perBrakeWh*brakes + (+suspWh);
+
+    // formatting
+    el("perBrake").textContent = (perBrakeWh).toFixed(1) + " Wh";
+    el("perDay").textContent = (dayWh/1000).toFixed(2) + " kWh";
+
+    // snippet
+    const snippet =
+`תיאור קצר למפרט/פטנט:
+מערכת איסוף־אנרגיה מבוזרת לרכב, הכוללת מודול בכל גלגל הכולל ממיר אנרגיה (בלימה רגנרטיבית ו/או קצירה מהמתלה),
+סוללה מקומית ובקר; וכן יחידת ליבה מרכזית (Energy Core) הכוללת סוללה מרכזית, ממירי DC/DC, וניהול טעינה/פריקה
+ואיזון עומסים. המערכת מחלקת את אנרגיית השחזור בין המודולים ומספקת יתירות (Fail-safe): בעת תקלה/ניתוק בליבה,
+המודולים המקומיים יכולים להמשיך לספק אנרגיה למערכות חיוניות ולשמר יציבות. באוטובוסים/עצור־וסע ניתן לשלב אגירה
+הידראולית באמצעות מצבר לחץ (Accumulator) לשחזור אנרגיה בזמן בלימה ושחרורה בהאצה.
+
+מספרים לדוגמה (מהסימולציה כאן):
+מסה m=${m} ק"ג, בלימה מ-${v0} ל-${v1} קמ"ש, יעילות η=${Math.round(eta*100)}%,
+אנרגיה לבלימה ≈ ${perBrakeWh.toFixed(1)} Wh, בלימות ביום=${brakes},
+סה"כ יום ≈ ${(dayWh/1000).toFixed(2)} kWh (כולל מתלים ${suspWh} Wh).
+`;
+    el("patentSnippet").textContent = snippet;
+  }
+
+  function init(){
+    ["mass","v0","v1","brakes","eta","susp"].forEach(id=>{
+      el(id).addEventListener("input", calc);
+    });
+    calc();
+
+    el("copyBtn").addEventListener("click", async ()=>{
+      el("patentSnippet").style.display = "block";
+      try{
+        await navigator.clipboard.writeText(el("patentSnippet").textContent);
+        el("copyBtn").textContent = "הועתק ✅";
+        setTimeout(()=> el("copyBtn").textContent = "העתק סיכום קצר (לטקסט/פטנט)", 1200);
+      }catch(e){
+        alert("לא הצלחתי להעתיק אוטומטית. אפשר לסמן ולהעתיק ידנית מהתיבה.");
+      }
+    });
+
+    el("printBtn").addEventListener("click", ()=> window.print());
+
+    let mathVisible = true;
+    el("toggleMathBtn").addEventListener("click", ()=>{
+      mathVisible = !mathVisible;
+      const box = el("mathBox");
+      box.style.display = mathVisible ? "block" : "none";
+      el("toggleMathBtn").textContent = mathVisible ? "הצג/הסתר נוסחאות" : "הצג נוסחאות";
+    });
+  }
+</script>
+
+</body>
+</html>
