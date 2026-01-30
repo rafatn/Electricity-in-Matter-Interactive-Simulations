@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>קרקע → אטמוספירה “גיטרה” → שמים • תמסורת מרובת־ניגינות (Taylor N=3)</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --bg1:#0f172a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --text:#e5e7eb;
+      --muted:#a3a3a3;
+      --line: rgba(255,255,255,.12);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --ok:#86efac;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg0:#f4f6fb;
+        --bg1:#eef2ff;
+        --card: rgba(255,255,255,.78);
+        --card2: rgba(255,255,255,.55);
+        --text:#0f172a;
+        --muted:#64748b;
+        --line: rgba(15,23,42,.16);
+        --accent:#0284c7;
+        --accent2:#7c3aed;
+        --shadow: 0 18px 50px rgba(2,6,23,.12);
+      }
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(125,211,252,.18), transparent 55%),
+        radial-gradient(1200px 800px at 80% 20%, rgba(167,139,250,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    .wrap{max-width:1250px;margin:0 auto;padding:22px}
+    .hero{
+      background:linear-gradient(135deg, rgba(125,211,252,.12), rgba(167,139,250,.10));
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    h1{margin:0 0 8px;font-size:22px}
+    .sub{color:var(--muted);line-height:1.55}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{margin:0 0 8px;font-size:16px}
+    .card h3{margin:14px 0 8px;font-size:14px;color:var(--accent)}
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      font-size:12px;
+      margin:4px 6px 0 0;
+    }
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .mono{font-family:var(--mono);font-size:12px}
+    .eq{direction:ltr;text-align:left;overflow:auto;padding:10px;border-radius:14px;border:1px dashed var(--line);background:var(--card2)}
+    .note{
+      border-right:3px solid var(--accent);
+      padding:10px 12px;
+      background:rgba(125,211,252,.08);
+      border-radius:14px;
+      margin-top:10px;
+    }
+    .note.warn{border-right-color:var(--warn);background:rgba(251,191,36,.10)}
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      color:var(--text);padding:10px 12px;border-radius:14px;
+      cursor:pointer;font-weight:700;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{border-color:rgba(125,211,252,.45)}
+    .btn.ghost{background:transparent}
+    .inputs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 720px){ .inputs{grid-template-columns:1fr} }
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+    input[type="range"]{width:100%}
+    input[type="number"], input[type="text"]{
+      width:100%;box-sizing:border-box;
+      padding:10px 10px;border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      color:var(--text);outline:none;
+    }
+    @media (prefers-color-scheme: light){
+      input[type="number"], input[type="text"]{background:rgba(255,255,255,.75)}
+    }
+    canvas{width:100%;height:300px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.12)}
+    @media (prefers-color-scheme: light){
+      canvas{background:rgba(255,255,255,.55)}
+    }
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    td,th{padding:10px 10px;border:1px solid var(--line);background:var(--card2);vertical-align:top}
+    th{background:rgba(125,211,252,.10)}
+    tr td:first-child, tr th:first-child{border-top-right-radius:14px;border-bottom-right-radius:14px}
+    tr td:last-child, tr th:last-child{border-top-left-radius:14px;border-bottom-left-radius:14px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:11px;margin-left:6px}
+    .ok{color:var(--ok)}
+    .warnC{color:var(--warn)}
+    .bad{color:var(--bad)}
+    .footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}
+    .mini{font-size:11px;color:var(--muted)}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>🌍→🎸→☁️ קרקע → “גיטרת האטמוספירה” → שמים • תמסורת מרובת־ניגינות (Taylor N=3)</h1>
+    <div class="sub">
+      מגדירים מודל מאוחד שבו <b>כל הניגינות</b> (סייסמי, חום, רוח/לחץ, EM) הן קלטים מן הקרקע,
+      והאטמוספירה מתנהגת כ־<b>מיתרים/ממברנה ענקית</b> שמעבירה, מחזקת, מסננת ומערבבת.
+      פונקציית המעבר ניתנת גם כ־<b>תמסורת תדרית</b> וגם כ־<b>תמסורת טורית (Taylor) מסדר 3</b> לפי הרעיון שלך.
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="pill">✅ 4 “ניגינות”</span>
+      <span class="pill">✅ תמסורת אופרטורית</span>
+      <span class="pill">✅ Taylor \(N=3\)</span>
+      <span class="pill">✅ מודים ספריים \(Y_{\ell m}\)</span>
+      <span class="pill">✅ דוגמא+סימולציה</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: Theory -->
+    <div class="card">
+      <h2>1) הגדרה מהתחלה: המרחבים והמשוואה המאוחדת</h2>
+
+      <h3>1.1 התחום הגאומטרי (כדור הארץ + שמים)</h3>
+      <div class="eq">
+        \[
+          (r,\theta,\phi),\quad r\ge R,\quad \text{קרקע: } r=R,\quad \text{מדידה בשמים: } r=R+H
+        \]
+        \[
+          d\mu = r^2\sin\theta\,dr\,d\theta\,d\phi \quad \text{(מידה טבעית בכדוריות)}
+        \]
+      </div>
+
+      <h3>1.2 “מיתר/גיטרה” רב־פיזיקלית: וקטור מצב מאוחד</h3>
+      <div class="eq">
+        \[
+        \mathbf{X}(\mathbf{r},t)=
+        \begin{bmatrix}
+        \mathbf{u}(\mathbf{r},t)\\
+        p(\mathbf{r},t)\\
+        T(\mathbf{r},t)\\
+        \rho(\mathbf{r},t)\\
+        \mathbf{E}(\mathbf{r},t)\\
+        \mathbf{B}(\mathbf{r},t)
+        \end{bmatrix}
+        \]
+      </div>
+      <div class="note">
+        <b>אינטואיציה:</b> “מיתרי הגיטרה” הם מצבי גל/תהודה של האטמוספירה. כל קלט מהקרקע “מפריט” אחרת,
+        והשמים “שומעים” את הסכום והערבוב.
+      </div>
+
+      <h3>1.3 משוואת הגיטרה המאוחדת (צורה כללית)</h3>
+      <div class="eq">
+        \[
+          \mathbf{M}(r)\,\partial_{tt}\mathbf{X}
+          +\mathbf{D}(r)\,\partial_t\mathbf{X}
+          +\mathbf{L}(r,\nabla)\,\mathbf{X}
+          =\mathbf{F}(\mathbf{r},t)
+        \]
+      </div>
+      <div class="muted">
+        כאן \(\mathbf{L}\) הוא “אופרטור המיתר”: גלים, דיפוזיה, מקסוול, אקוסטיקה, צימודים בין שדות.
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>2) “כל הניגינות” = כל הקלטים יחד</h2>
+      <div class="eq">
+        \[
+          \mathbf{F}=\mathbf{F}_{seis}+\mathbf{F}_{heat}+\mathbf{F}_{wind}+\mathbf{F}_{EM}
+        \]
+      </div>
+
+      <table>
+        <thead>
+        <tr>
+          <th>ניגינה</th>
+          <th>איך היא נכנסת (דוגמה)</th>
+          <th>תג</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><b>סייסמי</b> 🌎</td>
+          <td class="mono">u(R,θ,φ,t)=g_seis(θ,φ,t) &nbsp;או&nbsp; n·T∇u=h_seis</td>
+          <td><span class="tag">seis</span><span class="tag">M</span></td>
+        </tr>
+        <tr>
+          <td><b>חימום</b> 🔥</td>
+          <td class="mono">T(R,θ,φ,t)=T_ground &nbsp;או&nbsp; -k∂rT=q_heat</td>
+          <td><span class="tag">heat</span><span class="tag">T</span></td>
+        </tr>
+        <tr>
+          <td><b>רוח/לחץ</b> 🌬️</td>
+          <td class="mono">p(R,θ,φ,t)=p_ground &nbsp;(+ forcing נפחי)</td>
+          <td><span class="tag">wind</span><span class="tag">p</span></td>
+        </tr>
+        <tr>
+          <td><b>אלקטרומגנטי</b> ⚡</td>
+          <td class="mono">∇×B=μ0J+μ0ε0∂tE  (J: ברקים/יונוספירה)</td>
+          <td><span class="tag">EM</span><span class="tag">E,B</span></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="hr"></div>
+
+      <h2>3) פונקציית מעבר קרקע → שמים (Transfer)</h2>
+
+      <h3>3.1 קלט מאוחד ופלט בשמים</h3>
+      <div class="eq">
+        \[
+          \mathbf{U}(\theta,\phi,t)=
+          \begin{bmatrix}
+          \mathbf{g}_{seis}\\
+          q_{heat}\\
+          p_{ground}\\
+          \mathbf{J}_{lightning}
+          \end{bmatrix}
+          ,\qquad
+          \mathbf{Y}(\theta,\phi,t)=\mathbf{C}\,\mathbf{X}(R+H,\theta,\phi,t)
+        \]
+        \[
+          \boxed{\ \mathbf{Y}=\mathcal{T}_H[\mathbf{U}]\ }
+        \]
+      </div>
+
+      <h3>3.2 “תוים על כדור”: פירוק למודים ספריים</h3>
+      <div class="eq">
+        \[
+          U(\theta,\phi,t)=\sum_{\ell,m}U_{\ell m}(t)\,Y_{\ell m}(\theta,\phi),\qquad
+          Y(\theta,\phi,t)=\sum_{\ell,m}Y_{\ell m}(t)\,Y_{\ell m}(\theta,\phi)
+        \]
+        \[
+          \boxed{\ Y_{\ell m}(\omega)=\mathcal{T}_{\ell m}(H,\omega)\,U_{\ell m}(\omega)\ }
+        \]
+      </div>
+      <div class="note warn">
+        זה “הגיטרה”: לכל \((\ell,m)\) יש “תו”, והאטמוספירה היא מסנן/מגבר תלוי תדר.
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>4) עכשיו השיטה שלך: Transfer כ־Taylor \(N=3\) (לא אינטגרל ולא נגזרת)</h2>
+
+      <div class="eq">
+        \[
+          \Delta\mathbf{u}(t)=\mathbf{u}(t)-\mathbf{u}_0
+        \]
+        \[
+          \boxed{
+          \mathbf{y}(t)\approx
+          \mathbf{a}_0
+          +\mathbf{A}_1\,\Delta\mathbf{u}
+          +\mathbf{A}_2\,(\Delta\mathbf{u}\otimes\Delta\mathbf{u})
+          +\mathbf{A}_3\,(\Delta\mathbf{u}^{\otimes 3})
+          }
+        \]
+      </div>
+
+      <div class="note">
+        <b>פירוש:</b>  
+        \(\mathbf{A}_1\) = תמסורת לינארית “ישירה” (כמו אוהם מורכב אבל רב־ערוצי).  
+        \(\mathbf{A}_2\) = ערבוב בין ניגינות (למשל חום×רוח → לחץ).  
+        \(\mathbf{A}_3\) = ספים/פאזות/אי־לינאריות חזקה (סערה, טריגר, רוויה).
+      </div>
+
+      <h3>4.1 תיוג מקדמים (טבלת “מי משפיע על מה”)</h3>
+      <div class="mini">בדוגמה למטה, נבחר 4 קלטים ו־3 יציאות (שמיים): \(y=[\Delta p,\Delta T,\Delta E]\).</div>
+
+      <table id="coeffTable">
+        <thead>
+        <tr>
+          <th>מקדמי מעבר</th>
+          <th>הגדרה</th>
+          <th>דוגמה (תגים)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="mono">A1</td>
+          <td>לינארי: כל ניגינה → כל מדידה בשמים</td>
+          <td><span class="tag">seis→p</span><span class="tag">heat→T</span><span class="tag">EM→E</span></td>
+        </tr>
+        <tr>
+          <td class="mono">A2</td>
+          <td>זוגות: ערבוב בין ניגינות</td>
+          <td><span class="tag">heat×wind→p</span><span class="tag">seis×EM→E</span></td>
+        </tr>
+        <tr>
+          <td class="mono">A3</td>
+          <td>שלישיות: טריגר/סף/רוויה</td>
+          <td><span class="tag">heat×wind×heat→p</span><span class="tag">wind×wind×EM→E</span></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="footer">
+        בברכה,<br/>מסמך מודל • קרקע→גיטרת האטמוספירה→שמים (Taylor N=3)
+      </div>
+    </div>
+
+    <!-- RIGHT: Interactive demo -->
+    <div class="card">
+      <h2>דוגמא חיה: “מנגנים” בקלטים ורואים את השמים</h2>
+      <div class="muted">
+        כאן בחרנו מודל קטן להמחשה: 4 קלטים (Seis/Heat/Wind/EM) → 3 יציאות בשמים: \(\Delta p,\Delta T,\Delta E\).
+        אפשר להדליק/לכבות כל ניגינה ולשנות עוצמה ותדר. המודל משתמש ב־Taylor \(N=3\) עם ערבובים.
+      </div>
+
+      <canvas id="cv" width="900" height="520"></canvas>
+
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="btnRun">▶ הפעל</button>
+        <button class="btn" id="btnStep">⏭ צעד אחד</button>
+        <button class="btn ghost" id="btnReset">↺ איפוס</button>
+      </div>
+
+      <div class="inputs">
+        <div>
+          <label>Δt (צעד זמן)</label>
+          <input id="dt" type="number" step="0.001" value="0.02">
+        </div>
+        <div>
+          <label>צעדים לכל פריים</label>
+          <input id="spf" type="number" step="1" value="6">
+        </div>
+
+        <div style="grid-column:1/-1">
+          <div class="row">
+            <span class="pill"><b>סייסמי 🌎</b> <span id="onSeis" class="ok">ON</span></span>
+            <button class="btn" id="togSeis">הדלק/כבה</button>
+          </div>
+          <label>עוצמה (Seis)</label>
+          <input id="ampSeis" type="range" min="0" max="1" step="0.01" value="0.55">
+          <div class="row">
+            <div style="flex:1">
+              <label>תדר (Hz) Seis</label>
+              <input id="frSeis" type="number" step="0.1" value="1.7">
+            </div>
+            <div style="flex:1">
+              <label>פאזה (rad) Seis</label>
+              <input id="phSeis" type="number" step="0.1" value="0.0">
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column:1/-1">
+          <div class="row">
+            <span class="pill"><b>חימום 🔥</b> <span id="onHeat" class="ok">ON</span></span>
+            <button class="btn" id="togHeat">הדלק/כבה</button>
+          </div>
+          <label>עוצמה (Heat)</label>
+          <input id="ampHeat" type="range" min="0" max="1" step="0.01" value="0.45">
+          <div class="row">
+            <div style="flex:1">
+              <label>תדר (Hz) Heat</label>
+              <input id="frHeat" type="number" step="0.1" value="0.6">
+            </div>
+            <div style="flex:1">
+              <label>פאזה (rad) Heat</label>
+              <input id="phHeat" type="number" step="0.1" value="1.0">
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column:1/-1">
+          <div class="row">
+            <span class="pill"><b>רוח/לחץ 🌬️</b> <span id="onWind" class="ok">ON</span></span>
+            <button class="btn" id="togWind">הדלק/כבה</button>
+          </div>
+          <label>עוצמה (Wind)</label>
+          <input id="ampWind" type="range" min="0" max="1" step="0.01" value="0.60">
+          <div class="row">
+            <div style="flex:1">
+              <label>תדר (Hz) Wind</label>
+              <input id="frWind" type="number" step="0.1" value="0.9">
+            </div>
+            <div style="flex:1">
+              <label>פאזה (rad) Wind</label>
+              <input id="phWind" type="number" step="0.1" value="2.1">
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column:1/-1">
+          <div class="row">
+            <span class="pill"><b>EM ⚡</b> <span id="onEM" class="ok">ON</span></span>
+            <button class="btn" id="togEM">הדלק/כבה</button>
+          </div>
+          <label>עוצמה (EM)</label>
+          <input id="ampEM" type="range" min="0" max="1" step="0.01" value="0.35">
+          <div class="row">
+            <div style="flex:1">
+              <label>תדר (Hz) EM</label>
+              <input id="frEM" type="number" step="0.1" value="3.2">
+            </div>
+            <div style="flex:1">
+              <label>פאזה (rad) EM</label>
+              <input id="phEM" type="number" step="0.1" value="0.3">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>כוח ערבוב A2 (Mix2)</label>
+          <input id="mix2" type="range" min="0" max="1" step="0.01" value="0.55">
+        </div>
+        <div>
+          <label>כוח סף/אי־לינאריות A3 (Mix3)</label>
+          <input id="mix3" type="range" min="0" max="1" step="0.01" value="0.40">
+        </div>
+
+        <div>
+          <label>החלקת פלט (Inertia)</label>
+          <input id="alpha" type="range" min="0" max="0.99" step="0.01" value="0.84">
+          <div class="mini">כמו “מיתרים”: תגובה עם השהיה/זיכרון.</div>
+        </div>
+        <div>
+          <label>סקייל ציור</label>
+          <input id="scale" type="number" step="10" value="140">
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>תוצאה בשמים (לפי Taylor N=3)</h3>
+      <div class="eq mono" id="outBox">—</div>
+
+      <div class="note warn">
+        <b>איך לקרוא את הדוגמה:</b><br/>
+        • אם תכבה את כל הניגינות מלבד אחת — תקבל בעיקר תרומת \(A_1\) (לינארי).<br/>
+        • אם תדליק שתי ניגינות — תראה ערבוב דרך \(A_2\) (זוגות).<br/>
+        • אם תדליק שלוש/ארבע — תראה טריגרים/רוויה דרך \(A_3\) (שלישיות).
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // KaTeX auto-render
+  window.addEventListener("load", () => {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false},
+      ]
+    });
+  });
+
+  // ---------- Small math helpers ----------
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const vAdd=(a,b)=>a.map((v,i)=>v+b[i]);
+  const vSub=(a,b)=>a.map((v,i)=>v-b[i]);
+  const vScale=(a,s)=>a.map(v=>v*s);
+  const vDot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+
+  // For A2 on inputs: store only selected pair-mixing terms (sparse)
+  // For A3 on inputs: store only selected triple-mixing terms (sparse)
+  // This is a demo: the structure matches your model; coefficients are illustrative.
+
+  // ---------- Inputs (4 “nigunim”) ----------
+  // u = [seis, heat, wind, em]
+  function inputSignal(t, cfg){
+    const sig = (amp, fr, ph)=> amp * Math.sin(2*Math.PI*fr*t + ph);
+    const u = [
+      cfg.on.seis ? sig(cfg.amp.seis, cfg.fr.seis, cfg.ph.seis) : 0,
+      cfg.on.heat ? sig(cfg.amp.heat, cfg.fr.heat, cfg.ph.heat) : 0,
+      cfg.on.wind ? sig(cfg.amp.wind, cfg.fr.wind, cfg.ph.wind) : 0,
+      cfg.on.em   ? sig(cfg.amp.em,   cfg.fr.em,   cfg.ph.em)   : 0
+    ];
+    return u;
+  }
+
+  // ---------- Taylor Transfer N=3 ----------
+  // Outputs in sky: y = [Δp, ΔT, ΔE]  (3 outputs)
+  // y ≈ a0 + A1 Δu + A2(Δu⊗Δu) + A3(Δu⊗Δu⊗Δu)
+  //
+  // We'll set u0 = 0 (baseline calm), so Δu = u.
+  // a0 = baseline offsets ~ 0 for demo.
+
+  const a0 = [0,0,0];
+
+  // A1 is a 3x4 matrix
+  // Rows: [p, T, E], Cols: [seis, heat, wind, em]
+  // Intuition:
+  // - seis impacts pressure a bit (acoustic/gravity waves), temp small, E very small
+  // - heat impacts temp strongly, also pressure moderately (buoyancy), E weak
+  // - wind impacts pressure strongly, temp moderately, E moderate (charges/ionospheric coupling)
+  // - EM impacts E strongly, pressure weak, temp weak
+  const A1_base = [
+    [ 0.55, 0.30, 0.75, 0.18 ], // Δp
+    [ 0.10, 0.95, 0.35, 0.12 ], // ΔT
+    [ 0.06, 0.10, 0.28, 1.05 ]  // ΔE
+  ];
+
+  // A2 sparse: each term is (outIndex, i, j, coeff) for u_i*u_j (symmetric)
+  // We'll scale it by mix2.
+  const A2_terms = [
+    // heat×wind -> pressure (strong)
+    {o:0,i:1,j:2,c: 1.20},
+    // seis×wind -> pressure
+    {o:0,i:0,j:2,c: 0.55},
+    // heat×seis -> temp
+    {o:1,i:1,j:0,c: 0.35},
+    // wind×em -> E
+    {o:2,i:2,j:3,c: 0.75},
+    // seis×em -> E
+    {o:2,i:0,j:3,c: 0.35},
+    // heat×em -> temp
+    {o:1,i:1,j:3,c: 0.18},
+  ];
+
+  // A3 sparse: each term is (outIndex, i, j, k, coeff) for u_i*u_j*u_k (symmetric in demo)
+  // We'll scale it by mix3. This models “sף/רוויה/טריגר”.
+  const A3_terms = [
+    // heat×wind×heat -> pressure (convective trigger)
+    {o:0,i:1,j:2,k:1,c: 1.05},
+    // wind×wind×em -> E (storm electric buildup)
+    {o:2,i:2,j:2,k:3,c: 0.85},
+    // seis×wind×em -> E (coupled burst)
+    {o:2,i:0,j:2,k:3,c: 0.55},
+    // heat×heat×wind -> temp (nonlinear heating response)
+    {o:1,i:1,j:1,k:2,c: 0.60},
+    // seis×seis×wind -> pressure (nonlinear acoustic/gravity coupling)
+    {o:0,i:0,j:0,k:2,c: 0.45},
+  ];
+
+  function transferTaylor(u, mix2, mix3){
+    // Δu = u (baseline u0 = 0)
+    const du = u;
+
+    // y = a0 + A1 du
+    let y = a0.slice();
+    for(let o=0;o<3;o++){
+      let s=0;
+      for(let i=0;i<4;i++) s += A1_base[o][i]*du[i];
+      y[o] += s;
+    }
+
+    // + A2 terms
+    for(const t of A2_terms){
+      y[t.o] += mix2 * t.c * (du[t.i]*du[t.j]);
+    }
+
+    // + A3 terms
+    for(const t of A3_terms){
+      y[t.o] += mix3 * t.c * (du[t.i]*du[t.j]*du[t.k]);
+    }
+
+    return y;
+  }
+
+  // Add “stringy atmosphere” inertia/decay: y_out = alpha*y_prev + (1-alpha)*y_new
+  function smooth(prev, next, alpha){
+    return prev.map((v,i)=> alpha*v + (1-alpha)*next[i]);
+  }
+
+  // ---------- UI ----------
+  const cv=document.getElementById("cv");
+  const ctx=cv.getContext("2d");
+  const outBox=document.getElementById("outBox");
+
+  const dtEl=document.getElementById("dt");
+  const spfEl=document.getElementById("spf");
+  const alphaEl=document.getElementById("alpha");
+  const scaleEl=document.getElementById("scale");
+  const mix2El=document.getElementById("mix2");
+  const mix3El=document.getElementById("mix3");
+
+  const ampSeis=document.getElementById("ampSeis");
+  const frSeis=document.getElementById("frSeis");
+  const phSeis=document.getElementById("phSeis");
+
+  const ampHeat=document.getElementById("ampHeat");
+  const frHeat=document.getElementById("frHeat");
+  const phHeat=document.getElementById("phHeat");
+
+  const ampWind=document.getElementById("ampWind");
+  const frWind=document.getElementById("frWind");
+  const phWind=document.getElementById("phWind");
+
+  const ampEM=document.getElementById("ampEM");
+  const frEM=document.getElementById("frEM");
+  const phEM=document.getElementById("phEM");
+
+  const onSeis=document.getElementById("onSeis");
+  const onHeat=document.getElementById("onHeat");
+  const onWind=document.getElementById("onWind");
+  const onEM=document.getElementById("onEM");
+
+  const togSeis=document.getElementById("togSeis");
+  const togHeat=document.getElementById("togHeat");
+  const togWind=document.getElementById("togWind");
+  const togEM=document.getElementById("togEM");
+
+  const btnRun=document.getElementById("btnRun");
+  const btnStep=document.getElementById("btnStep");
+  const btnReset=document.getElementById("btnReset");
+
+  let running=false, raf=null;
+
+  // model state
+  let t=0;
+  let yPrev=[0,0,0];
+
+  // chart buffers
+  const buf = {
+    p: [], T: [], E: [],
+    u0: [], u1: [], u2: [], u3: [],
+    maxN: 420
+  };
+
+  const cfg = {
+    on: {seis:true, heat:true, wind:true, em:true},
+    amp:{seis:0.55, heat:0.45, wind:0.60, em:0.35},
+    fr: {seis:1.7, heat:0.6,  wind:0.9,  em:3.2 },
+    ph: {seis:0.0, heat:1.0,  wind:2.1,  em:0.3 },
+  };
+
+  function syncCfgFromUI(){
+    cfg.amp.seis=parseFloat(ampSeis.value); cfg.fr.seis=parseFloat(frSeis.value); cfg.ph.seis=parseFloat(phSeis.value);
+    cfg.amp.heat=parseFloat(ampHeat.value); cfg.fr.heat=parseFloat(frHeat.value); cfg.ph.heat=parseFloat(phHeat.value);
+    cfg.amp.wind=parseFloat(ampWind.value); cfg.fr.wind=parseFloat(frWind.value); cfg.ph.wind=parseFloat(phWind.value);
+    cfg.amp.em  =parseFloat(ampEM.value);   cfg.fr.em  =parseFloat(frEM.value);   cfg.ph.em  =parseFloat(phEM.value);
+  }
+
+  function setOnLabel(span, on){
+    span.textContent = on ? "ON" : "OFF";
+    span.className = on ? "ok" : "bad";
+  }
+  function updateOnLabels(){
+    setOnLabel(onSeis, cfg.on.seis);
+    setOnLabel(onHeat, cfg.on.heat);
+    setOnLabel(onWind, cfg.on.wind);
+    setOnLabel(onEM,   cfg.on.em);
+  }
+  updateOnLabels();
+
+  togSeis.onclick=()=>{cfg.on.seis=!cfg.on.seis; updateOnLabels();};
+  togHeat.onclick=()=>{cfg.on.heat=!cfg.on.heat; updateOnLabels();};
+  togWind.onclick=()=>{cfg.on.wind=!cfg.on.wind; updateOnLabels();};
+  togEM.onclick  =()=>{cfg.on.em  =!cfg.on.em;   updateOnLabels();};
+
+  function clearCanvas(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // light grid
+    ctx.save();
+    ctx.globalAlpha=0.25;
+    ctx.strokeStyle="rgba(255,255,255,0.30)";
+    ctx.lineWidth=1;
+    for(let i=1;i<6;i++){
+      const y=i*cv.height/6;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cv.width,y); ctx.stroke();
+    }
+    for(let i=1;i<10;i++){
+      const x=i*cv.width/10;
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,cv.height); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  clearCanvas();
+
+  function pushBuf(key, val){
+    buf[key].push(val);
+    if(buf[key].length>buf.maxN) buf[key].shift();
+  }
+
+  function drawSeries(series, yMid, yScale, color){
+    const n=series.length;
+    if(n<2) return;
+    ctx.save();
+    ctx.strokeStyle=color;
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const x = (i/(buf.maxN-1))*cv.width;
+      const y = yMid - series[i]*yScale;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawLegend(){
+    ctx.save();
+    ctx.globalAlpha=0.95;
+    ctx.fillStyle="rgba(0,0,0,0.30)";
+    ctx.fillRect(10,10, cv.width-20, 54);
+    ctx.globalAlpha=1;
+    ctx.fillStyle="rgba(255,255,255,0.90)";
+    ctx.font="12px ui-sans-serif, system-ui";
+    ctx.fillText("פלט בשמים: Δp (כחול) • ΔT (סגול) • ΔE (ירקרק) — מודל Taylor N=3", 18, 32);
+    ctx.fillStyle="rgba(255,255,255,0.70)";
+    ctx.fillText("קלטים (דק): Seis/Heat/Wind/EM", 18, 52);
+    ctx.restore();
+  }
+
+  function renderPlot(scale){
+    clearCanvas();
+    drawLegend();
+
+    // Upper area: outputs
+    const topH = cv.height*0.62;
+    const midP = topH*0.30;
+    const midT = topH*0.62;
+    const midE = topH*0.92;
+
+    drawSeries(buf.p, midP, scale, "rgba(125,211,252,0.95)"); // blue
+    drawSeries(buf.T, midT, scale, "rgba(167,139,250,0.95)"); // violet
+    drawSeries(buf.E, midE, scale, "rgba(134,239,172,0.95)"); // green
+
+    // Lower area: inputs (thin)
+    const baseY = cv.height*0.80;
+    const small = scale*0.55;
+    drawSeries(buf.u0, baseY+70, small, "rgba(255,255,255,0.35)");
+    drawSeries(buf.u1, baseY+90, small, "rgba(255,255,255,0.30)");
+    drawSeries(buf.u2, baseY+110, small, "rgba(255,255,255,0.25)");
+    drawSeries(buf.u3, baseY+130, small, "rgba(255,255,255,0.20)");
+
+    // Labels
+    ctx.save();
+    ctx.fillStyle="rgba(255,255,255,0.85)";
+    ctx.font="12px ui-sans-serif, system-ui";
+    ctx.fillText("Δp", 12, midP-6);
+    ctx.fillText("ΔT", 12, midT-6);
+    ctx.fillText("ΔE", 12, midE-6);
+    ctx.fillStyle="rgba(255,255,255,0.65)";
+    ctx.fillText("u_seis", 12, baseY+70-6);
+    ctx.fillText("u_heat", 12, baseY+90-6);
+    ctx.fillText("u_wind", 12, baseY+110-6);
+    ctx.fillText("u_EM",   12, baseY+130-6);
+    ctx.restore();
+  }
+
+  function computeStep(){
+    syncCfgFromUI();
+    const dt = Math.max(0.0001, parseFloat(dtEl.value||"0.02"));
+    const alpha = clamp(parseFloat(alphaEl.value||"0.84"), 0, 0.99);
+    const mix2 = parseFloat(mix2El.value||"0.55");
+    const mix3 = parseFloat(mix3El.value||"0.40");
+
+    // input
+    const u = inputSignal(t, cfg);
+
+    // transfer (Taylor N=3)
+    const yNew = transferTaylor(u, mix2, mix3);
+
+    // atmosphere inertia (stringy response)
+    const y = smooth(yPrev, yNew, alpha);
+    yPrev = y;
+
+    // buffer
+    pushBuf("p", y[0]);
+    pushBuf("T", y[1]);
+    pushBuf("E", y[2]);
+    pushBuf("u0", u[0]);
+    pushBuf("u1", u[1]);
+    pushBuf("u2", u[2]);
+    pushBuf("u3", u[3]);
+
+    // display
+    const ratio = (Math.abs(y[0])<1e-9) ? 0 : (Math.abs(y[2]) / Math.abs(y[0]));
+    outBox.textContent =
+`זמן: t = ${t.toFixed(3)} s
+
+קלטים (קרקע) u = [seis, heat, wind, EM]
+u = [${u.map(v=>v.toFixed(4)).join(", ")}]
+
+פלט (שמים) y = [Δp, ΔT, ΔE]
+y = [${y.map(v=>v.toFixed(4)).join(", ")}]
+
+תרומה רעיונית:
+• A1 (לינארי) + A2 (ערבוב זוגי) + A3 (ערבוב משולש / סף)
+• Mix2 = ${mix2.toFixed(2)}, Mix3 = ${mix3.toFixed(2)}, Inertia α = ${alpha.toFixed(2)}
+
+מדד גס:
+|ΔE|/|Δp| ≈ ${ratio.toFixed(3)} (רמז ל”ריאקטיבי/EM” מול “מכני/לחץ”)`;
+
+    // advance time
+    t += dt;
+  }
+
+  function loop(){
+    if(!running) return;
+    const spf = Math.max(1, parseInt(spfEl.value||"6",10));
+    for(let i=0;i<spf;i++) computeStep();
+    const scale = Math.max(10, parseFloat(scaleEl.value||"140"));
+    renderPlot(scale);
+    raf=requestAnimationFrame(loop);
+  }
+
+  btnRun.onclick=()=>{
+    running=!running;
+    btnRun.textContent = running ? "⏸ עצור" : "▶ הפעל";
+    if(running) loop();
+    else if(raf) cancelAnimationFrame(raf);
+  };
+
+  btnStep.onclick=()=>{
+    const spf = Math.max(1, parseInt(spfEl.value||"1",10));
+    for(let i=0;i<spf;i++) computeStep();
+    const scale = Math.max(10, parseFloat(scaleEl.value||"140"));
+    renderPlot(scale);
+  };
+
+  btnReset.onclick=()=>{
+    running=false;
+    btnRun.textContent="▶ הפעל";
+    if(raf) cancelAnimationFrame(raf);
+    t=0;
+    yPrev=[0,0,0];
+    buf.p=[]; buf.T=[]; buf.E=[];
+    buf.u0=[]; buf.u1=[]; buf.u2=[]; buf.u3=[];
+    clearCanvas();
+    outBox.textContent="—";
+    renderPlot(Math.max(10, parseFloat(scaleEl.value||"140")));
+  };
+
+  // initial render
+  renderPlot(Math.max(10, parseFloat(scaleEl.value||"140")));
+</script>
+</body>
+</html>
