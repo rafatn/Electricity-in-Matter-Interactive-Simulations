@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>תורת תמסורת-טיילור (N=3) ב־3D — מודל מלא + דוגמאות</title>
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --bg1:#0f172a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --text:#e5e7eb;
+      --muted:#a3a3a3;
+      --line: rgba(255,255,255,.12);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --ok:#86efac;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg0:#f4f6fb;
+        --bg1:#eef2ff;
+        --card: rgba(255,255,255,.78);
+        --card2: rgba(255,255,255,.55);
+        --text:#0f172a;
+        --muted:#64748b;
+        --line: rgba(15,23,42,.16);
+        --accent:#0284c7;
+        --accent2:#7c3aed;
+        --shadow: 0 18px 50px rgba(2,6,23,.12);
+      }
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(125,211,252,.18), transparent 55%),
+        radial-gradient(1200px 800px at 80% 20%, rgba(167,139,250,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:var(--accent)}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    .hero{
+      background:linear-gradient(135deg, rgba(125,211,252,.12), rgba(167,139,250,.10));
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px 18px 14px;
+      box-shadow:var(--shadow);
+    }
+    h1{margin:0 0 8px;font-size:22px}
+    .sub{color:var(--muted);line-height:1.5}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{margin:0 0 8px;font-size:16px}
+    .card h3{margin:14px 0 8px;font-size:14px;color:var(--accent)}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      font-size:12px;
+      margin:4px 6px 0 0;
+    }
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .mono{font-family:var(--mono);font-size:12px}
+    .eq{direction:ltr;text-align:left;overflow:auto;padding:10px;border-radius:14px;border:1px dashed var(--line);background:var(--card2)}
+    .note{
+      border-right:3px solid var(--accent);
+      padding:10px 12px;
+      background:rgba(125,211,252,.08);
+      border-radius:14px;
+      color:var(--text);
+      margin-top:10px;
+    }
+    .warn{
+      border-right:3px solid var(--warn);
+      background:rgba(251,191,36,.10);
+    }
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      color:var(--text);padding:10px 12px;border-radius:14px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{border-color:rgba(125,211,252,.45)}
+    .btn.danger{border-color:rgba(251,113,133,.55)}
+    .inputs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 620px){
+      .inputs{grid-template-columns:1fr}
+    }
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+    input{
+      width:100%;box-sizing:border-box;
+      padding:10px 10px;border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      color:var(--text);
+      outline:none;
+    }
+    @media (prefers-color-scheme: light){
+      input{background:rgba(255,255,255,.75)}
+    }
+    canvas{width:100%;height:360px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.12)}
+    @media (prefers-color-scheme: light){
+      canvas{background:rgba(255,255,255,.55)}
+    }
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    td,th{padding:10px 10px;border:1px solid var(--line);background:var(--card2)}
+    th{background:rgba(125,211,252,.10)}
+    tr td:first-child, tr th:first-child{border-top-right-radius:14px;border-bottom-right-radius:14px}
+    tr td:last-child, tr th:last-child{border-top-left-radius:14px;border-bottom-left-radius:14px}
+    .footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>🧬 תמסורת-טיילור (N=3) ב־3D — “פונקציית מעבר” כמקדמים</h1>
+      <div class="sub">
+        מסמך מסכם מהתחלה: מגדירים מרחב מצב, פונקציית תמסורת \(\Psi\), אופרטור חדש \(\mathbb{P}_3\) שמוציא מקדמים,
+        מסלול אקטיבי+ריאקטיבי, ועדכון דינמי של המקדמים עצמם. כולל דוגמא מספרית וסימולציה קלה.
+      </div>
+      <div class="row" style="margin-top:10px">
+        <span class="pill">✅ 3D</span>
+        <span class="pill">✅ Taylor עד סדר 3</span>
+        <span class="pill">✅ אקטיבי + ריאקטיבי</span>
+        <span class="pill">✅ מידה לכדוריות</span>
+        <span class="pill">✅ דוגמא לכל שלב</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Theory + examples -->
+      <div class="card">
+        <h2>1) הגדרות מהתחלה (המסגרת)</h2>
+
+        <h3>1.1 מרחב מצב 3D ונקודת ייחוס</h3>
+        <div class="eq">
+          \[
+            \mathbf{x}=(x_1,x_2,x_3)\in\mathcal{S}\subseteq\mathbb{R}^3,\qquad
+            \mathbf{x}_0\in\mathcal{S},\qquad
+            \Delta\mathbf{x}=\mathbf{x}-\mathbf{x}_0
+          \]
+        </div>
+
+        <h3>1.2 פונקציית תמסורת (פוטנציאל מעבר)</h3>
+        <div class="eq">
+          \[
+            \Psi:\mathcal{S}\to\mathbb{R}
+          \]
+        </div>
+        <div class="note">
+          <b>רעיון מרכזי:</b> במקום “לתאר מעבר” רק דרך מסלולים/גרדיאנטים, אנחנו הופכים את <u>מקדמי הטיילור</u> עצמם
+          לישות פיזיקלית: הם <b>פונקציית התמסורת</b> במובן מעשי.
+        </div>
+
+        <h3>1.3 הפעולה החדשה: \(\mathbb{P}_3\) (אופרטור תמסורת-טיילור)</h3>
+        <div class="eq">
+          \[
+            \mathbb{P}_3[\Psi](\mathbf{x}_0) := (a_0,\mathbf{a}_1,A_2,A_3)\in\mathcal{A}_3
+          \]
+        </div>
+        <div class="muted">
+          כאן \(\mathcal{A}_3\) הוא “מרחב המעבר” (מרחב המקדמים עד סדר 3).
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>2) טור טיילור ב־3D עד סדר 3</h2>
+        <div class="eq">
+          \[
+            \Psi_3(\mathbf{x})
+            =
+            a_0
+            + \mathbf{a}_1\cdot \Delta\mathbf{x}
+            +\frac12\,\Delta\mathbf{x}^\top A_2\,\Delta\mathbf{x}
+            +\frac{1}{6}\sum_{i,j,k=1}^{3} (A_3)_{ijk}\,\Delta x_i\Delta x_j\Delta x_k
+          \]
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>רכיב</th>
+              <th>מה הוא</th>
+              <th>פירוש פיזיקלי (דוגמה)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">a0</td>
+              <td>סקאלר</td>
+              <td>כיול/רמת אפס של מעבר</td>
+            </tr>
+            <tr>
+              <td class="mono">a1</td>
+              <td>וקטור \(\in\mathbb{R}^3\)</td>
+              <td>חוק לינארי מקומי (“אוהם מקומי”)</td>
+            </tr>
+            <tr>
+              <td class="mono">A2</td>
+              <td>מטריצה סימטרית</td>
+              <td>עקמומיות/רגישות; יציבות/אי־יציבות</td>
+            </tr>
+            <tr>
+              <td class="mono">A3</td>
+              <td>טנזור סימטרי דרגה 3</td>
+              <td>אי־לינאריות מעבר (סף/“פאזה”)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>2.1 גרדיאנט מתוך המקדמים</h3>
+        <div class="eq">
+          \[
+            \nabla \Psi_3(\mathbf{x})
+            =
+            \mathbf{a}_1
+            + A_2\,\Delta\mathbf{x}
+            +\frac12\,\mathbf{b}(\Delta\mathbf{x})
+          \]
+          \[
+            [\mathbf{b}]_i=
+            \sum_{j,k=1}^{3} (A_3)_{ijk}\,\Delta x_j\Delta x_k
+          \]
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>3) מסלול 3D: אקטיבי + ריאקטיבי</h2>
+        <div class="eq">
+          \[
+            \dot{\mathbf{x}}
+            =
+            -\nabla\Psi_3(\mathbf{x})
+            + \boldsymbol{\omega}\times \nabla\Psi_3(\mathbf{x})
+          \]
+        </div>
+        <div class="note">
+          <b>אקטיבי</b> (החלק הראשון): “יורד פוטנציאל” &nbsp;•&nbsp;
+          <b>ריאקטיבי</b> (הצלב): “מסובב” את הכיוון (הלוך-חזור), בדומה ל־\(Q\).
+        </div>
+
+        <h3>3.1 איך מודדים “כמה אקטיבי” וכמה “ריאקטיבי”?</h3>
+        <div class="eq">
+          \[
+            \mathbf{v}_{act}=-\nabla\Psi_3,\qquad
+            \mathbf{v}_{react}=\boldsymbol{\omega}\times\nabla\Psi_3
+          \]
+          \[
+            P_{geo}:=\|\mathbf{v}_{act}\|,\qquad
+            Q_{geo}:=\|\mathbf{v}_{react}\|
+          \]
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>4) דינמיקה של המקדמים עצמם (המעבר “חי”)</h2>
+        <div class="muted">
+          זה החלק שבדרך כלל לא מתארים: אנחנו נותנים למקדמים להתעדכן בזמן לפי המסלול.
+        </div>
+
+        <h3>4.1 מדד מורכבות/עלות על מקדמים</h3>
+        <div class="eq">
+          \[
+            \mathcal{M}_3
+            =
+            w_0 a_0^2
+            +w_1\|\mathbf{a}_1\|^2
+            +w_2\|A_2\|_F^2
+            +w_3\|A_3\|_F^2
+          \]
+        </div>
+
+        <h3>4.2 עדכון מינימלי (ריסון + למידה)</h3>
+        <div class="eq">
+          \[
+            \dot a_0 = -2w_0 a_0 + \lambda_0
+          \]
+          \[
+            \dot{\mathbf{a}}_1 = -2w_1 \mathbf{a}_1 + \lambda_1\,\Delta\mathbf{x}
+          \]
+          \[
+            \dot A_2 = -2w_2 A_2 + \lambda_2\,\mathrm{Sym}(\Delta\mathbf{x}\Delta\mathbf{x}^\top)
+          \]
+          \[
+            \dot A_3 = -2w_3 A_3 + \lambda_3\,\mathrm{Sym}(\Delta\mathbf{x}\otimes\Delta\mathbf{x}\otimes\Delta\mathbf{x})
+          \]
+        </div>
+
+        <div class="note warn">
+          <b>הערה:</b> זו “בחירת בסיס” פשוטה. אפשר להחליף את \(\Delta\mathbf{x}\) בקלטים מתויגים (T, ρ, EM…),
+          או להגדיר למידה/ריסון שונים לכל נושא.
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>5) כדוריות + מידה (Measure)</h2>
+        <h3>5.1 מעבר לקואורדינטות כדוריות</h3>
+        <div class="eq">
+          \[
+            (x_1,x_2,x_3)\ \leftrightarrow\ (r,\theta,\phi)
+          \]
+        </div>
+
+        <h3>5.2 מידה טבעית בכדוריות</h3>
+        <div class="eq">
+          \[
+            d\mu = r^2\sin\theta\ dr\,d\theta\,d\phi
+          \]
+        </div>
+
+        <div class="note">
+          זה נותן “משקל” נכון לנפח, לכן כשאתה מגדיר נורמות/אינטגרלים (אם תרצה בהמשך),
+          לא תהיה תלוי בבחירת קואורדינטות.
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>6) דוגמא מספרית לכל שלב (בצד ימין גם סימולציה)</h2>
+        <div class="muted">
+          בדוגמה: נבחר \(\mathbf{x}_0\), מקדמים התחלתיים פשוטים, נחשב \(\Psi_3\), \(\nabla\Psi_3\), נפריד אקטיבי/ריאקטיבי,
+          ונריץ אינטגרציה (Euler) כדי לראות מסלול.
+        </div>
+
+        <div class="eq mono" id="exampleText">
+          טוען דוגמה…
+        </div>
+
+        <div class="footer">
+          בברכה,<br/>מסמך מודל — תמסורת-טיילור N=3 ב־3D
+        </div>
+      </div>
+
+      <!-- RIGHT: Interactive demo -->
+      <div class="card">
+        <h2>סימולציה (דוגמה) — מסלול 3D עם הקרנה 2D</h2>
+        <div class="muted">
+          מציירים על המסך את \((x_1,x_2)\) כהקרנה. ערך \(x_3\) מוצג כמספר ומעודכן בזמן.
+        </div>
+
+        <canvas id="cv" width="900" height="480"></canvas>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnRun">▶ הפעל</button>
+          <button class="btn" id="btnStep">⏭ צעד אחד</button>
+          <button class="btn" id="btnReset">↺ אפס</button>
+          <button class="btn danger" id="btnClear">🧹 נקה ציור</button>
+        </div>
+
+        <div class="inputs">
+          <div>
+            <label>Δt (צעד זמן)</label>
+            <input id="dt" type="number" step="0.001" value="0.02">
+          </div>
+          <div>
+            <label>צעדים לכל פריים</label>
+            <input id="stepsPerFrame" type="number" step="1" value="6">
+          </div>
+
+          <div>
+            <label>\(\omega_x\)</label>
+            <input id="wx" type="number" step="0.01" value="0.0">
+          </div>
+          <div>
+            <label>\(\omega_y\)</label>
+            <input id="wy" type="number" step="0.01" value="0.0">
+          </div>
+          <div>
+            <label>\(\omega_z\)</label>
+            <input id="wz" type="number" step="0.01" value="1.2">
+          </div>
+          <div>
+            <label>קנה־מידה תצוגה (Scale)</label>
+            <input id="scale" type="number" step="1" value="110">
+          </div>
+
+          <div>
+            <label>\(w_1\) (ריסון a1)</label>
+            <input id="w1" type="number" step="0.01" value="0.20">
+          </div>
+          <div>
+            <label>\(\lambda_1\) (למידה a1)</label>
+            <input id="l1" type="number" step="0.01" value="0.35">
+          </div>
+
+          <div>
+            <label>\(w_2\) (ריסון A2)</label>
+            <input id="w2" type="number" step="0.01" value="0.12">
+          </div>
+          <div>
+            <label>\(\lambda_2\) (למידה A2)</label>
+            <input id="l2" type="number" step="0.01" value="0.22">
+          </div>
+
+          <div>
+            <label>\(w_3\) (ריסון A3)</label>
+            <input id="w3" type="number" step="0.01" value="0.08">
+          </div>
+          <div>
+            <label>\(\lambda_3\) (למידה A3)</label>
+            <input id="l3" type="number" step="0.01" value="0.18">
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>מצב נוכחי</h3>
+        <div class="eq mono" id="stateBox">—</div>
+
+        <h3>אקטיבי/ריאקטיבי (גאומטרי)</h3>
+        <div class="eq mono" id="pqBox">—</div>
+
+        <div class="note">
+          טיפ: אם \(\boldsymbol{\omega}=(0,0,0)\) → מסלול “גרדיאנטי טהור” (רק אקטיבי).<br/>
+          אם מגדילים \(\omega_z\) → יותר “סחרור” סביב ציר z (יותר ריאקטיבי).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- KaTeX auto-render ----------
+    window.addEventListener("load", () => {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false},
+        ]
+      });
+    });
+
+    // ---------- Helpers: vector / matrix / tensor (small, minimal) ----------
+    const vAdd = (a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+    const vSub = (a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+    const vScale=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
+    const vDot = (a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    const vNorm=(a)=>Math.sqrt(vDot(a,a));
+    const vCross=(a,b)=>[
+      a[1]*b[2]-a[2]*b[1],
+      a[2]*b[0]-a[0]*b[2],
+      a[0]*b[1]-a[1]*b[0]
+    ];
+
+    const mVec = (M, x)=>[
+      M[0][0]*x[0]+M[0][1]*x[1]+M[0][2]*x[2],
+      M[1][0]*x[0]+M[1][1]*x[1]+M[1][2]*x[2],
+      M[2][0]*x[0]+M[2][1]*x[1]+M[2][2]*x[2],
+    ];
+
+    const mOuter = (x)=>[
+      [x[0]*x[0], x[0]*x[1], x[0]*x[2]],
+      [x[1]*x[0], x[1]*x[1], x[1]*x[2]],
+      [x[2]*x[0], x[2]*x[1], x[2]*x[2]],
+    ];
+
+    const mSym = (M)=>[
+      [(M[0][0]), (M[0][1]+M[1][0])/2, (M[0][2]+M[2][0])/2],
+      [(M[1][0]+M[0][1])/2, (M[1][1]), (M[1][2]+M[2][1])/2],
+      [(M[2][0]+M[0][2])/2, (M[2][1]+M[1][2])/2, (M[2][2])]
+    ];
+
+    // Tensor A3: store as 3x3x3 array. We'll keep it symmetric-ish by sym update.
+    const zeroA3 = ()=>Array.from({length:3},()=>Array.from({length:3},()=>Array(3).fill(0)));
+
+    // b_i = sum_{j,k} A3_{i j k} dx_j dx_k
+    const tensorB = (A3, dx)=>{
+      const b=[0,0,0];
+      for(let i=0;i<3;i++){
+        let s=0;
+        for(let j=0;j<3;j++){
+          for(let k=0;k<3;k++){
+            s += A3[i][j][k]*dx[j]*dx[k];
+          }
+        }
+        b[i]=s;
+      }
+      return b;
+    };
+
+    // Symmetrize A3 by averaging permutations (lightweight approach)
+    const symA3 = (A3)=>{
+      const B=zeroA3();
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+          for(let k=0;k<3;k++){
+            const v = (A3[i][j][k] + A3[i][k][j] + A3[j][i][k] + A3[j][k][i] + A3[k][i][j] + A3[k][j][i]) / 6;
+            B[i][j][k]=v;
+          }
+        }
+      }
+      return B;
+    };
+
+    // Outer tensor dx⊗dx⊗dx
+    const outer3 = (dx)=>{
+      const T=zeroA3();
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+          for(let k=0;k<3;k++){
+            T[i][j][k]=dx[i]*dx[j]*dx[k];
+          }
+        }
+      }
+      return T;
+    };
+
+    const addA3 = (A,B)=>{
+      const C=zeroA3();
+      for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++) C[i][j][k]=A[i][j][k]+B[i][j][k];
+      return C;
+    };
+    const scaleA3 = (A,s)=>{
+      const C=zeroA3();
+      for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++) C[i][j][k]=A[i][j][k]*s;
+      return C;
+    };
+
+    // ---------- Model: Psi3, grad, dynamics ----------
+    function psi3(a0,a1,A2,A3,x,x0){
+      const dx=vSub(x,x0);
+      const lin = vDot(a1,dx);
+      const quad = 0.5 * vDot(dx, mVec(A2,dx));
+      // cubic term: (1/6) sum_{i,j,k} A3_{ijk} dx_i dx_j dx_k
+      let cub=0;
+      for(let i=0;i<3;i++) for(let j=0;j<3;j++) for(let k=0;k<3;k++){
+        cub += A3[i][j][k]*dx[i]*dx[j]*dx[k];
+      }
+      cub *= (1/6);
+      return a0 + lin + quad + cub;
+    }
+
+    function gradPsi3(a1,A2,A3,x,x0){
+      const dx=vSub(x,x0);
+      const b = tensorB(A3,dx);
+      return vAdd(vAdd(a1, mVec(A2,dx)), vScale(b,0.5));
+    }
+
+    function stepEuler(state, params){
+      const {x0, dt, omega, w1,l1,w2,l2,w3,l3} = params;
+      // unpack
+      let x=state.x.slice();
+      let a1=state.a1.slice();
+      let A2=state.A2.map(r=>r.slice());
+      let A3=state.A3; // nested arrays
+
+      const dx=vSub(x,x0);
+
+      // --- update coefficients (simple: rissun + learning) ---
+      a1 = vAdd( vScale(a1, (1-2*w1*dt)), vScale(dx, l1*dt) );
+
+      const dA2 = mSym(mOuter(dx));
+      // A2 <- (1-2w2 dt)A2 + (l2 dt)*Sym(dx dx^T)
+      A2 = A2.map((row,i)=>row.map((val,j)=> (1-2*w2*dt)*val + (l2*dt)*dA2[i][j] ));
+
+      const dA3 = symA3(outer3(dx));
+      A3 = symA3( addA3( scaleA3(A3, (1-2*w3*dt)), scaleA3(dA3, (l3*dt)) ) );
+
+      // --- compute gradient and velocity ---
+      const g = gradPsi3(a1,A2,A3,x,x0);
+      const vAct = vScale(g,-1);
+      const vRea = vCross(omega,g);
+      const v = vAdd(vAct, vRea);
+
+      // --- update state x ---
+      x = vAdd(x, vScale(v, dt));
+
+      // save
+      state.x=x;
+      state.a1=a1;
+      state.A2=A2;
+      state.A3=A3;
+      state.g=g;
+      state.vAct=vAct;
+      state.vRea=vRea;
+      state.v=v;
+      state.dx=dx;
+
+      return state;
+    }
+
+    // ---------- UI / demo ----------
+    const cv=document.getElementById("cv");
+    const ctx=cv.getContext("2d");
+    const stateBox=document.getElementById("stateBox");
+    const pqBox=document.getElementById("pqBox");
+
+    const dtEl=document.getElementById("dt");
+    const spfEl=document.getElementById("stepsPerFrame");
+    const wxEl=document.getElementById("wx");
+    const wyEl=document.getElementById("wy");
+    const wzEl=document.getElementById("wz");
+    const scaleEl=document.getElementById("scale");
+
+    const w1El=document.getElementById("w1");
+    const l1El=document.getElementById("l1");
+    const w2El=document.getElementById("w2");
+    const l2El=document.getElementById("l2");
+    const w3El=document.getElementById("w3");
+    const l3El=document.getElementById("l3");
+
+    const btnRun=document.getElementById("btnRun");
+    const btnStep=document.getElementById("btnStep");
+    const btnReset=document.getElementById("btnReset");
+    const btnClear=document.getElementById("btnClear");
+
+    const x0=[0,0,0];
+
+    // Initial example coefficients
+    const init = ()=>{
+      return {
+        x:[ 0.45, -0.15, 0.20 ],          // initial state
+        a0: 0,
+        a1:[ 0.20, 0.00, -0.10 ],         // linear
+        A2:[
+          [ 0.35, 0.05, 0.00 ],
+          [ 0.05, 0.22, 0.03 ],
+          [ 0.00, 0.03, 0.28 ]
+        ],
+        A3: (()=>{
+          const A=zeroA3();
+          // put a small symmetric-ish cubic nonlinearity
+          A[0][0][0]= 0.18;
+          A[1][1][1]= -0.12;
+          A[2][2][2]= 0.10;
+          A[0][1][1]= 0.06; A[1][0][1]=0.06; A[1][1][0]=0.06;
+          A[0][2][2]= -0.05; A[2][0][2]=-0.05; A[2][2][0]=-0.05;
+          return symA3(A);
+        })(),
+        g:[0,0,0], vAct:[0,0,0], vRea:[0,0,0], v:[0,0,0], dx:[0,0,0],
+      };
+    };
+
+    let st = init();
+
+    // draw helpers
+    function clearCanvas(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      // center axes
+      ctx.save();
+      ctx.globalAlpha=0.9;
+      ctx.beginPath();
+      ctx.moveTo(cv.width/2,0); ctx.lineTo(cv.width/2,cv.height);
+      ctx.moveTo(0,cv.height/2); ctx.lineTo(cv.width,cv.height/2);
+      ctx.strokeStyle = "rgba(255,255,255,0.20)";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.restore();
+    }
+    clearCanvas();
+
+    function plotPoint(x, scale){
+      const px = cv.width/2 + x[0]*scale;
+      const py = cv.height/2 - x[1]*scale;
+      ctx.beginPath();
+      ctx.arc(px,py,2.0,0,Math.PI*2);
+      ctx.fillStyle = "rgba(125,211,252,0.9)";
+      ctx.fill();
+    }
+
+    function drawVector(from, vec, scale, color){
+      const x1 = cv.width/2 + from[0]*scale;
+      const y1 = cv.height/2 - from[1]*scale;
+      const x2 = cv.width/2 + (from[0]+vec[0])*scale;
+      const y2 = cv.height/2 - (from[1]+vec[1])*scale;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth=2;
+      ctx.stroke();
+    }
+
+    function updateBoxes(params){
+      const {omega} = params;
+      const Pgeo = vNorm(st.vAct);
+      const Qgeo = vNorm(st.vRea);
+      const psi = psi3(st.a0, st.a1, st.A2, st.A3, st.x, x0);
+
+      stateBox.textContent =
+        `x = [${st.x.map(n=>n.toFixed(4)).join(", ")}]\n`+
+        `Δx = [${st.dx.map(n=>n.toFixed(4)).join(", ")}]\n`+
+        `Ψ3(x) = ${psi.toFixed(6)}\n`+
+        `∇Ψ3 = [${st.g.map(n=>n.toFixed(4)).join(", ")}]\n`+
+        `ω = [${omega.map(n=>n.toFixed(3)).join(", ")}]`;
+
+      pqBox.textContent =
+        `v_act = -∇Ψ3 = [${st.vAct.map(n=>n.toFixed(4)).join(", ")}]\n`+
+        `v_react = ω×∇Ψ3 = [${st.vRea.map(n=>n.toFixed(4)).join(", ")}]\n`+
+        `P_geo = ||v_act|| = ${Pgeo.toFixed(6)}\n`+
+        `Q_geo = ||v_react|| = ${Qgeo.toFixed(6)}\n`+
+        `Q/P = ${(Pgeo>1e-9 ? (Qgeo/Pgeo) : 0).toFixed(6)}`;
+    }
+
+    function paramsFromUI(){
+      const dt = Math.max(0.0001, parseFloat(dtEl.value||"0.02"));
+      const stepsPerFrame = Math.max(1, parseInt(spfEl.value||"6",10));
+      const omega = [
+        parseFloat(wxEl.value||"0"),
+        parseFloat(wyEl.value||"0"),
+        parseFloat(wzEl.value||"1.2"),
+      ];
+      const scale = Math.max(10, parseFloat(scaleEl.value||"110"));
+
+      return {
+        dt, stepsPerFrame, omega, scale, x0,
+        w1: Math.max(0, parseFloat(w1El.value||"0.2")),
+        l1: parseFloat(l1El.value||"0.35"),
+        w2: Math.max(0, parseFloat(w2El.value||"0.12")),
+        l2: parseFloat(l2El.value||"0.22"),
+        w3: Math.max(0, parseFloat(w3El.value||"0.08")),
+        l3: parseFloat(l3El.value||"0.18"),
+      };
+    }
+
+    // running loop
+    let running=false;
+    let raf=null;
+
+    function tick(){
+      if(!running) return;
+      const p=paramsFromUI();
+      for(let i=0;i<p.stepsPerFrame;i++){
+        // save dx before step
+        st.dx = vSub(st.x, x0);
+        st.g = gradPsi3(st.a1, st.A2, st.A3, st.x, x0);
+        st.vAct = vScale(st.g, -1);
+        st.vRea = vCross(p.omega, st.g);
+        st.v = vAdd(st.vAct, st.vRea);
+
+        plotPoint(st.x, p.scale);
+
+        st = stepEuler(st, p);
+      }
+      updateBoxes(p);
+      raf=requestAnimationFrame(tick);
+    }
+
+    btnRun.addEventListener("click", ()=>{
+      running=!running;
+      btnRun.textContent = running ? "⏸ עצור" : "▶ הפעל";
+      if(running){ tick(); } else { if(raf) cancelAnimationFrame(raf); }
+    });
+
+    btnStep.addEventListener("click", ()=>{
+      const p=paramsFromUI();
+      // one step
+      st.dx = vSub(st.x, x0);
+      st.g = gradPsi3(st.a1, st.A2, st.A3, st.x, x0);
+      st.vAct = vScale(st.g, -1);
+      st.vRea = vCross(p.omega, st.g);
+      st.v = vAdd(st.vAct, st.vRea);
+
+      plotPoint(st.x, p.scale);
+      st = stepEuler(st, p);
+      updateBoxes(p);
+    });
+
+    btnReset.addEventListener("click", ()=>{
+      const was=running;
+      running=false;
+      btnRun.textContent="▶ הפעל";
+      if(raf) cancelAnimationFrame(raf);
+      st = init();
+      clearCanvas();
+      updateBoxes(paramsFromUI());
+      running=was;
+      if(running){ btnRun.textContent="⏸ עצור"; tick(); }
+    });
+
+    btnClear.addEventListener("click", ()=>{
+      clearCanvas();
+    });
+
+    // Initialize display
+    updateBoxes(paramsFromUI());
+    plotPoint(st.x, parseFloat(scaleEl.value||"110"));
+
+    // Fill the "exampleText" box with a step-by-step numeric example
+    const ex = document.getElementById("exampleText");
+    function writeExample(){
+      const x = st.x, a0=st.a0, a1=st.a1, A2=st.A2, A3=st.A3;
+      const dx=vSub(x,x0);
+      const psi=psi3(a0,a1,A2,A3,x,x0);
+      const g=gradPsi3(a1,A2,A3,x,x0);
+      const p=paramsFromUI();
+      const vAct=vScale(g,-1);
+      const vRea=vCross(p.omega,g);
+      const v=vAdd(vAct,vRea);
+      ex.textContent =
+`שלב 1 — בוחרים נקודת ייחוס:
+x0 = [0,0,0]
+
+שלב 2 — מצב התחלתי:
+x = [${x.map(n=>n.toFixed(4)).join(", ")}]
+Δx = x - x0 = [${dx.map(n=>n.toFixed(4)).join(", ")}]
+
+שלב 3 — מקדמי טור (N=3):
+a0 = ${a0.toFixed(4)}
+a1 = [${a1.map(n=>n.toFixed(4)).join(", ")}]
+A2 (3x3) = [
+  [${A2[0].map(n=>n.toFixed(3)).join(", ")}],
+  [${A2[1].map(n=>n.toFixed(3)).join(", ")}],
+  [${A2[2].map(n=>n.toFixed(3)).join(", ")}]
+]
+A3 — טנזור (כאן מספר רכיבים לדוגמה, סימטרי בקירוב)
+
+שלב 4 — מחשבים Ψ3(x):
+Ψ3(x) = ${psi.toFixed(6)}
+
+שלב 5 — מחשבים גרדיאנט מתוך המקדמים:
+∇Ψ3(x) = [${g.map(n=>n.toFixed(4)).join(", ")}]
+
+שלב 6 — מפרידים אקטיבי/ריאקטיבי:
+v_act = -∇Ψ3 = [${vAct.map(n=>n.toFixed(4)).join(", ")}]
+v_react = ω×∇Ψ3 = [${vRea.map(n=>n.toFixed(4)).join(", ")}]
+v_total = v_act + v_react = [${v.map(n=>n.toFixed(4)).join(", ")}]
+
+שלב 7 — צעד Euler:
+x_next = x + Δt * v_total  (Δt = ${p.dt})
+
+שלב 8 — עדכון מקדמים (למידה+ריסון):
+a1(t+Δt), A2(t+Δt), A3(t+Δt) מתעדכנים לפי Δx.
+(ראה משוואות בסעיף 4 למעלה)
+`;
+    }
+    writeExample();
+  </script>
+</body>
+</html>
