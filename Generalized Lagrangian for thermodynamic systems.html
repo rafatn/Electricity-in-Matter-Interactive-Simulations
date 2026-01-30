@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לגראנז'יאן מוכלל למערכות תרמודינמיות</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .math-box {
+            background: white;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            overflow-x: auto;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 3px 5px;
+            border-radius: 3px;
+        }
+        
+        .variable-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .variable-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .variable-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .var-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .var-desc {
+            color: #666;
+        }
+        
+        .system-example {
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        footer {
+            background: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>לגראנז'יאן מוכלל למערכות תרמודינמיות</h1>
+            <div class="subtitle">הרחבת הפורמליזם הלגראנז'י למשוואות תנועה הכוללות משתנים תרמודינמיים</div>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2>הרעיון המרכזי</h2>
+                <p>במכניקה קלאסית, הלגראנז'יאן <span class="highlight">L</span> מוגדר כהפרש בין האנרגיה הקינטית והפוטנציאלית:</p>
+                <div class="math-box">
+                    L(q, ˙q, t) = T(˙q) - V(q)
+                </div>
+                <p>עם משוואות אוילר-לגראנז':</p>
+                <div class="math-box">
+                    d/dt (∂L/∂˙qᵢ) - ∂L/∂qᵢ = 0
+                </div>
+                <p>במערכות תרמודינמיות, אנו מרחיבים את קבוצת הקואורדינטות המוכללות כך שתכלול גם משתנים תרמודינמיים כמו אנטרופיה ונפח.</p>
+            </div>
+            
+            <div class="card">
+                <h2>משתנים מוכללים חדשים</h2>
+                <p>נוסיף למערכת קואורדינטות מוכללות המתארות מצב תרמודינמי:</p>
+                <ul class="variable-list">
+                    <li><span class="var-name">S</span> <span class="var-desc">- אנטרופיה (תיאור דרגות החופש התרמיות)</span></li>
+                    <li><span class="var-name">V</span> <span class="var-desc">- נפח (תיאור עבודת לחץ-נפח)</span></li>
+                    <li><span class="var-name">T</span> <span class="var-desc">- טמפרטורה (ניתנת לביטוי דרך S)</span></li>
+                    <li><span class="var-name">P</span> <span class="var-desc">- לחץ (ניתן לביטוי דרך V ו-S)</span></li>
+                </ul>
+                <p>הלגראנז'יאן המוכלל תלוי כעת בכל המשתנים ובנגזרותיהם הזמניות:</p>
+                <div class="math-box">
+                    𝓛 = 𝓛(q, ˙q, S, Ṡ, V, Ṡ, t)
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>לגראנז'יאן לדוגמה</h2>
+                <p>עבור מערכת מכנית1-תרמודינמית פשוטה, אפשר להציע:</p>
+                <div class="math-box">
+                    𝓛 = ½m˙q² - Φ(q) + λ(TṠ - PṂ)
+                </div>
+                <p>כאשר:</p>
+                <ul>
+                    <li>החלק הראשון מתאר את האנרגיה המכנית</li>
+                    <li>החלק השני כולל את הקשר התרמודינמי היסודי</li>
+                    <li>λ הוא גורם לגראנז' המבטיח כי החוק הראשון של התרמודינמיקה מתקיים</li>
+                </ul>
+                <p>הקשר התרמודינמי היסודי:</p>
+                <div class="math-box">
+                    dU = TdS - PdV
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>משוואות התנועה המוכללות</h2>
+                <p>מעקרון הפעולה המינימלית δ∫𝓛 dt = 0, נגזור משוואות אוילר-לגראנז' עבור כל סוג משתנה:</p>
+                
+                <h3>עבור קואורדינטה מכנית q:</h3>
+                <div class="math-box">
+                    d/dt (∂𝓛/∂˙q) - ∂𝓛/∂q = 0
+                </div>
+                
+                <h3>עבור אנטרופיה S:</h3>
+                <div class="math-box">
+                    d/dt (∂𝓛/∂Ṡ) - ∂𝓛/∂S = 0
+                </div>
+                
+                <h3>עבור נפח V:</h3>
+                <div class="math-box">
+                    d/dt (∂𝓛/∂Ṃ) - ∂𝓛/∂V = 0
+                </div>
+                
+                <p>משוואות אלה משלבות את החוק השני של ניוטון עם החוק הראשון של התרמודינמיקה.</p>
+            </div>
+            
+            <div class="card">
+                <h2>דוגמה: גז אידיאלי במכל עם בוכנה</h2>
+                <div class="system-example">
+                    <p>נבחן מערכת של גז אידיאלי במכל עם בוכנה נעה:</p>
+                    <ul>
+                        <li>קואורדינטה מכנית: x - מיקום הבוכנה</li>
+                        <li>קואורדינטות תרמודינמיות: V - נפח הגז, S - אנטרופיה</li>
+                        <li>אנרגיה פנימית: U(S,V) עבור גז אידיאלי</li>
+                    </ul>
+                    <p>לגראנז'יאן אפשרי:</p>
+                    <div class="math-box">
+                        𝓛 = ½mẋ² - U(S,V) + α(TṠ - PṂ) + β(V - A·x)
+                    </div>
+                    <p>כאשר האיבר האחרון מבטיח את הקשר הגיאומטרי V = A·x (A - שטח הבוכנה).</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>פרשנות פיזיקלית</h2>
+                <p>הגישה הלגראנז'ית המוכללת מאפשרת:</p>
+                <ol>
+                    <li><strong>טיפול אחיד</strong> במשתנים מכניים ותרמודינמיים</li>
+                    <li><strong>גזירה שיטתית</strong> של משוואות התנועה המשולבות</li>
+                    <li><strong>שימור כמויות</strong> דרך משפט נתר עבור סימטריות במערכת המורחבת</li>
+                    <li><strong>ניסוח קוונטי</strong> אפשרי למערכות תרמודינמיות באמצעות אינטגrale מסלול</li>
+                </ol>
+                <p>האתגר העיקרי הוא בבחירת הלגראנז'יאן המתאים ואילוצי המערכת.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 | פורמליזם לגראנז' מוכלל לתרמודינמיקה | הרחבה של המכניקה האנליטית הקלאסית</p>
+            <p>הצגה סכמטית לתאוריה המפותחת בספרות המקצועית תחת "Thermodynamic Lagrangian"</p>
+        </footer>
+    </div>
+</body>
+</html>
