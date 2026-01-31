@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>סימולציית 2 קיוּביטים – אינטראקטיבי</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --accent:#3b4cca;
+  --accent2:#6a5acd;
+  --text:#1f2937;
+  --muted:#6b7280;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+}
+
+header{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  padding:2.5rem 1.5rem;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+}
+
+main{
+  max-width:900px;
+  margin:2rem auto;
+  padding:0 1rem 3rem;
+}
+
+section{
+  background:var(--card);
+  margin:2rem 0;
+  padding:2rem;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+  color:var(--accent);
+  margin-top:0;
+}
+
+label{
+  display:block;
+  margin:0.8rem 0 .3rem;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+canvas{
+  background:#f8f9ff;
+  border-radius:10px;
+  display:block;
+  margin:1rem 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>סימולציה אינטראקטיבית של 2 קיוּביטים</h1>
+  <p>שינוי אמפליטודות והצגת הסתברות המדידה לכל מצב |00⟩,|01⟩,|10⟩,|11⟩</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. הגדר אמפליטודות</h2>
+<p>גרור את הסליידרים כדי לשנות α של כל מצב:</p>
+
+<label for="amp00">|00⟩</label>
+<input type="range" id="amp00" min="0" max="1" step="0.01" value="0.5">
+
+<label for="amp01">|01⟩</label>
+<input type="range" id="amp01" min="0" max="1" step="0.01" value="0.5">
+
+<label for="amp10">|10⟩</label>
+<input type="range" id="amp10" min="0" max="1" step="0.01" value="0.5">
+
+<label for="amp11">|11⟩</label>
+<input type="range" id="amp11" min="0" max="1" step="0.01" value="0.5">
+
+<canvas id="probCanvas" width="800" height="250"></canvas>
+<p>הגרף מראה את הסתברות המדידה לכל אחד מהמצבים.</p>
+</section>
+
+<section>
+<h2>2. הסבר</h2>
+<ul>
+<li>הקיוּביטים: |ψ⟩ = α₀₀|00⟩ + α₀₁|01⟩ + α₁₀|10⟩ + α₁₁|11⟩</li>
+<li>P(state) = |α|² לכל מצב</li>
+<li>הסכום מנורמל ל-1 באופן אוטומטי</li>
+<li>ניתן לראות את סופרפוזיציה בזמן אמת</li>
+</ul>
+</section>
+
+</main>
+
+<script>
+const sliders = [
+  document.getElementById('amp00'),
+  document.getElementById('amp01'),
+  document.getElementById('amp10'),
+  document.getElementById('amp11')
+];
+
+const canvas = document.getElementById('probCanvas');
+const ctx = canvas.getContext('2d');
+
+function drawGraph() {
+  // קריאת ערכים
+  let amps = sliders.map(s => parseFloat(s.value));
+
+  // נורמליזציה
+  let norm = Math.sqrt(amps.reduce((acc,v)=>acc+v*v,0));
+  if(norm===0) norm=1;
+  let probs = amps.map(v => (v/norm)**2);
+
+  // ניקוי קנבס
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // ציור ברים
+  const margin = 50;
+  const barWidth = 120;
+  const spacing = 50;
+  const maxHeight = canvas.height - 2*margin;
+
+  const labels = ["|00⟩","|01⟩","|10⟩","|11⟩"];
+  const colors = ["#3b4cca","#6a5acd","#5c6bc0","#7c4dff"];
+
+  for(let i=0;i<4;i++){
+    let x = margin + i*(barWidth + spacing);
+    let y = canvas.height - margin - probs[i]*maxHeight;
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(x, y, barWidth, probs[i]*maxHeight);
+    ctx.fillStyle = "#000";
+    ctx.font = "16px Arial";
+    ctx.fillText(`${labels[i]}: P=${probs[i].toFixed(2)}`, x, canvas.height-margin+20);
+  }
+}
+
+// מאזינים לכל הסליידרים
+sliders.forEach(s => s.addEventListener('input', drawGraph));
+
+// ציור התחלתי
+drawGraph();
+</script>
+
+</body>
+</html>
