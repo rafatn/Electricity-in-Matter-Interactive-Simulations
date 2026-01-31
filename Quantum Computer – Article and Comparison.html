@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>מאמר: מחשב קוונטי – השוואה וחישוב במרחב מצבים</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --accent:#3b4cca;
+  --accent2:#6a5acd;
+  --text:#1f2937;
+  --muted:#6b7280;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.75;
+}
+
+header{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  padding:3rem 1.5rem;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+  font-size:2.2rem;
+}
+
+header p{
+  margin-top:.8rem;
+  opacity:.95;
+}
+
+main{
+  max-width:1100px;
+  margin:2rem auto;
+  padding:0 1rem 3rem;
+}
+
+section{
+  background:var(--card);
+  margin:2rem 0;
+  padding:2rem;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+h2{
+  margin-top:0;
+  color:var(--accent);
+}
+
+h3{
+  color:var(--accent2);
+}
+
+ul{
+  padding-right:1.3rem;
+}
+
+li{
+  margin-bottom:.6rem;
+}
+
+blockquote{
+  background:#eef2ff;
+  border-right:5px solid var(--accent);
+  margin:1.5rem 0;
+  padding:1rem 1.2rem;
+  border-radius:8px;
+  font-weight:500;
+}
+
+.math{
+  direction:ltr;
+  background:#0f172a;
+  color:#e5e7eb;
+  padding:1rem;
+  border-radius:10px;
+  font-family: Consolas, monospace;
+  overflow-x:auto;
+  margin:1.2rem 0;
+}
+
+svg{
+  width:100%;
+  max-width:700px;
+  display:block;
+  margin:1.5rem auto;
+}
+
+table{
+  width:100%;
+  border-collapse: collapse;
+  margin:1rem 0;
+}
+
+th, td{
+  border:1px solid #ccc;
+  padding:.8rem;
+  text-align:center;
+}
+
+th{
+  background:var(--accent2);
+  color:white;
+}
+
+td{
+  background:#f8f9ff;
+}
+
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:.9rem;
+  padding:2rem 1rem 3rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>מחשב קוונטי – מאמר והשוואה</h1>
+  <p>חישוב בדיד במרחב מצבים, עם השוואה למחשבים קלאסיים ואנלוגיים</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. הרעיון המרכזי</h2>
+<p>
+מחשב קוונטי פועל על <strong>מרחב מצבים</strong>, לא על ערכים בודדים.  
+החישוב מתבצע על סופרפוזיציות של קיוּביטים באמצעות אבולוציה פיזיקלית רציפה ומדויקת.
+</p>
+
+<blockquote>
+חישוב קוונטי = לוגיקה בדידה × פיזיקה רציפה
+</blockquote>
+</section>
+
+<section>
+<h2>2. ניסוח מתמטי</h2>
+
+<p>מצב קוונטי מתואר כוקטור במרחב הילברט:</p>
+
+<div class="math">
+|ψ⟩ = Σ αᵢ |i⟩ , Σ |αᵢ|² = 1
+</div>
+
+<ul>
+  <li>הבסיס |i⟩ – בדיד</li>
+  <li>האימפליטודות αᵢ – רציפות ומורכבות</li>
+  <li>האבולוציה – לינארית ויוניטרית: <span class="math">|ψ(t)⟩ = U(t)|ψ(0)⟩ , U = e^{-iHt/ħ}</span></li>
+</ul>
+
+<blockquote>
+למרות שהחישוב נראה מורכב, הוא לינארי לחלוטין.
+</blockquote>
+</section>
+
+<section>
+<h2>3. סדר ואי-קומוטטיביות</h2>
+<p>שערים קוונטיים אינם קומוטטיביים – סדר הפעולות משפיע על התוצאה.</p>
+
+<div class="math">
+AB ≠ BA
+</div>
+
+<ul>
+  <li>הפאזה משפיעה על התוצאה</li>
+  <li>כל שינוי בסדר = שינוי האלגוריתם</li>
+  <li>המידע אינו רק 0 או 1, אלא היחסים בין הקיוּביטים</li>
+</ul>
+</section>
+
+<section>
+<h2>4. בדיד ↔ רציף</h2>
+
+<svg viewBox="0 0 700 250">
+  <rect x="20" y="80" width="160" height="90" rx="12" fill="#c7d2fe"/>
+  <text x="100" y="125" text-anchor="middle" font-size="16">קיוּביטים<br>בדידים</text>
+
+  <rect x="270" y="40" width="160" height="170" rx="12" fill="#e0e7ff"/>
+  <text x="350" y="115" text-anchor="middle" font-size="16">
+    דינמיקה רציפה<br>(פאזה / זמן)
+  </text>
+
+  <rect x="520" y="80" width="160" height="90" rx="12" fill="#c7d2fe"/>
+  <text x="600" y="125" text-anchor="middle" font-size="16">מדידה<br>בדידה</text>
+
+  <line x1="180" y1="125" x2="270" y2="125" stroke="#000" stroke-width="2"/>
+  <line x1="430" y1="125" x2="520" y2="125" stroke="#000" stroke-width="2"/>
+</svg>
+
+<blockquote>
+המערכת הרציפה מממשת חישוב בדיד – מרחב מצבים > תוצאה בדידה
+</blockquote>
+</section>
+
+<section>
+<h2>5. סביבה ומגבלות פיזיקליות</h2>
+
+<ul>
+  <li>אין העברת מידע מעל מהירות האור</li>
+  <li>זמני שערים נקבעים על ידי הפיזיקה (לייזר / מיקרוגלים)</li>
+  <li>דה-קוהרנטיות – איבוד מידע פיזיקלי בזמן החישוב</li>
+  <li>המקביליות היא במרחב מתמטי, לא בזמן/מרחב פיזי</li>
+</ul>
+
+<blockquote>
+מהירות החישוב ≠ מהירות האור; חישוב קוונטי הוא “מהיר במרחב מצבים”
+</blockquote>
+</section>
+
+<section>
+<h2>6. השוואה: קלאסי, אנלוגי וקוונטי</h2>
+
+<table>
+<tr>
+<th>סוג מחשב</th>
+<th>ייצוג מידע</th>
+<th>אבולוציה</th>
+<th>תוצאה</th>
+<th>חישוב מקבילי</th>
+</tr>
+<tr>
+<td>קלאסי</td>
+<td>ביטים (0/1)</td>
+<td>לוגיקה בדידה</td>
+<td>0 או 1</td>
+<td>רצפי (סדרה)</td>
+</tr>
+<tr>
+<td>אנלוגי</td>
+<td>ערכים רציפים</td>
+<td>שינויים פיזיקליים רציפים</td>
+<td>ערך רציף</td>
+<td>בסוג מסוים של סימולציות</td>
+</tr>
+<tr>
+<td>קוונטי</td>
+<td>קיוּביטים – סופרפוזיציה</td>
+<td>יוניטרי / לינארי / לא-קומוטטיבי</td>
+<td>בדיד לאחר מדידה</td>
+<td>מקבילית במרחב מצבים</td>
+</tr>
+</table>
+</section>
+
+<section>
+<h2>7. פרשנות פילוסופית</h2>
+
+<p>במחשב קלאסי:</p>
+<ul>
+<li>מצב → פעולה → תוצאה</li>
+</ul>
+
+<p>במחשב קוונטי:</p>
+<ul>
+<li>מרחב מצבים → טרנספורמציה → הקרנה / מדידה</li>
+</ul>
+
+<blockquote>
+חישוב קוונטי הוא חישוב של אפשרויות, לא של ערכים בודדים
+</blockquote>
+</section>
+
+<section>
+<h2>8. סיכום</h2>
+
+<ul>
+<li>לינארי, אך לא-קומוטטיבי</li>
+<li>בדידות לוגית, רציפות פיזיקלית</li>
+<li>מהירות היא במבנה, לא בזמן הפיזי</li>
+<li>חישוב במרחב מצבים – לא “חישוב מהיר יותר” אלא “שונה לחלוטין”</li>
+</ul>
+
+<blockquote>
+מחשב קוונטי = מחשב במרחב עמוק יותר
+</blockquote>
+</section>
+
+</main>
+
+<footer>
+מאמר רעיוני – מחשוב קוונטי עם השוואה
+</footer>
+
+</body>
+</html>
