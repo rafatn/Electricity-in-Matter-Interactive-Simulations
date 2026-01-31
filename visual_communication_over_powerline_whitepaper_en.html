@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Visual Communication over Power Line – Engineering Whitepaper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:#f5f7fb;
+  color:#0f172a;
+  margin:0;
+  line-height:1.65;
+}
+header{
+  background:linear-gradient(135deg,#020617,#1e3a8a);
+  color:#ffffff;
+  padding:40px;
+}
+section{
+  background:#ffffff;
+  margin:28px;
+  padding:28px;
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.08);
+}
+h1,h2,h3{margin-top:0}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+.badge{
+  display:inline-block;
+  background:#e0e7ff;
+  color:#1e3a8a;
+  padding:6px 14px;
+  border-radius:999px;
+  margin:4px;
+  font-size:14px;
+}
+.diagram{
+  text-align:center;
+  margin:26px 0;
+}
+footer{
+  text-align:center;
+  padding:24px;
+  color:#475569;
+}
+code{
+  background:#eef2ff;
+  padding:2px 6px;
+  border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Visual Communication over Power Line</h1>
+<p>
+Engineering Whitepaper – Visual Media Bus Architecture
+</p>
+</header>
+
+<section>
+<h2>1. Executive Summary</h2>
+<p>
+This document presents a system for real-time transmission of visual media
+(video and audio) over standard electrical power lines.
+The proposed architecture transforms the power grid into a dedicated
+<strong>visual communication bus</strong>,
+without reliance on IP networking, Ethernet, or HDMI cabling.
+</p>
+
+<span class="badge">Low Latency</span>
+<span class="badge">No IP Stack</span>
+<span class="badge">Plug & View</span>
+</section>
+
+<section>
+<h2>2. Concept Overview</h2>
+<p>
+Conventional power lines deliver electrical energy at
+<strong>230V / 50Hz</strong>.
+The proposed system introduces an additional high-frequency carrier
+superimposed on the same conductors, enabling bidirectional visual
+communication.
+</p>
+
+<ul>
+<li>The power signal remains unmodified</li>
+<li>Visual data is spectrally modulated at higher frequencies</li>
+<li>Each electrical outlet functions as a media transmitter and receiver</li>
+</ul>
+</section>
+
+<section>
+<h2>3. Physical Bandwidth Analysis</h2>
+
+<h3>Assumptions</h3>
+<ul>
+<li>Approved frequency band: 1–30 MHz</li>
+<li>Effective usable bandwidth: ~20 MHz</li>
+<li>Average SNR: 20–30 dB</li>
+<li>Modulation: OFDM with adaptive QAM</li>
+</ul>
+
+<h3>Shannon Capacity Formula</h3>
+<p><code>C = B · log₂(1 + SNR)</code></p>
+
+<table>
+<tr><th>Parameter</th><th>Value</th></tr>
+<tr><td>Bandwidth (B)</td><td>20 MHz</td></tr>
+<tr><td>SNR</td><td>20 dB ≈ 100</td></tr>
+<tr><td>Theoretical Capacity</td><td>~133 Mbps</td></tr>
+<tr><td>Practical Efficiency (~60%)</td><td><strong>~80 Mbps</strong></td></tr>
+</table>
+</section>
+
+<section>
+<h2>4. SNR vs Bitrate Behavior</h2>
+
+<div class="diagram">
+<svg width="620" height="260" viewBox="0 0 620 260">
+<line x1="50" y1="20" x2="50" y2="220" stroke="#000"/>
+<line x1="50" y1="220" x2="580" y2="220" stroke="#000"/>
+<text x="5" y="30">Mbps</text>
+<text x="520" y="250">SNR (dB)</text>
+<polyline
+points="50,210 130,180 210,150 290,120 370,95 450,75 530,60"
+fill="none" stroke="#2563eb" stroke-width="3"/>
+</svg>
+</div>
+
+<p>
+The achievable bitrate increases logarithmically with SNR,
+similar to DSL and DOCSIS systems.
+Adaptive modulation ensures robustness under varying noise conditions.
+</p>
+</section>
+
+<section>
+<h2>5. Video Bandwidth Requirements</h2>
+
+<table>
+<tr><th>Format</th><th>Codec</th><th>Bitrate</th></tr>
+<tr><td>720p @30fps</td><td>H.265</td><td>2–4 Mbps</td></tr>
+<tr><td>1080p @30fps</td><td>H.265</td><td>4–8 Mbps</td></tr>
+<tr><td>1080p @60fps</td><td>H.265</td><td>8–12 Mbps</td></tr>
+<tr><td>4K @30fps</td><td>H.265</td><td>15–25 Mbps</td></tr>
+</table>
+
+<p>
+The system can reliably support:
+</p>
+<ul>
+<li>Multiple parallel 1080p streams</li>
+<li>Or a single low-latency 4K stream</li>
+</ul>
+</section>
+
+<section>
+<h2>6. Latency Analysis</h2>
+<ul>
+<li>Low-latency video encoding: 10–20 ms</li>
+<li>Modulation and power line propagation: 1–3 ms</li>
+<li>Decoding and rendering: 10–20 ms</li>
+</ul>
+
+<p>
+<strong>Total end-to-end latency:</strong>  
+≈ <code>25–40 ms</code>
+</p>
+</section>
+
+<section>
+<h2>7. Comparison with Existing Technologies</h2>
+
+<table>
+<tr>
+<th>Technology</th><th>Latency</th><th>Network Dependency</th><th>Primary Use</th>
+</tr>
+<tr>
+<td>HDMI</td><td>~0 ms</td><td>Dedicated cable</td><td>Point-to-point video</td>
+</tr>
+<tr>
+<td>Ethernet / IP</td><td>50–150 ms</td><td>Network infrastructure</td><td>General data</td>
+</tr>
+<tr>
+<td>PLC (HomePlug)</td><td>40–80 ms</td><td>IP-based</td><td>Data transport</td>
+</tr>
+<tr>
+<td><strong>Proposed VM-PL</strong></td>
+<td><strong>25–40 ms</strong></td>
+<td><strong>None</strong></td>
+<td><strong>Visual media</strong></td>
+</tr>
+</table>
+</section>
+
+<section>
+<h2>8. Regulatory Considerations</h2>
+<ul>
+<li>CENELEC Band A (3–95 kHz): Utility control</li>
+<li>Band B (95–125 kHz): Consumer devices</li>
+<li>Band C/D (125 kHz–30 MHz): Communication</li>
+</ul>
+
+<p>
+The proposed system operates within Band C/D and applies
+dynamic spectral notching to avoid radio interference.
+</p>
+</section>
+
+<section>
+<h2>9. Hardware Architecture (FPGA / SoC)</h2>
+
+<ul>
+<li>Low-latency video encoder (H.265 / AV1)</li>
+<li>Custom media packetization (non-IP)</li>
+<li>OFDM modulator and demodulator</li>
+<li>Isolated analog front-end and coupling network</li>
+<li>Hardware-assisted encryption</li>
+</ul>
+
+<p>
+Target platforms include FPGA-based SoCs such as:
+Xilinx Zynq, Intel Cyclone V, or equivalent.
+</p>
+</section>
+
+<section>
+<h2>10. Conclusion</h2>
+<p>
+Electrical power lines can serve as a reliable and efficient
+medium for real-time visual communication.
+The proposed architecture introduces a new category of
+<strong>visual media transport</strong>
+that combines low latency, infrastructure independence,
+and plug-and-play deployment.
+</p>
+
+<span class="badge">Technically Feasible</span>
+<span class="badge">Scalable</span>
+<span class="badge">Patent-Ready</span>
+</section>
+
+<footer>
+<p>
+Visual Communication over Power Line  
+Engineering Whitepaper
+</p>
+</footer>
+
+</body>
+</html>
