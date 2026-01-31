@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מיפוי תהליכים פיזיקליים לפי טמפרטורה</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9fc;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            text-align: right;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            padding: 18px 15px;
+            text-align: center;
+            font-size: 1.1em;
+            border: 1px solid #34495e;
+        }
+        
+        td {
+            padding: 18px 15px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #f1f8ff;
+        }
+        
+        .temp-range {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.05em;
+        }
+        
+        .cold {
+            color: #3498db;
+        }
+        
+        .hot {
+            color: #e74c3c;
+        }
+        
+        ul {
+            margin: 10px 0;
+            padding-right: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            border-right: 4px solid #3498db;
+            margin: 25px 0;
+        }
+        
+        .highlight h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>מיפוי תהליכים פיזיקליים לפי טמפרטורה ותחום</h1>
+        <div class="subtitle">כיצד רמת הטמפרטורה מעצבת את הפיזיקה והתופעות הנצפות</div>
+        
+        <h2>טבלת תהליכים פיזיקליים בהקשר של טמפרטורה</h2>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="25%">טווח טמפרטורה<br>(קור ←→ חום)</th>
+                        <th width="35%">השפעה על רמות האנרגיה והתחום הפיזיקלי</th>
+                        <th width="40%">תהליכים ודוגמאות בולטים</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="temp-range cold">קרוב לאפס המוחלט<br>(מילי-קלווין עד ננו-קלווין)</td>
+                        <td><strong>דומיננטיות של אפקטים קוונטיים מאקרוסקופיים</strong>. האנרגיה התרמית כל כך נמוכה עד שהיא לא "מבלבלת" את התנהגות הגלים הקוונטיים.</td>
+                        <td>
+                            <ul>
+                                <li><strong>עיבוי בוז-איינשטיין</strong>: אטומים מאבדים את זהותם הפרטית ומתנהגים כ"על-אטום" קוונטי אחד.</li>
+                                <li><strong>מוליכות-על</strong>: התנגדות חשמלית אפסית (זרם חשמלי קוונטי).</li>
+                                <li><strong>נוזל-על</strong> (כמו הליום-4): צמיגות אפסית, זורם ללא חיכוך.</li>
+                                <li><strong>משטחי פרמי</strong>: מחקר של אלקטרונים בחומרים.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="temp-range cold">טמפרטורות נמוכות מאוד<br>(כמה קלווין)</td>
+                        <td>מכניקה סטטיסטית קוונטית מתחילה לשלוט. תופעות "קלאסיות" דועכות.</td>
+                        <td>
+                            <ul>
+                                <li><strong>מגנטיות קוונטית</strong>.</li>
+                                <li><strong>אפקט הול הקוונטי</strong>: התנגדות מקוונטטת במדויק.</li>
+                                <li><strong>פעימות קוונטיות</strong> בנקודות קוונטיות.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="temp-range">טמפרטורת החדר והלאה למעלה<br>(כ-300 קלווין ומעלה)</td>
+                        <td><strong>דומיננטיות של פיזיקה "קלאסית"</strong>. האנרגיה התרמית גבוהה מספיק כדי להסתיר אפקטים קוונטיים עדינים.</td>
+                        <td>
+                            <ul>
+                                <li>מכניקה ניוטונית, הולכת חום, זרימה טורבולנטית.</li>
+                                <li>כימיה: תגובות כימיות מואצות עם הטמפרטורה.</li>
+                                <li>רוב התופעות היום-יומיות.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="temp-range hot">טמפרטורות גבוהות מאוד<br>(אלפי קלווין ומעלה)</td>
+                        <td>חומר נכנס למצב פלזמה. אטומים מיוננים. אנרגיה תרמית מתחרה בקשרים האטומיים.</td>
+                        <td>
+                            <ul>
+                                <li><strong>פיזיקת פלזמה</strong> (כוכבים, ברקים, נורות פלואורסצנט).</li>
+                                <li><strong>היתוך גרעיני</strong> (בשמש, בכורים ניסיוניים).</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="temp-range hot">אנרגיות/טמפרטורות קוסמיות<br>(מיליארדי קלווין)</td>
+                        <td><strong>פיזיקה של חלקיקים יסודיים וקוסמולוגיה</strong>. החומר מפורק לחלקיקיו הבסיסיים.</td>
+                        <td>
+                            <ul>
+                                <li><strong>המפץ הגדול</strong>: כל ארבע הכוחות מאוחדים.</li>
+                                <li>ליבת כוכבים סופר-נובה: יצירת יסודות כבדים.</li>
+                                <li>קרינת הוקינג (תיאורטית) מחורים שחורים – אפקט קוונטי בטמפרטורה נמוכה מאוד על פני שדה כבידה עצום.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="highlight">
+            <h3>מדוע הקור כל כך קריטי לפיתוח רעיונות בפיזיקה?</h3>
+            <p><strong>1. "השתקה" של הרעש התרמי:</strong> בטמפרטורה נמוכה, האנרגיה התרמית האקראית (ה"רעש") קטנה מאוד. זה מאפשר ל<strong>אות הקוונטי הטהור</strong> לבלוט. הקור הוא ה<strong>מעבדה האולטימטיבית</strong> לחקר תופעות קוונטיות יסודיות.</p>
+            <p><strong>2. מעברי פאזה וגילויים של סדר חדש:</strong> הקור מאפשר לחומר להגיע למצבי צבירה ותופעות <strong>שלא קיימות בשום טמפרטורה אחרת</strong>. גילוי מוליכות-העל היה מהפכה – זהו סדר קוונטי חדש של זוגות אלקטרונים (זוגות קופר).</p>
+            <p><strong>3. טכנולוגיות קוונטיות:</strong> הקור הוא הבסיס ל: <strong>מחשבים קוונטיים</strong>, <strong>מדידות מדויקות להפליא</strong> (כמו בגלאי גלי כבידה מתקדמים), ו<strong>MRI רפואי</strong>.</p>
+        </div>
+        
+        <div class="footer">
+            טבלה זו מפתחת את הרעיון המקורי לסידור תהליכים פיזיקליים לפי רמות אנרגיה ותחום, עם הדגשה על פרמטר הטמפרטורה.<br>
+            ניתן לשמור דף זה כקובץ PDF באמצעות אפשרות ההדפסה בדפדפן (בחירת "שמור כ-PDF" ביעד ההדפסה).
+        </div>
+    </div>
+</body>
+</html>
