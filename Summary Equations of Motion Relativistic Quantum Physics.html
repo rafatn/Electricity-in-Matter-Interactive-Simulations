@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיכום: ממשוואות תנועה לפיזיקה קוונטית יחסותית</title>
+    <style>
+        :root {
+            --classical: #3498db;
+            --relativistic: #9b59b6;
+            --quantum: #2ecc71;
+            --thermodynamic: #e74c3c;
+            --geometric: #f39c12;
+            --unified: #1abc9c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Assistant', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
+            color: #ecf0f1;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            text-align: right;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(25, 35, 55, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timeline {
+            position: absolute;
+            top: 0;
+            right: 50px;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--classical), var(--relativistic), var(--quantum), var(--unified));
+            z-index: 0;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 3em;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--unified);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        h2 {
+            color: var(--classical);
+            margin-top: 80px;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            padding-right: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2.relativistic { color: var(--relativistic); }
+        h2.quantum { color: var(--quantum); }
+        h2.unified { color: var(--unified); }
+        
+        h3 {
+            color: var(--thermodynamic);
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-size: 2em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .evolution-timeline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 50px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .evolution-step {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid;
+            transition: transform 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .evolution-step:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .step-1 { border-color: var(--classical); }
+        .step-2 { border-color: var(--thermodynamic); }
+        .step-3 { border-color: var(--geometric); }
+        .step-4 { border-color: var(--relativistic); }
+        .step-5 { border-color: var(--quantum); }
+        .step-6 { border-color: var(--unified); }
+        
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--classical), var(--relativistic));
+            color: white;
+            border-radius: 50%;
+            line-height: 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .master-equation {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            margin: 60px 0;
+            text-align: center;
+            font-size: 1.8em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+            overflow-x: auto;
+        }
+        
+        .equation-hierarchy {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .equation-card {
+            background: rgba(40, 50, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 8px solid;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .equation-card.classical { border-left-color: var(--classical); }
+        .equation-card.thermo { border-left-color: var(--thermodynamic); }
+        .equation-card.geometric { border-left-color: var(--geometric); }
+        .equation-card.relativistic { border-left-color: var(--relativistic); }
+        .equation-card.quantum { border-left-color: var(--quantum); }
+        
+        .quantum-branch {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.2));
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            border: 2px solid var(--quantum);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quantum-equations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .quantum-equation {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .unification-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 60px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .unification-level {
+            width: 80%;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 15px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid;
+        }
+        
+        .level-1 { border-color: var(--classical); }
+        .level-2 { border-color: var(--relativistic); }
+        .level-3 { border-color: var(--quantum); }
+        .level-4 { border-color: var(--unified); }
+        
+        .connection {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--classical), var(--unified));
+        }
+        
+        .applications {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .application-card {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+        
+        .future-directions {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 60px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #2c3e50;
+            padding: 50px;
+            border-radius: 20px;
+            margin: 60px 0;
+            text-align: center;
+            font-size: 1.4em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #95a5a6;
+            font-size: 1em;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+            
+            .master-equation {
+                padding: 20px;
+                font-size: 1.2em;
+            }
+            
+            .evolution-step {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="timeline"></div>
+        
+        <h1>סיכום: ממשוואות תנועה לפיזיקה קוונטית יחסותית</h1>
+        <div style="text-align: center; color: #bdc3c7; margin-bottom: 40px; font-size: 1.3em;">
+            מסע מתמטי מלא מניוטון ועד לתורת המיתרים - הסתעפות מלאה של כל הענפים
+        </div>
+        
+        <!-- חלק 1: ציר זמן התפתחותי -->
+        <h2>חלק 1: ציר הזמן המתמטי</h2>
+        
+        <div class="evolution-timeline">
+            <div class="evolution-step step-1">
+                <div class="step-number">1</div>
+                <h3>מכניקה קלאסית</h3>
+                <p>1687 - ניוטון</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(52, 152, 219, 0.2); border-radius: 10px;">
+                    \[
+                    F = ma
+                    \]
+                </div>
+                <p>תנועה, מסה, כוח</p>
+            </div>
+            
+            <div class="evolution-step step-2">
+                <div class="step-number">2</div>
+                <h3>תרמודינמיקה</h3>
+                <p>1850 - קלאוזיוס, קלווין</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(231, 76, 60, 0.2); border-radius: 10px;">
+                    \[
+                    \Delta S \geq 0
+                    \]
+                </div>
+                <p>חום, אנטרופיה, טמפרטורה</p>
+            </div>
+            
+            <div class="evolution-step step-3">
+                <div class="step-number">3</div>
+                <h3>גיאומטריה דיפרנציאלית</h3>
+                <p>1854 - רימן</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(243, 156, 18, 0.2); border-radius: 10px;">
+                    \[
+                    ds^2 = g_{\mu\nu}dx^\mu dx^\nu
+                    \]
+                </div>
+                <p>עקמומיות, מרחבים</p>
+            </div>
+            
+            <div class="evolution-step step-4">
+                <div class="step-number">4</div>
+                <h3>יחסות</h3>
+                <p>1905/1915 - איינשטיין</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(155, 89, 182, 0.2); border-radius: 10px;">
+                    \[
+                    G_{\mu\nu} = 8\pi T_{\mu\nu}
+                    \]
+                </div>
+                <p>מרחב-זמן, כבידה</p>
+            </div>
+            
+            <div class="evolution-step step-5">
+                <div class="step-number">5</div>
+                <h3>מכניקה קוונטית</h3>
+                <p>1925 - שרדינגר, הייזנברג</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(46, 204, 113, 0.2); border-radius: 10px;">
+                    \[
+                    i\hbar\frac{\partial\psi}{\partial t} = \hat{H}\psi
+                    \]
+                </div>
+                <p>סופרפוזיציה, הסתברות</p>
+            </div>
+            
+            <div class="evolution-step step-6">
+                <div class="step-number">6</div>
+                <h3>איחוד</h3>
+                <p>1968 - תורת המיתרים</p>
+                <div style="margin: 20px 0; padding: 15px; background: rgba(26, 188, 156, 0.2); border-radius: 10px;">
+                    \[
+                    S = \frac{1}{4\pi\alpha'}\int d^2\sigma\sqrt{h}h^{ab}\partial_a X^\mu\partial_b X_\mu
+                    \]
+                </div>
+                <p>כוחות מאוחדים</p>
+            </div>
+        </div>
+        
+        <!-- חלק 2: המשוואה המאסטר -->
+        <h2 class="unified">חלק 2: המשוואה המאסטר - סיכום כל התורות</h2>
+        
+        <div class="master-equation">
+            \[
+            \boxed{\mathcal{D}\Psi[\mathcal{M}, \Phi, g, T, \psi] = \mathcal{J}}
+            \]
+            
+            <div style="margin-top: 30px; font-size: 0.8em;">
+                <p>כאשר:</p>
+                <p>\( \mathcal{D} \) - אופרטור דיפרנציאלי-אינטגרלי המשלב יחסות, קוונטים ותרמודינמיקה</p>
+                <p>\( \Psi \) - פונקציית גל על-מרחבית של כל המערכות</p>
+                <p>\( \mathcal{M} \) - מרחב-זמן דינמי</p>
+                <p>\( \Phi \) - שדות חומר ואנרגיה</p>
+                <p>\( g \) - מטריקה דינמית</p>
+                <p>\( T \) - טמפרטורה ומצב תרמי</p>
+                <p>\( \psi \) - פונקציות גל קוונטיות</p>
+                <p>\( \mathcal{J} \) - מקורות ואפקטים חיצוניים</p>
+            </div>
+        </div>
+        
+        <!-- חלק 3: היררכיית המשוואות -->
+        <h2>חלק 3: היררכיית המשוואות - מקלוסיקה לקוונטים</h2>
+        
+        <div class="equation-hierarchy">
+            <div class="equation-card classical">
+                <h3>רמה 1: מכניקה ניוטונית</h3>
+                <div style="padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    m_i\frac{d^2\vec{r}_i}{dt^2} = \sum_j \vec{F}_{ij} + \vec{F}_{\text{חיצוני}}
+                    \]
+                </div>
+                <p><strong>תחום:</strong> מהירויות נמוכות, סקאלות מאקרוסקופיות</p>
+                <p><strong>מגבלות:</strong> לא יחסותי, לא קוונטי</p>
+            </div>
+            
+            <div class="equation-card thermo">
+                <h3>רמה 2: תרמודינמיקה סטטיסטית</h3>
+                <div style="padding: 20px; background: rgba(231, 76, 60, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    dS = \frac{\delta Q}{T} + dS_{\text{יצור}}
+                    \]
+                </div>
+                <p><strong>תוספות:</strong> טמפרטורה, אנטרופיה, לחץ</p>
+                <p><strong>חוק שני:</strong> \( dS_{\text{יצור}} \geq 0 \)</p>
+            </div>
+            
+            <div class="equation-card geometric">
+                <h3>רמה 3: גיאומטריה דיפרנציאלית</h3>
+                <div style="padding: 20px; background: rgba(243, 156, 18, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4}T_{\mu\nu}
+                    \]
+                </div>
+                <p><strong>תוספות:</strong> עקמומיות, מטריקה, טנזורים</p>
+                <p><strong>חוק כבידה:</strong> מסה מעקמת מרחב-זמן</p>
+            </div>
+            
+            <div class="equation-card relativistic">
+                <h3>רמה 4: יחסות כללית + שדות</h3>
+                <div style="padding: 20px; background: rgba(155, 89, 182, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \frac{d^2x^\mu}{d\tau^2} + \Gamma^\mu_{\alpha\beta}\frac{dx^\alpha}{d\tau}\frac{dx^\beta}{d\tau} = \frac{q}{m}F^\mu_\nu\frac{dx^\nu}{d\tau}
+                    \]
+                </div>
+                <p><strong>תוספות:</strong> גאודזיקה, כוחות מדומים, אלקטרומגנטיות יחסותית</p>
+                <p><strong>יחוד:</strong> כבידה = גיאומטריה</p>
+            </div>
+            
+            <div class="equation-card quantum">
+                <h3>רמה 5: תורת שדות קוונטית</h3>
+                <div style="padding: 20px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    S = \int d^4x\sqrt{-g}\left[\frac{R}{16\pi G} + \mathcal{L}_{\text{שדות}}\right]
+                    \]
+                </div>
+                <p><strong>תוספות:</strong> פונקציונלי פעולה, אינטגרלי מסלול</p>
+                <p><strong>קוונטיזציה:</strong> שדות → אופרטורים</p>
+            </div>
+        </div>
+        
+        <!-- חלק 4: הסתעפות לפיזיקה קוונטית -->
+        <h2 class="quantum">חלק 4: הסתעפות מלאה לפיזיקה קוונטית</h2>
+        
+        <div class="quantum-branch">
+            <h3>4.1 קוונטיזציה של משוואות התנועה</h3>
+            
+            <div class="quantum-equations">
+                <div class="quantum-equation">
+                    <h4>קוונטיזציה קנונית</h4>
+                    \[
+                    [\hat{x}_i, \hat{p}_j] = i\hbar\delta_{ij}
+                    \]
+                    <p>סוגריים פואסון → קומוטטורים</p>
+                </div>
+                
+                <div class="quantum-equation">
+                    <h4>משוואת שרדינגר יחסותית</h4>
+                    \[
+                    i\hbar\frac{\partial\psi}{\partial t} = \sqrt{-\hbar^2c^2\nabla^2 + m^2c^4}\ \psi
+                    \]
+                    <p>שורש אופרטור - בעייתי</p>
+                </div>
+                
+                <div class="quantum-equation">
+                    <h4>משוואת דיראק</h4>
+                    \[
+                    (i\gamma^\mu\partial_\mu - m)\psi = 0
+                    \]
+                    <p>פתרון יחסותי לפרמיונים</p>
+                </div>
+                
+                <div class="quantum-equation">
+                    <h4>משוואת קליין-גורדון</h4>
+                    \[
+                    (\partial_\mu\partial^\mu + m^2)\phi = 0
+                    \]
+                    <p>פתרון יחסותי לבוזונים</p>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 40px;">4.2 תורת שדות קוונטית במרחב-זמן מעוקם</h3>
+            
+            <div style="padding: 30px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 30px 0;">
+                \[
+                \mathcal{L} = \sqrt{-g}\left[g^{\mu\nu}\partial_\mu\phi^\dagger\partial_\nu\phi - m^2\phi^\dagger\phi + \mathcal{L}_{\text{אינטראקציה}}\right]
+                \]
+                
+                <p><strong>אתגרים:</strong></p>
+                <ul style="text-align: right; margin: 20px 0;">
+                    <li>אינטגרלי מסלול במרחב מעוקם</li>
+                    <li>נורמליזציה בשדות מעקמים</li>
+                    <li>קוונטיזציה של מטריקה עצמה</li>
+                </ul>
+            </div>
+            
+            <h3>4.3 כבידה קוונטית - הגישות השונות</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div style="padding: 20px; background: rgba(155, 89, 182, 0.1); border-radius: 10px;">
+                    <h4>תורת המיתרים</h4>
+                    \[
+                    S_{\text{מיתר}} = -\frac{T}{2}\int d^2\sigma\sqrt{h}h^{ab}\partial_a X^\mu\partial_b X_\mu
+                    \]
+                    <p>חלקיקים = מיתרים רוטטים</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(46, 204, 113, 0.1); border-radius: 10px;">
+                    <h4>כבידה קוונטית לולאתית</h4>
+                    \[
+                    \hat{H}\Psi[A] = 0
+                    \]
+                    <p>מרחב-זמן בדיד</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 10px;">
+                    <h4>גיאומטריה לא-קומוטטיבית</h4>
+                    \[
+                    [x^\mu, x^\nu] = i\theta^{\mu\nu}
+                    \]
+                    <p>מרחב-זמן קוונטי</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- חלק 5: דיאגרמת איחוד -->
+        <h2 class="unified">חלק 5: דיאגרמת האיחוד המלאה</h2>
+        
+        <div class="unification-diagram">
+            <div class="unification-level level-1">
+                <h3>רמה 1: מכניקה קלאסית</h3>
+                <p>\[ F = ma \]</p>
+                <p>תנועה, מסה, כוח</p>
+            </div>
+            
+            <div class="connection"></div>
+            
+            <div class="unification-level level-2">
+                <h3>רמה 2: יחסות כללית</h3>
+                <p>\[ G_{\mu\nu} = 8\pi T_{\mu\nu} \]</p>
+                <p>כבידה = גיאומטריה</p>
+            </div>
+            
+            <div class="connection"></div>
+            
+            <div class="unification-level level-3">
+                <h3>רמה 3: תורת שדות קוונטית</h3>
+                <p>\[ \mathcal{L} = -\frac{1}{4}F_{\mu\nu}F^{\mu\nu} + \bar{\psi}(i\gamma^\mu D_\mu - m)\psi \]</p>
+                <p>חלקיקים = שדות קוונטיים</p>
+            </div>
+            
+            <div class="connection"></div>
+            
+            <div class="unification-level level-4">
+                <h3>רמה 4: תורת הכל</h3>
+                <p>\[ S = \frac{1}{2\kappa_{10}^2}\int d^{10}x\sqrt{-G}e^{-2\Phi}[R + 4(\nabla\Phi)^2 - \frac{1}{2}|H_3|^2] \]</p>
+                <p>מיתרים במרחב 10-מימדי</p>
+            </div>
+        </div>
+        
+        <!-- חלק 6: תרמודינמיקה קוונטית -->
+        <h2 class="quantum">חלק 6: תרמודינמיקה קוונטית יחסותית</h2>
+        
+        <div class="quantum-branch" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(243, 156, 18, 0.1)); border-color: #e74c3c;">
+            <h3>6.1 פיזיקה סטטיסטית קוונטית</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div style="padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                    <h4>פונקציית חלוקה קוונטית</h4>
+                    \[
+                    Z = \text{Tr}(e^{-\beta\hat{H}})
+                    \]
+                    <p>\( \beta = 1/k_BT \)</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                    <h4>פיזור בוז-איינשטיין</h4>
+                    \[
+                    \langle n_i \rangle = \frac{1}{e^{\beta(\epsilon_i - \mu)} - 1}
+                    \]
+                    <p>לבוזונים</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                    <h4>פיזור פרמי-דיראק</h4>
+                    \[
+                    \langle n_i \rangle = \frac{1}{e^{\beta(\epsilon_i - \mu)} + 1}
+                    \]
+                    <p>לפרמיונים</p>
+                </div>
+            </div>
+            
+            <h3>6.2 אפקטים קוונטיים-תרמיים</h3>
+            
+            <div style="padding: 30px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 30px 0;">
+                \[
+            \begin{aligned}
+            &\text{אפקט Unruh: } T_{\text{Unruh}} = \frac{\hbar a}{2\pi c k_B} \\
+            &\text{קרינת הוקינג: } T_H = \frac{\hbar c^3}{8\pi G M k_B} \\
+            &\text{תנודות קוונטיות: } \langle \phi^2 \rangle = \int \frac{d^3k}{(2\pi)^3}\frac{1}{2\sqrt{k^2 + m^2}}
+            \end{aligned}
+                \]
+            </div>
+        </div>
+        
+        <!-- חלק 7: יישומים טכנולוגיים -->
+        <h2>חלק 7: יישומים טכנולוגיים מהתורה המאוחדת</h2>
+        
+        <div class="applications">
+            <div class="application-card">
+                <h4>לוויינות GPS</h4>
+                <p>תיקונים יחסותיים + קוונטיים</p>
+                \[
+                \frac{\Delta f}{f} \approx 4.5\times 10^{-10}
+                \]
+                <p>דיוק של מטרים</p>
+            </div>
+            
+            <div class="application-card">
+                <h4>מחשבים קוונטיים</h4>
+                <p>סופרפוזיציה + שזירה</p>
+                \[
+                |\psi\rangle = \alpha|0\rangle + \beta|1\rangle
+                \]
+                <p>חישוב אקספוננציאלי</p>
+            </div>
+            
+            <div class="application-card">
+                <h4>חיישני כבידה קוונטיים</h4>
+                <p>מדידות אינטרפרומטריות</p>
+                \[
+                \Delta \phi \sim \frac{1}{\sqrt{N}}
+                \]
+                <p>גלאי גלי כבידה מתקדמים</p>
+            </div>
+            
+            <div class="application-card">
+                <h4חומרים קוונטיים</h4>
+                <p>מוליכות-על, נוזלי-על</p>
+                \[
+                \psi = |\psi|e^{i\theta}
+                \]
+                <p>סדר קוונטי מאקרוסקופי</p>
+            </div>
+        </div>
+        
+        <!-- חלק 8: כיוונים עתידיים -->
+        <div class="future-directions">
+            <h3>כיווני מחקר עתידיים</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h4>כבידה קוונטית</h4>
+                    <p>איחוד QFT + יחסות כללית</p>
+                    <p>שאלות: סינגולריות, הולוגרפיה</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h4>חומר אפל ואנרגיה אפלה</h4>
+                    <p>95% מהיקום לא מוסבר</p>
+                    <p>חיפוש תיאוריות מעבר למודל הסטנדרטי</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h4>תרמודינמיקה של חורים שחורים</h4>
+                    <p>פרדוקס המידע</p>
+                    <p>אנטרופיה של חורים שחורים</p>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h4>קוסמולוגיה קוונטית</h4>
+                    <p>תנאי התחלה של היקום</p>
+                    <p>רב-יקום, אינפלציה קוונטית</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- חלק 9: מסקנות וסיכום -->
+        <div class="conclusion">
+            <h3>מסקנות: המסע השלם</h3>
+            
+            <div style="text-align: right; margin: 30px;">
+                <h4>התפתחות התיאוריה:</h4>
+                <ol>
+                    <li><strong>מכניקה קלאסית</strong> (1687) - תנועה, כוח, מסה</li>
+                    <li><strong>תרמודינמיקה</strong> (1850) - חום, אנטרופיה, טמפרטורה</li>
+                    <li><strong>יחסות</strong> (1905/1915) - מרחב-זמן, כבידה</li>
+                    <li><strong>מכניקה קוונטית</strong> (1925) - הסתברות, סופרפוזיציה</li>
+                    <li><strong>תורת שדות קוונטית</strong> (1940) - חלקיקים=שדות</li>
+                    <li><strong>ניסיונות איחוד</strong> (1968-היום) - תורת המיתרים, LQG</li>
+                </ol>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <h4>המשוואה האולטימטיבית (חזון):</h4>
+                \[
+                \boxed{\hat{\mathcal{H}}_{\text{כללי}}|\Psi_{\text{יקום}}\rangle = 0}
+                \]
+                <p>כאשר \( \hat{\mathcal{H}}_{\text{כללי}} \) הוא המילטוניאן של כל המערכות</p>
+                <p>ו-\( |\Psi_{\text{יקום}}\rangle \) היא פונקציית הגל של היקום כולו</p>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                <h4>התובנה המרכזית מהמסע:</h4>
+                <p><strong>כל משוואות הפיזיקה הן קירובים למציאות אחת שלמה</strong></p>
+                <p>ניוטון → איינשטיין → שרדינגר הם שלבים בהבנה עמוקה יותר</p>
+                <p>והחיפוש אחר התורה המאוחדת ממשיך...</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>סיכום מלא: ממשוואות תנועה לפיזיקה קוונטית יחסותית</p>
+            <p>© מסע מתמטי מקיף - מניוטון ועד לתורת המיתרים</p>
+            <p>נוצר כסיכום לדיון מעמיק על פיזיקה, יחסות, קוונטים ואיחוד תורות</p>
+            <p style="margin-top: 20px; font-size: 1.2em; color: #1abc9c;">
+                "המשוואה האלגנטית ביותר: \( e^{i\pi} + 1 = 0 \)<br>
+                המסע האלגנטי ביותר: מניוטון לתורת המיתרים"
+            </p>
+        </div>
+    </div>
+    
+    <!-- סקריפט להצגת נוסחאות -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+</body>
+</html>
