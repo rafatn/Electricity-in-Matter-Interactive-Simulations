@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תורת היחסות בתנועה: צופה חיצוני מול פנימי</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --special-relativity: #8e44ad;
+            --general-relativity: #e74c3c;
+            --external-observer: #3498db;
+            --internal-observer: #27ae60;
+            --spacetime: #9b59b6;
+            --geodesic: #f39c12;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Assistant', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #ecf0f1;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            text-align: right;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(25, 35, 45, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--spacetime);
+        }
+        
+        .spacetime-grid {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(52, 152, 219, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(52, 152, 219, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3em;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--spacetime);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        h2 {
+            color: var(--external-observer);
+            margin-top: 60px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            padding-right: 20px;
+            border-right: 5px solid;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2.internal {
+            color: var(--internal-observer);
+            border-right-color: var(--internal-observer);
+        }
+        
+        h3 {
+            color: var(--special-relativity);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.7em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h3.general {
+            color: var(--general-relativity);
+        }
+        
+        .observer-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 900px) {
+            .observer-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .observer-box {
+            background: rgba(30, 40, 50, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .observer-box.external {
+            border-color: var(--external-observer);
+        }
+        
+        .observer-box.internal {
+            border-color: var(--internal-observer);
+        }
+        
+        .observer-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        
+        .equation-box {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.9));
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.4em;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            overflow-x: auto;
+            border-left: 5px solid;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .equation-box.special {
+            border-left-color: var(--special-relativity);
+        }
+        
+        .equation-box.general {
+            border-left-color: var(--general-relativity);
+        }
+        
+        .equation-box.external {
+            border-left-color: var(--external-observer);
+        }
+        
+        .equation-box.internal {
+            border-left-color: var(--internal-observer);
+        }
+        
+        .metric-tensor-box {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .geodesic-equation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin: 40px 0;
+            font-size: 1.5em;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .proper-time-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .proper-time-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .paradox-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .coordinate-transformation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .transformation-step {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--special-relativity);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #2c3e50;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 50px 0;
+            text-align: center;
+            font-size: 1.3em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #95a5a6;
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .param-table th {
+            background: rgba(52, 152, 219, 0.3);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .param-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .special { color: var(--special-relativity); }
+        .general { color: var(--general-relativity); }
+        .external { color: var(--external-observer); }
+        .internal { color: var(--internal-observer); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spacetime-grid"></div>
+        
+        <h1>תורת היחסות בתנועה: צופה חיצוני מול פנימי</h1>
+        <div style="text-align: center; color: #bdc3c7; margin-bottom: 40px; font-size: 1.2em;">
+            פיתוח משוואות תנועה יחסותיות מהפרספקטיבה הכפולה: מבחוץ לפי וקטור המיקום, מבפנים לפי המציאותו
+        </div>
+        
+        <!-- חלק 1: ההבחנה הבסיסית -->
+        <h2>חלק 1: שני סוגי צופים - שתי מציאויות</h2>
+        
+        <div class="observer-comparison">
+            <div class="observer-box external">
+                <h3>🎯 צופה חיצוני</h3>
+                <p><strong>מבט מבחוץ על המערכת:</strong></p>
+                <ul>
+                    <li>רואה את <span class="external">המיקום המוחלט</span> במרחב-זמן</li>
+                    <li>מודד <span class="external">זמן קואורדינטיבי</span> \( t \)</li>
+                    <li>משתמש ב<span class="external">מערכת אינרציאלית גלובלית</span></li>
+                    <li>רואה <span class="external">תנועה "אמיתית"</span> במרחב</li>
+                </ul>
+            </div>
+            
+            <div class="observer-box internal">
+                <h3>🧠 צופה פנימי</h3>
+                <p><strong>מציאותו בתוך המערכת:</strong></p>
+                <ul>
+                    <li>חווה את <span class="internal">זמן העצמי</span> \( \tau \)</li>
+                    <li>מודד <span class="internal">מרחקים מקומיים</span></li>
+                    <li>משתמש ב<span class="internal">מערכת המנוחה שלו</span></li>
+                    <li>חש את <span class="internal">כוחות המדומים</span> שלו</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- חלק 2: יחסות פרטית - המשוואות הבסיסיות -->
+        <h2>חלק 2: יחסות פרטית - שתי פרספקטיבות</h2>
+        
+        <h3>2.1 טרנספורמציית לורנץ:</h3>
+        <div class="equation-box special">
+            \[
+            \begin{aligned}
+            t' &= \gamma\left(t - \frac{vx}{c^2}\right) \\
+            x' &= \gamma(x - vt) \\
+            y' &= y \\
+            z' &= z \\
+            \gamma &= \frac{1}{\sqrt{1 - \frac{v^2}{c^2}}}
+            \end{aligned}
+            \]
+        </div>
+        
+        <div class="observer-comparison">
+            <div class="observer-box external">
+                <h4>מבחוץ:</h4>
+                <p>הצופה החיצוני רואה:</p>
+                <div class="equation-box external">
+                    \[
+                    \Delta t_{\text{חיצוני}} = \gamma \Delta \tau
+                    \]
+                </div>
+                <p>משך הזמן של האובייקט <strong>מתארך</strong> בגורם \( \gamma \)</p>
+            </div>
+            
+            <div class="observer-box internal">
+                <h4>מבפנים:</h4>
+                <p>הצופה הפנימי חווה:</p>
+                <div class="equation-box internal">
+                    \[
+                    \Delta \tau = \frac{\Delta t_{\text{חיצוני}}}{\gamma}
+                    \]
+                </div>
+                <p>הזמן שלו <strong>נמתח</strong> מבחוץ, אך מבפנים הוא רגיל</p>
+            </div>
+        </div>
+        
+        <!-- חלק 3: משוואות תנועה יחסותיות -->
+        <h2>חלק 3: משוואות תנועה יחסותיות</h2>
+        
+        <h3>3.1 יחסות פרטית - ארבע-מהירות וארבע-תאוצה:</h3>
+        <div class="equation-box special">
+            \[
+            \begin{aligned}
+            U^\mu &= \gamma(c, \vec{v}) \quad &\text{(ארבע-מהירות)} \\
+            A^\mu &= \frac{dU^\mu}{d\tau} \quad &\text{(ארבע-תאוצה)} \\
+            F^\mu &= \frac{dp^\mu}{d\tau} = m_0 A^\mu \quad &\text{(ארבע-כוח)}
+            \end{aligned}
+            \]
+        </div>
+        
+        <!-- חלק 4: יחסות כללית - הגאודזיקה -->
+        <h2 class="internal">חלק 4: יחסות כללית - מרחב-זמן מעוקם</h2>
+        
+        <div class="metric-tensor-box">
+            <h3>טנזור המטריקה:</h3>
+            \[
+            ds^2 = g_{\mu\nu}dx^\mu dx^\nu
+            \]
+            <p>לצופה פנימי: \( ds^2 = -c^2 d\tau^2 \) (תמיד!)</p>
+            <p>לצופה חיצוני: \( ds^2 \) תלוי בקואורדינטות</p>
+        </div>
+        
+        <h3>4.1 משוואת הגאודזיקה:</h3>
+        <div class="geodesic-equation">
+            \[
+            \frac{d^2 x^\mu}{d\tau^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\tau} \frac{dx^\beta}{d\tau} = 0
+            \]
+            <p>זו <strong>משוואת התנועה היחסותית המלאה</strong> - גופים נעים בקווי גאודזיקה</p>
+        </div>
+        
+        <!-- חלק 5: פיתוח מלא - צופה חיצוני -->
+        <h2>חלק 5: פיתוח מתמטי - פרספקטיבה חיצונית</h2>
+        
+        <h3>5.1 משוואת התנועה במערכת החיצונית:</h3>
+        <div class="equation-box external">
+            \[
+            \frac{d}{dt}\left(\frac{m_0\vec{v}}{\sqrt{1-\frac{v^2}{c^2}}}\right) = \vec{F}_{\text{חיצוני}}
+            \]
+        </div>
+        
+        <h3>5.2 מדידות חיצוניות:</h3>
+        <div class="param-table">
+            <thead>
+                <tr>
+                    <th>כמות</th>
+                    <th>מדידה חיצונית</th>
+                    <th>משמעות</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="external">אורך</td>
+                    <td class="external">\( L = L_0\sqrt{1-\frac{v^2}{c^2}} \)</td>
+                    <td>התכווצות לורנץ</td>
+                </tr>
+                <tr>
+                    <td class="external">זמן</td>
+                    <td class="external">\( \Delta t = \gamma\Delta\tau \)</td>
+                    <td>התרחבות זמן</td>
+                </tr>
+                <tr>
+                    <td class="external">מסה</td>
+                    <td class="external">\( m = \gamma m_0 \)</td>
+                    <td>גידול מסה יחסותי</td>
+                </tr>
+                <tr>
+                    <td class="external">אנרגיה</td>
+                    <td class="external">\( E = \gamma m_0 c^2 \)</td>
+                    <td>אנרגיה כוללת</td>
+                </tr>
+            </tbody>
+        </div>
+        
+        <!-- חלק 6: פיתוח מלא - צופה פנימי -->
+        <h2 class="internal">חלק 6: פיתוח מתמטי - פרספקטיבה פנימית</h2>
+        
+        <h3>6.1 משוואות התנועה הפנימיות:</h3>
+        <div class="equation-box internal">
+            \[
+            m_0\frac{d^2\vec{\xi}}{d\tau^2} = \vec{F}_{\text{מדומה}} + \vec{F}_{\text{אמיתי}}
+            \]
+            <p>כאשר \( \vec{\xi} \) הן קואורדינטות במערכת המנוחה המקומית</p>
+        </div>
+        
+        <h3>6.2 חוויות פנימיות:</h3>
+        <div class="proper-time-box">
+            <div class="proper-time-card">
+                <h4>זמן עצמי</h4>
+                \[
+                d\tau = \sqrt{-g_{\mu\nu}dx^\mu dx^\nu}/c
+                \]
+                <p>הזמן שנמדד <strong>על ידי שעון נישא</strong></p>
+            </div>
+            
+            <div class="proper-time-card">
+                <h4>כוחות מדומים</h4>
+                \[
+                F^i_{\text{מדומה}} = -m_0\Gamma^i_{00}c^2
+                \]
+                <p>מהווים <strong>את הכבידה שחש הצופה</strong></p>
+            </div>
+            
+            <div class="proper-time-card">
+                <h4>מערכת לוקלית אינרציאלית</h4>
+                \[
+                g_{\mu\nu} = \eta_{\mu\nu} + \mathcal{O}(x^2)
+                \]
+                <p>בכל נקודה ניתן להגדיר <strong>מערכת שבה חוקי הפיזיקה הם SR</strong></p>
+            </div>
+        </div>
+        
+        <!-- חלק 7: דוגמה: לוויין במסלול -->
+        <h2>חלק 7: דוגמה: לוויין GPS</h2>
+        
+        <div class="paradox-box">
+            <h3>7.1 הפרדוקס הכפול של לוויין GPS:</h3>
+            
+            <div class="observer-comparison">
+                <div class="observer-box external">
+                    <h4>מבחוץ (כדור הארץ):</h4>
+                    <p>הלוויין נע במהירות ~3.9 ק"מ/שנייה</p>
+                    \[
+                    \gamma \approx 1 + 8.4\times 10^{-11}
+                    \]
+                    <p>השעון שלו <strong>מפגר</strong> ב-7.2 מיקרושניות/יום</p>
+                </div>
+                
+                <div class="observer-box internal">
+                    <h4>מבפנים (בלוויין עצמו):</h4>
+                    <p>הלוויין בגובה ~20,200 ק"מ</p>
+                    \[
+                    \frac{\Delta\Phi}{c^2} \approx 5.3\times 10^{-10}
+                    \]
+                    <p>השעון שלו <strong>מקדים</strong> ב-45.7 מיקרושניות/יום</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <strong>סה"כ תיקון: 38.6 מיקרושניות/יום (מקדים)</strong>
+            </div>
+        </div>
+        
+        <!-- חלק 8: טנמטר אנרגיה-תנע במטריקה -->
+        <h2 class="general">חלק 8: טנזור אנרגיה-תנע במרחב-זמן מעוקם</h2>
+        
+        <div class="equation-box general">
+            \[
+            G_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}
+            \]
+            <p>משוואת איינשטיין - <strong>המטריקה נקבעת על ידי החומר</strong></p>
+        </div>
+        
+        <h3>8.1 פיתוח עבור צופה חיצוני:</h3>
+        <div class="equation-box external">
+            \[
+            T^{\mu\nu}_{\text{(חיצוני)}} = \rho u^\mu u^\nu + P(g^{\mu\nu} + u^\mu u^\nu)
+            \]
+            <p>כאשר \( \rho \) הוא צפיפות האנרגיה ו-P הלחץ</p>
+        </div>
+        
+        <h3>8.2 פיתוח עבור צופה פנימי:</h3>
+        <div class="equation-box internal">
+            \[
+            T^{\mu\nu}_{\text{(פנימי)}} = 
+            \begin{cases} 
+            \rho_0 & \mu=\nu=0 \\
+            0 & \text{אחרת}
+            \end{cases}
+            \quad \text{במערכת המנוחה}
+            \]
+        </div>
+        
+        <!-- חלק 9: טרנספורמציות קואורדינטות -->
+        <h2>חלק 9: טרנספורמציות בין המערכות</h2>
+        
+        <div class="coordinate-transformation">
+            <div class="transformation-step">
+                <div class="step-number">1</div>
+                <h4>מערכת חיצונית</h4>
+                <p>קואורדינטות: \( (t, x, y, z) \)</p>
+                <p>מטריקה: \( g_{\mu\nu}(x) \)</p>
+            </div>
+            
+            <div class="transformation-step">
+                <div class="step-number">2</div>
+                <h4>טרנספורמציה</h4>
+                \[
+                x'^\mu = x'^\mu(x^\nu)
+                \]
+                <p>יעקוביאן: \( J^\mu_\nu = \frac{\partial x'^\mu}{\partial x^\nu} \)</p>
+            </div>
+            
+            <div class="transformation-step">
+                <div class="step-number">3</div>
+                <h4>מערכת פנימית</h4>
+                <p>קואורדינטות: \( (\tau, \xi^1, \xi^2, \xi^3) \)</p>
+                <p>מטריקה: \( \eta_{\mu\nu} \) (בסדר ראשון)</p>
+            </div>
+        </div>
+        
+        <!-- חלק 10: משוואת התנועה המלאה -->
+        <h2>חלק 10: משוואת התנועה היחסותית המלאה</h2>
+        
+        <div class="geodesic-equation" style="background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);">
+            \[
+            \boxed{\frac{d^2 x^\mu}{d\lambda^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\lambda} \frac{dx^\beta}{d\lambda} = \frac{q}{m} F^\mu_\nu \frac{dx^\nu}{d\lambda}}
+            \]
+            <p>משוואת הגאודזיקה עם כוח לורנץ אלקטרומגנטי</p>
+        </div>
+        
+        <div class="observer-comparison">
+            <div class="observer-box external">
+                <h4>פרשנות חיצונית:</h4>
+                \[
+                \frac{d}{dt}\left(\gamma m_0 \vec{v}\right) = \vec{F}_{\text{חיצוני}}
+                \]
+                <p>כולל כוחות מגנטיים, חשמליים, וכבידתיים</p>
+            </div>
+            
+            <div class="observer-box internal">
+                <h4>פרשנות פנימית:</h4>
+                \[
+                m_0\frac{d^2\xi^i}{d\tau^2} = F^i_{\text{מדומה}} + q(E^i + \epsilon^{ijk}v_jB_k)
+                \]
+                <p>הכוח "המדומה" הוא בעצם <strong>תוצאת העקמומיות</strong></p>
+            </div>
+        </div>
+        
+        <!-- חלק 11: אפקטים מדידים -->
+        <h2>חלק 11: אפקטים מדידים בשתי הפרספקטיבות</h2>
+        
+        <div class="param-table">
+            <thead>
+                <tr>
+                    <th>אפקט</th>
+                    <th>מדידה חיצונית</th>
+                    <th>חוויה פנימית</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>התרחבות זמן</strong></td>
+                    <td class="external">\( \Delta t = \gamma\Delta\tau \)</td>
+                    <td class="internal">הזמן זורם כרגיל</td>
+                </tr>
+                <tr>
+                    <td><strong>התכווצות אורך</strong></td>
+                    <td class="external">\( L = L_0/\gamma \)</td>
+                    <td class="internal">אורכים נראים רגילים</td>
+                </tr>
+                <tr>
+                    <td><strong>כבידה</strong></td>
+                    <td class="external">עקום במרחב-זמן</td>
+                    <td class="internal">כוח הפועל על הגוף</td>
+                </tr>
+                <tr>
+                    <td><strong>תאוצה</strong></td>
+                    <td class="external">סטייה מגאודזיקה</td>
+                    <td class="internal">כוח דוחף/מושך</td>
+                </tr>
+                <tr>
+                    <td><strong>תנועה במעגל</strong></td>
+                    <td class="external">תנועה גאודזית</td>
+                    <td class="internal">כוח צנטריפוגלי</td>
+                </tr>
+            </tbody>
+        </div>
+        
+        <!-- חלק 12: פרדוקס התאומים - פתרון מלא -->
+        <h2>חלק 12: פרדוקס התאומים - הפתרון המלא</h2>
+        
+        <div class="paradox-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h3>12.1 החישוב המתמטי:</h3>
+            
+            <div class="observer-comparison">
+                <div class="observer-box external">
+                    <h4>מבחוץ (כדור הארץ):</h4>
+                    <p>התאום הנוסע במהירות \( v \) למרחק \( L \) וחזרה:</p>
+                    \[
+                    \Delta\tau_{\text{נוסע}} = \frac{2L}{v}\sqrt{1-\frac{v^2}{c^2}}
+                    \]
+                    <p>הזמן שעבר עבורו <strong>פחות</strong></p>
+                </div>
+                
+                <div class="observer-box internal">
+                    <h4>מבפנים (בחללית):</h4>
+                    <p>התאום הנוסע רואה את כדור הארץ מתרחק ומתקרב:</p>
+                    \[
+                    \Delta\tau_{\text{כדור הארץ}} = \frac{2L}{v}\frac{1}{\gamma}
+                    \]
+                    <p>הוא חושב שזמן כדור הארץ <strong>איטי יותר</strong> (אך זה לא סימטרי כי הוא מאיץ!)</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <h4>הפתרון: <strong>ההאצה שוברת את הסימטריה</strong></h4>
+                <p>התאום הנוסע <strong>מאיץ</strong> - הוא לא במערכת אינרציאלית</p>
+                <p>חישוב אינטגרלי של הזמן העצמי נותן:</p>
+                \[
+                \tau_{\text{נוסע}} = \int \sqrt{1-\frac{v(t)^2}{c^2}} dt < \tau_{\text{נשאר}}
+                \]
+            </div>
+        </div>
+        
+        <!-- חלק 13: מסקנות ושילוב עם משוואות הקודמות -->
+        <div class="conclusion">
+            <h3>מסקנות: שתי פרספקטיבות - אותה פיזיקה</h3>
+            
+            <div class="observer-comparison">
+                <div class="observer-box external" style="background: rgba(52, 152, 219, 0.2);">
+                    <h4>לצופה החיצוני:</h4>
+                    <ul>
+                        <li>העולם מתאר על ידי <strong>משוואות דיפרנציאליות במרחב-זמן</strong></li>
+                        <li>התנועה היא <strong>גאודזית</strong> (או סטייה ממנה עקב כוחות)</li>
+                        <li>הזמן הוא <strong>קואורדינטה</strong> במרחב-זמן</li>
+                    </ul>
+                </div>
+                
+                <div class="observer-box internal" style="background: rgba(39, 174, 96, 0.2);">
+                    <h4>לצופה הפנימי:</h4>
+                    <ul>
+                        <li>הוא חווה <strong>כוחות</strong> הפועלים עליו</li>
+                        <li>הזמן הוא <strong>זמן עצמי</strong> שנמדד בשעונו</li>
+                        <li>הוא במערכת <strong>לוקלית אינרציאלית</strong> (עד לסדר ראשון)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                <h4>שילוב עם משוואות הקודמות:</h4>
+                <p>כשנוספים אפקטים יחסותיים למשוואות התנועה עם החום והמיקום, מקבלים:</p>
+                \[
+                \boxed{\frac{Dp^\mu}{D\tau} = F^\mu_{\text{תרמי}} + F^\mu_{\text{קרינה}} + F^\mu_{\text{אלקטרומגנטי}} + \text{כוחות מדומים}}
+                \]
+                <p>כאשר \( \frac{D}{D\tau} \) היא נגזרת קוונטית במרחב-זמן מעוקם</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>משוואות תנועה יחסותיות עם פרספקטיבה כפולה – פיתוח מתמטי מלא</p>
+            <p>© תורת היחסות במבט כפול: מבחוץ לפי וקטור המיקום, מבפנים לפי המציאותו</p>
+            <p>המשך ישיר לדיון על משוואות תנועה עם תיקוני מיקום וחום</p>
+        </div>
+    </div>
+    
+    <!-- סקריפט להצגת נוסחאות -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+</body>
+</html>
