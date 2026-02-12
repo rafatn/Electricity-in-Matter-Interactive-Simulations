@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת צלחות פטרי לשינוי פאזה מבוקר בטמפרטורה</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Heebo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            direction: rtl;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #0c2461;
+            margin-bottom: 10px;
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #0c2461, #4a69bd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .system-description {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .system-description h2 {
+            color: #0c2461;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4a69bd;
+            padding-bottom: 8px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .petri-grid {
+            flex: 2;
+            min-width: 300px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .petri-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .petri-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+        
+        .petri-header {
+            background: linear-gradient(90deg, #1e3799, #4a69bd);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .petri-dish-container {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .petri-dish {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f8f9fa, #e9ecef);
+            border: 15px solid #dee2e6;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .petri-content {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-radius: 50%;
+            transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .material-name {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            font-size: 0.9rem;
+        }
+        
+        .phase-indicator {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            font-size: 1.1rem;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 350px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .control-section h3 {
+            color: #0c2461;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-section h3 i {
+            color: #4a69bd;
+        }
+        
+        .temperature-control {
+            margin-bottom: 25px;
+        }
+        
+        .temp-slider-container {
+            margin: 15px 0;
+        }
+        
+        .temp-slider {
+            width: 100%;
+            height: 25px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #3498db, #2ecc71, #f1c40f, #e74c3c);
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .temp-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #0c2461;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .temp-display {
+            font-size: 2.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #0c2461;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .temp-range {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .material-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .material-btn {
+            padding: 12px 5px;
+            border: none;
+            border-radius: 10px;
+            background-color: #e9ecef;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        .material-btn:hover {
+            background-color: #4a69bd;
+            color: white;
+        }
+        
+        .material-btn.active {
+            background-color: #0c2461;
+            color: white;
+            box-shadow: 0 3px 10px rgba(12, 36, 97, 0.3);
+        }
+        
+        .phase-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .phase-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            margin: 0 5px;
+            justify-content: center;
+        }
+        
+        .solid-btn {
+            background-color: #3498db;
+        }
+        
+        .solid-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .liquid-btn {
+            background-color: #2ecc71;
+        }
+        
+        .liquid-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .gas-btn {
+            background-color: #e74c3c;
+        }
+        
+        .gas-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .system-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .system-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        
+        .start-btn {
+            background-color: #2ecc71;
+        }
+        
+        .start-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .stop-btn {
+            background-color: #e74c3c;
+        }
+        
+        .stop-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .reset-btn {
+            background-color: #f39c12;
+        }
+        
+        .reset-btn:hover {
+            background-color: #d68910;
+        }
+        
+        .phase-diagram {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .phase-diagram h2 {
+            color: #0c2461;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4a69bd;
+            padding-bottom: 10px;
+        }
+        
+        .diagram-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            background: linear-gradient(90deg, #e3f2fd, #f3e5f5);
+            border-radius: 15px;
+            position: relative;
+            margin-top: 20px;
+        }
+        
+        .phase-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s;
+        }
+        
+        .solid-region {
+            position: absolute;
+            left: 10%;
+            width: 30%;
+            height: 100%;
+            background-color: rgba(52, 152, 219, 0.2);
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .liquid-region {
+            position: absolute;
+            left: 40%;
+            width: 30%;
+            height: 100%;
+            background-color: rgba(46, 204, 113, 0.2);
+        }
+        
+        .gas-region {
+            position: absolute;
+            left: 70%;
+            width: 30%;
+            height: 100%;
+            background-color: rgba(231, 76, 60, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .region-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        
+        .solid-label {
+            left: 25%;
+        }
+        
+        .liquid-label {
+            left: 55%;
+        }
+        
+        .gas-label {
+            left: 85%;
+        }
+        
+        .info-panel {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-panel h2 {
+            color: #0c2461;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4a69bd;
+            padding-bottom: 10px;
+        }
+        
+        .applications {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .app-card {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 6px solid #4a69bd;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .app-card h3 {
+            color: #0c2461;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: white;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1100px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .petri-grid {
+                order: 2;
+            }
+            
+            .control-panel {
+                order: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .petri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .material-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .system-controls {
+                flex-direction: column;
+            }
+        }
+        
+        .temp-status {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .status-item {
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        
+        .status-item.active {
+            background-color: rgba(74, 105, 189, 0.2);
+            border: 2px solid #4a69bd;
+            color: #0c2461;
+            font-weight: bold;
+        }
+        
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: floatUp 3s infinite ease-in;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100px) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .crystals {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .crystal {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-vial"></i> מערכת צלחות פטרי לשינוי פאזה מבוקר בטמפרטורה</h1>
+            <p class="subtitle">שליטה מדויקת בשינויי פאזה של חומרים באמצעות בקרת טמפרטורה בצלחות פטרי</p>
+        </header>
+        
+        <div class="system-description">
+            <h2><i class="fas fa-info-circle"></i> על המערכת</h2>
+            <p>מערכת זו מאפשרת שליטה בטמפרטורה של צלחות פטרי המכילות חומרים שונים המשנים פאזה (מוצק/נוזל/גז) בהתאם לטמפרטורה. המערכת משמשת למחקר חומרים, הדגמות פיזיקליות, ופיתוח טכנולוגיות חדשות בתחומי הנדסת חומרים וביוטכנולוגיה.</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="petri-grid" id="petriGrid">
+                <!-- צלחות פטרי יוטענו דרך JavaScript -->
+            </div>
+            
+            <div class="control-panel">
+                <div class="control-section">
+                    <h3><i class="fas fa-thermometer-half"></i> בקרת טמפרטורה מרכזית</h3>
+                    <div class="temperature-control">
+                        <p>הגדר טמפרטורה למערכת כולה או לצלחת נבחרת:</p>
+                        <div class="temp-slider-container">
+                            <input type="range" min="-20" max="200" value="25" class="temp-slider" id="tempSlider">
+                            <div class="temp-range">
+                                <span>-20°C (מוצק)</span>
+                                <span>200°C (גז)</span>
+                            </div>
+                        </div>
+                        <div class="temp-display" id="tempDisplay">25°C</div>
+                        
+                        <div class="temp-status">
+                            <div class="status-item" id="solidStatus">
+                                <i class="fas fa-snowflake"></i>
+                                <div>מוצק</div>
+                            </div>
+                            <div class="status-item active" id="liquidStatus">
+                                <i class="fas fa-tint"></i>
+                                <div>נוזל</div>
+                            </div>
+                            <div class="status-item" id="gasStatus">
+                                <i class="fas fa-wind"></i>
+                                <div>גז</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h3><i class="fas fa-flask"></i> בחירת חומר</h3>
+                    <p>בחר חומר להצגה בצלחת הפטרי:</p>
+                    <div class="material-selector" id="materialSelector">
+                        <!-- כפתורי חומרים יוטענו דרך JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h3><i class="fas fa-sliders-h"></i> שליטה ישירה בפאזה</h3>
+                    <p>שנה פאזה לחומר הנבחר:</p>
+                    <div class="phase-controls">
+                        <button class="phase-btn solid-btn" id="solidBtn">
+                            <i class="fas fa-snowflake"></i>
+                            מוצק
+                        </button>
+                        <button class="phase-btn liquid-btn" id="liquidBtn">
+                            <i class="fas fa-tint"></i>
+                            נוזל
+                        </button>
+                        <button class="phase-btn gas-btn" id="gasBtn">
+                            <i class="fas fa-wind"></i>
+                            גז
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h3><i class="fas fa-cogs"></i> ניהול המערכת</h3>
+                    <div class="system-controls">
+                        <button class="system-btn start-btn" id="startBtn">
+                            <i class="fas fa-play"></i>
+                            הפעל ניסוי
+                        </button>
+                        <button class="system-btn stop-btn" id="stopBtn">
+                            <i class="fas fa-stop"></i>
+                            עצור ניסוי
+                        </button>
+                        <button class="system-btn reset-btn" id="resetBtn">
+                            <i class="fas fa-redo"></i>
+                            אפס מערכת
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h3><i class="fas fa-chart-line"></i> נתוני ניסוי</h3>
+                    <div id="experimentData">
+                        <p><strong>חומר נוכחי:</strong> <span id="currentMaterial">מים</span></p>
+                        <p><strong>טמפרטורת מעבר פאזה:</strong> <span id="phaseTransitionTemp">0°C / 100°C</span></p>
+                        <p><strong>אנרגיה נדרשת:</strong> <span id="energyRequired">334 kJ/kg (היתוך)</span></p>
+                        <p><strong>זמן ניסוי:</strong> <span id="experimentTime">00:00</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="phase-diagram">
+            <h2><i class="fas fa-project-diagram"></i> דיאגרמת פאזה דינמית</h2>
+            <p>הדיאגרמה מציגה את מצב החומר הנבחר בהתאם לטמפרטורה והלחץ:</p>
+            <div class="diagram-container">
+                <div class="solid-region"></div>
+                <div class="liquid-region"></div>
+                <div class="gas-region"></div>
+                <div class="region-label solid-label">מוצק</div>
+                <div class="region-label liquid-label">נוזל</div>
+                <div class="region-label gas-label">גז</div>
+                <div class="phase-point" id="phasePoint"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2><i class="fas fa-lightbulb"></i> יישומים אפשריים למערכת</h2>
+            <div class="applications">
+                <div class="app-card">
+                    <h3><i class="fas fa-microscope"></i> מחקר חומרים מתקדמים</h3>
+                    <p>ניתוח תכונות תרמיות של חומרים חדשים ופיתוח סגסוגות עם נקודות התכה מבוקרות.</p>
+                </div>
+                <div class="app-card">
+                    <h3><i class="fas fa-pills"></i> תרופות ונסיוב</h3>
+                    <p>פיתוח תרופות עם שחרור מבוקר טמפרטורה ומערכות נשא תרופתי חכמות.</p>
+                </div>
+                <div class="app-card">
+                    <h3><i class="fas fa-industry"></i> תעשיית המזון</h3>
+                    <p>פיתוח שומנים מיוחדים, תחליפי שוקולד וחומרי גלם עם תכונות תרמיות ספציפיות.</p>
+                </div>
+                <div class="app-card">
+                    <h3><i class="fas fa-biohazard"></i> ביוטכנולוגיה</h3>
+                    <pגידול רקמות בתנאי טמפרטורה מבוקרים ומחקר אנזימים הרגישים לשינויי טמפרטורה.</p>
+                </div>
+                <div class="app-card">
+                    <h3><i class="fas fa-graduation-cap"></i> הדגמות חינוכיות</h3>
+                    <p>המחשה ויזואלית של שינויי פאזה ועקרונות תרמודינמיקה במעבדות לימודיות.</p>
+                </div>
+                <div class="app-card">
+                    <h3><i class="fas fa-solar-panel"></i> אנרגיה ירוקה</h3>
+                    <p>פיתוח חומרים לאגירת אנרגיה תרמית ושילוב במערכות סולאריות תרמיות.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>מערכת צלחות פטרי לשינוי פאזה מבוקר בטמפרטורה | פיתוח טכנולוגי למחקר חומרים מתקדם</p>
+            <p>© 2023 - מעבדת החומרים החכמים | הטכניון - מכון טכנולוגי לישראל</p>
+        </footer>
+    </div>
+
+    <script>
+        // נתוני חומרים עם נקודות מעבר פאזה
+        const materials = [
+            {
+                id: 1,
+                name: "מים",
+                formula: "H₂O",
+                colorSolid: "#a3d5ff",
+                colorLiquid: "#4dabf7",
+                colorGas: "#e7f5ff",
+                meltingPoint: 0,
+                boilingPoint: 100,
+                heatFusion: 334, // kJ/kg
+                heatVaporization: 2257, // kJ/kg
+                description: "חומר חיוני עם תכונות ייחודיות"
+            },
+            {
+                id: 2,
+                name: "גליצרול",
+                formula: "C₃H₈O₃",
+                colorSolid: "#d0bfff",
+                colorLiquid: "#9775fa",
+                colorGas: "#f3f0ff",
+                meltingPoint: 18,
+                boilingPoint: 290,
+                heatFusion: 200,
+                heatVaporization: 800,
+                description: "נוזל צמיגי המשמש בתעשיות תרופות ומזון"
+            },
+            {
+                id: 3,
+                name: "נתרן כלורי",
+                formula: "NaCl",
+                colorSolid: "#ffd8a8",
+                colorLiquid: "#ffa94d",
+                colorGas: "#fff4e6",
+                meltingPoint: 801,
+                boilingPoint: 1413,
+                heatFusion: 28,
+                heatVaporization: 170,
+                description: "מלח בישול - דוגמה לחומר יוני"
+            },
+            {
+                id: 4,
+                name: "פאראפין",
+                formula: "CₙH₂ₙ₊₂",
+                colorSolid: "#ffc9c9",
+                colorLiquid: "#ff6b6b",
+                colorGas: "#fff0f0",
+                meltingPoint: 37,
+                boilingPoint: 370,
+                heatFusion: 200,
+                heatVaporization: 500,
+                description: "שעווה המשמשת לאגירת אנרגיה תרמית"
+            },
+            {
+                id: 5,
+                name: "כספית",
+                formula: "Hg",
+                colorSolid: "#ced4da",
+                colorLiquid: "#495057",
+                colorGas: "#f8f9fa",
+                meltingPoint: -39,
+                boilingPoint: 357,
+                heatFusion: 11,
+                heatVaporization: 295,
+                description: "מתכת נוזלית בטמפרטורת החדר"
+            },
+            {
+                id: 6,
+                name: "גופרית",
+                formula: "S₈",
+                colorSolid: "#ffd43b",
+                colorLiquid: "#fcc419",
+                colorGas: "#fff9db",
+                meltingPoint: 115,
+                boilingPoint: 445,
+                heatFusion: 54,
+                heatVaporization: 140,
+                description: "יסוד לא מתכתי עם מספר אלוטרופים"
+            },
+            {
+                id: 7,
+                name: "אתנול",
+                formula: "C₂H₆O",
+                colorSolid: "#b2f2bb",
+                colorLiquid: "#51cf66",
+                colorGas: "#ebfbee",
+                meltingPoint: -114,
+                boilingPoint: 78,
+                heatFusion: 109,
+                heatVaporization: 841,
+                description: "אלכוהול המשמש בחיטוי ודלק"
+            },
+            {
+                id: 8,
+                name: "אלומיניום",
+                formula: "Al",
+                colorSolid: "#a9d6e5",
+                colorLiquid: "#2a6f97",
+                colorGas: "#e2eafc",
+                meltingPoint: 660,
+                boilingPoint: 2519,
+                heatFusion: 397,
+                heatVaporization: 10900,
+                description: "מתכת קלה עם שימושים תעשייתיים רבים"
+            }
+        ];
+
+        // מצב המערכת
+        let currentTemperature = 25;
+        let selectedMaterialId = 1;
+        let experimentRunning = false;
+        let experimentStartTime = null;
+        let experimentTimer = null;
+        let selectedPetriId = null;
+        let petriDishes = [];
+
+        // אלמנטים DOM
+        const petriGrid = document.getElementById('petriGrid');
+        const materialSelector = document.getElementById('materialSelector');
+        const tempSlider = document.getElementById('tempSlider');
+        const tempDisplay = document.getElementById('tempDisplay');
+        const phasePoint = document.getElementById('phasePoint');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const solidBtn = document.getElementById('solidBtn');
+        const liquidBtn = document.getElementById('liquidBtn');
+        const gasBtn = document.getElementById('gasBtn');
+        const currentMaterialSpan = document.getElementById('currentMaterial');
+        const phaseTransitionTempSpan = document.getElementById('phaseTransitionTemp');
+        const energyRequiredSpan = document.getElementById('energyRequired');
+        const experimentTimeSpan = document.getElementById('experimentTime');
+        const solidStatus = document.getElementById('solidStatus');
+        const liquidStatus = document.getElementById('liquidStatus');
+        const gasStatus = document.getElementById('gasStatus');
+
+        // אתחול צלחות פטרי
+        function initializePetriDishes() {
+            petriGrid.innerHTML = '';
+            petriDishes = [];
+            
+            materials.forEach((material, index) => {
+                const petriCard = document.createElement('div');
+                petriCard.className = 'petri-card';
+                petriCard.dataset.id = material.id;
+                
+                petriCard.innerHTML = `
+                    <div class="petri-header">
+                        <h3>${material.name}</h3>
+                        <p>${material.formula}</p>
+                    </div>
+                    <div class="petri-dish-container">
+                        <div class="petri-dish" id="petriDish${material.id}">
+                            <div class="petri-content" id="petriContent${material.id}">
+                                <div class="phase-indicator" id="phaseIndicator${material.id}">נוזל</div>
+                                <div class="material-name">${material.name}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 15px; text-align: center;">
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">${material.description}</p>
+                        <div style="display: flex; justify-content: space-around; font-size: 0.85rem;">
+                            <div><i class="fas fa-snowflake" style="color: #3498db;"></i> ${material.meltingPoint}°C</div>
+                            <div><i class="fas fa-tint" style="color: #2ecc71;"></i> ${material.boilingPoint}°C</div>
+                        </div>
+                    </div>
+                `;
+                
+                petriGrid.appendChild(petriCard);
+                
+                // שמירת צלחת במערך
+                petriDishes.push({
+                    id: material.id,
+                    element: document.getElementById(`petriContent${material.id}`),
+                    phaseIndicator: document.getElementById(`phaseIndicator${material.id}`),
+                    material: material
+                });
+                
+                // הוספת מאזין ללחיצה על הצלחת
+                petriCard.addEventListener('click', () => selectPetriDish(material.id));
+            });
+            
+            // בחירת צלחת ראשונה כברירת מחדל
+            selectPetriDish(1);
+        }
+
+        // אתחול בחירת חומרים
+        function initializeMaterialSelector() {
+            materialSelector.innerHTML = '';
+            
+            materials.forEach(material => {
+                const materialBtn = document.createElement('button');
+                materialBtn.className = 'material-btn';
+                if (material.id === selectedMaterialId) {
+                    materialBtn.classList.add('active');
+                }
+                materialBtn.textContent = material.name;
+                materialBtn.dataset.id = material.id;
+                
+                materialBtn.addEventListener('click', () => {
+                    document.querySelectorAll('.material-btn').forEach(btn => btn.classList.remove('active'));
+                    materialBtn.classList.add('active');
+                    selectedMaterialId = material.id;
+                    updateSelectedMaterial();
+                    selectPetriDish(material.id);
+                });
+                
+                materialSelector.appendChild(materialBtn);
+            });
+        }
+
+        // בחירת צלחת פטרי
+        function selectPetriDish(petriId) {
+            selectedPetriId = petriId;
+            
+            // עדכון החומר הנבחר לפי הצלחת
+            selectedMaterialId = petriId;
+            document.querySelectorAll('.material-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.id) === petriId);
+            });
+            
+            // הדגשת הצלחת הנבחרת
+            document.querySelectorAll('.petri-card').forEach(card => {
+                card.style.boxShadow = card.dataset.id === petriId.toString() 
+                    ? '0 15px 35px rgba(74, 105, 189, 0.5)' 
+                    : '0 10px 25px rgba(0, 0, 0, 0.15)';
+                card.style.border = card.dataset.id === petriId.toString() 
+                    ? '3px solid #4a69bd' 
+                    : 'none';
+            });
+            
+            updateSelectedMaterial();
+            updateAllPetriDishes();
+        }
+
+        // עדכון החומר הנבחר
+        function updateSelectedMaterial() {
+            const material = materials.find(m => m.id === selectedMaterialId);
+            if (!material) return;
+            
+            currentMaterialSpan.textContent = `${material.name} (${material.formula})`;
+            phaseTransitionTempSpan.textContent = `${material.meltingPoint}°C / ${material.boilingPoint}°C`;
+            
+            // קביעת האנרגיה הנדרשת לפי הפאזה הנוכחית
+            let energyText = "";
+            if (currentTemperature < material.meltingPoint) {
+                energyText = `${material.heatFusion} kJ/kg (היתוך)`;
+            } else if (currentTemperature < material.boilingPoint) {
+                energyText = `${material.heatVaporization} kJ/kg (איוד)`;
+            } else {
+                energyText = "חומר במצב גז";
+            }
+            energyRequiredSpan.textContent = energyText;
+            
+            // עדכון נקודה בדיאגרמת הפאזה
+            updatePhaseDiagram(material);
+        }
+
+        // עדכון כל צלחות הפטרי
+        function updateAllPetriDishes() {
+            petriDishes.forEach(petri => {
+                updatePetriDish(petri, currentTemperature);
+            });
+            
+            // עדכון סטטוס הפאזה
+            updatePhaseStatus();
+        }
+
+        // עדכון צלחת פטרי בודדת
+        function updatePetriDish(petri, temperature) {
+            const material = petri.material;
+            let phase = "";
+            let backgroundColor = "";
+            let animation = "";
+            
+            // קביעת הפאזה לפי הטמפרטורה
+            if (temperature < material.meltingPoint) {
+                phase = "מוצק";
+                backgroundColor = material.colorSolid;
+                animation = "crystals";
+            } else if (temperature < material.boilingPoint) {
+                phase = "נוזל";
+                backgroundColor = material.colorLiquid;
+                animation = "none";
+            } else {
+                phase = "גז";
+                backgroundColor = material.colorGas;
+                animation = "bubbles";
+            }
+            
+            // עדכון הצבע והפאזה
+            petri.element.style.background = `radial-gradient(circle at 30% 30%, ${backgroundColor}, ${darkenColor(backgroundColor, 30)})`;
+            petri.phaseIndicator.textContent = phase;
+            
+            // הסרת אנימציות קודמות
+            petri.element.querySelectorAll('.bubbles, .crystals').forEach(el => el.remove());
+            
+            // הוספת אנימציות מתאימות
+            if (animation === "bubbles") {
+                addBubblesAnimation(petri.element);
+            } else if (animation === "crystals") {
+                addCrystalsAnimation(petri.element);
+            }
+            
+            // הדגשת הצלחת הנבחרת
+            const isSelected = petri.id === selectedPetriId;
+            const petriDish = document.getElementById(`petriDish${petri.id}`);
+            if (isSelected) {
+                petriDish.style.borderColor = "#4a69bd";
+                petriDish.style.boxShadow = "inset 0 0 20px rgba(0, 0, 0, 0.1), 0 5px 20px rgba(74, 105, 189, 0.7)";
+            } else {
+                petriDish.style.borderColor = "#dee2e6";
+                petriDish.style.boxShadow = "inset 0 0 20px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.2)";
+            }
+        }
+
+        // הוספת אנימציית בועות לגז
+        function addBubblesAnimation(container) {
+            const bubbles = document.createElement('div');
+            bubbles.className = 'bubbles';
+            
+            // יצירת בועות אקראיות
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 15 + 5;
+                const left = Math.random() * 80 + 10;
+                const delay = Math.random() * 2;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}%`;
+                bubble.style.animationDelay = `${delay}s`;
+                
+                bubbles.appendChild(bubble);
+            }
+            
+            container.appendChild(bubbles);
+        }
+
+        // הוספת אנימציית גבישים למוצק
+        function addCrystalsAnimation(container) {
+            const crystals = document.createElement('div');
+            crystals.className = 'crystals';
+            
+            // יצירת גבישים אקראיים
+            for (let i = 0; i < 8; i++) {
+                const crystal = document.createElement('div');
+                crystal.className = 'crystal';
+                const size = Math.random() * 20 + 10;
+                const left = Math.random() * 70 + 15;
+                const top = Math.random() * 70 + 15;
+                const rotation = Math.random() * 360;
+                
+                crystal.style.width = `${size}px`;
+                crystal.style.height = `${size}px`;
+                crystal.style.left = `${left}%`;
+                crystal.style.top = `${top}%`;
+                crystal.style.transform = `rotate(${rotation}deg)`;
+                
+                crystals.appendChild(crystal);
+            }
+            
+            container.appendChild(crystals);
+        }
+
+        // כהה צבע
+        function darkenColor(color, percent) {
+            // המרת hex ל-rgb
+            let r = parseInt(color.substring(1, 3), 16);
+            let g = parseInt(color.substring(3, 5), 16);
+            let b = parseInt(color.substring(5, 7), 16);
+            
+            r = Math.floor(r * (100 - percent) / 100);
+            g = Math.floor(g * (100 - percent) / 100);
+            b = Math.floor(b * (100 - percent) / 100);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // עדכון דיאגרמת הפאזה
+        function updatePhaseDiagram(material) {
+            // מיקום הנקודה על ציר הטמפרטורה (מ-20- ל-200+)
+            const tempPosition = ((currentTemperature + 20) / 220) * 100;
+            
+            // מיקום על ציר הלחץ (מדומה) - משתנה אקראית מעט
+            const pressurePosition = 30 + Math.sin(currentTemperature / 10) * 40;
+            
+            phasePoint.style.left = `${tempPosition}%`;
+            phasePoint.style.top = `${pressurePosition}%`;
+            
+            // צבע הנקודה לפי הפאזה
+            if (currentTemperature < material.meltingPoint) {
+                phasePoint.style.backgroundColor = material.colorSolid;
+            } else if (currentTemperature < material.boilingPoint) {
+                phasePoint.style.backgroundColor = material.colorLiquid;
+            } else {
+                phasePoint.style.backgroundColor = material.colorGas;
+            }
+        }
+
+        // עדכון סטטוס הפאזה
+        function updatePhaseStatus() {
+            const material = materials.find(m => m.id === selectedMaterialId);
+            if (!material) return;
+            
+            // הסרת סטטוס פעיל מכל הסטטוסים
+            solidStatus.classList.remove('active');
+            liquidStatus.classList.remove('active');
+            gasStatus.classList.remove('active');
+            
+            // הוספת סטטוס פעיל לפי הטמפרטורה הנוכחית
+            if (currentTemperature < material.meltingPoint) {
+                solidStatus.classList.add('active');
+            } else if (currentTemperature < material.boilingPoint) {
+                liquidStatus.classList.add('active');
+            } else {
+                gasStatus.classList.add('active');
+            }
+        }
+
+        // עדכון זמן הניסוי
+        function updateExperimentTime() {
+            if (!experimentStartTime) return;
+            
+            const now = new Date();
+            const elapsed = Math.floor((now - experimentStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            experimentTimeSpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // התחלת ניסוי
+        function startExperiment() {
+            if (experimentRunning) return;
+            
+            experimentRunning = true;
+            experimentStartTime = new Date();
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // עדכון זמן הניסוי כל שנייה
+            experimentTimer = setInterval(updateExperimentTime, 1000);
+            
+            // אנימציה של שינוי טמפרטורה אוטומטי
+            simulateTemperatureChange();
+        }
+
+        // עצירת ניסוי
+        function stopExperiment() {
+            experimentRunning = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            
+            if (experimentTimer) {
+                clearInterval(experimentTimer);
+                experimentTimer = null;
+            }
+        }
+
+        // איפוס מערכת
+        function resetExperiment() {
+            stopExperiment();
+            experimentStartTime = null;
+            experimentTimeSpan.textContent = "00:00";
+            currentTemperature = 25;
+            tempSlider.value = currentTemperature;
+            tempDisplay.textContent = `${currentTemperature}°C`;
+            updateAllPetriDishes();
+            updateSelectedMaterial();
+        }
+
+        // סימולציה של שינוי טמפרטורה אוטומטי
+        function simulateTemperatureChange() {
+            if (!experimentRunning) return;
+            
+            // שינוי אקראי קל בטמפרטורה
+            const change = (Math.random() - 0.5) * 5;
+            let newTemp = currentTemperature + change;
+            
+            // הגבלת הטמפרטורה לטווח המחוון
+            newTemp = Math.max(-20, Math.min(200, newTemp));
+            
+            // עדכון הטמפרטורה
+            currentTemperature = Math.round(newTemp * 10) / 10;
+            tempSlider.value = currentTemperature;
+            tempDisplay.textContent = `${currentTemperature}°C`;
+            updateAllPetriDishes();
+            updateSelectedMaterial();
+            
+            // חזרה על הפונקציה לאחר עיכוב אקראי
+            if (experimentRunning) {
+                setTimeout(simulateTemperatureChange, 1000 + Math.random() * 2000);
+            }
+        }
+
+        // הגדרת טמפרטורה לפאזה ספציפית
+        function setTemperatureForPhase(phase) {
+            const material = materials.find(m => m.id === selectedMaterialId);
+            if (!material) return;
+            
+            let targetTemp = currentTemperature;
+            
+            switch(phase) {
+                case 'solid':
+                    targetTemp = material.meltingPoint - 10;
+                    break;
+                case 'liquid':
+                    targetTemp = (material.meltingPoint + material.boilingPoint) / 2;
+                    break;
+                case 'gas':
+                    targetTemp = material.boilingPoint + 10;
+                    break;
+            }
+            
+            // הנפשה של שינוי הטמפרטורה
+            animateTemperatureChange(targetTemp);
+        }
+
+        // הנפשה של שינוי טמפרטורה
+        function animateTemperatureChange(targetTemp) {
+            const startTemp = currentTemperature;
+            const duration = 2000; // 2 שניות
+            const startTime = Date.now();
+            
+            function updateTemperature() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // שימוש בפונקציית ease-out
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                
+                currentTemperature = startTemp + (targetTemp - startTemp) * easedProgress;
+                tempSlider.value = currentTemperature;
+                tempDisplay.textContent = `${Math.round(currentTemperature * 10) / 10}°C`;
+                updateAllPetriDishes();
+                updateSelectedMaterial();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateTemperature);
+                }
+            }
+            
+            requestAnimationFrame(updateTemperature);
+        }
+
+        // הגדרת מאזיני אירועים
+        function setupEventListeners() {
+            // מחוון טמפרטורה
+            tempSlider.addEventListener('input', function() {
+                currentTemperature = parseInt(this.value);
+                tempDisplay.textContent = `${currentTemperature}°C`;
+                updateAllPetriDishes();
+                updateSelectedMaterial();
+            });
+            
+            // כפתורי פאזה
+            solidBtn.addEventListener('click', () => setTemperatureForPhase('solid'));
+            liquidBtn.addEventListener('click', () => setTemperatureForPhase('liquid'));
+            gasBtn.addEventListener('click', () => setTemperatureForPhase('gas'));
+            
+            // כפתורי ניהול ניסוי
+            startBtn.addEventListener('click', startExperiment);
+            stopBtn.addEventListener('click', stopExperiment);
+            resetBtn.addEventListener('click', resetExperiment);
+            
+            // עצירת ניסוי בתחילה
+            stopBtn.disabled = true;
+        }
+
+        // אתחול המערכת
+        function initializeSystem() {
+            initializePetriDishes();
+            initializeMaterialSelector();
+            setupEventListeners();
+            updateAllPetriDishes();
+            updateSelectedMaterial();
+        }
+
+        // הפעלת המערכת כאשר הדף נטען
+        document.addEventListener('DOMContentLoaded', initializeSystem);
+    </script>
+</body>
+</html>
