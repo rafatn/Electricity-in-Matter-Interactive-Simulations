@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טרנספורמציות ספין-תלויות: גיאומטריה של ספין up/down</title>
+    <style>
+        :root {
+            --spin-up: #3498db;
+            --spin-down: #e74c3c;
+            --spinor: #9b59b6;
+            --twistor: #2ecc71;
+            --spin-geometry: #f39c12;
+            --spin-connection: #1abc9c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Assistant', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
+            color: #ecf0f1;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            text-align: right;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(25, 35, 55, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spin-field {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(52, 152, 219, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(231, 76, 60, 0.2) 0%, transparent 50%);
+            z-index: 0;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--spinor);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        h2 {
+            color: var(--spin-up);
+            margin-top: 60px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            padding-right: 20px;
+            border-right: 5px solid var(--spin-up);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2.spin-down { color: var(--spin-down); border-right-color: var(--spin-down); }
+        h2.spinor { color: var(--spinor); border-right-color: var(--spinor); }
+        
+        h3 {
+            color: var(--spin-geometry);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.7em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .spin-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 900px) {
+            .spin-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .spin-card {
+            background: rgba(40, 50, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 3px solid;
+            transition: transform 0.3s;
+        }
+        
+        .spin-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        
+        .spin-card.up { border-color: var(--spin-up); }
+        .spin-card.down { border-color: var(--spin-down); }
+        
+        .spinor-equation {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(52, 152, 219, 0.2));
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.4em;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            overflow-x: auto;
+            border-left: 5px solid var(--spinor);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .twistor-theory {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 50px 0;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .spin-connection-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .connection-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .spin-structure {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin: 40px 0;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .transformation-matrix-spinor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .matrix-item {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(243, 156, 18, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #2c3e50;
+            padding: 50px;
+            border-radius: 20px;
+            margin: 60px 0;
+            text-align: center;
+            font-size: 1.3em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #95a5a6;
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .color-code {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        
+        .up-color { background: var(--spin-up); }
+        .down-color { background: var(--spin-down); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spin-field"></div>
+        
+        <h1>טרנספורמציות ספין-תלויות: הגיאומטריה של spin up/down</h1>
+        <div style="text-align: center; color: #bdc3c7; margin-bottom: 40px; font-size: 1.2em;">
+            תיקון קריטי: טרנספורמציות פואנקרה שונות לחלקיקים עם ספין שונה!
+        </div>
+        
+        <!-- חלק 1: הבעיה בטרנספורמציית פואנקרה רגילה -->
+        <h2>חלק 1: מה חסר בטרנספורמציית פואנקרה הרגילה?</h2>
+        
+        <div class="spinor-equation">
+            \[
+            \text{בעיה: } x'^\mu = \Lambda^\mu_{\ \nu} x^\nu + a^\mu \ \text{לא מספיקה!}
+            \]
+            <p>חסר: איך <strong>פונקציית הגל עם ספין</strong> משתנה?</p>
+        </div>
+        
+        <div class="spin-comparison">
+            <div class="spin-card up">
+                <h3>ספין UP <span class="color-code up-color"></span></h3>
+                <div style="padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \psi_{\uparrow}(x) \rightarrow \psi'_{\uparrow}(x')
+                    \]
+                </div>
+                <p><strong>טרנספורמציה:</strong> ייצוג \( (\frac{1}{2}, 0) \) של SL(2,ℂ)</p>
+                <p><strong>מטריצה:</strong> \( S_{\uparrow}(\Lambda) \) שונה!</p>
+            </div>
+            
+            <div class="spin-card down">
+                <h3>ספין DOWN <span class="color-code down-color"></span></h3>
+                <div style="padding: 20px; background: rgba(231, 76, 60, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \psi_{\downarrow}(x) \rightarrow \psi'_{\downarrow}(x')
+                    \]
+                </div>
+                <p><strong>טרנספורמציה:</strong> ייצוג \( (0, \frac{1}{2}) \) של SL(2,ℂ)</p>
+                <p><strong>מטריצה:</strong> \( S_{\downarrow}(\Lambda) \) שונה!</p>
+            </div>
+        </div>
+        
+        <!-- חלק 2: תורת הספינורים -->
+        <h2 class="spinor">חלק 2: תורת הספינורים - שפת הספין</h2>
+        
+        <div class="twistor-theory">
+            <h3>קבוצת SL(2,ℂ) - הכיסוי הכפול של SO⁺(1,3)</h3>
+            \[
+            \boxed{\text{SL}(2,\mathbb{C}) \rightarrow \text{SO}^+(1,3) \quad \text{(2:1 covering)}}
+            \]
+            <p>לכל מטריצת לורנץ \( \Lambda \) יש <strong>שתי</strong> מטריצות ספינוריות: \( \pm S(\Lambda) \)</p>
+        </div>
+        
+        <!-- חלק 3: מטריצות טרנספורמציה לספינורים -->
+        <h2>חלק 3: מטריצות הטרנספורמציה לספין up/down</h2>
+        
+        <h3>3.1 ספינור ויילאי (שמאלי) - ספין UP:</h3>
+        <div class="spinor-equation">
+            \[
+            \psi_L'(x') = S_L(\Lambda)\psi_L(x), \quad S_L(\Lambda) \in (\frac{1}{2}, 0)
+            \]
+            <p>עבור boost בכיוון z:</p>
+            \[
+            S_L(\Lambda) = \exp\left(-\frac{\phi}{2}\sigma^3\right)
+            \]
+            <p>כאשר \( \phi = \text{arctanh}(v/c) \) - rapidity</p>
+        </div>
+        
+        <h3>3.2 ספינור דיראקי (ימני) - ספין DOWN:</h3>
+        <div class="spinor-equation">
+            \[
+            \psi_R'(x') = S_R(\Lambda)\psi_R(x), \quad S_R(\Lambda) \in (0, \frac{1}{2})
+            \]
+            <p>עבור boost בכיוון z:</p>
+            \[
+            S_R(\Lambda) = \exp\left(+\frac{\phi}{2}\sigma^3\right)
+            \]
+            <p><strong>הבדל קריטי:</strong> סימן הפוך!</p>
+        </div>
+        
+        <!-- חלק 4: הגיאומטריה של ספין -->
+        <h2 class="spinor">חלק 4: גיאומטריה ספינורית - חיבור ספין לגיאומטריה</h2>
+        
+        <div class="spin-structure">
+            <h3>מבנה ספין (Spin Structure)</h3>
+            \[
+            \text{Spin}(1,3) \rightarrow \text{SO}(1,3)
+            \]
+            <p><strong>רעיון:</strong> ספין הוא תכונה <strong>טופולוגית</strong> של המרחב</p>
+            <p>חלקיק חוזר לעצמו אחרי סיבוב של \( 4\pi \), לא \( 2\pi \)!</p>
+        </div>
+        
+        <!-- חלק 5: קשר הספין (Spin Connection) -->
+        <h2>חלק 5: קשר הספין - כיצד ספין "רואה" עקמומיות</h2>
+        
+        <div class="spin-connection-box">
+            <div class="connection-card">
+                <h4>קשר הספין במרחב שטוח</h4>
+                \[
+                \omega_\mu^{ab} = 0
+                \]
+                <p>ספין לא מרגיש סיבוב במרחב מינקובסקי</p>
+            </div>
+            
+            <div class="connection-card">
+                <h4>קשר הספין במרחב מעוקם</h4>
+                \[
+                \omega_\mu^{ab} = e^a_\nu \nabla_\mu e^{b\nu}
+                \]
+                <p>ספין מרגיש את העקמומיות דרך הקשר!</p>
+            </div>
+            
+            <div class="connection-card">
+                <h4>משוואת דיראק במרחב מעוקם</h4>
+                \[
+                (i\gamma^\mu D_\mu - m)\psi = 0
+                \]
+                <p>כאשר \( D_\mu = \partial_\mu + \frac{1}{4}\omega_\mu^{ab}\gamma_a\gamma_b \)</p>
+            </div>
+        </div>
+        
+        <!-- חלק 6: טבלת טרנספורמציות מלאה -->
+        <h2>חלק 6: טבלת טרנספורמציות לפי ספין</h2>
+        
+        <div style="overflow-x: auto; margin: 40px 0; position: relative; z-index: 1;">
+            <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, var(--spin-up), var(--spin-down)); color: white;">
+                        <th style="padding: 15px; text-align: center;">ספין (s)</th>
+                        <th style="padding: 15px; text-align: center;">ייצוג</th>
+                        <th style="padding: 15px; text-align: center;">טרנספורמציה</th>
+                        <th style="padding: 15px; text-align: center;">מטריצה</th>
+                        <th style="padding: 15px; text-align: center;">דוגמה</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <td style="padding: 15px; text-align: center;">0</td>
+                        <td style="padding: 15px; text-align: center;">\( (0, 0) \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \phi'(x') = \phi(x) \)</td>
+                        <td style="padding: 15px; text-align: center;">1</td>
+                        <td style="padding: 15px; text-align: center;">היגס, π-מזון</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <td style="padding: 15px; text-align: center;">1/2 (up)</td>
+                        <td style="padding: 15px; text-align: center;">\( (\frac{1}{2}, 0) \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \psi_L' = S_L\psi_L \)</td>
+                        <td style="padding: 15px; text-align: center;">\( e^{-\phi\sigma^3/2} \)</td>
+                        <td style="padding: 15px; text-align: center;">נייטרינו שמאלי</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <td style="padding: 15px; text-align: center;">1/2 (down)</td>
+                        <td style="padding: 15px; text-align: center;">\( (0, \frac{1}{2}) \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \psi_R' = S_R\psi_R \)</td>
+                        <td style="padding: 15px; text-align: center;">\( e^{+\phi\sigma^3/2} \)</td>
+                        <td style="padding: 15px; text-align: center;">אנטי-נייטרינו ימני</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <td style="padding: 15px; text-align: center;">1/2 (דיראק)</td>
+                        <td style="padding: 15px; text-align: center;">\( (\frac{1}{2}, 0) \oplus (0, \frac{1}{2}) \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \psi' = S(\Lambda)\psi \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \begin{pmatrix} S_L & 0 \\ 0 & S_R \end{pmatrix} \)</td>
+                        <td style="padding: 15px; text-align: center;">אלקטרון</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; text-align: center;">1</td>
+                        <td style="padding: 15px; text-align: center;">\( (\frac{1}{2}, \frac{1}{2}) \)</td>
+                        <td style="padding: 15px; text-align: center;">\( A'^\mu = \Lambda^\mu_{\ \nu}A^\nu \)</td>
+                        <td style="padding: 15px; text-align: center;">\( \Lambda \)</td>
+                        <td style="padding: 15px; text-align: center;">פוטון, W/Z</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- חלק 7: אפקטים פיזיקליים של טרנספורמציה תלויית-ספין -->
+        <h2 class="spin-down">חלק 7: אפקטים פיזיקליים - ספין משנה הכל!</h2>
+        
+        <div class="spin-comparison">
+            <div class="spin-card up">
+                <h3>אפקט Thomas Precession</h3>
+                <div style="padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \omega_T = \frac{\gamma^2}{\gamma+1}\frac{\vec{a}\times\vec{v}}{c^2}
+                    \]
+                </div>
+                <p><strong>סיבוב ספין</strong> של אלקטרון באטום</p>
+                <p>נובע ישירות מ<strong>טרנספורמציית הספין</strong>!</p>
+            </div>
+            
+            <div class="spin-card down">
+                <h3>אפקט Barnett</h3>
+                <div style="padding: 20px; background: rgba(231, 76, 60, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    M = \chi \omega
+                    \]
+                </div>
+                <p>סיבוב גוף → מגנטיזציה</p>
+                <p>ספין "מרגיש" את הסיבוב דרך <strong>קשר הספין</strong></p>
+            </div>
+        </div>
+        
+        <!-- חלק 8: תורת הטוויסטורים -->
+        <h2 class="spinor">חלק 8: תורת הטוויסטורים - גיאומטריה חדשה</h2>
+        
+        <div class="twistor-theory" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h3>טוויסטור = נקודה במרחב + ספין</h3>
+            \[
+            Z^\alpha = (\omega^A, \pi_{\dot{A}}) \in \mathbb{T} = \mathbb{C}^4
+            \]
+            <p>כאשר:</p>
+            <p>\( \omega^A \) - ספינור מיקום</p>
+            <p>\( \pi_{\dot{A}} \) - ספינור תנע</p>
+            
+            <h4>יתרון: ספין וגיאומטריה מאוחדים!</h4>
+        </div>
+        
+        <!-- חלק 9: הטרנספורמציה הסופית - ספין + מיקום -->
+        <h2>חלק 9: הטרנספורמציה המלאה - ספין + גיאומטריה</h2>
+        
+        <div class="spinor-equation" style="font-size: 1.6em;">
+            \[
+            \boxed{\begin{pmatrix}
+            \text{קואורדינטות} \\
+            \text{ספין}
+            \end{pmatrix}' = 
+            \begin{pmatrix}
+            \Lambda & 0 \\
+            0 & S(\Lambda)
+            \end{pmatrix}
+            \begin{pmatrix}
+            \text{קואורדינטות} \\
+            \text{ספין}
+            \end{pmatrix}
+            + 
+            \begin{pmatrix}
+            a \\
+            0
+            \end{pmatrix}}
+            \]
+        </div>
+        
+        <div class="transformation-matrix-spinor">
+            <div class="matrix-item">
+                <h4>לספין 0 (סקלר)</h4>
+                \[
+                \begin{pmatrix}
+                \phi'(x') \\
+                \text{(אין ספין)}
+                \end{pmatrix}
+                \]
+                <p>רק קואורדינטות משתנות</p>
+            </div>
+            
+            <div class="matrix-item">
+                <h4>לספין 1/2 UP</h4>
+                \[
+                \begin{pmatrix}
+                x'^\mu \\
+                \psi_{\uparrow}'
+                \end{pmatrix}
+                =
+                \begin{pmatrix}
+                \Lambda^\mu_\nu & 0 \\
+                0 & S_L(\Lambda)
+                \end{pmatrix}
+                \begin{pmatrix}
+                x^\nu \\
+                \psi_{\uparrow}
+                \end{pmatrix}
+                \]
+                <p>קואורדינטות + ספין משתנים בנפרד</p>
+            </div>
+            
+            <div class="matrix-item">
+                <h4>לספין 1 (וקטור)</h4>
+                \[
+                \begin{pmatrix}
+                x'^\mu \\
+                A'^\nu
+                \end{pmatrix}
+                =
+                \begin{pmatrix}
+                \Lambda^\mu_\alpha & 0 \\
+                0 & \Lambda^\nu_\beta
+                \end{pmatrix}
+                \begin{pmatrix}
+                x^\alpha \\
+                A^\beta
+                \end{pmatrix}
+                \]
+                <p>ספין משתנה כמו קואורדינטות</p>
+            </div>
+        </div>
+        
+        <!-- חלק 10: פישוט פדגוגי -->
+        <h2>חלק 10: איך מלמדים את זה לסטודנטים?</h2>
+        
+        <div class="conclusion" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h3>שלב 1: חלוקה לפי ספין</h3>
+            <p><strong>שלב 1.1:</strong> ספין 0 - הכי פשוט (רק קואורדינטות)</p>
+            <p><strong>שלב 1.2:</strong> ספין 1/2 - ספינורים (מטריצות 2×2)</p>
+            <p><strong>שלב 1.3:</strong> ספין 1 - וקטורים (מטריצות 4×4)</p>
+            <p><strong>שלב 1.4:</strong> ספין 2 - טנזורים (מטריצות מורכבות)</p>
+            
+            <h3 style="margin-top: 30px;">שלב 2: הדגשת ההבדלים</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                    <h4>ספין 0</h4>
+                    <p>סיבוב 360° = חוזר</p>
+                </div>
+                <div style="padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                    <h4>ספין 1/2</h4>
+                    <p>סיבוב 720° = חוזר!</p>
+                </div>
+                <div style="padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                    <h4>ספין 1</h4>
+                    <p>סיבוב 360° = חוזר</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- חלק 11: מסקנות -->
+        <div class="conclusion">
+            <h3>מסקנות: הפיזיקה המלאה דורשת טרנספורמציה ספין-תלויה</h3>
+            
+            <div style="text-align: right; margin: 30px; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                <h4>התיקון הסופי לתורת הטרנספורמציות:</h4>
+                <p><strong>לא מספיק:</strong> \( x'^\mu = \Lambda^\mu_\nu x^\nu + a^\mu \)</p>
+                <p><strong>צריך:</strong> \( (\text{קואורדינטות}, \text{ספין})' = (\Lambda, S(\Lambda))(\text{קואורדינטות}, \text{ספין}) \)</p>
+                <p>כאשר \( S(\Lambda) \) תלוי ב<strong>ספין של החלקיק</strong>!</p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h4>שלוש רמות של טרנספורמציות:</h4>
+                <ol style="text-align: right; margin: 20px 0;">
+                    <li><strong>רמה 0:</strong> טרנספורמציית גלילאי - רק מיקום</li>
+                    <li><strong>רמה 1:</strong> טרנספורמציית פואנקרה - מיקום+זמן</li>
+                    <li><strong>רמה 2:</strong> טרנספורמציה ספין-תלויה - מיקום+זמן+ספין</li>
+                </ol>
+                <p>וזה מה שחסר בהוראת הפיזיקה המסורתית!</p>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <h4>המסר הפדגוגי:</h4>
+                \[
+                \boxed{\text{לא מלמדים יחסות בלי ספין!}}
+                \]
+                <p>כי חלקיקים עם ספין שונה <strong>מרגישים את המרחב-זמן באופן שונה</strong></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>טרנספורמציות ספין-תלויות - הגיאומטריה המלאה של חלקיקים</p>
+            <p>© תיקון קריטי: טרנספורמציות פואנקרה חייבות להיות תלויות בספין!</p>
+            <p>נוצר כתגובה לתובנה: "צריך להגדיר טרנספורמציה חדשה לפי ספין - אם זה ספין אפ ואם זה ספין דאון"</p>
+            <p style="margin-top: 20px; color: var(--spinor); font-weight: bold;">
+                ספין אינו "תוספת" לפיזיקה - הוא חלק אינטגרלי מהגיאומטריה של המרחב-זמן!
+            </p>
+        </div>
+    </div>
+    
+    <!-- סקריפט להצגת נוסחאות -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+</body>
+</html>
