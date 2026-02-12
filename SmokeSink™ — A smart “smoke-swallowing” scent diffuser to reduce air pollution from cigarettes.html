@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmokeSink™ • מפיץ ריח הבולע עשן סיגריות</title>
+  <meta name="description" content="קונספט הנדסי למכשיר שולחני/רכב: שואב עשן סיגריות, מסנן ומנטרל מזהמים, ואז מפיץ ריח נקי בצורה חכמה." />
+  <style>
+    :root{
+      --bg0:#0b1220;
+      --bg1:#0f172a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --line: rgba(148,163,184,.22);
+      --text:#e5e7eb;
+      --muted:#a3a3a3;
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow: 0 18px 55px rgba(0,0,0,.40);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(56,189,248,.22), transparent 55%),
+        radial-gradient(900px 600px at 85% 15%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(700px 600px at 55% 90%, rgba(245,158,11,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:var(--accent2); text-decoration:none}
+    a:hover{ text-decoration:underline }
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:10px;
+      padding:18px 18px;
+      background:linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.10));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      flex:1 1 520px;
+    }
+    .brand h1{margin:0; font-size:26px; letter-spacing:.2px}
+    .brand p{margin:0; color:var(--muted); line-height:1.6}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px}
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      border-radius:999px;
+      color:#dbeafe;
+    }
+    .cta{
+      flex:0 1 310px;
+      padding:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .cta .big{
+      font-size:14px; color:var(--muted); line-height:1.55;
+    }
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button.primary{
+      border-color:rgba(34,197,94,.45);
+      background:linear-gradient(135deg, rgba(34,197,94,.30), rgba(34,197,94,.12));
+    }
+    button:hover{filter:brightness(1.06)}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+      margin-top:14px;
+    }
+    .card{
+      grid-column: span 12;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px 16px;
+    }
+    .card h2{margin:0 0 10px; font-size:18px}
+    .card h3{margin:14px 0 8px; font-size:15px; color:#e2e8f0}
+    .muted{color:var(--muted)}
+    .two{grid-column: span 12}
+    @media (min-width: 920px){
+      .two{grid-column: span 6}
+      .three{grid-column: span 4}
+      .eight{grid-column: span 8}
+      .four{grid-column: span 4}
+    }
+    .list{margin:0; padding:0 18px 0 0; line-height:1.85}
+    .list li{margin:6px 0}
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:rgba(255,255,255,.05);
+      color:#e2e8f0;
+    }
+    .flow{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr;
+      margin-top:10px;
+    }
+    .step{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.05);
+    }
+    .badge{
+      min-width:34px; height:34px;
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+    }
+    .badge.green{background:rgba(34,197,94,.20); border-color:rgba(34,197,94,.35)}
+    .badge.blue{background:rgba(56,189,248,.18); border-color:rgba(56,189,248,.35)}
+    .badge.orange{background:rgba(245,158,11,.18); border-color:rgba(245,158,11,.35)}
+    .badge.red{background:rgba(239,68,68,.15); border-color:rgba(239,68,68,.35)}
+    .step p{margin:2px 0 0; color:var(--muted); line-height:1.6}
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--line);
+      margin-top:10px;
+      background:rgba(255,255,255,.04);
+    }
+    .table th, .table td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(148,163,184,.18);
+      text-align:right;
+      vertical-align:top;
+      font-size:14px;
+    }
+    .table th{
+      font-size:13px;
+      color:#dbeafe;
+      background:rgba(255,255,255,.06);
+    }
+    .table tr:last-child td{border-bottom:none}
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px dashed rgba(245,158,11,.45);
+      background:rgba(245,158,11,.10);
+      border-radius:14px;
+      color:#fde68a;
+      line-height:1.7;
+    }
+    .danger{
+      border-color:rgba(239,68,68,.45)!important;
+      background:rgba(239,68,68,.10)!important;
+      color:#fecaca!important;
+    }
+    .footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+      border-top:1px solid var(--line);
+      padding-top:14px;
+    }
+    .mini{
+      font-size:12px; color:var(--muted);
+    }
+    .toggle{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      padding:10px 12px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.04);
+    }
+    .chip{
+      padding:6px 10px; border-radius:999px; border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      cursor:pointer;
+      font-weight:700;
+      font-size:12px;
+    }
+    .chip.on{
+      border-color:rgba(34,197,94,.45);
+      background:rgba(34,197,94,.18);
+    }
+    .hide{display:none!important}
+    .codebox{
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.65;
+      white-space:pre-wrap;
+      background:rgba(2,6,23,.55);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      overflow:auto;
+      margin-top:10px;
+      color:#e2e8f0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <section class="brand">
+        <h1>SmokeSink™ — מפיץ ריח חכם “בולע עשן” להפחתת זיהום אוויר מסיגריות</h1>
+        <p>
+          מכשיר שולחני / רכב / חלל קטן שמטרתו <b>לשאוב את עשן הסיגריה בנקודת הפליטה</b>,
+          לבצע <b>סינון רב־שלבי</b> (חלקיקים + גזים), ואז <b>להחזיר אוויר נקי</b> עם <b>ריח מבוקר</b>.
+          הרעיון המרכזי: <b>לא מסווה ריח</b> — אלא מפחית מזהמים אמיתיים.
+        </p>
+        <div class="pillrow">
+          <span class="pill">PM2.5 / VOC Sensing</span>
+          <span class="pill">HEPA + Carbon</span>
+          <span class="pill">Low-Noise Turbine</span>
+          <span class="pill">Smart Fragrance Control</span>
+          <span class="pill">Car / Home / Office</span>
+        </div>
+      </section>
+
+      <aside class="cta">
+        <div class="big">
+          מסמך רעיוני למשקיעים/פיתוח: ארכיטקטורה, רכיבים, תרחישי שימוש, בידול וסיכוני בטיחות.
+        </div>
+        <div class="btnrow">
+          <button class="primary" onclick="window.print()">🖨️ הדפס / PDF</button>
+          <button onclick="scrollToId('prototype')">🧪 פרוטוטייפ</button>
+          <button onclick="scrollToId('claims')">📌 Claim Ideas</button>
+        </div>
+        <div class="mini">טיפ: בהדפסה מומלץ לבחור “Save as PDF”.</div>
+      </aside>
+    </header>
+
+    <main class="grid">
+      <section class="card two">
+        <h2>1) הבעיה</h2>
+        <ul class="list">
+          <li>עשן סיגריות בחלל סגור מכיל <b>חלקיקים עדינים</b> (PM2.5) ו<b>תרכובות נדיפות</b> (VOC) שנספגות ברהיטים ובבגדים.</li>
+          <li>מפיצי ריח רגילים לרוב רק <b>מכסים</b> את הריח, ולעיתים יוצרים “תערובת ריח” לא נעימה.</li>
+          <li>נדרש פתרון שמבצע <b>יניקה מהמקור</b> + <b>סינון/נטרול</b> + <b>בישום מבוקר</b>.</li>
+        </ul>
+      </section>
+
+      <section class="card two">
+        <h2>2) פתרון מוצע (במילה אחת)</h2>
+        <p class="muted" style="margin:0; line-height:1.8">
+          <b>לכידה → סינון → ספיחה → ניטרול (אופציונלי) → פיזור ריח</b><br/>
+          המכשיר עובד במצב “חכם”:
+          כאשר רמת עשן גבוהה, הריח נכבה והשאיבה מתחזקת; כאשר האוויר נקי, ניתן לשחרר ריח בעדינות.
+        </p>
+
+        <div class="flow">
+          <div class="step">
+            <div class="badge blue">A</div>
+            <div>
+              <b>יניקה ממוקדת</b>
+              <p>פתח יניקה קרוב למקור + מאוורר טורבינה שקט. מטרה: ללכוד את הענן לפני שיתפזר בחדר.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge green">B</div>
+            <div>
+              <b>סינון חלקיקים (HEPA)</b>
+              <p>לכידת אפר/זפת/PM2.5 — הפחתת עשן נראה לעין.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge orange">C</div>
+            <div>
+              <b>ספיחה כימית (Activated Carbon / Zeolite)</b>
+              <p>בליעת תרכובות ריח וגזים נדיפים (VOC). הפחתת “ריח סיגריה” אמיתי ולא רק מסכה.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge red">D</div>
+            <div>
+              <b>ניטרול מתקדם (אופציונלי)</b>
+              <p>יוניזציה/פלזמה קרה בהספק נמוך — רק אם עומדים בתקני בטיחות מחמירים וללא יצירת אוזון.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge blue">E</div>
+            <div>
+              <b>מפיץ ריח חכם</b>
+              <p>שחרור ריח רק לאחר סינון. מינון לפי חיישנים. אפשר גם מצב “ניטרול ללא ריח”.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="note danger">
+          ⚠️ הערת בטיחות: אם משתמשים ביוניזציה/פלזמה — חייבים תכנון למניעת אוזון, בדיקות מעבדה ועמידה בתקנים.
+          פרוטוטייפ ראשוני מומלץ לבנות ללא שלב זה, עם HEPA + פחם פעיל בלבד.
+        </div>
+      </section>
+
+      <section class="card three">
+        <h2>3) חיישנים ובקרה</h2>
+        <div class="toggle" id="modes">
+          <span class="chip on" data-mode="auto">AUTO</span>
+          <span class="chip" data-mode="silent">SILENT</span>
+          <span class="chip" data-mode="boost">BOOST</span>
+          <span class="chip" data-mode="neutral">NEUTRAL</span>
+        </div>
+
+        <h3>חיישנים אופציונליים</h3>
+        <ul class="list">
+          <li><b>PM2.5</b> — למדידת חלקיקים (עשן נראה).</li>
+          <li><b>VOC</b> — למדידת תרכובות נדיפות (ריח).</li>
+          <li><b>CO</b> — לרכב/חללים סגורים (זהירות).</li>
+          <li><b>טמפרטורה/לחות</b> — כי לחות משפיעה על תפיסת ריח.</li>
+        </ul>
+
+        <h3>לוגיקה</h3>
+        <div class="codebox" aria-label="control logic">
+if PM2.5 גבוה או VOC גבוה:
+  Fan = HIGH
+  Fragrance = OFF
+else:
+  Fan = LOW/MED
+  Fragrance = LOW (בהדרגה)
+        </div>
+      </section>
+
+      <section class="card three">
+        <h2>4) חומרים/פילטרים</h2>
+        <table class="table" aria-label="filters">
+          <thead>
+            <tr>
+              <th>שכבה</th>
+              <th>מטרה</th>
+              <th>מה נתפס</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Pre-Filter</b></td>
+              <td>הגנה על HEPA</td>
+              <td>אבק/סיבים/שיער</td>
+            </tr>
+            <tr>
+              <td><b>HEPA</b></td>
+              <td>חלקיקים</td>
+              <td>PM2.5, זפת, אפר</td>
+            </tr>
+            <tr>
+              <td><b>Activated Carbon</b></td>
+              <td>ספיחה כימית</td>
+              <td>VOC, ריחות, חלק מהגזים</td>
+            </tr>
+            <tr>
+              <td><b>Zeolite (אופציונלי)</b></td>
+              <td>ספיחה סלקטיבית</td>
+              <td>ריחות מסוימים, לחות עודפת</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          טיפ הנדסי: פילטרים כ“מחסנית” נשלפת (Cartridge) עם נעילה — תחזוקה פשוטה ושוק מתכלים.
+        </div>
+      </section>
+
+      <section class="card three">
+        <h2>5) תרחישי מוצר</h2>
+        <ul class="list">
+          <li><b>שולחני</b> — ליד מאפרה/שולחן עבודה.</li>
+          <li><b>רכב</b> — USB/12V, גודל קומפקטי, מצבי שקט/בוסט.</li>
+          <li><b>משרד/חלל אירוח</b> — יחידה חזקה עם ניטור איכות אוויר.</li>
+        </ul>
+
+        <h3>בידול (USP)</h3>
+        <ul class="list">
+          <li>יניקה ממוקדת <b>לפני התפזרות</b>.</li>
+          <li>ריח עובד רק אחרי סינון — <b>לא ערבוב רע</b>.</li>
+          <li>בקרה חכמה לפי PM/VOC.</li>
+          <li>מחסניות פילטר — מודל הכנסות מתכלים.</li>
+        </ul>
+      </section>
+
+      <section class="card eight" id="prototype">
+        <h2>6) פרוטוטייפ מומלץ (שלב־אחר־שלב)</h2>
+
+        <h3>שלב 1 — אבטיפוס “בטוח ופשוט”</h3>
+        <ul class="list">
+          <li>מאוורר טורבינה DC שקט + תעלה קצרה/משפך יניקה.</li>
+          <li>Pre-filter + HEPA + פחם פעיל (Cartridge מודולרי).</li>
+          <li>מתג 3 מצבים: <span class="kbd">LOW</span> / <span class="kbd">MED</span> / <span class="kbd">HIGH</span>.</li>
+        </ul>
+
+        <h3>שלב 2 — חיישנים ובקרה</h3>
+        <ul class="list">
+          <li>חיישן PM2.5 וחיישן VOC.</li>
+          <li>בקר קטן (ESP32) לשליטה במאוורר ובמפיץ הריח.</li>
+          <li>ממשק LED: ירוק (נקי) / כתום (בינוני) / אדום (עשן גבוה).</li>
+        </ul>
+
+        <h3>שלב 3 — מפיץ ריח “נקי”</h3>
+        <ul class="list">
+          <li>מנגנון פיזור עדין (וייק/פד/מיקרו־אטומייזר) עם מינון.</li>
+          <li>מנעול לוגי: ריח <b>כבוי</b> בזמן עשן גבוה.</li>
+          <li>אפשרות מצב “ניטרול ללא ריח”.</li>
+        </ul>
+
+        <h3>שלב 4 — שדרוגים אופציונליים</h3>
+        <ul class="list">
+          <li>מצב BOOST אוטומטי כשמזהה “שאיפה/נשיפה” באמצעות זרימה או VOC.</li>
+          <li>אפליקציה/BT להצגת איכות אוויר וסטטוס פילטרים.</li>
+          <li>שלב ניטרול מתקדם רק לאחר בדיקות בטיחות.</li>
+        </ul>
+
+        <div class="note">
+          מדד הצלחה פשוט לפרוטוטייפ: ירידה ניכרת ב־PM2.5 תוך דקות + ירידה ב־VOC לאורך זמן + פחות “הדבקה” לרהיטים.
+        </div>
+      </section>
+
+      <section class="card four">
+        <h2>7) מודל עסקי</h2>
+        <ul class="list">
+          <li><b>מכשיר</b> — מכירה חד־פעמית.</li>
+          <li><b>פילטרים</b> — מחסניות החלפה תקופתיות (Recurring).</li>
+          <li><b>ארומה</b> — קפסולות/מחסניות ריח איכותיות.</li>
+          <li><b>B2B</b> — משרדים/מסעדות/אירוח.</li>
+        </ul>
+        <h3>ערוצי שיווק</h3>
+        <ul class="list">
+          <li>קמפיין “אוויר נקי בבית”</li>
+          <li>שוק רכב (אביזרי פרימיום)</li>
+          <li>חללים קטנים (משרד/קליניקות)</li>
+        </ul>
+      </section>
+
+      <section class="card" id="claims">
+        <h2>8) רעיונות ל־Patent Claims (ניסוח רעיוני)</h2>
+        <p class="muted" style="margin:0; line-height:1.8">
+          להלן רעיונות כלליים (לא ייעוץ משפטי). אפשר בהמשך לנסח Claims פורמליים.
+        </p>
+        <ol class="list">
+          <li>
+            מערכת הכוללת <b>פתח יניקה ממוקד</b> המיועד ללכידת עשן סיגריות סמוך למקור,
+            בשילוב <b>מערך סינון רב־שלבי</b> הכולל סינון חלקיקים וספיחה כימית.
+          </li>
+          <li>
+            בקרה חכמה המנטרת <b>PM2.5 ו/או VOC</b> ומתאימה בזמן אמת את עוצמת היניקה,
+            ובנוסף <b>מונעת הפצת ריח</b> כאשר רמת העשן גבוהה.
+          </li>
+          <li>
+            מחסנית פילטר מודולרית נשלפת הכוללת לפחות HEPA ופחם פעיל,
+            עם מנגנון נעילה וזיהוי/ספירת זמן לשימוש (Filter Life).
+          </li>
+          <li>
+            שיטת פעולה: “לכידה → סינון → ספיחה → החזרת אוויר” שבה פיזור הריח
+            מתבצע רק לאחר שמדדי איכות האוויר חוצים סף נקבע מראש.
+          </li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>9) סיכונים ומגבלות</h2>
+        <ul class="list">
+          <li>יעילות תלויה במיקום — עדיף קרוב למקור העשן.</li>
+          <li>פילטרים מתמלאים — חייבים תחזוקה/החלפה.</li>
+          <li>תוספי יינון/פלזמה דורשים תקינה כדי לא ליצור תוצרים מזיקים.</li>
+          <li>מפיץ ריח חייב להיות <b>במינון</b> כדי לא ליצור עומס ריח.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>10) מה אפשר להוסיף בשלב הבא</h2>
+        <ul class="list">
+          <li><b>גרסת HTML דו־לשונית</b> (עברית/אנגלית) למשקיעים.</li>
+          <li><b>דיאגרמת בלוקים</b> + שרטוט תעלה/זרימה.</li>
+          <li><b>BOM</b> (רשימת רכיבים) והמלצה לרכיבי מדף.</li>
+          <li><b>קוד בסיס</b> ל־ESP32 (חיישנים + PWM למאוורר + שליטת ריח).</li>
+        </ul>
+      </section>
+    </main>
+
+    <div class="footer">
+      <div>
+        מסמך זה נועד להצגת רעיון הנדסי ומסחרי. כל פיתוח אמיתי דורש בדיקות בטיחות, תקינה,
+        והערכת סיכונים (כולל פליטת אוזון/תוצרים משניים אם משתמשים בטכנולוגיות ניטרול מתקדמות).
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scrollToId(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    // Mode chips demo (visual only)
+    const chips = Array.from(document.querySelectorAll('#modes .chip'));
+    chips.forEach(ch => {
+      ch.addEventListener('click', () => {
+        chips.forEach(x => x.classList.remove('on'));
+        ch.classList.add('on');
+      });
+    });
+  </script>
+</body>
+</html>
