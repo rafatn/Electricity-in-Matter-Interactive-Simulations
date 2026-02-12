@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צלחת פטרי תרמו-ריאקטיבית</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            direction: rtl;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .petri-container {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .petri-dish {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f8f9fa, #e9ecef);
+            border: 15px solid #dee2e6;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .petri-content {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .temperature-control {
+            margin-bottom: 30px;
+        }
+        
+        .temp-slider-container {
+            margin: 20px 0;
+        }
+        
+        .temp-slider {
+            width: 100%;
+            height: 25px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #3498db, #f1c40f, #e74c3c);
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .temp-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .temp-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s;
+        }
+        
+        .temp-range {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #7f8c8d;
+        }
+        
+        .info-panel {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .applications {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .app-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .app-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .temperature-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .temp-status {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 5px;
+            background-color: #f8f9fa;
+        }
+        
+        .status-item.active {
+            background-color: #e3f2fd;
+            border: 2px solid #3498db;
+        }
+        
+        .temp-presets {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .temp-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .temp-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .cool-btn {
+            background-color: #3498db;
+        }
+        
+        .room-btn {
+            background-color: #2ecc71;
+        }
+        
+        .warm-btn {
+            background-color: #f39c12;
+        }
+        
+        .hot-btn {
+            background-color: #e74c3c;
+        }
+        
+        .colony {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.9;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .petri-dish {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>צלחת פטרי תרמו-ריאקטיבית</h1>
+            <p class="subtitle">הדגמה אינטראקטיבית של צלחת פטרי חכמה המגיבה לשינויים בטמפרטורה</p>
+            <p>שנה את הטמפרטורה וצפה בתגובות הצלחת!</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="petri-container">
+                <h2>צלחת פטרי תרמו-כרומית</h2>
+                <div class="petri-dish">
+                    <div class="petri-content" id="petriContent">
+                        <!-- המושבות המיקרוביאליות יוצגו כאן דרך JavaScript -->
+                    </div>
+                </div>
+                <div class="temp-status">
+                    <div class="status-item" id="coldStatus">
+                        <div class="temperature-indicator" style="background-color: #3498db;"></div>
+                        <div>קר (4°C)</div>
+                    </div>
+                    <div class="status-item active" id="roomStatus">
+                        <div class="temperature-indicator" style="background-color: #2ecc71;"></div>
+                        <div>חדר (22°C)</div>
+                    </div>
+                    <div class="status-item" id="warmStatus">
+                        <div class="temperature-indicator" style="background-color: #f39c12;"></div>
+                        <div>חמים (37°C)</div>
+                    </div>
+                    <div class="status-item" id="hotStatus">
+                        <div class="temperature-indicator" style="background-color: #e74c3c;"></div>
+                        <div>חם (42°C)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <h2>בקרת טמפרטורה</h2>
+                <div class="temperature-control">
+                    <p>הזז את המחוון כדי לשנות את הטמפרטורה של צלחת הפטרי:</p>
+                    <div class="temp-slider-container">
+                        <input type="range" min="4" max="42" value="22" class="temp-slider" id="tempSlider">
+                        <div class="temp-range">
+                            <span>4°C (קר)</span>
+                            <span>42°C (חם)</span>
+                        </div>
+                    </div>
+                    <div class="temp-display" id="tempDisplay">22°C</div>
+                    
+                    <div class="temp-presets">
+                        <button class="temp-btn cool-btn" data-temp="4">קר (4°C)</button>
+                        <button class="temp-btn room-btn" data-temp="22">חדר (22°C)</button>
+                        <button class="temp-btn warm-btn" data-temp="37">חמים (37°C)</button>
+                        <button class="temp-btn hot-btn" data-temp="42">חם (42°C)</button>
+                    </div>
+                </div>
+                
+                <div class="reaction-info">
+                    <h2>תגובת הצלחת</h2>
+                    <p id="reactionText">הצלחת נמצאת בטמפרטורת החדר. המושבות המיקרוביאליות מתפתחות בקצב אופטימלי.</p>
+                    <ul id="reactionDetails">
+                        <li>צבע הצלחת: ירוק (צבע בסיס)</li>
+                        <li>גודל המושבות: בינוני</li>
+                        <li>קצב גדילה: אופטימלי</li>
+                        <li>פעילות מטבולית: נורמלית</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>יישומים אפשריים של צלחת פטרי תרמו-ריאקטיבית</h2>
+            <div class="applications">
+                <div class="app-card">
+                    <h3>מחקר מיקרוביולוגי</h3>
+                    <p>ניטור אוטומטי של טמפרטורת גידול חיידקים וזיהוי חום הנפלט ממושבות מיקרוביאליות.</p>
+                </div>
+                <div class="app-card">
+                    <h3>רפואה ותרביות רקמה</h3>
+                    <p>ניטור טמפרטורה בתרביות רקמה רגישות ומערכת התרעה לשינויי טמפרטורה בקירור דגימות.</p>
+                </div>
+                <div class="app-card">
+                    <h3>מחקר כימי וחומרים</h3>
+                    <p>ניתוח תגובות כימיות אקסותרמיות/אנדותרמיות ומחקרי גבישות ופולימרים התלויים בטמפרטורה.</p>
+                </div>
+                <div class="app-card">
+                    <h3>חינוך והדגמות</h3>
+                    <p>הדגמה ויזואלית של עקרונות תרמודינמיקה ורגישות לטמפרטורה במעבדות לימודיות.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>הדגמה של צלחת פטרי תרמו-ריאקטיבית | הרעיון מבוסס על צלחת פטרי חכמה המגיבה לשינויים בטמפרטורה</p>
+            <p>© 2023 - הדגמה אינטראקטיבית</p>
+        </footer>
+    </div>
+
+    <script>
+        // אלמנטים DOM
+        const tempSlider = document.getElementById('tempSlider');
+        const tempDisplay = document.getElementById('tempDisplay');
+        const petriContent = document.getElementById('petriContent');
+        const reactionText = document.getElementById('reactionText');
+        const reactionDetails = document.getElementById('reactionDetails');
+        const tempPresets = document.querySelectorAll('.temp-btn');
+        const statusItems = document.querySelectorAll('.status-item');
+        
+        // מצב התחלתי
+        let currentTemp = 22;
+        let colonies = [];
+        
+        // אתחול הצלחת עם מושבות מיקרוביאליות
+        function initializeColonies() {
+            colonies = [];
+            petriContent.innerHTML = '';
+            
+            // יצירת 15 מושבות במיקומים אקראיים
+            for (let i = 0; i < 15; i++) {
+                const colony = document.createElement('div');
+                colony.classList.add('colony');
+                
+                // מיקום אקראי בתוך הצלחת
+                const size = 15 + Math.random() * 25;
+                const x = 20 + Math.random() * 60;
+                const y = 20 + Math.random() * 60;
+                
+                colony.style.width = `${size}px`;
+                colony.style.height = `${size}px`;
+                colony.style.left = `${x}%`;
+                colony.style.top = `${y}%`;
+                
+                // צבע התחלתי - ירוק לטמפרטורת החדר
+                colony.style.backgroundColor = '#2ecc71';
+                colony.style.opacity = '0.7';
+                
+                colonies.push({
+                    element: colony,
+                    x: x,
+                    y: y,
+                    baseSize: size,
+                    growthRate: 0.5 + Math.random() * 0.5
+                });
+                
+                petriContent.appendChild(colony);
+            }
+            
+            updatePetriDish();
+        }
+        
+        // עדכון מראה הצלחת לפי הטמפרטורה
+        function updatePetriDish() {
+            // עדכון צבע הרקע של הצלחת לפי הטמפרטורה
+            let petriColor;
+            let colonyColor;
+            let colonyOpacity;
+            let colonySizeMultiplier;
+            
+            if (currentTemp <= 10) {
+                // קר מאוד - כחול
+                petriColor = 'radial-gradient(circle at 30% 30%, #e3f2fd, #bbdefb)';
+                colonyColor = '#3498db';
+                colonyOpacity = 0.5;
+                colonySizeMultiplier = 0.5;
+            } else if (currentTemp <= 20) {
+                // קריר - טורקיז
+                petriColor = 'radial-gradient(circle at 30% 30%, #e0f7fa, #b2ebf2)';
+                colonyColor = '#1abc9c';
+                colonyOpacity = 0.6;
+                colonySizeMultiplier = 0.8;
+            } else if (currentTemp <= 30) {
+                // טמפרטורת חדר - ירוק
+                petriColor = 'radial-gradient(circle at 30% 30%, #e8f5e9, #c8e6c9)';
+                colonyColor = '#2ecc71';
+                colonyOpacity = 0.8;
+                colonySizeMultiplier = 1.0;
+            } else if (currentTemp <= 37) {
+                // חמים - צהוב/כתום
+                petriColor = 'radial-gradient(circle at 30% 30%, #fff3e0, #ffe0b2)';
+                colonyColor = '#f39c12';
+                colonyOpacity = 0.9;
+                colonySizeMultiplier = 1.2;
+            } else {
+                // חם מאוד - אדום
+                petriColor = 'radial-gradient(circle at 30% 30%, #ffebee, #ffcdd2)';
+                colonyColor = '#e74c3c';
+                colonyOpacity = 0.95;
+                colonySizeMultiplier = 1.5;
+            }
+            
+            // החלת השינויים על הצלחת
+            petriContent.style.background = petriColor;
+            
+            // עדכון המושבות
+            colonies.forEach(colony => {
+                const newSize = colony.baseSize * colonySizeMultiplier;
+                colony.element.style.width = `${newSize}px`;
+                colony.element.style.height = `${newSize}px`;
+                colony.element.style.backgroundColor = colonyColor;
+                colony.element.style.opacity = colonyOpacity;
+            });
+            
+            // עדכון הטקסט המתאר
+            updateReactionText();
+            
+            // עדכון מצב הפעיל
+            updateActiveStatus();
+        }
+        
+        // עדכון הטקסט המתאר את תגובת הצלחת
+        function updateReactionText() {
+            let text = '';
+            let detailsItems = [];
+            
+            if (currentTemp <= 10) {
+                text = 'הטמפרטורה נמוכה מאוד. המושבות המיקרוביאליות רדומות עם פעילות מטבולית מינימלית.';
+                detailsItems = [
+                    'צבע הצלחת: כחול (קר מאוד)',
+                    'גודל המושבות: קטן מאוד',
+                    'קצב גדילה: אפסי כמעט',
+                    'פעילות מטבולית: מינימלית'
+                ];
+            } else if (currentTemp <= 20) {
+                text = 'הטמפרטורה קרירה. המושבות המיקרוביאליות פעילות אך מתפתחות בקצב איטי.';
+                detailsItems = [
+                    'צבע הצלחת: טורקיז (קריר)',
+                    'גודל המושבות: קטן',
+                    'קצב גדילה: איטי',
+                    'פעילות מטבולית: נמוכה'
+                ];
+            } else if (currentTemp <= 30) {
+                text = 'הצלחת נמצאת בטמפרטורה אופטימלית. המושבות המיקרוביאליות מתפתחות בקצב מקסימלי.';
+                detailsItems = [
+                    'צבע הצלחת: ירוק (אופטימלי)',
+                    'גודל המושבות: בינוני',
+                    'קצב גדילה: מקסימלי',
+                    'פעילות מטבולית: גבוהה'
+                ];
+            } else if (currentTemp <= 37) {
+                text = 'הטמפרטורה חמה. המושבות המיקרוביאליות מתפתחות במהירות אך בחלק מהמינים עשויה להיגרם עקה תרמית.';
+                detailsItems = [
+                    'צבע הצלחת: כתום (חם)',
+                    'גודל המושבות: גדול',
+                    'קצב גדילה: מהיר מאוד',
+                    'פעילות מטבולית: מוגברת'
+                ];
+            } else {
+                text = 'הטמפרטורה גבוהה מדי. רוב המיקרואורגניזמים סובלים מעקה תרמית קשה וקצב הגדילה יורד משמעותית.';
+                detailsItems = [
+                    'צבע הצלחת: אדום (חם מאוד)',
+                    'גודל המושבות: גדול אך לא פעיל',
+                    'קצב גדילה: נמוך מאוד',
+                    'פעילות מטבולית: נמוכה'
+                ];
+            }
+            
+            reactionText.textContent = text;
+            
+            // עדכון רשימת הפרטים
+            reactionDetails.innerHTML = '';
+            detailsItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                reactionDetails.appendChild(li);
+            });
+        }
+        
+        // עדכון מצב הפעיל בלוח הבקרה
+        function updateActiveStatus() {
+            statusItems.forEach(item => item.classList.remove('active'));
+            
+            if (currentTemp <= 10) {
+                document.getElementById('coldStatus').classList.add('active');
+            } else if (currentTemp <= 20) {
+                document.getElementById('coldStatus').classList.add('active');
+            } else if (currentTemp <= 30) {
+                document.getElementById('roomStatus').classList.add('active');
+            } else if (currentTemp <= 37) {
+                document.getElementById('warmStatus').classList.add('active');
+            } else {
+                document.getElementById('hotStatus').classList.add('active');
+            }
+        }
+        
+        // מאזינים לאירועים
+        tempSlider.addEventListener('input', function() {
+            currentTemp = parseInt(this.value);
+            tempDisplay.textContent = `${currentTemp}°C`;
+            updatePetriDish();
+        });
+        
+        // מאזינים ללחיצות על כפתורי הטמפרטורה המוגדרות מראש
+        tempPresets.forEach(button => {
+            button.addEventListener('click', function() {
+                const temp = parseInt(this.getAttribute('data-temp'));
+                currentTemp = temp;
+                tempSlider.value = temp;
+                tempDisplay.textContent = `${temp}°C`;
+                updatePetriDish();
+            });
+        });
+        
+        // אתחול הדף
+        initializeColonies();
+        updatePetriDish();
+    </script>
+</body>
+</html>
