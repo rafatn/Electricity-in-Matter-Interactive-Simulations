@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משוואות תנועה עם שינויי מצב צבירה והתנגשויות</title>
+    <style>
+        :root {
+            --phase-change: #9b59b6;
+            --collision: #e74c3c;
+            --solid: #3498db;
+            --liquid: #2ecc71;
+            --gas: #f39c12;
+            --plasma: #e67e22;
+            --transition: #1abc9c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Assistant', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #ecf0f1;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            text-align: right;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(25, 35, 45, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phase-transitions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(231, 76, 60, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--phase-change);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        h2 {
+            color: var(--phase-change);
+            margin-top: 60px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            padding-right: 20px;
+            border-right: 5px solid var(--phase-change);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2.collision { color: var(--collision); border-right-color: var(--collision); }
+        h2.phase { color: var(--phase-change); border-right-color: var(--phase-change); }
+        
+        h3 {
+            color: var(--transition);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.7em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 900px) {
+            .phase-box {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .phase-card {
+            background: rgba(40, 50, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 3px solid;
+            transition: transform 0.3s;
+        }
+        
+        .phase-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        
+        .phase-card.solid { border-color: var(--solid); }
+        .phase-card.liquid { border-color: var(--liquid); }
+        .phase-card.gas { border-color: var(--gas); }
+        .phase-card.plasma { border-color: var(--plasma); }
+        
+        .phase-equation {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(52, 152, 219, 0.2));
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.4em;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            overflow-x: auto;
+            border-left: 5px solid var(--phase-change);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .collision-dynamics {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 50px 0;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-properties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .property-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .transition-mechanics {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin: 40px 0;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .impact-model {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .impact-item {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(243, 156, 18, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .phase-transition-equation {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #2c3e50;
+            padding: 50px;
+            border-radius: 20px;
+            margin: 60px 0;
+            text-align: center;
+            font-size: 1.3em;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #95a5a6;
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        
+        .solid-indicator { background: var(--solid); }
+        .liquid-indicator { background: var(--liquid); }
+        .gas-indicator { background: var(--gas); }
+        .plasma-indicator { background: var(--plasma); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="phase-transitions"></div>
+        
+        <h1>משוואות תנועה עם שינויי מצב צבירה והתנגשויות</h1>
+        <div style="text-align: center; color: #bdc3c7; margin-bottom: 40px; font-size: 1.2em;">
+            אינטגרציה של מעברי פאזה, התנגשויות וחזרה למצב צבירה בפגיעה
+        </div>
+        
+        <!-- חלק 1: מודל דינמי לשינוי מצב צבירה -->
+        <h2>חלק 1: דינמיקה של שינוי מצב צבירה באוויר</h2>
+        
+        <div class="phase-box">
+            <div class="phase-card solid">
+                <h3>מוצק <span class="phase-indicator solid-indicator"></span></h3>
+                <div style="padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \sigma_{ij} = C_{ijkl}\epsilon_{kl}
+                    \]
+                </div>
+                <p><strong>מודול יאנג:</strong> \( E \) גבוה</p>
+                <p><strong>צמיגות:</strong> אינסופית למעשה</p>
+                <p><strong>מבנה:</strong> סריג גבישי</p>
+            </div>
+            
+            <div class="phase-card liquid">
+                <h3>נוזל <span class="phase-indicator liquid-indicator"></span></h3>
+                <div style="padding: 20px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \tau_{ij} = \eta\left(\frac{\partial v_i}{\partial x_j} + \frac{\partial v_j}{\partial x_i}\right)
+                    \]
+                </div>
+                <p><strong>צמיגות:</strong> \( \eta \) סופית</p>
+                <p><strong>דחיסות:</strong> נמוכה</p>
+                <p><strong>זרימה:</strong> עם גרדיאנט לחץ</p>
+            </div>
+            
+            <div class="phase-card gas">
+                <h3>גז <span class="phase-indicator gas-indicator"></span></h3>
+                <div style="padding: 20px; background: rgba(243, 156, 18, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    PV = nRT
+                    \]
+                </div>
+                <p><strong>דחיסות:</strong> גבוהה</p>
+                <p><strong>צמיגות:</strong> נמוכה מאוד</p>
+                <p><strong>דיפוזיה:</strong> מהירה</p>
+            </div>
+            
+            <div class="phase-card plasma">
+                <h3>פלזמה <span class="phase-indicator plasma-indicator"></span></h3>
+                <div style="padding: 20px; background: rgba(230, 126, 34, 0.1); border-radius: 10px; margin: 15px 0;">
+                    \[
+                    \frac{\partial n}{\partial t} + \nabla\cdot(n\vec{v}) = 0
+                    \]
+                </div>
+                <p><strong>טמפרטורה:</strong> גבוהה מאוד</p>
+                <p><strong>הולכה:</strong> מעולה</p>
+                <p><strong>שדות:</strong> מגיב לשדות EM</p>
+            </div>
+        </div>
+        
+        <!-- חלק 2: תנאי מעבר פאזה דינמי -->
+        <h2 class="phase">חלק 2: תנאי מעבר פאזה דינמיים</h2>
+        
+        <div class="phase-equation">
+            \[
+            \boxed{\frac{d\Phi}{dt} = \frac{1}{\tau_\Phi}\left[\Phi_{\text{eq}}(T,P) - \Phi(t)\right]}
+            \]
+            <p>כאשר \( \Phi \) הוא פרמטר הסדר (0=מוצק, 1=נוזל, 2=גז, 3=פלזמה)</p>
+            <p>ו-\( \tau_\Phi \) הוא זמן הרפיה של המעבר</p>
+        </div>
+        
+        <!-- חלק 3: דינמיקת התנגשות עם שינוי פאזה -->
+        <h2 class="collision">חלק 3: דינמיקת התנגשות עם מעברי פאזה</h2>
+        
+        <div class="collision-dynamics">
+            <h3>משוואת התנועה עם שינוי פאזה בהתנגשות:</h3>
+            \[
+            m\frac{d^2\vec{r}}{dt^2} = \vec{F}_{\text{חיצוני}} - \eta(\Phi)\vec{v} - \frac{d\Phi}{dt}\Delta H_{\text{מעבר}}\hat{v}
+            \]
+            <p>כאשר:</p>
+            <p>\( \eta(\Phi) \) - צמיגות התלויה במצב הצבירה</p>
+            <p>\( \Delta H_{\text{מעבר}} \) - אנתלפית מעבר הפאזה</p>
+            <p>המונח האחרון - כוח עקב ספיחת/שחרור חום במעבר פאזה!</p>
+        </div>
+        
+        <!-- חלק 4: משוואות תלויות פאזה במערכת פרנה -->
+        <h2>חלק 4: משוואות פרנה עם מצבי צבירה משתנים</h2>
+        
+        <div class="phase-properties">
+            <div class="property-card">
+                <h4>עקמומיות תלוית פאזה</h4>
+                \[
+                \kappa(\Phi) = \kappa_0[1 + \alpha_\kappa(\Phi - \Phi_0)]
+                \]
+                <p>עקמומיות משתנה עם מצב הצבירה</p>
+            </div>
+            
+            <div class="property-card">
+                <h4>פיתול תלוי פאזה</h4>
+                \[
+                \tau(\Phi) = \tau_0[1 + \beta_\tau(\Phi - \Phi_0)]
+                \]
+                <p>פיתול המסלול משתנה</p>
+            </div>
+            
+            <div class="property-card">
+                <h4>צמיגות במערכת פרנה</h4>
+                \[
+                \eta_{ij}(\Phi) = \eta_0\delta_{ij} + \gamma(\Phi)(e_i \otimes e_j)
+                \]
+                <p>טנזור צמיגות אנאיזוטרופי</p>
+            </div>
+        </div>
+        
+        <!-- חלק 5: מכניקת פגיעה והתמצקות -->
+        <h2 class="collision">חלק 5: מכניקת פגיעה והתמצקות מחדש</h2>
+        
+        <div class="transition-mechanics">
+            <h3>5.1 קריטריון פגיעה לשינוי פאזה:</h3>
+            \[
+            \text{מעבר פאזה מתרחש אם: } \frac{1}{2}mv^2 > E_{\text{מעבר}}(\Phi)
+            \]
+            <p>כאשר \( E_{\text{מעבר}}(\Phi) \) היא אנרגיית השפעול למעבר</p>
+            
+            <h3 style="margin-top: 30px;">5.2 קצב התמצקות לאחר פגיעה:</h3>
+            \[
+            \frac{d\Phi}{dt} = -k_s\left[\Phi - \Phi_{\text{מוצק}}(T)\right]^n
+            \]
+            <p>כאשר \( k_s \) הוא קבוע התמצקות ו-\( n \) מעריך קינטי</p>
+        </div>
+        
+        <!-- חלק 6: מודל פגיעה מלא -->
+        <h2>חלק 6: מודל פגיעה עם מעברי פאזה מרובים</h2>
+        
+        <div class="impact-model">
+            <div class="impact-item">
+                <h4>שלב 1: גישה</h4>
+                \[
+                \Phi = \Phi_{\text{התחלתי}}
+                \]
+                <p>חומר במצב צבירה התחלתי</p>
+            </div>
+            
+            <div class="impact-item">
+                <h4>שלב 2: חימום/קירור באוויר</h4>
+                \[
+                \frac{dT}{dt} = \alpha(T_{\text{סביבה}} - T)
+                \]
+                <p>שינוי טמפרטורה בזמן המעוף</p>
+            </div>
+            
+            <div class="impact-item">
+                <h4>שלב 3: פגיעה</h4>
+                \[
+                \Delta E = \frac{1}{2}m(v^2 - v'^2)
+                \]
+                <p>אנרגיה המשתחררת בפגיעה</p>
+            </div>
+            
+            <div class="impact-item">
+                <h4>שלב 4: התמצקות</h4>
+                \[
+                \Phi(t) = \Phi_{\text{מוצק}} + (\Phi_{\text{פגיעה}} - \Phi_{\text{מוצק}})e^{-t/\tau_s}
+                \]
+                <p>חזרה הדרגתית למוצק</p>
+            </div>
+        </div>
+        
+        <!-- חלק 7: משוואות התנועה המשולבות -->
+        <h2 class="phase">חלק 7: משוואות תנועה משולבות עם פאזה</h2>
+        
+        <div class="phase-transition-equation">
+            <h3>7.1 משוואת המיקום עם פאזה:</h3>
+            \[
+            m(\Phi)\frac{d^2\vec{r}}{dt^2} = -\nabla V(\vec{r}) - \eta(\Phi)\vec{v} + \vec{F}_{\text{תרמי}}(T,\Phi)
+            \]
+            
+            <h3 style="margin-top: 30px;">7.2 משוואת הפאזה:</h3>
+            \[
+            \tau_\Phi\frac{d^2\Phi}{dt^2} + \frac{d\Phi}{dt} = \frac{\Phi_{\text{eq}}(T,P) - \Phi}{\tau_R}
+            \]
+            
+            <h3 style="margin-top: 30px;">7.3 משוואת האנרגיה:</h3>
+            \[
+            C_p(\Phi)\frac{dT}{dt} = -\frac{d\Phi}{dt}\Delta H_{\text{מעבר}} + \dot{Q}_{\text{סביבה}}
+            \]
+        </div>
+        
+        <!-- חלק 8: דוגמאות קונקרטיות -->
+        <h2>חלק 8: דוגמאות של מעברי פאזה בהתנגשויות</h2>
+        
+        <div class="phase-properties">
+            <div class="property-card" style="background: rgba(52, 152, 219, 0.15);">
+                <h4>קרח → מים → קרח</h4>
+                <p><strong>מסלול:</strong> כדור קרח נזרק</p>
+                <p><strong>באוויר:</strong> התכה חלקית</p>
+                <p><strong>בפגיעה:</strong> התמצקות מהירה</p>
+                \[
+                \Delta H = 334 \, \text{kJ/kg}
+                \]
+            </div>
+            
+            <div class="property-card" style="background: rgba(243, 156, 18, 0.15);">
+                <h4>מתכת → פלזמה → מתכת</h4>
+                <p><strong>מסלול:</strong> מטאור באטמוספירה</p>
+                <p><strong>באוויר:</strong> חימום לפלזמה</p>
+                <p><strong>בפגיעה:</strong> התקררות והתמצקות</p>
+                \[
+                T_{\text{פלזמה}} > 10^4 \, \text{K}
+                \]
+            </div>
+            
+            <div class="property-card" style="background: rgba(46, 204, 113, 0.15);">
+                <h4>שמן → אירוסול → שמן</h4>
+                <p><strong>מסלול:</strong> טיפות בשפריץ</p>
+                <p><strong>באוויר:</strong> פיזור לאירוסול</p>
+                <p><strong>בפגיעה:</strong> איחוד חזרה לנוזל</p>
+                \[
+                \gamma_{\text{משטח}} \text{מכריע}
+                \]
+            </div>
+            
+            <div class="property-card" style="background: rgba(155, 89, 182, 0.15);">
+                <h4>פולימר → ג'ל → פולימר</h4>
+                <p><strong>מסלול:</strong> חומר חכם נזרק</p>
+                <p><strong>באוויר:</strong> שינוי מבנה</p>
+                <p><strong>בפגיעה:</strong> חזרה למצב קשיח</p>
+                \[
+                \tau_R \sim \text{מילישניות}
+                \]
+            </div>
+        </div>
+        
+        <!-- חלק 9: טנזורים עם פאזה -->
+        <h2>חלק 9: טנזורי חומר עם מצב צבירה משתנה</h2>
+        
+        <div class="collision-dynamics" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h3>טנזור האלסטיות התלוי פאזה:</h3>
+            \[
+            C_{ijkl}(\Phi) = C_{ijkl}^0 + \Phi(C_{ijkl}^1 - C_{ijkl}^0) + \frac{d\Phi}{dt}D_{ijkl}
+            \]
+            
+            <h3 style="margin-top: 30px;">טנזור הצמיגות התלוי פאזה:</h3>
+            \[
+            \eta_{ijkl}(\Phi) = \eta_0\delta_{ij}\delta_{kl} + \eta_1(\Phi)\epsilon_{ijkl}
+            \]
+            
+            <h3 style="margin-top: 30px;">טנזור מעבר הפאזה:</h3>
+            \[
+            \Gamma_{ij} = \alpha\frac{\partial\Phi}{\partial x_i}\frac{\partial\Phi}{\partial x_j}
+            \]
+        </div>
+        
+        <!-- חלק 10: משוואת הגלים עם פאזה -->
+        <h2 class="phase">חלק 10: משוואת הגלים בחומר עם פאזה משתנה</h2>
+        
+        <div class="phase-equation">
+            \[
+            \rho(\Phi)\frac{\partial^2 u_i}{\partial t^2} = \frac{\partial}{\partial x_j}\left[C_{ijkl}(\Phi)\frac{\partial u_k}{\partial x_l}\right] + \frac{\partial\Phi}{\partial t}\beta_{ij}\frac{\partial u_j}{\partial t}
+            \]
+            <p>כאשר \( \beta_{ij} \) הוא טנזור בליעה תלוי קצב שינוי פאזה</p>
+        </div>
+        
+        <!-- חלק 11: אינטגרציה עם מערכת פרנה הקודמת -->
+        <h2>חלק 11: אינטגרציה מלאה עם משוואות העקמומיות</h2>
+        
+        <div class="phase-transition-equation" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #2c3e50;">
+            <h3>משוואת התנועה הסופית במערכת פרנה:</h3>
+            \[
+            \boxed{\begin{aligned}
+            m(\Phi)&\left[\frac{d^2\xi^\alpha}{d\tau^2} + \Gamma^\alpha_{\beta\gamma}\frac{d\xi^\beta}{d\tau}\frac{d\xi^\gamma}{d\tau}\right] = \\
+            &F^\alpha_{\text{חיצוני}} - \eta^{\alpha\beta}(\Phi)\frac{d\xi_\beta}{d\tau} \\
+            &- \frac{d\Phi}{d\tau}\Delta H_{\text{מעבר}}\frac{d\xi^\alpha}{d\tau} \\
+            &+ \kappa(\Phi)F^\alpha_{\text{צנטריפוגלי}} + \tau(\Phi)F^\alpha_{\text{קוריוליס}}
+            \end{aligned}}
+            \]
+            
+            <h3 style="margin-top: 30px;">משוואת הפאזה במערכת פרנה:</h3>
+            \[
+            \frac{d^2\Phi}{d\tau^2} + \frac{1}{\tau_\Phi}\frac{d\Phi}{d\tau} = \frac{\Phi_{\text{eq}}(T,\kappa,\tau) - \Phi}{\tau_R^2}
+            \]
+        </div>
+        
+        <!-- חלק 12: יישומים -->
+        <h2 class="collision">חלק 12: יישומים מעשיים</h2>
+        
+        <div class="phase-properties">
+            <div class="property-card" style="background: rgba(231, 76, 60, 0.1);">
+                <h4>הגנה משוריינת</h4>
+                <p>חומרים המשנים פאזה בפגיעה</p>
+                <p>בליעת אנרגיה דרך מעבר פאזה</p>
+                <p>חזרה למצב קשיח לאחר הפגיעה</p>
+            </div>
+            
+            <div class="property-card" style="background: rgba(52, 152, 219, 0.1);">
+                <h4>נחיתות רכות</h4>
+                <p>חומרים שהופכים לנוזל בפגיעה</p>
+                <p>פיזור אנרגיה דרך צמיגות</p>
+                <p>התמצקות לאחר עצירה</p>
+            </div>
+            
+            <div class="property-card" style="background: rgba(46, 204, 113, 0.1);">
+                <h4>טכנולוגיה רפואית</h4>
+                <p>חומרים חכמים עם פאזה משתנה</p>
+                <p>שינוי תכונות בהתאם לטמפרטורה</p>
+                <p>חזרה לצורת מקור לאחר מעוף</p>
+            </div>
+            
+            <div class="property-card" style="background: rgba(155, 89, 182, 0.1);">
+                <h4>חישה מרחוק</h4>
+                <p>גלאים המשנים פאזה בפגיעה</p>
+                <p>מדידת מאפייני פגיעה דרך שינוי פאזה</p>
+                <p>איפוס אוטומטי לאחר מדידה</p>
+            </div>
+        </div>
+        
+        <!-- חלק 13: מסקנות -->
+        <div class="conclusion">
+            <h3>מסקנות: פיזיקה דינמית של חומרים משתני פאזה</h3>
+            
+            <div style="text-align: right; margin: 30px; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                <h4>המהפכה: משוואות תנועה עם מצב צבירה דינמי</h4>
+                <p><strong>לא:</strong> \( m\ddot{x} = F \) עם חומר קבוע</p>
+                <p><strong>אלא:</strong> \( m(\Phi)\ddot{x} = F(\Phi,\dot{\Phi}) \) עם חומר משתנה!</p>
+                <p>כאשר \( \Phi(t) \) מתאר את מצב הצבירה המשתנה בזמן</p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h4>שלושה ממדים חדשים בפיזיקה:</h4>
+                <ol style="text-align: right; margin: 20px 0;">
+                    <li><strong>דינמיקת פאזה:</strong> שינוי מצב צבירה בזמן תנועה</li>
+                    <li><strong>אינטראקציה פאזה-גיאומטריה:</strong> עקמומיות משפיעה על מעברי פאזה</li>
+                    <li><strong>אפקט פגיעה הפיך:</strong> חזרה למצב צבירה מקורי לאחר התנגשות</li>
+                </ol>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <h4>המשוואה האולטימטיבית לחומרים חכמים:</h4>
+                \[
+                \boxed{\frac{D}{D\tau}\left[m(\Phi)U^\mu + S^{\mu\nu}(\Phi)\omega_\nu\right] = F^\mu(\Phi,\dot{\Phi},\kappa,\tau,T)}
+                \]
+                <p>חומר שאינו רק נע - אלא <strong>משתנה</strong> תוך כדי תנועה!</p>
+                <p>וחזרה לצורתו המקורית לאחר אינטראקציה - ממש כמו חומרים חכמים בעולם האמיתי</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>משוואות תנועה עם שינויי מצב צבירה והתנגשויות הפיכות</p>
+            <p>© אינטגרציה של מעברי פאזה, גיאומטריה מעוקמת ודינמיקת התנגשות</p>
+            <p>נוצר כתגובה לבקשה: "נטפל בחומרים המשנים את המצב הצבירה שלהם באוויר ובחזרה לאדמה או פגיעה בעצם אחר והפוך"</p>
+            <p style="margin-top: 20px; color: var(--transition); font-weight: bold;">
+                הפיזיקה האמיתית של חומרים היא לא סטטית - הם משתנים, מתעקמים, מתנגשים, וחוזרים לצורתם!
+            </p>
+        </div>
+    </div>
+    
+    <!-- סקריפט להצגת נוסחאות -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+</body>
+</html>
