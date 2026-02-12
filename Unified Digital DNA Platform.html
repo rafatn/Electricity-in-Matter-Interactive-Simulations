@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פלטפורמת DNA דיגיטלית מאוחדת - UDP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            direction: rtl;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(90deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #1a2980;
+            border-bottom: 3px solid #26d0ce;
+            padding-bottom: 10px;
+            margin: 30px 0 20px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-right: 5px solid #26d0ce;
+        }
+        
+        .phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .phase-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            border-top: 4px solid;
+        }
+        
+        .phase-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .phase-1 { border-color: #e74c3c; }
+        .phase-2 { border-color: #3498db; }
+        .phase-3 { border-color: #2ecc71; }
+        
+        .code-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .highlight {
+            color: #3498db;
+        }
+        
+        .string { color: #2ecc71; }
+        .keyword { color: #e74c3c; }
+        .function { color: #3498db; }
+        .comment { color: #95a5a6; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background: #1a2980;
+            color: white;
+            padding: 15px;
+            text-align: right;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .layer {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #26d0ce;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .phases, .architecture-grid, .comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 2px solid #eee;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>פלטפורמת DNA דיגיטלית מאוחדת</h1>
+            <p>UDP - Unified DNA Platform</p>
+            <p>ארכיטקטורה לאבטחת תקשורת חזותית בתמונות רפואיות ושידורי טלוויזיה</p>
+        </header>
+        
+        <section class="section">
+            <h2>מבוא המערכת</h2>
+            <p>פלטפורמת UDP היא מערכת אבטחת תוכן מתקדמת המשתמשת במושג "DNA דיגיטלי" כדי להגן על תקשורת חזותית בשני תחומים עיקריים:</p>
+            <ul>
+                <li><strong>תמונות רפואיות</strong> - הגנה על נתונים רגישים לפי תקני HIPAA ו-GDPR</li>
+                <li><strong>שידורי טלוויזיה</strong> - מניעת דליפות וניהול זכויות דיגיטלי בזמן אמת</li>
+            </ul>
+            <p>המערכת משתמשת בטרנספורמציות מתמטיות (פורייה, צבע, קול) ליצירת חתימה ייחודית המוטבעת בתוכן עצמו.</p>
+        </section>
+        
+        <section class="section">
+            <h2>שלבי התפתחות המערכת</h2>
+            <div class="phases">
+                <div class="phase-card phase-1">
+                    <h3>שלב 1: MVP (3-6 חודשים)</h3>
+                    <ul>
+                        <li>ליבת UDP עם מנוע DNA בסיסי</li>
+                        <li>תמיכה בתחום אחד (רפואי או שידור)</li>
+                        <li>ממשק API בסיסי</li>
+                        <li>הטבעת DNA בסטגנוגרפיה בסיסית</li>
+                        <li>אימות DNA מקומי</li>
+                    </ul>
+                </div>
+                
+                <div class="phase-card phase-2">
+                    <h3>שלב 2: פלטפורמה מלאה (6-12 חודשים)</h3>
+                    <ul>
+                        <li>תמיכה בשני התחומים במקביל</li>
+                        <li>מערכת מדיניות מתקדמת</li>
+                        <li>ממשקי ניהול מלאים</li>
+                        <li>אינטגרציה עם מערכות קיימות</li>
+                        <li>ביצועים אופטימליים</li>
+                    </ul>
+                </div>
+                
+                <div class="phase-card phase-3">
+                    <h3>שלב 3: אקוסיסטם (12-18 חודשים)</h3>
+                    <ul>
+                        <li>אינטגרציות עם מערכות PACS ו-DRM</li>
+                        <li>AI/ML לשיפור DNA</li>
+                        <li>שוק DNA (DNA Marketplace)</li>
+                        <li>הרחבה לתחומים נוספים</li>
+                        <li>פלטפורמה כשירות (PaaS)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>ארכיטקטורת המערכת</h2>
+            
+            <h3>שכבות הליבה:</h3>
+            <div class="architecture-grid">
+                <div class="layer">
+                    <h4>שכבה 7: ממשק משתמש</h4>
+                    <p>פורטל דיירים, מנהל מערכת, API Gateway</p>
+                </div>
+                <div class="layer">
+                    <h4>שכבה 6: מנועי DNA</h4>
+                    <p>מנועים ייעודיים לכל תחום (רפואה/שידור)</p>
+                </div>
+                <div class="layer">
+                    <h4>שכבה 5: עיבוד DNA</h4>
+                    <p>סינתזת DNA, הטבעה, חילוץ, אימות</p>
+                </div>
+                <div class="layer">
+                    <h4>שכבה 4: טכנולוגיית ליבה</h4>
+                    <p>מנועי טרנספורמציה, הצפנה, סטגנוגרפיה</p>
+                </div>
+                <div class="layer">
+                    <h4>שכבה 3: שכבת נתונים</h4>
+                    <p>רישום DNA, מאגר מדיניות, מפתחות</p>
+                </div>
+                <div class="layer">
+                    <h4>שכבה 2: תשתית</h4>
+                    <p>Kubernetes, Kafka, Flink, אבטחה</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>קוד Python לדוגמה</h2>
+            
+            <h3>1. מחלקת DNA בסיסית</h3>
+            <div class="code-container">
+                <pre><code><span class="keyword">class</span> <span class="function">DigitalDNA</span>:
+    <span class="string">"""מחלקה בסיסית ליצירת DNA דיגיטלי"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="highlight">self</span>, content_type, tenant_id):
+        <span class="highlight">self</span>.content_type = content_type
+        <span class="highlight">self</span>.tenant_id = tenant_id
+        <span class="highlight">self</span>.dna_version = <span class="string">"2.0"</span>
+        <span class="highlight">self</span>.creation_time = datetime.datetime.now().isoformat()
+    
+    <span class="keyword">def</span> <span class="function">generate_dna</span>(<span class="highlight">self</span>, content_features, policy):
+        <span class="string">"""יצירת DNA מתוך מאפייני תוכן ומדיניות"""</span>
+        
+        dna_structure = {
+            <span class="string">"metadata"</span>: {
+                <span class="string">"dna_version"</span>: <span class="highlight">self</span>.dna_version,
+                <span class="string">"content_type"</span>: <span class="highlight">self</span>.content_type,
+                <span class="string">"tenant_id"</span>: <span class="highlight">self</span>.tenant_id,
+                <span class="string">"creation_time"</span>: <span class="highlight">self</span>.creation_time
+            },
+            <span class="string">"identity_layer"</span>: {
+                <span class="string">"content_hash"</span>: self._calculate_hash(content_features),
+                <span class="string">"unique_markers"</span>: self._extract_unique_markers(content_features)
+            },
+            <span class="string">"policy_layer"</span>: {
+                <span class="string">"usage_rules"</span>: policy.get(<span class="string">"usage_rules"</span>, {}),
+                <span class="string">"access_control"</span>: policy.get(<span class="string">"access_control"</span>, []),
+                <span class="string">"lifecycle"</span>: policy.get(<span class="string">"lifecycle"</span>, {})
+            },
+            <span class="string">"telomeres"</span>: {
+                <span class="string">"max_replications"</span>: policy.get(<span class="string">"max_copies"</span>, 1),
+                <span class="string">"current_count"</span>: 0,
+                <span class="string">"history"</span>: []
+            }
+        }
+        
+        <span class="comment"># הוספת הרחבות תחום ספציפיות</span>
+        <span class="keyword">if</span> <span class="highlight">self</span>.content_type == <span class="string">"medical"</span>:
+            dna_structure[<span class="string">"domain_extension"</span>] = self._add_medical_extension(content_features)
+        <span class="keyword">elif</span> <span class="highlight">self</span>.content_type == <span class="string">"broadcast"</span>:
+            dna_structure[<span class="string">"domain_extension"</span>] = self._add_broadcast_extension(content_features)
+        
+        <span class="comment"># חתימה קריפטוגרפית</span>
+        dna_structure[<span class="string">"signature"</span>] = self._sign_dna(dna_structure)
+        
+        <span class="keyword">return</span> dna_structure
+    
+    <span class="keyword">def</span> <span class="function">_calculate_hash</span>(<span class="highlight">self</span>, features):
+        <span class="keyword">import</span> hashlib
+        content_str = <span class="string">""</span>.join(<span class="keyword">str</span>(f) <span class="keyword">for</span> f <span class="keyword">in</span> features.values())
+        <span class="keyword">return</span> hashlib.sha256(content_str.encode()).hexdigest()</code></pre>
+            </div>
+            
+            <h3>2. מנוע הטבעת DNA</h3>
+            <div class="code-container">
+                <pre><code><span class="keyword">class</span> <span class="function">DNAEmbedder</span>:
+    <span class="string">"""מחלקה להטבעת DNA בתוכן חזותי"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="highlight">self</span>, embedding_method=<span class="string">"hybrid"</span>):
+        <span class="highlight">self</span>.embedding_method = embedding_method
+        
+    <span class="keyword">def</span> <span class="function">embed_in_image</span>(<span class="highlight">self</span>, image_array, dna_payload):
+        <span class="string">"""הטבעת DNA בתמונה"""</span>
+        
+        <span class="keyword">import</span> numpy <span class="keyword">as</span> np
+        
+        <span class="keyword">if</span> <span class="highlight">self</span>.embedding_method == <span class="string">"spatial"</span>:
+            <span class="comment"># הטבעה בתחום המרחב (LSB - Least Significant Bit)</span>
+            embedded_image = self._embed_lsb(image_array, dna_payload)
+            
+        <span class="keyword">elif</span> <span class="highlight">self</span>.embedding_method == <span class="string">"frequency"</span>:
+            <span class="comment"># הטבעה בתחום התדר (DCT/פורייה)</span>
+            embedded_image = self._embed_frequency_domain(image_array, dna_payload)
+            
+        <span class="keyword">elif</span> <span class="highlight">self</span>.embedding_method == <span class="string">"hybrid"</span>:
+            <span class="comment"># שילוב שיטות</span>
+            embedded_image = self._embed_hybrid(image_array, dna_payload)
+        
+        <span class="keyword">return</span> embedded_image
+    
+    <span class="keyword">def</span> <span class="function">_embed_lsb</span>(<span class="highlight">self</span>, image, dna_payload):
+        <span class="string">"""הטבעה בשיטת LSB"""</span>
+        dna_binary = <span class="string">''</span>.join(format(ord(c), <span class="string">'08b'</span>) <span class="keyword">for</span> c <span class="keyword">in</span> <span class="keyword">str</span>(dna_payload))
+        dna_index = 0
+        
+        height, width = image.shape[:2]
+        embedded = image.copy()
+        
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(height):
+            <span class="keyword">for</span> j <span class="keyword">in</span> range(width):
+                <span class="keyword">if</span> dna_index < len(dna_binary):
+                    <span class="comment"># החלפת הביט הכי פחות משמעותי</span>
+                    pixel_value = embedded[i, j]
+                    <span class="keyword">if</span> len(image.shape) == 3:  <span class="comment"># צבעוני</span>
+                        <span class="keyword">for</span> channel <span class="keyword">in</span> range(3):
+                            <span class="keyword">if</span> dna_index < len(dna_binary):
+                                <span class="comment"># שמירת 7 ביטים גבוהים + ביט DNA</span>
+                                pixel_value[channel] = (pixel_value[channel] & 0xFE) | int(dna_binary[dna_index])
+                                dna_index += 1
+                    <span class="keyword">else</span>:  <span class="comment"># גווני אפור</span>
+                        <span class="keyword">if</span> dna_index < len(dna_binary):
+                            embedded[i, j] = (embedded[i, j] & 0xFE) | int(dna_binary[dna_index])
+                            dna_index += 1
+        
+        <span class="keyword">return</span> embedded</code></pre>
+            </div>
+            
+            <h3>3. מערכת אימות DNA בזמן אמת</h3>
+            <div class="code-container">
+                <pre><code><span class="keyword">class</span> <span class="function">DNAValidator</span>:
+    <span class="string">"""מחלקה לאימות DNA דיגיטלי"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="highlight">self</span>, registry_url, tenant_config):
+        <span class="highlight">self</span>.registry_url = registry_url
+        <span class="highlight">self</span>.tenant_config = tenant_config
+        <span class="highlight">self</span>.cache = {}
+        
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">validate_content</span>(<span class="highlight">self</span>, content, dna_signature):
+        <span class="string">"""אימות תוכן עם DNA"""</span>
+        
+        <span class="comment"># 1. חילוץ DNA מהתוכן</span>
+        extracted_dna = self._extract_dna(content, dna_signature)
+        
+        <span class="comment"># 2. אימות מבנה DNA</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> self._validate_structure(extracted_dna):
+            <span class="keyword">return</span> {<span class="string">"valid"</span>: <span class="keyword">False</span>, <span class="string">"reason"</span>: <span class="string">"Invalid DNA structure"</span>}
+        
+        <span class="comment"># 3. בדיקת חתימה קריפטוגרפית</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> self._verify_signature(extracted_dna):
+            <span class="keyword">return</span> {<span class="string">"valid"</span>: <span class="keyword">False</span>, <span class="string">"reason"</span>: <span class="string">"Invalid signature"</span>}
+        
+        <span class="comment"># 4. אימות במאגר המרכזי (או cache)</span>
+        dna_hash = extracted_dna.get(<span class="string">"identity_layer"</span>, {}).get(<span class="string">"content_hash"</span>)
+        <span class="keyword">if</span> dna_hash <span class="keyword">in</span> <span class="highlight">self</span>.cache:
+            registry_result = <span class="highlight">self</span>.cache[dna_hash]
+        <span class="keyword">else</span>:
+            registry_result = <span class="keyword">await</span> self._query_registry(dna_hash)
+            <span class="highlight">self</span>.cache[dna_hash] = registry_result
+        
+        <span class="comment"># 5. בדיקת מדיניות דייר</span>
+        policy_check = self._check_policy(extracted_dna, registry_result)
+        
+        <span class="comment"># 6. בדיקת טלומרים (מספר העתקות מותר)</span>
+        telomere_check = self._check_telomeres(extracted_dna)
+        
+        <span class="keyword">return</span> {
+            <span class="string">"valid"</span>: all([registry_result.get(<span class="string">"registered"</span>), 
+                           policy_check.get(<span class="string">"allowed"</span>), 
+                           telomere_check.get(<span class="string">"within_limits"</span>)]),
+            <span class="string">"details"</span>: {
+                <span class="string">"registry"</span>: registry_result,
+                <span class="string">"policy"</span>: policy_check,
+                <span class="string">"telomeres"</span>: telomere_check,
+                <span class="string">"dna_info"</span>: {
+                    <span class="string">"content_type"</span>: extracted_dna.get(<span class="string">"metadata"</span>, {}).get(<span class="string">"content_type"</span>),
+                    <span class="string">"tenant_id"</span>: extracted_dna.get(<span class="string">"metadata"</span>, {}).get(<span class="string">"tenant_id"</span>),
+                    <span class="string">"creation_time"</span>: extracted_dna.get(<span class="string">"metadata"</span>, {}).get(<span class="string">"creation_time"</span>)
+                }
+            }
+        }
+    
+    <span class="keyword">def</span> <span class="function">_check_telomeres</span>(<span class="highlight">self</span>, dna):
+        <span class="string">"""בדיקת מגבלות שכפול (טלומרים)"""</span>
+        telomeres = dna.get(<span class="string">"telomeres"</span>, {})
+        current = telomeres.get(<span class="string">"current_count"</span>, 0)
+        max_allowed = telomeres.get(<span class="string">"max_replications"</span>, 1)
+        
+        <span class="keyword">if</span> current >= max_allowed:
+            <span class="keyword">return</span> {
+                <span class="string">"within_limits"</span>: <span class="keyword">False</span>,
+                <span class="string">"message"</span>: <span class="string">f"Maximum copies exceeded: {current}/{max_allowed}"</span>,
+                <span class="string">"action"</span>: <span class="string">"block"</span>
+            }
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> {
+                <span class="string">"within_limits"</span>: <span class="keyword">True</span>,
+                <span class="string">"message"</span>: <span class="string">f"Copies within limits: {current}/{max_allowed}"</span>,
+                <span class="string">"action"</span>: <span class="string">"allow"</span>
+            }</code></pre>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>השוואה בין תחומים</h2>
+            
+            <div class="comparison">
+                <div>
+                    <h3>תמונות רפואיות</h3>
+                    <table>
+                        <tr>
+                            <th>פרמטר</th>
+                            <th>ערך</th>
+                        </tr>
+                        <tr>
+                            <td>גודל DNA</td>
+                            <td>1-10KB</td>
+                        </tr>
+                        <tr>
+                            <td>תדר עדכון</td>
+                            <td>חד-פעמי</td>
+                        </tr>
+                        <tr>
+                            <td>סובלנות לדחיסה</td>
+                            <td>אפס אובדן</td>
+                        </tr>
+                        <tr>
+                            <td>צד לקוח</td>
+                            <td>תחנות עבודה מקצועיות</td>
+                        </tr>
+                        <tr>
+                            <td>Latency מותר</td>
+                            <td>גבוה (שניות)</td>
+                        </tr>
+                        <tr>
+                            <td>רגולציה</td>
+                            <td>HIPAA, GDPR</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div>
+                    <h3>שידורי טלוויזיה</h3>
+                    <table>
+                        <tr>
+                            <th>פרמטר</th>
+                            <th>ערך</th>
+                        </tr>
+                        <tr>
+                            <td>גודל DNA</td>
+                            <td>50-500 בייט</td>
+                        </tr>
+                        <tr>
+                            <td>תדר עדכון</td>
+                            <td>כל פריים/שניה</td>
+                        </tr>
+                        <tr>
+                            <td>סובלנות לדחיסה</td>
+                            <td>אובדן גבוה</td>
+                        </tr>
+                        <tr>
+                            <td>צד לקוח</td>
+                            <td>מגוון מכשירים</td>
+                        </tr>
+                        <tr>
+                            <td>Latency מותר</td>
+                            <td>נמוך (מילישניות)</td>
+                        </tr>
+                        <tr>
+                            <td>רגולציה</td>
+                            <td>FCC, MPAA</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>דוגמת קוד אינטגרציה מלאה</h2>
+            <div class="code-container">
+                <pre><code><span class="keyword">import</span> asyncio
+<span class="keyword">import</span> json
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">class</span> <span class="function">UDPPlatform</span>:
+    <span class="string">"""דוגמת פלטפורמת UDP מלאה"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="highlight">self</span>):
+        <span class="highlight">self</span>.dna_generator = DigitalDNA()
+        <span class="highlight">self</span>.embedder = DNAEmbedder()
+        <span class="highlight">self</span>.validator = DNAValidator(
+            registry_url=<span class="string">"https://registry.udp.example.com"</span>,
+            tenant_config=self._load_tenant_config()
+        )
+        
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">process_medical_image</span>(<span class="highlight">self</span>, image_path, patient_info):
+        <span class="string">"""עיבוד תמונה רפואית"""</span>
+        
+        <span class="comment"># 1. טעינת תמונה</span>
+        image = self._load_image(image_path)
+        
+        <span class="comment"># 2. חילוץ מאפיינים רפואיים</span>
+        features = self._extract_medical_features(image, patient_info)
+        
+        <span class="comment"># 3. יצירת DNA רפואי</span>
+        medical_policy = {
+            <span class="string">"usage_rules"</span>: {
+                <span class="string">"allowed_uses"</span>: [<span class="string">"diagnosis"</span>, <span class="string">"treatment"</span>],
+                <span class="string">"prohibited_uses"</span>: [<span class="string">"research"</span>, <span class="string">"commercial"</span>],
+                <span class="string">"retention_period"</span>: <span class="string">"10_years"</span>
+            },
+            <span class="string">"access_control"</span>: [
+                {
+                    <span class="string">"role"</span>: <span class="string">"radiologist"</span>,
+                    <span class="string">"permissions"</span>: [<span class="string">"view"</span>, <span class="string">"annotate"</span>]
+                },
+                {
+                    <span class="string">"role"</span>: <span class="string">"researcher"</span>,
+                    <span class="string">"permissions"</span>: [<span class="string">"view"</span>],
+                    <span class="string">"requires_consent"</span>: <span class="keyword">True</span>
+                }
+            ],
+            <span class="string">"max_copies"</span>: 3
+        }
+        
+        dna = <span class="highlight">self</span>.dna_generator.generate_dna(
+            content_type=<span class="string">"medical"</span>,
+            content_features=features,
+            policy=medical_policy,
+            tenant_id=<span class="string">"med_tenant_001"</span>
+        )
+        
+        <span class="comment"># 4. הטבעת DNA בתמונה</span>
+        embedded_image = <span class="highlight">self</span>.embedder.embed_in_image(image, dna)
+        
+        <span class="comment"># 5. שמירה עם DNA</span>
+        output_path = self._save_embedded_image(embedded_image, dna)
+        
+        <span class="keyword">return</span> {
+            <span class="string">"status"</span>: <span class="string">"success"</span>,
+            <span class="string">"output_path"</span>: output_path,
+            <span class="string">"dna_hash"</span>: dna.get(<span class="string">"identity_layer"</span>, {}).get(<span class="string">"content_hash"</span>),
+            <span class="string">"embedded_size"</span>: embedded_image.shape
+        }
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">process_broadcast_stream</span>(<span class="highlight">self</span>, stream_url, broadcast_info):
+        <span class="string">"""עיבוד שידור חי"""</span>
+        
+        broadcast_policy = {
+            <span class="string">"usage_rules"</span>: {
+                <span class="string">"allowed_devices"</span>: [<span class="string">"smart_tv"</span>, <span class="string">"mobile"</span>, <span class="string">"tablet"</span>],
+                <span class="string">"geographic_restrictions"</span>: broadcast_info.get(<span class="string">"regions"</span>, [<span class="string">"IL"</span>]),
+                <span class="string">"time_restrictions"</span>: {
+                    <span class="string">"start"</span>: broadcast_info.get(<span class="string">"start_time"</span>),
+                    <span class="string">"end"</span>: broadcast_info.get(<span class="string">"end_time"</span>)
+                }
+            },
+            <span class="string">"access_control"</span>: [
+                {
+                    <span class="string">"subscription_tier"</span>: <span class="string">"premium"</span>,
+                    <span class="string">"quality"</span>: <span class="string">"4k"</span>,
+                    <span class="string">"concurrent_streams"</span>: 3
+                },
+                {
+                    <span class="string">"subscription_tier"</span>: <span class="string">"basic"</span>,
+                    <span class="string">"quality"</span>: <span class="string">"hd"</span>,
+                    <span class="string">"concurrent_streams"</span>: 1
+                }
+            ],
+            <span class="string">"max_copies"</span>: 1,  <span class="comment"># שידור חי - העתקה אחת בלבד</span>
+            <span class="string">"real_time_validation"</span>: <span class="keyword">True</span>
+        }
+        
+        <span class="comment"># זרימת שידור עם DNA דינמי</span>
+        stream_processor = BroadcastStreamProcessor(
+            stream_url=stream_url,
+            dna_generator=<span class="highlight">self</span>.dna_generator,
+            embedder=<span class="highlight">self</span>.embedder,
+            policy=broadcast_policy
+        )
+        
+        <span class="comment"># הפעלת עיבוד בזמן אמת</span>
+        <span class="keyword">await</span> stream_processor.start_stream()
+        
+        <span class="keyword">return</span> {
+            <span class="string">"status"</span>: <span class="string">"streaming"</span>,
+            <span class="string">"stream_id"</span>: stream_processor.stream_id,
+            <span class="string">"dna_update_rate"</span>: <span class="string">"per_frame"</span>,
+            <span class="string">"estimated_latency"</span>: <span class="string">"50ms"</span>
+        }
+
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">main</span>():
+    <span class="string">"""דוגמת שימוש ראשית"""</span>
+    
+    platform = UDPPlatform()
+    
+    <span class="comment"># מקרה 1: תמונה רפואית</span>
+    print(<span class="string">"מעבד תמונה רפואית..."</span>)
+    medical_result = <span class="keyword">await</span> platform.process_medical_image(
+        image_path=<span class="string">"/data/mri/patient_001.dcm"</span>,
+        patient_info={<span class="string">"id"</span>: <span class="string">"ANON_001"</span>, <span class="string">"study_date"</span>: <span class="string">"2024-01-20"</span>}
+    )
+    print(<span class="string">f"תוצאה רפואית: {json.dumps(medical_result, indent=2)}"</span>)
+    
+    <span class="comment"># מקרה 2: שידור חי</span>
+    print(<span class="string">"\nמתחיל שידור חי..."</span>)
+    broadcast_result = <span class="keyword">await</span> platform.process_broadcast_stream(
+        stream_url=<span class="string">"rtmp://live.example.com/primary"</span>,
+        broadcast_info={
+            <span class="string">"channel"</span>: <span class="string">"SPORTS_IL"</span>,
+            <span class="string">"program"</span>: <span class="string">"BASKETBALL_FINAL"</span>,
+            <span class="string">"regions"</span>: [<span class="string">"IL"</span>, <span class="string">"US"</span>],
+            <span class="string">"start_time"</span>: <span class="string">"2024-01-20T20:00:00Z"</span>,
+            <span class="string">"end_time"</span>: <span class="string">"2024-01-20T22:00:00Z"</span>
+        }
+    )
+    print(<span class="string">f"תוצאה שידור: {json.dumps(broadcast_result, indent=2)}"</span>)
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    asyncio.run(main())</code></pre>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>טבלת שלבי פיתוח מפורטת</h2>
+            <table>
+                <tr>
+                    <th>שלב</th>
+                    <th>מרכיבים</th>
+                    <th>זמן משוער</th>
+                    <th>דרישות משאבים</th>
+                </tr>
+                <tr>
+                    <td>MVP</td>
+                    <td>
+                        <ul>
+                            <li>מנוע DNA בסיסי</li>
+                            <li>הטבעה LSB בסיסית</li>
+                            <li>אימות מקומי</li>
+                            <li>API בסיסי</li>
+                        </ul>
+                    </td>
+                    <td>3-6 חודשים</td>
+                    <td>2 מהנדסים<br>שרת יחיד</td>
+                </tr>
+                <tr>
+                    <td>פלטפורמה מלאה</td>
+                    <td>
+                        <ul>
+                            <li>מערכת רב-דיירית</li>
+                            <li>הטבעה היברידית מתקדמת</li>
+                            <li>מאגר DNA מבוזר</li>
+                            <li>ממשק ניהול מלא</li>
+                        </ul>
+                    </td>
+                    <td>6-12 חודשים</td>
+                    <td>5-7 מהנדסים<br>צוות אבטחה<br>תשתית ענן</td>
+                </tr>
+                <tr>
+                    <td>אקוסיסטם</td>
+                    <td>
+                        <ul>
+                            <li>אינטגרציות מערכתיות</li>
+                            <li>בינה מלאכותית</li>
+                            <li>שוק DNA</li>
+                            <li>הרחבה לתחומים נוספים</li>
+                        </ul>
+                    </td>
+                    <td>12-18 חודשים</td>
+                    <td>10+ מהנדסים<br>צוות מוצר<br>שותפים אסטרטגיים</td>
+                </tr>
+            </table>
+        </section>
+        
+        <div class="footer">
+            <p>© 2024 פלטפורמת UDP - Unified DNA Platform</p>
+            <p>מערכת אבטחת תוכן מתקדמת המבוססת על DNA דיגיטלי</p>
+            <p>גרסאת מסמך: 2.0 | תאריך עדכון: ינואר 2024</p>
+        </div>
+    </div>
+
+    <script>
+        // קוד JavaScript לניווט חלק בין חלקי המסמך
+        document.addEventListener('DOMContentLoaded', function() {
+            // הדגשת קוד פייתון
+            const codeBlocks = document.querySelectorAll('.code-container pre code');
+            
+            // פונקציה להדגשת תחביר בסיסית
+            function highlightPythonCode(element) {
+                let code = element.textContent;
+                
+                // החלפות בסיסיות לצורך הדגשה
+                code = code.replace(/(class|def|async|await|if|elif|else|for|while|return|import|from|as|try|except|with|in|and|or|not)/g, 
+                    '<span class="keyword">$1</span>');
+                code = code.replace(/(".*?"|'.*?')/g, 
+                    '<span class="string">$1</span>');
+                code = code.replace(/(\w+)\(/g, 
+                    '<span class="function">$1</span>(');
+                code = code.replace(/#(.*)/g, 
+                    '<span class="comment">#$1</span>');
+                
+                element.innerHTML = code;
+            }
+            
+            codeBlocks.forEach(block => {
+                highlightPythonCode(block);
+            });
+            
+            // אנימציה לכניסת כרטיסים
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // החלת אנימציה על כרטיסים
+            const cards = document.querySelectorAll('.phase-card, .layer');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+            
+            // אנימציה לטבלאות
+            const tables = document.querySelectorAll('table');
+            tables.forEach((table, index) => {
+                table.style.opacity = '0';
+                table.style.transform = 'translateX(20px)';
+                table.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+                observer.observe(table);
+            });
+        });
+    </script>
+</body>
+</html>
