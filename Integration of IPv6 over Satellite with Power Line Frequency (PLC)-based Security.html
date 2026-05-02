@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פרויקט אבטחת תקשורת לוויינית - PLC + IPv6</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --code-bg: #1a1a1a;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Noto Sans Hebrew', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+            background-size: 50px 50px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            margin-top: 2rem;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        
+        h2 {
+            color: var(--primary);
+            border-right: 5px solid var(--secondary);
+            padding-right: 15px;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-right: 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            line-height: 1.8;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, var(--light) 0%, #ffffff 100%);
+            border-right: 4px solid var(--secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+        
+        .diagram {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        
+        .code-block {
+            background: var(--code-bg);
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--secondary);
+        }
+        
+        .card h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+        
+        .tech-tag {
+            background: var(--light);
+            color: var(--dark);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border: 2px dashed var(--secondary);
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            color: var(--dark);
+            border-top: 1px solid #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 1.5rem;
+            }
+            
+            .diagram {
+                font-size: 0.9rem;
+                padding: 1rem;
+            }
+        }
+        
+        /* הנפשות */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* עיצוב לטבלאות */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: right;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background: var(--light);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🚀 פרויקט אבטחת תקשורת לוויינית</h1>
+            <div class="subtitle">
+                אינטגרציה של IPv6 over Satellite עם אבטחה מבוססת תדר רשת חשמל (PLC)
+            </div>
+            <a href="#" class="download-btn pulse" onclick="downloadAsPDF()">
+                📥 הורד כקובץ PDF
+            </a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- סעיף סקירה כללית -->
+        <section class="section">
+            <h2>📡 סקירה כללית של המערכת</h2>
+            <p>
+                מערכת תקשורת היברידית פורצת דרך המשלבת תקשורת לוויינית ישירה עם אבטחה מבוססת
+                תשתית פיזית - רשת החשמל. המערכת מספקת פתרון תקשורת מאובטח באזורים מרוחקים
+                או במצבי חירום.
+            </p>
+            
+            <div class="highlight">
+                <strong>רעיון מרכזי:</strong> שימוש בתדר ובטביעת האצבע הייחודית של רשת החשמל
+                כאמצעי אימות והצפנה, בשילוב עם תקשורת IPv6 דרך לוויין.
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>🎯 מטרה עיקרית</h4>
+                    <p>יצירת תקשורת E2E מאובטחת שאינה תלויה בתשתיות מסורתיות</p>
+                </div>
+                <div class="card">
+                    <h4>🔧 טכנולוגיה מרכזית</h4>
+                    <p>Powerline Communication (PLC) + IPv6 over Satellite</p>
+                </div>
+                <div class="card">
+                    <h4>🔒 רמת אבטחה</h4>
+                    <p>פיזית + קריפטוגרפית + מבוזרת</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- סעיף ארכיטקטורה -->
+        <section class="section">
+            <h2>🏗 ארכיטקטורת המערכת</h2>
+            
+            <h3>רכיבים מרכזיים:</h3>
+            <ol>
+                <li><strong>מכשירי קצה</strong> (טלפונים, IoT) עם מתאמי PLC</li>
+                <li><strong>Gateway מקומי</strong> עם יכולות PLC ולוויין</li>
+                <li><strong>תשתית לוויין</strong> תומכת IPv6 טהור</li>
+                <li><strong>שרתי ניהול ואבטחה</strong> בענן</li>
+            </ol>
+            
+            <h3>תרשים זרימת נתונים:</h3>
+            <div class="diagram">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   מכשיר קצה     │    │    Gateway      │    │     לוויין      │
+│   (טלפון/IoT)   │    │   PLC + SAT     │    │                 │
+│                 │    │                 │    │                 │
+│  [IPv6 + Wire-] │    │  [IPv6 Routing] │    │  [IP Forwarding]│
+│  [Guard VPN]    │    │                 │    │                 │
+│                 │    │                 │    │                 │
+└───────┬─────────┘    └───────┬─────────┘    └───────┬─────────┘
+        │                      │                      │
+        │   (PLC Communication)│                      │
+        │─────────────────────▶│                      │
+        │                      │                      │
+        │                      │   (Satellite Link)   │
+        │                      │─────────────────────▶│
+        │                      │                      │
+        │                      │                      │   (אינטרנט)
+        │                      │                      │────────────▶
+            </div>
+        </section>
+        
+        <!-- סעיף מכניזם אבטחת PLC -->
+        <section class="section">
+            <h2>🔐 מכניזם אבטחה מבוסס תדר רשת חשמל</h2>
+            
+            <h3>רעיון ה-Physical Unclonable Function (PUF):</h3>
+            <p>
+                כל רשת חשמל יוצרת "טביעת אצבע" ייחודית עקב:
+            </p>
+            <ul>
+                <li>רעש רקע והפרעות</li>
+                <li>הרמוניות בתדר הבסיס (50/60Hz)</li>
+                <li>איכות מתח וצריכת חשמל משתנה</li>
+                <li>מאפיינים ייחודיים של שנאים וכבלים</li>
+            </ul>
+            
+            <h3>קוד דוגמה לחילוץ חתימה:</h3>
+            <div class="code-block">
+class PowerGridFingerprint:
+    def __init__(self, sample_rate=4000):
+        self.sample_rate = sample_rate
+        
+    def extract_grid_signature(self):
+        # קריאת נתונים מ-ADC
+        samples = self.read_adc_samples()
+        
+        # ניתוח FFT
+        fft = np.fft.fft(samples)
+        freqs = np.fft.fftfreq(len(samples), 1/self.sample_rate)
+        
+        # מציאת תדר בסיס והרמוניות
+        base_freq = self.find_peak_frequency(freqs, fft)
+        harmonics = self.extract_harmonics(base_freq, freqs, fft)
+        
+        # חישוב רעש רקע
+        noise_floor = self.calculate_noise_floor(fft)
+        
+        # יצירת חתימה ייחודית
+        signature = self.create_signature(
+            base_freq, 
+            harmonics, 
+            noise_floor
+        )
+        
+        return signature
+    
+    def generate_crypto_key(self, signature):
+        """המרת חתימה למפתח קריפטוגרפי"""
+        from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+        from cryptography.hazmat.primitives import hashes
+        
+        hkdf = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,  # מפתח 256-bit
+            salt=signature[:16],
+            info=b"power_grid_key"
+        )
+        
+        return hkdf.derive(signature)
+            </div>
+        </section>
+        
+        <!-- סעיף פרוטוקול תקשורת -->
+        <section class="section">
+            <h2>📡 פרוטוקול תקשורת מלא</h2>
+            
+            <div class="flowchart">
+                <h3>שלבי התחברות:</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>גילוי רשת PLC</strong><br>
+                        מכשיר מגלה Gateway דרך תקשורת powerline
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>מדידת טביעת אצבע</strong><br>
+                        שני הצדדים מודדים תדר רשת בו-זמנית
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>חילוץ מפתח קריפטוגרפי</strong><br>
+                        הפיכת החתימה למפתח הצפנה סימטרי
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>התממשקות לווינית</strong><br>
+                        הקמת חיבור IPv6 מאובטח דרך הלוויין
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>תקשורת E2E</strong><br>
+                        העברת נתונים מוצפנים מקצה לקצה
+                    </div>
+                </div>
+            </div>
+            
+            <h3>מפרט טכני:</h3>
+            <table>
+                <tr>
+                    <th>רכיב</th>
+                    <th>מפרט</th>
+                    <th>תפקיד</th>
+                </tr>
+                <tr>
+                    <td>PLC Modem</td>
+                    <td>HomePlug AV2 / G.hn</td>
+                    <td>תקשורת over powerlines</td>
+                </tr>
+                <tr>
+                    <td>Satellite Modem</td>
+                    <td>Starlink / Swarm</td>
+                    <td>חיבור IPv6 ללוויין</td>
+                </tr>
+                <tr>
+                    <td>הצפנה</td>
+                    <td>WireGuard + AES-256-GCM</td>
+                    <td>אבטחת E2E</td>
+                </tr>
+                <tr>
+                    <td>ניתוב</td>
+                    <td>IPv6 עם NAT64</td>
+                    <td>ניהול כתובות ותעבורה</td>
+                </tr>
+            </table>
+        </section>
+        
+        <!-- סעיף יתרונות ואתגרים -->
+        <section class="section">
+            <h2>⚖️ יתרונות ואתגרים</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>✅ יתרונות בולטים</h4>
+                    <ul>
+                        <li>אבטחה פיזית מובנית</li>
+                        <li>אי-תלות בתשתיות קרקעיות</li>
+                        <li>זמינות גבוהה באזורים מרוחקים</li>
+                        <li>ניהול מבוסס IPv6</li>
+                        <li>עלות תפעול נמוכה</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h4>⚠️ אתגרים מרכזיים</h4>
+                    <ul>
+                        <li>Latency גבוה בתקשורת לוויינית</li>
+                        <li>עלות חומרה ראשונית</li>
+                        <li>רישוי תדרים ורגולציה</li>
+                        <li>ניהול כוח וסוללות</li>
+                        <li>תאימות בין ספקים</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>פתרונות טכניים מוצעים:</h3>
+            <div class="highlight">
+                <strong>לאתגר Latency:</strong> שימוש ב-LEO Satellites (כמו Starlink) עם latency של 20-40ms בלבד<br>
+                <strong>לאתגר כוח:</strong> עיצוב Gateway עם מצבי sleep חכמים וניהול אנרגיה דינמי<br>
+                <strong>לאתגר תאימות:</strong> שימוש בתקני G.hn פתוחים ותמיכה ב-multi-vendor
+            </div>
+        </section>
+        
+        <!-- סעיף מימוש ופיתוח -->
+        <section class="section">
+            <h2>👨‍💻 מימוש ופיתוח</h2>
+            
+            <h3>מחסן הטכנולוגיות הנדרש:</h3>
+            <div class="tech-stack">
+                <span class="tech-tag">Python 3.9+</span>
+                <span class="tech-tag">C/C++ Embadded</span>
+                <span class="tech-tag">Linux Kernel</span>
+                <span class="tech-tag">WireGuard</span>
+                <span class="tech-tag">IPv6 Networking</span>
+                <span class="tech-tag">PLC Protocols</span>
+                <span class="tech-tag">Cryptography</span>
+                <span class="tech-tag">Satellite Comms</span>
+                <span class="tech-tag">DSP/FFT</span>
+            </div>
+            
+            <h3>דוגמת קוד להתחלת עבודה:</h3>
+            <div class="code-block">
+#!/usr/bin/env python3
+"""
+PowerGrid Secure Satellite Communication - Proof of Concept
+"""
+
+import numpy as np
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+class SecureGridComm:
+    def __init__(self):
+        self.grid_key = None
+        self.session_key = None
+        
+    def measure_grid_frequency(self, duration=0.1):
+        """מדידת תדר רשת והפקת entropy"""
+        # בדוגמה אמיתית: קריאה מ-ADC
+        t = np.linspace(0, duration, 4000)
+        
+        # סימולציה של רשת חשמל עם רעש ייחודי
+        base_freq = 50  # Hz
+        noise = np.random.normal(0, 0.1, len(t))  # רעש ייחודי
+        signal = np.sin(2 * np.pi * base_freq * t) + 0.1 * noise
+        
+        # ניתוח FFT
+        fft = np.fft.fft(signal)
+        freqs = np.fft.fftfreq(len(signal), t[1]-t[0])
+        
+        # חילוץ חתימה ייחודית
+        signature = self.extract_signature(freqs, fft)
+        return signature
+    
+    def establish_secure_channel(self):
+        """הקמת ערוץ תקשורת מאובטח"""
+        # שלב 1: מדידת תדר רשת
+        grid_signature = self.measure_grid_frequency()
+        
+        # שלב 2: הפקת מפתח מהחתימה
+        self.grid_key = self.derive_key(grid_signature)
+        
+        # שלב 3: יצירת מפתח סשן
+        self.session_key = self.generate_session_key()
+        
+        print(f"✅ ערוץ מאובטח הוקם בהצלחה")
+        print(f"   מפתח רשת: {self.grid_key[:16].hex()}...")
+        print(f"   מפתח סשן: {self.session_key[:16].hex()}...")
+        
+        return True
+    
+    def encrypt_message(self, message):
+        """הצפנת הודעה עם מפתח הסשן"""
+        cipher = Cipher(
+            algorithms.AES(self.session_key),
+            modes.GCM(np.random.bytes(12))  # IV אקראי
+        )
+        encryptor = cipher.encryptor()
+        encrypted = encryptor.update(message) + encryptor.finalize()
+        return encrypted, encryptor.tag
+
+# שימוש לדוגמה
+if __name__ == "__main__":
+    comm = SecureGridComm()
+    if comm.establish_secure_channel():
+        msg = b"Hello from secure grid network!"
+        encrypted, tag = comm.encrypt_message(msg)
+        print(f"📨 הודעה הוצפנה: {encrypted.hex()[:32]}...")
+            </div>
+        </section>
+        
+        <!-- סעיף יישומים מעשיים -->
+        <section class="section">
+            <h2>💡 יישומים מעשיים</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>🚨 תקשורת חירום</h4>
+                    <p>רשתות תקשורת עצמאיות לאזורי אסון כשתשתיות קורסות</p>
+                </div>
+                
+                <div class="card">
+                    <h4>🏥 תשתיות קריטיות</h4>
+                    <p>תקשורת מאובטחת לבתי חולים, מרכזי נתונים, ותשתיות אנרגיה</p>
+                </div>
+                
+                <div class="card">
+                    <h4>🌐 IoT מבוזר</h4>
+                    <p>חיבור מכשירים באזורים חקלאיים, תעשייתיים ומרוחקים</p>
+                </div>
+                
+                <div class="card">
+                    <h4>🔐 ממשל ואבטחה</h4>
+                    <p>תקשורת מאובטחת לסוכנויות ממשלתיות ואבטחתיות</p>
+                </div>
+            </div>
+            
+            <h3>תרחיש שימוש - בית חולים:</h3>
+            <div class="diagram">
+בית חולים ← רשת חשמל פנימית ← Gateway עם PLC
+                    ↓
+            מכשירים רפואיים ← מודדים תדר ← מייצרים מפתח
+                    ↓
+         חבילות מוצפנות ← נשלחות דרך לוויין
+                    ↓
+   מרכז פיקוח מרוחק ← מפענח ← ניתוח בזמן אמת
+            </div>
+        </section>
+        
+        <!-- סעיף צעדים הבאים -->
+        <section class="section">
+            <h2>📋 תוכנית עבודה מומלצת</h2>
+            
+            <h3>שלב 1: הוכחת היתכנות (חודשיים)</h3>
+            <ul>
+                <li>רכישת חומרת PLC ו-SBC (Raspberry Pi)</li>
+                <li>פיתוח מדידת תדר רשת בסיסית</li>
+                <li>הקמת תקשורת IPv6 מקומית</li>
+            </ul>
+            
+            <h3>שלב 2: אב טיפוס (3 חודשים)</h3>
+            <ul>
+                <li>אינטגרציה עם מודם לוויין פשוט</li>
+                <li>מימוש פרוטוקול אבטחה בסיסי</li>
+                <li>בדיקות שטח מוגבלות</li>
+            </ul>
+            
+            <h3>שלב 3: פיתוח מלא (6 חודשים)</h3>
+            <ul>
+                <li>אופטימיזציה של ביצועים</li>
+                <li>פיתוח ממשק משתמש</li>
+                <li>בדיקות אבטחה מקיפות</li>
+                <li>תיעוד ותקנים</li>
+            </ul>
+            
+            <h3>שלב 4: פריסה (חודשיים)</h3>
+            <ul>
+                <li>ייצור קטן</li>
+                <li>אימון משתמשים</li>
+                <li>תמיכה טכנית</li>
+            </ul>
+        </section>
+        
+        <!-- סעיף סיכום -->
+        <section class="section">
+            <h2>🎯 סיכום וחזון</h2>
+            
+            <div class="highlight">
+                <p>
+                    <strong>המערכת המוצעת היא מהפכנית:</strong><br>
+                    היא משלבת אבטחה פיזית מובנית בתשתית החשמל עם גישה גלובלית דרך לוויין,
+                    וכל זאת עם ארכיטקטורת IPv6 מודרנית.
+                </p>
+            </div>
+            
+            <h3>יתרונות מרכזיים:</h3>
+            <ol>
+                <li><strong>עמידות:</strong> פעילות גם כאשר תשתיות אחרות קורסות</li>
+                <li><strong>אבטחה:</strong> הגנה מובנית במספר שכבות</li>
+                <li><strong>גלובליות:</strong> כיסוי עולמי דרך לוויין</li>
+                <li><strong>מודרניות:</strong> שימוש ב-IPv6 וקריפטוגרפיה מתקדמת</li>
+                <li><strong>עצמאות:</strong> אי-תלות בספקי אינטרנט מקומיים</li>
+            </ol>
+            
+            <h3>פוטנציאל שוק:</h3>
+            <p>
+                המערכת מתאימה למגוון שווקים: ממשל, הגנה ואבטחה, תשתיות קריטיות,
+                תחבורה ימית ואווירית, מחקר באזורים מרוחקים, וקהילות מבודדות.
+            </p>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>📄 מסמך טכני - פרויקט אבטחת תקשורת לוויינית | גרסה 1.0 | נכתב בתאריך: דצמבר 2024</p>
+            <p>לשאלות נוספות או פיתוח: ניתן לפנות להמשך דיון</p>
+        </div>
+    </footer>
+    
+    <script>
+        // פונקציה להורדה כקובץ PDF (סימולציה)
+        function downloadAsPDF() {
+            alert('במערכת אמיתית, כאן היה נוצר קובץ PDF להורדה.\n\nקובץ ה-HTML הנוכחי מכיל את כל המידע והוא ניתן לשמירה דרך הדפדפן (קובץ → שמור בשם).');
+            
+            // אפשרות לשמירת התוכן כקובץ HTML
+            const content = document.documentElement.outerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'satellite-plc-security-project.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // הוספת אנימציות מעבר סעיפים
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.5s, transform 0.5s';
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
