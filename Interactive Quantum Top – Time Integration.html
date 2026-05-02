@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>צמרה קוונטית 3D – אינטראקטיבית</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4f6fb;}
+header{background:linear-gradient(135deg,#3b4cca,#6a5acd);color:#fff;padding:2rem;text-align:center;}
+main{max-width:1000px;margin:2rem auto;padding:1rem;}
+button{margin:.3rem;padding:.5rem 1rem;border:none;border-radius:6px;background:#6a5acd;color:#fff;cursor:pointer;}
+button:hover{background:#3b4cca;}
+canvas{background:#f8f9ff;border-radius:10px;display:block;margin:1rem auto;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>צמרה קוונטית אינטראקטיבית – אינטגרציה בזמן</h1>
+<p>2 קיוּביטים – אינטגרציה של הסתברויות לאורך זמן</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. הסבר הסימולציה</h2>
+<ul>
+<li>וקטור המצב |ψ(t)⟩ = [α₀₀, α₀₁, α₁₀, α₁₁]</li>
+<li>הסתברות לכל מצב: P_ij(t) = |α_ij(t)|²</li>
+<li>אינטגרציה מצטברת לאורך זמן: C_ij(T) = ∫ P_ij(t) dt</li>
+<li>הגרף מציג את הצמרה – כל מצב נקודה במרחב, הגובה = C_ij(T)</li>
+<li>הדינמיקה רציפה (Δt קטן), אך מוצגת בדידים (כל צעד = נקודת רשת)</li>
+</ul>
+</section>
+
+<section>
+<h2>2. שליטה</h2>
+<button id="start">התחל אינטגרציה</button>
+<button id="pause">עצור</button>
+<button id="reset">איפוס</button>
+<canvas id="quantumCanvas" width="800" height="400"></canvas>
+</section>
+
+</main>
+
+<script>
+// Canvas והקשר
+const canvas = document.getElementById('quantumCanvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width;
+const height = canvas.height;
+
+// קיוּביטים: |00,01,10,11>
+let amps = [1,0,0,0]; // מצב התחלה
+let cumulative = [0,0,0,0]; // אינטגרציה מצטברת
+let dt = 0.05; // צעד זמן
+let interval;
+let time = 0;
+
+// נקודות ברשת (x,z) במרחב)
+const positions = [
+  {x:150, z:150}, // |00>
+  {x:350, z:150}, // |01>
+  {x:150, z:300}, // |10>
+  {x:350, z:300}  // |11>
+];
+
+// פונקציה לנורמליזציה
+function normalize(v){
+  let norm = Math.sqrt(v.reduce((acc,x)=>acc+x*x,0));
+  return v.map(x=>x/norm);
+}
+
+// פונקציה לדינמיקה (Hadamard על קיוּביט 0 לכל צעד, לדוגמה)
+function step(){
+  const H=[[1/Math.sqrt(2),1/Math.sqrt(2)],[1/Math.sqrt(2),-1/Math.sqrt(2)]];
+  let newAmps=[0,0,0,0];
+  for(let i=0;i<4;i++){
+    let b = (i>>1)&1; // ביט 0
+    for(let j=0;j<2;j++){
+      let idx = ((j<<1)|(i&1));
+      newAmps[idx] += H[j][b]*amps[i];
+    }
+  }
+  amps = normalize(newAmps);
+
+  // אינטגרציה מצטברת (הצמרה)
+  for(let i=0;i<4;i++){
+    cumulative[i]+=amps[i]*amps[i]*dt;
+  }
+
+  time += dt;
+  drawMesh();
+}
+
+// ציור הצמרה (3D perspective על Canvas 2D)
+function drawMesh(){
+  ctx.clearRect(0,0,width,height);
+  const margin = 50;
+  const maxHeight = 200;
+  const maxCum = Math.max(...cumulative) || 1;
+
+  for(let i=0;i<4;i++){
+    let pos = positions[i];
+    let x = pos.x;
+    let z = pos.z;
+    let y = cumulative[i]/maxCum*maxHeight;
+
+    // perspective: מגדירים “גובה” יושב בציר y, z קטן = קרוב יותר
+    const screenY = height - margin - y;
+    const screenX = x + (z-150)/2; // פרספקטיבה פשוטה
+
+    ctx.fillStyle=["#3b4cca","#6a5acd","#5c6bc0","#7c4dff"][i];
+    ctx.fillRect(screenX, screenY, 60, y);
+    ctx.fillStyle="#000";
+    ctx.font="14px Arial";
+    ctx.fillText(`|${i.toString(2).padStart(2,'0')}⟩: ${cumulative[i].toFixed(2)}`, screenX, screenY-5);
+  }
+}
+
+// כפתורים
+document.getElementById('start').onclick = ()=>{
+  if(interval) clearInterval(interval);
+  interval = setInterval(step,50);
+};
+
+document.getElementById('pause').onclick = ()=>{
+  if(interval) clearInterval(interval);
+};
+
+document.getElementById('reset').onclick = ()=>{
+  if(interval) clearInterval(interval);
+  amps=[1,0,0,0];
+  cumulative=[0,0,0,0];
+  time=0;
+  drawMesh();
+};
+
+// ציור התחלתי
+drawMesh();
+</script>
+
+</body>
+</html>
