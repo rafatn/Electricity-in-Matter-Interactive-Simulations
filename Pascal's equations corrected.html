@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משוואות פסקל מורחבות | לחץ בסביבה תלת-ממדית מסתובבת ומתקדמת</title>
+    <!-- Google Font for modern look + math-friendly -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* main card style */
+        .summary-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem 2rem;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,240,0.5);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f4e6e, #0f2c3f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #2c5775;
+            border-right: 4px solid #2c7da0;
+            padding-right: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .section {
+            background: #f8fafd;
+            border-radius: 1.25rem;
+            padding: 1.25rem 1.75rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2edf2;
+            transition: box-shadow 0.2s;
+        }
+
+        .section:hover {
+            box-shadow: 0 8px 20px rgba(0, 32, 64, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #1f4e6e;
+            border-bottom: 2px solid #cbdde6;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title span {
+            background: #1f4e6e20;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1f4e6e;
+        }
+
+        .math-block {
+            background: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid #dce5ec;
+            box-shadow: inset 0 1px 2px #00000008, 0 1px 2px white;
+        }
+
+        .math {
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .param-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            border-right: 4px solid #2c7da0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .param-title {
+            font-weight: 700;
+            color: #0f3b4f;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .param-desc {
+            font-size: 0.9rem;
+            color: #2c4e66;
+            line-height: 1.4;
+        }
+
+        .final-equation {
+            background: linear-gradient(120deg, #eef3fc, #ffffff);
+            border: 2px solid #2c7da0;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #3e6d8a;
+            border-top: 1px solid #cfe0e8;
+            padding-top: 1.5rem;
+        }
+
+        kbd {
+            background: #eef2f5;
+            border-radius: 6px;
+            padding: 0.1rem 0.4rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .summary-card {
+                padding: 1.25rem;
+            }
+            .section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="summary-card">
+        <h1>🌍 משוואות פסקל מתוקנות</h1>
+        <div class="subtitle">תלת־ממד מלא (360°) • סיבוב & תנועת גבולות בגובה • מדדים פיזיקליים לטבע</div>
+
+        <!-- 1. הקדמה תלת-ממדית -->
+        <div class="section">
+            <div class="section-title">🧭 1. מסגרת תלת-ממדית מלאה <span>3 DoF • 360°</span></div>
+            <p>בטבע, לחץ אינו פונקציה של עומק אנכי בלבד. שיפועי לחץ בכיוונים אופקיים, השפעת סיבוב כדור הארץ, תנועת גבולות (התרוממות הרים, רעידות, כלי מסתובב) ודחיסות תלוית כיוון מחייבים הרחבת משוואת פסקל הקלאסית. להלן הניסוח הטנזורי התלוי-מרחב והזמן:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ \nabla P(\mathbf{r}, t) \;=\; \frac{\partial P}{\partial x_i} \hat{e}_i \quad,\quad i=1,2,3 \;(x,y,z)$$
+                </div>
+            </div>
+            <p>כאשר המערכת כולה יכולה <strong>להסתובב</strong> (<span class="math">\(\boldsymbol{\omega}(t)\)</span>) וגם <strong>להתקדם בגובה</strong> (<span class="math">\(\mathbf{v}_{\text{wall}}(t)\)</span>). תנאי השפה משתנים בזמן.</p>
+        </div>
+
+        <!-- 2. משוואת פסקל ההידרוסטטית המתוקנת (סטטית ביחס למערכת הנעה) -->
+        <div class="section">
+            <div class="section-title">⚙️ 2. פסקל מורחב – מערכת מסתובבת ומתקדמת <span>מנוחה יחסית</span></div>
+            <p>בתוך החומר, כאשר אין זרימה פנימית (<span class="math">\(\mathbf{v}=0\)</span>) אך הגבולות נעים ומסתובבים, שיווי המשקל נותן:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ \nabla P \;=\; \rho(\mathbf{r},T,S,P) \left[ \mathbf{g}(\mathbf{r}) \;-\; \frac{d\mathbf{v}_{\text{wall}}}{dt} \;-\; \frac{d\boldsymbol{\omega}}{dt} \times \mathbf{r} \;-\; \boldsymbol{\omega} \times (\boldsymbol{\omega} \times \mathbf{r}) \right] $$
+                </div>
+            </div>
+            <p><strong>תיקונים פיזיקליים:</strong></p>
+            <ul style="margin-right: 1.8rem; margin-top: 0.5rem; line-height: 1.5;">
+                <li><span class="math">\(-\rho \, d\mathbf{v}_{\text{wall}}/dt\)</span> – אינרציה עקב תאוצת הגובה/תנועת הדופן.</li>
+                <li><span class="math">\(-\rho \, (d\boldsymbol{\omega}/dt) \times \mathbf{r}\)</span> – כוח אוילר (תאוצה זוויתית).</li>
+                <li><span class="math">\(-\rho \, \boldsymbol{\omega} \times (\boldsymbol{\omega} \times \mathbf{r})\)</span> – כוח צנטריפוגלי (תלוי במרחק מציר הסיבוב).</li>
+                <li>כבידה מקומית <span class="math">\(\mathbf{g}(\mathbf{r})\)</span> עשויה להשתנות בגודל ובכיוון.</li>
+            </ul>
+        </div>
+
+        <!-- 3. דוגמה מפורשת: סיבוב + עלייה אנכית -->
+        <div class="section">
+            <div class="section-title">📐 3. דוגמה אנליטית <span>סיבוב סביב ציר z + תאוצת גובה</span></div>
+            <p>נניח <span class="math">\(\boldsymbol{\omega} = \omega \hat{z}\)</span> קבוע, <span class="math">\(d\mathbf{v}_{\text{wall}}/dt = a_z \hat{z}\)</span>, <span class="math">\(\mathbf{g} = -g\hat{z}\)</span>. שיפועי הלחץ:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ \frac{\partial P}{\partial x} = -\rho \omega^2 x,\quad \frac{\partial P}{\partial y} = -\rho \omega^2 y,\quad \frac{\partial P}{\partial z} = -\rho (g + a_z) $$
+                </div>
+            </div>
+            <p>פתרון הלחץ (צפיפות קבועה בקירוב):</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ P(x,y,z) = P_0 \;-\; \frac{1}{2}\rho \omega^2 (x^2+y^2) \;-\; \rho (g + a_z)\,z $$
+                </div>
+            </div>
+            <p>🔹 <strong>תובנה:</strong> הסיבוב יוצר שיפוע רדיאלי (לחץ נמוך יותר בציר הסיבוב). תנועת הגובה מוסיפה תיקון ישיר ללחץ ההידרוסטטי.</p>
+        </div>
+
+        <!-- 4. המשוואה הכללית (דינמית, עם זרימה יחסית) -->
+        <div class="section">
+            <div class="section-title">🌀 4. משוואת התנע הכללית <span>כוחות מדומים + צמיגות אניזוטרופית</span></div>
+            <p>במערכת הלא־אינרציאלית (הצמודה לכלי המסתובב והמתקדם), כולל זרימה יחסית <span class="math">\(\mathbf{v}\)</span> וטנזור צמיגות מלא:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ \rho \left( \frac{\partial \mathbf{v}}{\partial t} + (\mathbf{v}\cdot\nabla)\mathbf{v} \right) = -\nabla P \;+\; \nabla \cdot \boldsymbol{\tau} \;+\; \rho \mathbf{g} \;-\; \rho \frac{d\mathbf{v}_{\text{wall}}}{dt} \;-\; \rho\left[2\boldsymbol{\omega}\times\mathbf{v} + \frac{d\boldsymbol{\omega}}{dt}\times\mathbf{r} + \boldsymbol{\omega}\times(\boldsymbol{\omega}\times\mathbf{r})\right] $$
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="param-card">
+                    <div class="param-title">🧪 טנזור הצמיגות</div>
+                    <div class="param-desc"><span class="math">\(\tau_{ij} = \mu_{ij}(T,S,\mathbf{r}) \left( \partial_i v_j + \partial_j v_i - \frac{2}{3}\delta_{ij}\partial_k v_k \right)\)</span> — צמיגות תלוית כיוון (אניזוטרופיה סביבתית).</div>
+                </div>
+                <div class="param-card">
+                    <div class="param-title">🌊 כוחות סביבה נוספים</div>
+                    <div class="param-desc"><span class="math">\(\mathbf{F}_{\text{env}}\)</span>: קוריוליס, מגנטוהידרודינמיקה, התנגדות דראג בתווך נקבובי, לחץ קרינה ועוד.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. מדדים מלאים לתלות פיזיקלית -->
+        <div class="section">
+            <div class="section-title">📊 5. מדדים לתנאי סביבה <span>טמפרטורה, מליחות, דחיסות, כבידה משתנה</span></div>
+            <p>כל רכיב פיזיקלי מתוקן בתלות במשתנים המקומיים:</p>
+            <div class="grid-2">
+                <div class="param-card">
+                    <div class="param-title">🌡️ צפיפות תלוית תנאים</div>
+                    <div class="param-desc">
+                        $$ \rho(T,S,P,\mathbf{r}) = \rho_0\left[1 - \beta_T (T(\mathbf{r})-T_0) + \beta_S (S(\mathbf{r})-S_0) + \kappa_T (P-P_0) \right] $$
+                        <span style="font-size:0.8rem;">(מים/אוקיינוס) או מצב גז אידיאלי</span>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-title">🌍 שדה כבידה תלת-ממדי</div>
+                    <div class="param-desc">
+                        $$ \mathbf{g}(\mathbf{r}) = \nabla \Phi(\mathbf{r}) \quad\text{משתנה בגובה, קו רוחב, אנומליות מקומיות} $$
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-title">🌀 סיבוב ותאוצת גבול</div>
+                    <div class="param-desc">
+                        <span class="math">\(\boldsymbol{\omega}(t)\)</span> – מהירות זוויתית משתנה, <span class="math">\(\mathbf{v}_{\text{wall}}(t)\)</span> – מהירות הדופן (למשל התרוממות טקטונית).</div>
+                </div>
+                <div class="param-card">
+                    <div class="param-title">🧊 דחיסות & אניזוטרופיה</div>
+                    <div class="param-desc">טנזור חדירות <span class="math">\(K_{ij}\)</span> לסביבות נקבוביות, מודול דחיסות תלוי כיוון בגבישים/סלעים.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. תנאי שפה נעים והשפעת הגובה -->
+        <div class="section">
+            <div class="section-title">📌 6. תנאי גבול תלויי תנועה <span>דפנות נעות בזמן</span></div>
+            <p>על הדופן <span class="math">\(\partial \Omega(t)\)</span> (גבול המערכת) מתקיים שיווי משקל לחצים או תנאי גלישה:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ P(\mathbf{r}_{\text{wall}}(t),t) = P_{\text{ext}}(t) \;+\; \rho \, \mathbf{n}\cdot\left( \mathbf{g} - \frac{d\mathbf{v}_{\text{wall}}}{dt} - \boldsymbol{\omega}\times(\boldsymbol{\omega}\times\mathbf{r}) - \frac{d\boldsymbol{\omega}}{dt}\times\mathbf{r} \right) $$
+                </div>
+            </div>
+            <p>במערכת סגורה הנעה בגובה, הלחץ הפנימי מושפע ישירות מתאוצת הדופן – אפקט דומה ל"עומס g מוגבר" או ל"מעלית מאיצה".</p>
+        </div>
+
+        <!-- 7. משוואת פסקל הסופית - box -->
+        <div class="final-equation">
+            <div class="section-title" style="border-bottom: none; margin-bottom: 0.5rem;">✨ המשוואה המתוקנת הסופית (פסקל מורחב לטבע)</div>
+            <p style="font-weight: 500; margin-bottom: 0.75rem;">למצב סטטי ביחס למערכת המסתובבת והמתקדמת (ללא זרימה פנימית):</p>
+            <div class="math" style="font-size: 1.2rem;">
+                $$ \boxed{ \nabla P \;=\; \rho(\mathbf{r},T,S,P) \Bigl[ \mathbf{g}(\mathbf{r}) \;-\; \frac{d\mathbf{v}_{\text{wall}}}{dt} \;-\; \frac{d\boldsymbol{\omega}}{dt} \times \mathbf{r} \;-\; \boldsymbol{\omega} \times (\boldsymbol{\omega} \times \mathbf{r}) \Bigr] } $$
+            </div>
+            <p style="margin-top: 1rem;">➜ זוהי ההכללה התלת־ממדית המלאה של עקרון פסקל, הכוללת תיקונים מסיבוב, תנועת גובה, אפקטים גאולוגיים ואטמוספריים, ומדדים פיזיקליים מרחביים.</p>
+            <p style="margin-top: 0.5rem; font-size:0.9rem;">🔎 במקרה הפרטי <span class="math">\(\boldsymbol{\omega}=0\)</span> , <span class="math">\(d\mathbf{v}_{\text{wall}}/dt = 0\)</span> ו<span class="math">\(\mathbf{g}=-g\hat{z}\)</span> נקבל בחזרה <span class="math">\(dP/dz = -\rho g\)</span> – משוואת פסקל הקלאסית.</p>
+        </div>
+
+        <!-- 8. סיכום מדדים בטבלה ויזואלית -->
+        <div class="section">
+            <div class="section-title">🗂️ 7. סיכום מדדים פיזיקליים לטבע <span>360°, 3 ממדים</span></div>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse: collapse; background: white; border-radius: 1rem;">
+                    <thead>
+                        <tr><th style="text-align:right; padding: 0.75rem; background:#e5f0f5;">מרכיב</th><th style="text-align:right; padding: 0.75rem; background:#e5f0f5;">מדדים / תלות</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">לחץ \(P\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">\(P(x,y,z,t)\) – שדה סקלרי דינמי</td></tr>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">צפיפות \(\rho\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">\(T(\mathbf{r}), S(\mathbf{r}), P, \kappa, \beta\)</td></tr>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">כבידה \(\mathbf{g}\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">\(\mathbf{g}(\mathbf{r})\) – גודל וכיוון משתנים (גובה, קו רוחב)</td></tr>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">מהירות זוויתית \(\boldsymbol{\omega}\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">\(\boldsymbol{\omega}(t)\) , \(\dot{\boldsymbol{\omega}}\) – סיבוב משתנה בזמן</td></tr>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">תנועת גבול \(\mathbf{v}_{\text{wall}}\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">התרוממות גובה, תנועה אופקית, רעידות</td></tr>
+                        <tr><td style="padding: 0.6rem; border-bottom:1px solid #cde;">צמיגות \(\mu_{ij}\)</td><td style="padding: 0.6rem; border-bottom:1px solid #cde;">טנזור תלוי \(T,S,\mathbf{r}\) – אניזוטרופיה</td></tr>
+                        <tr><td style="padding: 0.6rem;">סביבה נקבובית</td><td style="padding: 0.6rem;">טנזור חדירות \(K_{ij}\) , כוח דראג</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 9. דוגמה יישומית: כדור הארץ מסתובב + רכס הרים עולה -->
+        <div class="section">
+            <div class="section-title">🏔️ 8. יישום טבעי: לחץ בליבת רכס הרים מסתובב <span>התרוממות + סיבוב</span></div>
+            <p>נתונים: כדור הארץ <span class="math">\(\omega = 7.27\times10^{-5}\,\text{rad/s}\)</span>, רכס הרים עולה בקצב <span class="math">\(v_z = 1 \,\text{cm/שנה}\)</span> (תאוצה זניחה <span class="math">\(a_z \approx 0\)</span>), צפיפות סלע <span class="math">\(\rho = 2700 \,\text{kg/m}^3\)</span>. הלחץ בעומק <span class="math">\(h\)</span> מתחת לפני הרכס, במרחק רדיאלי <span class="math">\(r\)</span> מציר הסיבוב:</p>
+            <div class="math-block">
+                <div class="math">
+                    $$ P(r,h) = P_{\text{atm}} - \frac{1}{2}\rho \omega^2 r^2 + \rho g h $$
+                </div>
+            </div>
+            <p>התרומה הצנטריפוגלית משמעותית בקו המשווה (מפחיתה לחץ בכ-0.1% יחסית ללחץ ההידרוסטטי), בעוד שבקטבים אפקט זה מתאפס. תנועת הגובה האיטית משפיעה על תנאי השפה בקנה מידה גאולוגי.</p>
+        </div>
+
+        <!-- 10. סיכום והערה אחרונה -->
+        <div class="footer-note">
+            📐 <strong>מסקנה:</strong> משוואות פסקל המסורתיות מהוות קירוב מצוין לסביבות איזוטרופיות סטטיות. לתיאור מדויק של טבע תלת־ממדי (360 מעלות) עם סיבוב, תנועת גבולות, שינויי טמפרטורה ומליחות – נדרשת ההכללה המוצגת לעיל.<br>
+            🧠 מודל זה רלוונטי לאוקיינוגרפיה, גאופיזיקה, מטאורולוגיה, הנדסת חלל ומערכות צנטריפוגליות משתנות.
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure KaTeX renders any additional math after dynamic load
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ]
+            });
+        }
+    });
+</script>
+</body>
+</html>
