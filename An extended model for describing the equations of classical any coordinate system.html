@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>מודל אלקטרומגנטי-תרמי מורחב – תלות במערכת הקואורדינטות</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: #eef2f7;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans Hebrew', system-ui, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 2rem;
+            color: #1a2a3f;
+        }
+        .document {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            border-right: 6px solid #1f6d8a;
+            padding-right: 1rem;
+            color: #0a4b65;
+        }
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 2rem;
+            color: #1a5d78;
+            border-bottom: 2px solid #cbdde6;
+            padding-bottom: 0.3rem;
+        }
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            color: #2c6b85;
+        }
+        .formula-box {
+            background: #f0f4f9;
+            border-right: 5px solid #2c7da0;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .note {
+            background: #e6f2f9;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-right: 4px solid #3c9bc7;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        th {
+            background: #d4e2ec;
+            padding: 10px;
+            font-weight: bold;
+        }
+        td {
+            border-bottom: 1px solid #e0eef5;
+            padding: 10px;
+            vertical-align: top;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid #cde0ea;
+            padding-top: 1rem;
+            color: #4f6f86;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .document { padding: 1.2rem; }
+            .formula-box { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="document">
+    <h1>🌐 מודל מורחב לתיאור משוואות האלקטרוניקה הקלאסית<br>בכל מערכת קואורדינטות (קרטזית, גלילית, כדורית, כלליות)</h1>
+    <div style="background:#e9f0f5; padding:0.5rem 1rem; border-radius:1rem; margin-bottom:1.5rem;">
+        ⚡ הרחבת חוק אוהם U = I·R תוך התחשבות בטמפרטורה, לחות, גובה, חומר, שדות E ו-B, 
+        <strong>ותלות מלאה במערכת הקואורדינטות</strong> – המחשב מגדיר קואורדינטות כלליות.
+    </div>
+
+    <h2>🔹 1. מדוע קואורדינטות חיוניות?</h2>
+    <p>במודלים קודמים הנחנו implicitly גאומטריה חד-ממדית או קרטזית. אבל מוליך יכול להיות תיל גלילי, מעגל כדורי, סליל ספירלי, או כל צורה גאומטרית. אופרטורים דיפרנציאליים (grad, div, curl, Laplacian) משתנים לפי מערכת הקואורדינטות. המחשב מאפשר להגדיר <strong>כל מערכת קואורדינטות רצויה</strong> – קלאסית או מוגדרת על ידי המשתמש.</p>
+    
+    <div class="note">
+        💡 עקרון יסודי: המשוואות הפיזיקליות זהות, אך הביטוי שלהן בקואורדינטות שונה. המחשב "יודע" לחשב את המטריקה, פקטורי הסקלה, ולבצע גזירה לפי הקואורדינטות המוגדרות.
+    </div>
+
+    <h2>🔹 2. קואורדינטות קלאסיות – ביטוי מפורש</h2>
+    <h3>📌 קרטזיות (x, y, z)</h3>
+    <div class="formula-box">
+        ∇·(σ E) = ∂/∂x (σ E_x) + ∂/∂y (σ E_y) + ∂/∂z (σ E_z) = 0 <br>
+        ∇×E = ( ∂E_z/∂y - ∂E_y/∂z , ∂E_x/∂z - ∂E_z/∂x , ∂E_y/∂x - ∂E_x/∂y ) = -∂B/∂t
+    </div>
+
+    <h3>📌 גליליות (r, φ, z)</h3>
+    <div class="formula-box">
+        ∇·(σ E) = (1/r) ∂/∂r (r σ E_r) + (1/r) ∂/∂φ (σ E_φ) + ∂/∂z (σ E_z) = 0 <br>
+        ∇×E = ( (1/r)∂E_z/∂φ - ∂E_φ/∂z ,  ∂E_r/∂z - ∂E_z/∂r , (1/r)[ ∂/∂r (r E_φ) - ∂E_r/∂φ ] )
+    </div>
+
+    <h3>📌 כדוריות (r, θ, φ)</h3>
+    <div class="formula-box">
+        ∇·(σ E) = (1/r²) ∂/∂r (r² σ E_r) + (1/(r sinθ)) ∂/∂θ (sinθ σ E_θ) + (1/(r sinθ)) ∂/∂φ (σ E_φ) = 0
+    </div>
+
+    <h2>🔹 3. קואורדינטות כלליות מוגדרות על ידי המחשב</h2>
+    <p>תהי מערכת קואורדינטות עקומות כללית (q¹, q², q³) עם מטרית מרחב:</p>
+    <div class="formula-box">
+        פקטורי הסקלה: h₁, h₂, h₃ (או g_{ii} במטריקה) <br>
+        ∇·A = (1/(h₁ h₂ h₃)) [ ∂/∂q¹ (h₂ h₃ A₁) + ∂/∂q² (h₁ h₃ A₂) + ∂/∂q³ (h₁ h₂ A₃) ] <br>
+        (∇×A)¹ = (1/(h₂ h₃)) [ ∂/∂q² (h₃ A₃) - ∂/∂q³ (h₂ A₂) ]  (וציקלית)
+    </div>
+    <div class="formula-box">
+        משוואת החום (Laplacian) בקואורדינטות כלליות: <br>
+        ∇²T = (1/(h₁ h₂ h₃)) Σ_{i=1..3} ∂/∂qⁱ [ (h₁ h₂ h₃ / h_i²) ∂T/∂qⁱ ]
+    </div>
+    <div class="note">
+        🖥️ המחשב מקבל הגדרת קואורדינטות סמלית או נומרית (למשל, קואורדינטות אליפטיות, פרבוליות, או רשת לא-מובנית) ומחשב את כל האופרטורים הדרושים לפתרון המערכת.
+    </div>
+
+    <h2>🔹 4. המערכת המלאה בקואורדינטות כלליות</h2>
+    <div class="formula-box">
+        ⚙️ משוואות יסוד בצורה גאומטרית-דיפרנציאלית (תקפות לכל קואורדינטות):
+        <hr>
+        (1)  (1/√g) ∂_i ( √g σ g^{ij} E_j ) = 0      [שימור מטען]<br>
+        (2)  (∇ × H)^i = (1/√g) ε^{ijk} ∂_j H_k = (σ E)^i + (ε ∂E/∂t)^i  [אמפר]<br>
+        (3)  (∇ × E)^i = - (∂B/∂t)^i               [פאראדיי]<br>
+        (4)  B^i = μ H^i,  D^i = ε E^i <br>
+        (5)  (1/√g) ∂_i ( √g k g^{ij} ∂_j T ) + J·E = 0  [חום]<br>
+        (6)  σ(T,RH,h) = σ₀[1+α_σ(T–T₀)+β(RH–RH₀)]·κ(h)  [חומר]<br>
+        (7)  ||E|| ≤ E_bd(h,RH)   [מגבלה]
+    </div>
+    <div class="note">
+        🧮 כאן g = det(g_{ij}) (יעקוב המטריקה), g^{ij} רכיבי המטריקה ההפוכה, ε^{ijk} טנזור לוי-צ'יויטה.
+    </div>
+
+    <h2>🔹 5. כיצד המחשב מגדיר קואורדינטות חדשות?</h2>
+    <ul>
+        <li><strong>הגדרה אנליטית:</strong> המשתמש מספק טרנספורמציה (x,y,z) → (q¹,q²,q³) או מגדיר ישירות h₁, h₂, h₃.</li>
+        <li><strong>מיפוי מספרי:</strong> רשת לא-מובנית (FEM) – כל אלמנט מקבל קואורדינטות מקומיות טבעיות (ξ,η,ζ).</li>
+        <li><strong>קואורדינטות מותאמות גאומטריה:</strong> למשל, קואורדינטות עקומות העוקבות אחר שדה זרימה תרמית או קווי שדה מגנטי.</li>
+        <li><strong>אופטימיזציה דינמית:</strong> המחשב יכול להחליף קואורדינטות תוך כדי ריצה (mesh adaptation) לשיפור דיוק.</li>
+    </ul>
+    <div class="formula-box">
+        דוגמה: קואורדינטות טורואידיות לתיאור שנאי או טוקמק – המחשב מקבל: <br>
+        h₁ = 1,  h₂ = r,  h₃ = R + r cosθ (בקואורדינטות (r,θ,φ) טורואידיות).
+    </div>
+
+    <h2>🔹 6. יתרונות הגישה המוגדרת על ידי המחשב</h2>
+    <table>
+        <thead><tr><th>תכונה</th><th>יתרון</th></tr></thead>
+        <tbody>
+            <tr><td>גמישות גאומטרית</td><td>כל צורה – חוט דק, כדור, טבעת, סליל, PCB מורכב</td></tr>
+            <tr><td>דיוק גבוה</td><td>התאמת הקואורדינטות לסימטריה הפיזיקלית (צמצום שגיאות נומריות)</td></tr>
+            <tr><td>אוטומציה</td><td>המחשב גוזר אופרטורים, בונה מטריצות, ומבצע אופטימיזציה</td></tr>
+            <tr><td>קואורדינטות מוכללות</td><td>ניתן להגדיר קואורדינטות לא-אורתוגונליות, משתנות בזמן, או תלויות פתרון</td></tr>
+        </tbody>
+    </table>
+
+    <h2>🔹 7. דוגמה יישומית: תיל גלילי בקואורדינטות גליליות + תלות סביבה</h2>
+    <div class="formula-box">
+        מוליך גלילי, רדיוס a, אורך L, ציר z. קואורדינטות (r,φ,z). <br>
+        בהנחת סימטריה אזימוטלית (∂/∂φ=0), הזרם I לאורך z. <br>
+        E_z(r) = I / [σ(T(r))·π(a² - (something for skin effect))] <br>
+        משוואת החום בקואורדינטות גליליות: (1/r) ∂/∂r (r k ∂T/∂r) + σ(T) E_z² = 0 <br>
+        + תנאי שפה: T(a) = T_amb(h,RH) + תיקון העברה.
+    </div>
+    <div class="note">
+        ✅ המחשב פותר מערכת זו בכל מערכת קואורדינטות – והתוצאה R_eff = U/I תלויה ישירות בגאומטריה, בגובה, בלחות, ובשדות.
+    </div>
+
+    <h2>🔹 8. סיכום – הנוסחה המאחדת</h2>
+    <div class="formula-box" style="background:#e0f0f5; font-weight:bold; text-align:center;">
+        ⚡ U = I · R_eff( q¹,q²,q³ , T , RH , h , J , B , metric ) <br>
+        כאשר R_eff נגזרת מפתרון מערכת משוואות בקואורדינטות (q¹,q²,q³) המוגדרות על ידי המחשב.
+    </div>
+    <p>המודל הסופי מאפשר לדמות מערכות אלקטרוניות בצורה מציאותית לחלוטין – תוך התחשבות בגורמים סביבתיים, תכונות חומר, שדות חשמליים ומגנטיים, ובכל גאומטריה הניתנת לתיאור על ידי קואורדינטות מוכללות.</p>
+
+    <footer>
+        🌍 מודל אוניברסלי לאלקטרוניקה קלאסית – קואורדינטות קרטזיות, גליליות, כדוריות, וכל קואורדינטות חדשות המוגדרות דיגיטלית.
+    </footer>
+</div>
+</body>
+</html>
