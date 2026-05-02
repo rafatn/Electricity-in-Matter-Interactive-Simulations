@@ -2,210 +2,186 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>Visual Communication over Power Line – Whitepaper</title>
+<title>תקשורת חזותית מעל רשת החשמל – חישוב רוחב פס</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{
   font-family: "Segoe UI", Arial, sans-serif;
   background:#f4f6fb;
-  color:#0f172a;
+  color:#1e293b;
   margin:0;
-  line-height:1.65;
+  line-height:1.6;
 }
 header{
-  background:linear-gradient(135deg,#020617,#1e3a8a);
+  background:linear-gradient(135deg,#0f172a,#1e40af);
   color:#fff;
-  padding:36px;
+  padding:30px;
 }
 section{
   background:#fff;
-  margin:26px;
-  padding:26px;
-  border-radius:14px;
-  box-shadow:0 15px 40px rgba(0,0,0,.08);
+  margin:24px;
+  padding:24px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 h1,h2,h3{margin-top:0}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #e5e7eb}
+code{
+  background:#eef2ff;
+  padding:2px 6px;
+  border-radius:6px;
+}
+ul,ol{padding-right:20px}
+.diagram{text-align:center;margin:20px 0}
+footer{text-align:center;padding:20px;color:#475569}
 .badge{
   display:inline-block;
   background:#e0e7ff;
   color:#1e3a8a;
-  padding:6px 14px;
+  padding:6px 12px;
   border-radius:999px;
-  margin:4px;
+  margin:4px 0;
   font-size:14px;
 }
-.diagram{text-align:center;margin:24px 0}
-footer{text-align:center;padding:20px;color:#475569}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  border-bottom:1px solid #e5e7eb;
+  padding:8px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>תקשורת חזותית מעל רשת החשמל</h1>
-<p>
-Visual Media Bus over Power Line (VM-PL)  
-מסמך הנדסי / Whitepaper
-</p>
+  <h1>תקשורת חזותית מעל רשת החשמל</h1>
+  <p>כולל חישוב רוחב-פס מעשי להעברת וידאו</p>
 </header>
 
 <section>
-<h2>1. תקציר מנהלים</h2>
-<p>
-המסמך מציג מערכת להעברת וידאו ושמע בזמן אמת מעל רשת החשמל,
-באמצעות התמרה ספקטרלית ושכבת מדיה ייעודית,
-ללא שימוש ב-IP, Ethernet או HDMI.
-</p>
-<span class="badge">Plug & View</span>
-<span class="badge">Low Latency</span>
-<span class="badge">No IP</span>
+<h2>הנחות בסיס לחישוב</h2>
+<ul>
+  <li>מתח רשת: <strong>230V / 50Hz</strong></li>
+  <li>תחום נשא מאושר: <strong>1–30MHz</strong></li>
+  <li>רוחב פס אפקטיבי: <strong>~20MHz</strong></li>
+  <li>שיטת מודולציה: <strong>OFDM + QAM</strong></li>
+  <li>יחס רעש ממוצע (SNR): <strong>20–30dB</strong></li>
+</ul>
 </section>
 
 <section>
-<h2>2. חישוב רוחב פס – בסיס פיזיקלי</h2>
-
-<h3>הנחות</h3>
-<ul>
-<li>תחום תדרים מאושר: 1–30MHz</li>
-<li>רוחב פס אפקטיבי: ~20MHz</li>
-<li>SNR ממוצע: 20–30dB</li>
-<li>מודולציה: OFDM + QAM</li>
-</ul>
+<h2>חישוב קיבולת תאורטית</h2>
 
 <h3>נוסחת שאנון</h3>
-<p><code>C = B · log₂(1 + SNR)</code></p>
+<p>
+<code>C = B × log₂(1 + SNR)</code>
+</p>
 
 <table>
-<tr><th>פרמטר</th><th>ערך</th></tr>
-<tr><td>B</td><td>20 MHz</td></tr>
-<tr><td>SNR</td><td>20dB ≈ 100</td></tr>
-<tr><td>קיבולת תאורטית</td><td>~133 Mbps</td></tr>
-<tr><td>קיבולת מעשית (≈60%)</td><td><strong>~80 Mbps</strong></td></tr>
+<tr>
+  <th align="right">פרמטר</th>
+  <th align="right">ערך</th>
+</tr>
+<tr>
+  <td>רוחב פס (B)</td>
+  <td>20 MHz</td>
+</tr>
+<tr>
+  <td>SNR</td>
+  <td>≈ 100 (20dB)</td>
+</tr>
+<tr>
+  <td>log₂(1+SNR)</td>
+  <td>≈ 6.65</td>
+</tr>
+<tr>
+  <td><strong>קיבולת תאורטית</strong></td>
+  <td><strong>~133 Mbps</strong></td>
+</tr>
 </table>
-</section>
-
-<section>
-<h2>3. גרף: SNR מול Bitrate</h2>
-
-<div class="diagram">
-<svg width="620" height="260" viewBox="0 0 620 260">
-<line x1="50" y1="20" x2="50" y2="220" stroke="#000"/>
-<line x1="50" y1="220" x2="580" y2="220" stroke="#000"/>
-
-<text x="10" y="30">Mbps</text>
-<text x="520" y="250">SNR (dB)</text>
-
-<polyline
-points="50,210 130,180 210,150 290,120 370,95 450,75 530,60"
-fill="none" stroke="#2563eb" stroke-width="3"/>
-
-<text x="120" y="235">10</text>
-<text x="200" y="235">15</text>
-<text x="280" y="235">20</text>
-<text x="360" y="235">25</text>
-<text x="440" y="235">30</text>
-</svg>
-</div>
 
 <p>
-הגרף מראה גידול כמעט לוגריתמי של קצב הנתונים עם שיפור ה-SNR,
-בדומה ל-DSL ו-DOCSIS.
+⚠ בפועל נניח <strong>50–60%</td> יעילות</strong> בגלל רעש, FEC וסנכרון.
+</p>
+
+<p>
+<strong>קיבולת מעשית:</strong>  
+≈ <code>65–80 Mbps</code>
 </p>
 </section>
 
 <section>
-<h2>4. דרישות וידאו מול קיבולת</h2>
-
-<table>
-<tr><th>פורמט</th><th>Codec</th><th>Bitrate</th></tr>
-<tr><td>720p30</td><td>H.265</td><td>2–4 Mbps</td></tr>
-<tr><td>1080p30</td><td>H.265</td><td>4–8 Mbps</td></tr>
-<tr><td>1080p60</td><td>H.265</td><td>8–12 Mbps</td></tr>
-<tr><td>4K30</td><td>H.265</td><td>15–25 Mbps</td></tr>
-</table>
-
-<p>
-✔ ניתן להעביר 3–6 ערוצי 1080p במקביל  
-✔ או ערוץ 4K אחד יציב
-</p>
-</section>
-
-<section>
-<h2>5. השוואה לטכנולוגיות קיימות</h2>
+<h2>דרישות וידאו טיפוסיות</h2>
 
 <table>
 <tr>
-<th>טכנולוגיה</th><th>Latency</th><th>תלות רשת</th><th>ייעוד</th>
+  <th align="right">פורמט</th>
+  <th align="right">קידוד</th>
+  <th align="right">רוחב פס</th>
 </tr>
 <tr>
-<td>HDMI</td><td>~0ms</td><td>כבל ייעודי</td><td>נקודה-לנקודה</td>
+  <td>720p @30fps</td>
+  <td>H.265</td>
+  <td>2–4 Mbps</td>
 </tr>
 <tr>
-<td>Ethernet / IP</td><td>50–150ms</td><td>רשת</td><td>כללי</td>
+  <td>1080p @30fps</td>
+  <td>H.265</td>
+  <td>4–8 Mbps</td>
 </tr>
 <tr>
-<td>PLC (HomePlug)</td><td>40–80ms</td><td>IP</td><td>Data</td>
+  <td>1080p @60fps</td>
+  <td>H.265</td>
+  <td>8–12 Mbps</td>
 </tr>
 <tr>
-<td><strong>VM-PL (מוצע)</strong></td>
-<td><strong>25–40ms</strong></td>
-<td><strong>אין</strong></td>
-<td><strong>מדיה</strong></td>
+  <td>4K @30fps</td>
+  <td>H.265</td>
+  <td>15–25 Mbps</td>
 </tr>
 </table>
-</section>
 
-<section>
-<h2>6. רגולציה – CENELEC</h2>
-<ul>
-<li>Band A (3–95kHz): שירותים</li>
-<li>Band B (95–125kHz): צרכנים</li>
-<li>Band C/D (125kHz–30MHz): תקשורת</li>
-</ul>
 <p>
-המערכת משתמשת ב-Band C/D עם Notching אוטומטי
-למניעת הפרעות רדיו.
+✔ המערכת יכולה להעביר:
 </p>
-</section>
-
-<section>
-<h2>7. מימוש חומרה – FPGA / SoC</h2>
-
-<h3>בלוקי מערכת</h3>
 <ul>
-<li>Video Encoder (H.265 Low Latency)</li>
-<li>Packetizer ייעודי (No IP)</li>
-<li>OFDM Modulator</li>
-<li>AFE + Coupler מבודד</li>
-<li>Demodulator + Decoder בצד המקלט</li>
-</ul>
-
-<h3>פלטפורמות מתאימות</h3>
-<ul>
-<li>Xilinx Zynq / Artix-7</li>
-<li>Intel Cyclone V</li>
-<li>SoC ARM + FPGA</li>
+  <li>מספר ערוצי 1080p במקביל</li>
+  <li>או ערוץ 4K אחד יציב</li>
 </ul>
 </section>
 
 <section>
-<h2>8. מסקנה</h2>
+<h2>Latency (השהיה)</h2>
+<ul>
+  <li>קידוד H.265 Low-Latency: ~10–20ms</li>
+  <li>מודולציה + קו: ~1–3ms</li>
+  <li>פענוח: ~10–20ms</li>
+</ul>
+
 <p>
-רשת החשמל הביתית מסוגלת לשמש כ-Visual Bus מלא,
-עם קיבולת, השהיה ויציבות המתאימים למדיה בזמן אמת.
+<strong>Latency כולל:</strong>  
+≈ <code>25–40ms</code> (טוב משידור IP רגיל)
 </p>
+</section>
+
+<section>
+<h2>מסקנה הנדסית</h2>
+<ul>
+  <li>רשת החשמל הביתית <strong>מסוגלת פיזיקלית</strong> לשאת וידאו</li>
+  <li>אין מגבלת תדר עקרונית – רק רעש</li>
+  <li>הפתרון מתאים ל־Real-Time</li>
+  <li>יתרון משמעותי במבנים ללא תשתית תקשורת</li>
+</ul>
 
 <span class="badge">Feasible</span>
-<span class="badge">Patent-Ready</span>
 <span class="badge">Scalable</span>
+<span class="badge">Low Latency</span>
 </section>
 
 <footer>
-<p>
-Visual Communication over Power Line – Engineering Whitepaper  
-</p>
+  <p>מסמך הנדסי רעיוני – חישוב רוחב פס לתקשורת חזותית על קו חשמל</p>
 </footer>
 
 </body>
