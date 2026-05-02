@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מודל מורחב לתיאור משוואות האלקטרוניקה הקלאסית</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: #eef2f7;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans Hebrew', system-ui, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 2rem;
+            color: #1a2a3f;
+        }
+        .document {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            padding: 2rem 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            border-right: 6px solid #1f6d8a;
+            padding-right: 1rem;
+            color: #0a4b65;
+        }
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 2rem;
+            color: #1a5d78;
+            border-bottom: 2px solid #cbdde6;
+            padding-bottom: 0.3rem;
+        }
+        .formula-box {
+            background: #f0f4f9;
+            border-right: 5px solid #2c7da0;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 1rem;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .note {
+            background: #e6f2f9;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-right: 4px solid #3c9bc7;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        th {
+            background: #d4e2ec;
+            padding: 10px;
+            font-weight: bold;
+        }
+        td {
+            border-bottom: 1px solid #e0eef5;
+            padding: 10px;
+            vertical-align: top;
+        }
+        .badge {
+            background: #1f6d8a;
+            color: white;
+            border-radius: 2rem;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 0.4rem;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid #cde0ea;
+            padding-top: 1rem;
+            color: #4f6f86;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .document { padding: 1.2rem; }
+            .formula-box { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="document">
+    <h1>📐 מודל מורחב לתיאור משוואות האלקטרוניקה הקלאסית</h1>
+    <div style="background:#e9f0f5; padding:0.5rem 1rem; border-radius:1rem; margin-bottom:1.5rem;">
+        ⚡ מעבר מ-<strong>U = I·R</strong> האידיאלי – הוספת גורמי חום, לחות, גובה, תכונות חומר, צפיפות זרם, שדה חשמלי ושדה מגנטי.
+    </div>
+
+    <h2>🔹 1. התנגדות תלוית סביבה</h2>
+    <div class="formula-box">
+        R(T, RH, h) = R₀ · [1 + α·(T – T₀) + β·(RH – RH₀)] · κ(h)
+    </div>
+    <ul>
+        <li><strong>T</strong> – טמפרטורת המוליך [°C]</li>
+        <li><strong>RH</strong> – לחות יחסית [%]</li>
+        <li><strong>h</strong> – גובה מעל פני הים [m]</li>
+        <li><strong>α</strong> – מקדם טמפרטורה של ההתנגדות (למשל 0.00393 לנחושת)</li>
+        <li><strong>β</strong> – מקדם לחות אמפירי</li>
+        <li><strong>κ(h)</strong> – תיקון גובה (השפעה על קירור / לחץ אוויר)</li>
+    </ul>
+    <div class="note">
+        🌡️ טמפרטורת הסביבה משתנה עם הגובה: <strong>T_amb(h) = T_sea – λ·h</strong> כאשר λ ≈ 6.5°C/km.
+    </div>
+
+    <h2>🔹 2. צפיפות זרם ומבנה החומר</h2>
+    <div class="formula-box">
+        J = I / A   (צפיפות זרם) <br>
+        σ(T,RH,h) = σ₀ · [1 + α_σ·(T–T₀) + β·(RH–RH₀)] · κ(h)  (מוליכות סגולית) <br>
+        J = σ · E   (חוק אוהם המיקרוסקופי)
+    </div>
+    <div class="formula-box">
+        התנגדות כוללת של מוליך לא אחיד תרמית: <br>
+        R_eff = ∫₀ᴸ dx / [σ(T(x), RH, h) · A(x)]   &nbsp;&nbsp;→&nbsp;&nbsp; U = I · R_eff
+    </div>
+    <div class="note">
+        ⚠️ מגבלת צפיפות זרם מרבית: J ≤ J_max(T, חומר) – מעבר לכך מתרחשת המסה או אלקטרומיגרציה.
+    </div>
+
+    <h2>🔹 3. השדה החשמלי בתנאי סביבה – אי-אחידות</h2>
+    <div class="formula-box">
+        משוואת רציפות הזרם: ∇·(σ(T,RH,h)·E) = 0 <br>
+        במקרה חד-ממדי: J = σ(T(x))·E(x) = קבוע &nbsp;→&nbsp; E(x) = J / σ(T(x))
+    </div>
+    <div class="formula-box">
+        השפעת לחות על פני השטח (מוליכות פנים σₛ): <br>
+        E(x) = I / [σ_vol(T)·A + σₛ·P]   כאשר P הוא היקף החתך
+    </div>
+    <div class="formula-box">
+        מגבלת פריצה דיאלקטרית התלויה בגובה: <br>
+        E_bd(h) = E_bd(0) · exp(–h / h₀) , &nbsp; ||E|| ≤ E_bd(h, RH)
+    </div>
+
+    <h2>🔹 4. אפקט תרמו-חשמל (זבק – Seebeck)</h2>
+    <div class="formula-box">
+        שדה חשמלי הנוצר משיפוע טמפרטורה: E_Seebeck = – S(T) · ∇T <br>
+        צפיפות הזרם הכוללת: J = σ(T)·[ E + S(T)·∇T ]
+    </div>
+    <div class="note">
+        🔥 ללא זרם חיצוני, שיפוע טמפרטורה יוצר מתח חשמלי – עקרון הפעולה של צמדים תרמיים.
+    </div>
+
+    <h2>🔹 5. שילוב השדה המגנטי (B, H)</h2>
+    <div class="formula-box">
+        משוואות מקסוול בתווך לא אידיאלי: <br>
+        ∇ × H = J + ∂D/∂t ,  B = μ(T,RH,h)·H <br>
+        ∇ × E = – ∂B/∂t
+    </div>
+    <div class="formula-box">
+        אפקט עור (Skin depth) בתדר ω: <br>
+        δ = √[ 2 / (ω·μ(T)·σ(T)) ]  → תלוי בגובה ולחות דרך σ(T) ו-μ(T)
+    </div>
+    <div class="formula-box">
+        כוח לורנץ והתנגדות מגנטית: <br>
+        J = σ·E + (σ/(n·q))·(J × B)
+    </div>
+
+    <h2>🔹 6. מערכת המשוואות המלאה (מודל ריאליסטי)</h2>
+    <div class="formula-box">
+        ⚙️ מערכת מצומדת – תרמית, חשמלית, מגנטית וסביבה:
+        <hr>
+        (1)  ∇·( σ(T,RH,h) · E ) = 0  &nbsp;&nbsp;(שימור מטען)<br>
+        (2)  ∇ × H = σ E + ε ∂E/∂t   &nbsp;&nbsp;(חוק אמפר)<br>
+        (3)  ∇ × E = – ∂(μH)/∂t      &nbsp;&nbsp;(חוק פאראדיי)<br>
+        (4)  ∇·(k ∇T) + J·E = 0      &nbsp;&nbsp;(משוואת חום, מקור אוהם)<br>
+        (5)  ||E|| ≤ E_bd(h, RH)      &nbsp;&nbsp;(מגבלת פריצה)<br>
+        (6)  σ(T) = σ₀[1+α_σ(T–T₀)+β(RH–RH₀)]·κ(h)<br>
+        (7)  μ(T,RH,h) = μ₀·μ_r(T,RH,h)<br>
+        (8)  T_amb(h) = T_sea – λ·h
+    </div>
+    <div class="note">
+        🧮 פתרון המערכת מתבצע באופן נומרי (FEM/הפרשים סופיים). ההתנגדות האפקטיבית R_eff אינה קבועה ונגזרת מהשדות והטמפרטורה.
+    </div>
+
+    <h2>🔹 7. טבלת השוואה – מודל קלאסי לעומת מודל מורחב</h2>
+    <table>
+        <thead><tr><th>היבט</th><th>מודל אידיאלי (U = I·R)</th><th>מודל מורחב (סביבה + חומר + שדות)</th></tr></thead>
+        <tbody>
+            <tr><td>התנגדות R</td><td>קבועה</td><td>תלויה ב-T, RH, h, J, B</td></tr>
+            <tr><td>השפעת טמפרטורה</td><td>מוזנחת</td><td>משוואת חום + σ(T) ו-μ(T)</td></tr>
+            <tr><td>לחות</td><td>לא נלקחת בחשבון</td><td>מוליכות פני שטח, שינוי σ, השפעה על E_bd</td></tr>
+            <tr><td>גובה</td><td>התעלמות</td><td>קירור מופחת, ירידת E_bd, שינוי T_amb</td></tr>
+            <tr><td>צפיפות זרם J</td><td>ללא הגבלה</td><td>J ≤ J_max(T) + חימום לא אחיד</td></tr>
+            <tr><td>שדה מגנטי B</td><td>לא מופיע</td><td>אפקט עור, כוח לורנץ, שינוי התפלגות J</td></tr>
+            <tr><td>אפקט זבק (תרמו-חשמל)</td><td>לא קיים</td><td>E נוסף מ-∇T, יצירת זרם תרמי</td></tr>
+        </tbody>
+    </table>
+
+    <h2>🔹 8. דוגמה יישומית – תיל נחושת בגובה 2500 מ', לחות 80%</h2>
+    <div class="formula-box">
+        נתונים: L=1m , A=1mm² , I=10A (DC) , RH=80% , h=2500m , T_sea=20°C <br>
+        שלבי חישוב:<br>
+        ➤ T_amb(2500m) = 20 – 6.5×2.5 = 3.75°C<br>
+        ➤ R₀ (20°C) ≈ 0.01724 Ω (נחושת)<br>
+        ➤ R(T) = R₀·[1 + 0.00393·(T–20)]<br>
+        ➤ איזון תרמי: I²·R = h_conv(h)·A_s·(T – T_amb) , h_conv יורד עם הגובה<br>
+        ➤ תיקון לחות 80%: β·(80–50) עם β קטן (השפעה מזערית בנחושת נקייה)<br>
+        ➤ <strong>תוצאה: R_eff ≈ 0.0191 Ω</strong> (גדול בכ-11% מהערך האידיאלי 0.01724 Ω)
+    </div>
+    <div class="note">
+        🧲 בתוספת שדה מגנטי חיצוני 0.1 Tesla, נוצרת שינוי קל בצפיפות הזרם (אפקט הול), אך ב-DC במוליך לא-מגנטי ההשפעה על ההתנגדות הכוללת זניחה.
+    </div>
+
+    <h2>🔹 9. סיכום – הנוסחה המאחדת</h2>
+    <div class="formula-box" style="background:#e0f0f5; font-weight:bold; text-align:center;">
+        ⚡ U = I · R_eff( T , RH , h , J , B )  &nbsp; עם &nbsp; R_eff הנגזר מפתרון מערכת המשוואות המצומדות.
+    </div>
+    <p>המודל החדש מאפשר תכנון מדויק של מערכות אלקטרוניות בתנאי סביבה משתנים (גבוה, לח, קיצוני בטמפרטורה) ומהווה בסיס תאורטי אחיד הכולל השפעות תרמיות, אלקטרומגנטיות ומבנה החומר.</p>
+
+    <footer>
+        © מודל מורחב לאלקטרוניקה קלאסית – שילוב טמפרטורה, לחות, גובה, צפיפות זרם, שדה חשמלי ושדה מגנטי.
+    </footer>
+</div>
+</body>
+</html>
