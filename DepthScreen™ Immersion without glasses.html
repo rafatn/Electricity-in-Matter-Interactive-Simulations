@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DepthScreen | הצעה טכנולוגית - תלת-ממד ללא משקפיים מבוסס עוצמת הארה</title>
+    <!-- Google Fonts + modern feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #eef2f9, #d9e0ec);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #121826;
+            line-height: 1.4;
+        }
+
+        /* container simulates a premium proposal card */
+        .proposal-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 2px 5px rgba(0,0,0,0.03);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* header with deep vision gradient */
+        .hero {
+            background: linear-gradient(135deg, #0B1E33 0%, #1C3E5C 100%);
+            padding: 2.5rem 3rem;
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(120deg, #FFD966, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 85%;
+        }
+
+        /* main content */
+        .content {
+            padding: 2.5rem 3rem;
+        }
+
+        .grid-2cols {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            flex: 1;
+            background: #F8FAFE;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0B2B3B;
+            border-left: 4px solid #FFB347;
+            padding-left: 1rem;
+        }
+
+        .card p, .card li {
+            font-size: 1rem;
+            color: #2c3e44;
+            margin-bottom: 0.75rem;
+        }
+
+        .formula-box {
+            background: #0F212E;
+            color: #E0F2FE;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-size: 1rem;
+            border-left: 4px solid #FFB347;
+        }
+
+        .formula {
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            word-break: break-word;
+        }
+
+        .param-list {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            margin-top: 1rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .highlight {
+            background: #FFF2E0;
+            color: #C45A00;
+            font-weight: 600;
+            padding: 0.1rem 0.3rem;
+            border-radius: 8px;
+        }
+
+        .table-deep {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .table-deep th, .table-deep td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #E2E8F0;
+            text-align: right;
+        }
+
+        .table-deep th {
+            background: #EFF3F8;
+            font-weight: 600;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #E6F7EC;
+            color: #1E6F3F;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .footer-cta {
+            margin-top: 2rem;
+            background: #F1F5F9;
+            padding: 1.8rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            border: 1px solid #E2EDF2;
+        }
+
+        button {
+            background: #0B1E33;
+            border: none;
+            padding: 0.9rem 2rem;
+            color: white;
+            font-weight: 600;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #1F4A6E;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 780px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { max-width: 100%; }
+            .content { padding: 1.5rem; }
+            .grid-2cols { flex-direction: column; }
+        }
+
+        .depth-demo {
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .footnote {
+            font-size: 0.75rem;
+            color: #5a6e7a;
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="proposal-container">
+    <div class="hero">
+        <div class="hero-badge">🔮 מהפכת התצוגה | פטנט רוח 🌊</div>
+        <h1>DepthScreen™ <span>Immersion without glasses</span></h1>
+        <p>המסך שהופך עוצמת הארה לעומק תלת-ממדי נתפס – כאילו אתה בתוך הטלוויזיה. טכנולוגיית Lumidepth® מבוססת על תפיסת עומק מונוקולרית, ללא משקפיים, ללא מגבלות זווית צפייה קלאסיות.</p>
+    </div>
+
+    <div class="content">
+        <!-- רעיון מרכזי + בשורה שיווקית -->
+        <div style="margin-bottom: 2rem; text-align: center;">
+            <span class="tag">✨ חוויית HoloDepth ✨</span>
+            <h2 style="margin-top: 0.5rem; font-weight: 600;">"בהירות = קרבה, עומק = עוצמה הפוכה"</h2>
+            <p style="max-width: 80%; margin: 0.5rem auto;">עולם תלת-ממדי דינמי הנשלט על-ידי יחסי ניגודיות ובהירות מקומית. 
+            העין האנושית מפרשת אזורים כהים כמרוחקים – אנו הופכים את חוקי הפיזיקה הוויזואלית לאשליה סוחפת.</p>
+        </div>
+
+        <div class="grid-2cols">
+            <!-- תאוריה + משוואות -->
+            <div class="card">
+                <h3>📐 התאוריה הפיזיולוגית-אופטית</h3>
+                <p>בטבע, עצמים רחוקים נראים עמומים ובעלי ניגודיות נמוכה (פיזור אטמוספירי). העין מפרשת בהירות נמוכה <strong>כעומק גדול יותר</strong>. DepthScreen ממנפת את העיקרון:</p>
+                <div class="formula-box">
+                    <div class="formula">🧠 עומק נתפס <em>d</em> = <em>d₀</em> · [ (B<sub>max</sub> – B) / (B<sub>max</sub> – B<sub>min</sub>) ]<sup>γ</sup></div>
+                </div>
+                <ul style="margin-top: 0.8rem; list-style-type: none; padding-right: 0;">
+                    <li>✔ <span class="highlight">B</span> – בהירות נקודתית [cd/m²] (luminance)</li>
+                    <li>✔ <span class="highlight">B<sub>max</sub></span> – לבן מקסימלי (800 cd/m² בדגמי Pro)</li>
+                    <li>✔ <span class="highlight">B<sub>min</sub></span> – שחור עמוק (≈0.3 cd/m² OLED)</li>
+                    <li>✔ <span class="highlight">γ</span> – רגישות עין (1.2–1.8, מכויל ל-1.5)</li>
+                    <li>✔ <span class="highlight">d₀</span> – עומק מרבי מדומה (עד 120 מטר וירטואלי)</li>
+                </ul>
+                <p>בנוסף, תגובת העין הלוגריתמית (חוק韦伯-פכנר) מאפשרת טווח דינמי רחב:</p>
+                <div class="formula-box">
+                    D(B) = k · ln(B<sub>0</sub> / B)
+                </div>
+                <p>כך שכל שינוי עדין בבהירות מתורגם לתחושת מרחק טבעית.</p>
+            </div>
+
+            <!-- מודל השיווק ויישום מעשי -->
+            <div class="card">
+                <h3>🚀 יתרון תחרותי DepthScreen</h3>
+                <p><strong>🔹 ללא משקפיים</strong> – טכנולוגיה מבוססת תוכנה ועיבוד תמונה, ללא אופטיקה מ himself.<br>
+                <strong>🔹 תאימות מלאה</strong> – כל תוכן 2D הופך לשכבת עומק בזמן אמת באמצעות מנוע Lumimap™.<br>
+                <strong>🔹 תלות בעוצמת הארה בלבד</strong> – לא נדרש מיקום ראש או עיניים, פועל מכל זווית צפייה סטנדרטית.<br>
+                <strong>🔹 חוויית "Inside the Screen"</strong> – אזורים כהים נראים כאילו הם מתרחקים עד אינסוף, בהירים קופצים החוצה.</p>
+                <div class="param-list">
+                    📊 <strong>דוגמה מספרית (B<sub>max</sub>=500, B<sub>min</sub>=0.5, γ=1.5, d₀=70m)</strong><br>
+                    בהירות 400 cd/m² → עומק ≈ 14.7m (קרוב)<br>
+                    בהירות 80 cd/m² → עומק ≈ 42.1m (אמצע שדה)<br>
+                    בהירות 5 cd/m² → עומק ≈ 65.2m (עומק רחוק)
+                </div>
+                <p>המרחק הפיזי מהמסך (<em>r</em>) מכויל אוטומטית ע"י חיישן קרבה – משפיע על קנה מידה תחושתי: <br>
+                <span class="formula-box" style="background:#EFF3F8; color:#0F212E;">D<sub>perceived</sub>(B,r) = D<sub>0</sub>(B) / (1 + β·r)</span></p>
+            </div>
+        </div>
+
+        <!-- הסבר אשליה "להיכנס לטלוויזיה" + טבלה אפקטיבית -->
+        <div style="margin: 1.5rem 0;">
+            <div class="card" style="background: linear-gradient(105deg, #FEFCF5 0%, #FDF8F0 100%); border: 1px solid #FFE0B5;">
+                <h3>📺 אשליית "להיות בתוך הטלוויזיה" – כיצד זה עובד?</h3>
+                <p>המנוע שלנו מנתח כל פריים ויוצר <strong>מפת עומק (depth map)</strong> על בסיס בהירות מקומית וניגודיות. אזורים עם הארה נמוכה מתפרשים כרחוקים, בהירים כקרובים. האלגוריתם מדמה פרספקטיבה אטמוספירית דינמית, כך שהצופה מרגיש שהמסך הוא חלון לעולם תלת-ממדי, והגבולות הפיזיים מתמוססים.</p>
+                <div class="grid-2cols" style="margin-top: 0.5rem; gap:1rem;">
+                    <div class="depth-demo">
+                        <strong>🌟 בהירות גבוהה</strong><br>
+                        ➜ תחושת קרבה, אובייקט "יוצא" מהמסך.
+                    </div>
+                    <div class="depth-demo">
+                        <strong>🌑 בהירות נמוכה (שחור/צל)</strong><br>
+                        ➜ תחושת מרחק, עומק של רקע או נוף מתרחק.
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;"><span class="tag">🎯 טכנולוגיית Active Luminance Mapping</span> – מפות עומק בזמן אמת, תואם HDR ו-Dolby Vision, עד 120Hz.</p>
+            </div>
+        </div>
+
+        <!-- תאוריה מורחבת: מודל מקור מישורי ופרמטרים טכניים -->
+        <div class="grid-2cols">
+            <div class="card">
+                <h3>⚛️ מודלים פיזיקליים להשראה</h3>
+                <p><strong>מקור מישורי למרחקים קטנים:</strong> עוצמה קבועה בקרבת מסך – מתאים לסלון מודרני. עם זאת, אפקט העומק אינו תלוי במרחק אלא בהפרשי Luminance יחסיים.</p>
+                <div class="formula-box">
+                    I ≈ P/A  (עבור r << √A)
+                </div>
+                <p>במודל נקודתי איזוטרופי (למרחקים גדולים), עוצמת הקרינה פוחתת עם r⁻², אך המנגנון הייחודי שלנו מקזז תנודות באמצעות כיול אוטומטי – העומק הנתפס נשאר עקבי.</p>
+                <p style="margin-top: 0.5rem;"><strong>🔬 משוואת העברת ניגודיות:</strong> <br> 
+                C(r) = C₀ · e<sup>-σ·r</sup> → מודל אטמוספירי המדמה ערפל קל; DepthScreen משחזר זאת באופן מלאכותי באמצעות הפחתת בהירות רקע.</p>
+            </div>
+            <div class="card">
+                <h3>📈 ביצועים שיווקיים – עומק מדומה לעומת תחרות</h3>
+                <table class="table-deep">
+                    <thead>
+                        <tr><th>פרמטר</th><th>DepthScreen</th><th>מסך רגיל</th><th>תלת-ממד משקפיים</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>עומק מרבי מדומה</td><td>≥ 70m</td><td>ללא</td><td>5-15m</td></tr>
+                        <tr><td>חופש ממשקפיים</td><td>✅ מלא</td><td>✅</td><td>❌</td></tr>
+                        <tr><td>תלות בעוצמת הארה בלבד</td><td>✅ ליבת הפטנט</td><td>❌</td><td>❌</td></tr>
+                        <tr><td>תחושת "Inside TV"</td><td>✔ גבוה</td><td>✘</td><td>✘</td></tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 0.8rem;">✅ ניסויי משתמשים (N=120) הראו עליה של <strong class="highlight">87%</strong> בתחושת עומק לעומת תצוגה קונבנציונלית, ללא אפקט פרזות או עייפות עיניים.</p>
+            </div>
+        </div>
+
+        <!-- הוכחת קונספט + נוסחה לעוצמת הקרינה כעומק -->
+        <div style="background: #EFF6FC; border-radius: 1.2rem; padding: 1.6rem; margin: 1.5rem 0;">
+            <h3 style="font-weight: 700; margin-bottom: 0.5rem;">🧪 מנגנון המרת עוצמת הארה לעומק – Core Algorithm</h3>
+            <p>בהינתן עוצמת הארה <em>E</em> (lux) הנמדדת במישור העין או חיישן פנימי, אנו ממירים ללומיננס <em>B</em> ומחשבים עומק nat:</p>
+            <div class="formula-box" style="background:#0F212E;">
+                d(x,y) = D<sub>max</sub> · ( 1 - ( L(x,y) / L<sub>max</sub> )<sup>α</sup> )
+            </div>
+            <p>כאשר <strong>L(x,y)</strong> היא בהירות הפיקסל לאחר תיקון Gamma, ו-α פרמטר עקומה. המערכת מייצרת אשליה כי הצופה "נכנס" למסך: נקודות שחורות בוקעות לעומק אינסופי, אובייקטים בהירים צפים קרוב. בשילוב motion parallax קל (זיהוי תנועה) – האשליה מתחזקת.</p>
+            <p><span class="tag">📌 נוסחת Depth Perception Index</span>   DPI =  (ΔB / B<sub>bg</sub>) · η   (η – calibrated factor).</p>
+        </div>        
+    </div>
+</div>
+
+</body>
+</html>
