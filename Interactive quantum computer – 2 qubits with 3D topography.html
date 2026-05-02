@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>מחשב קוונטי 2 קיוּביטים – צמרה אינטראקטיבית</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4f6fb;}
+header{background:linear-gradient(135deg,#3b4cca,#6a5acd);color:#fff;padding:2rem;text-align:center;}
+main{max-width:1000px;margin:2rem auto;padding:1rem;}
+button{margin:.3rem;padding:.5rem 1rem;border:none;border-radius:6px;background:#6a5acd;color:#fff;cursor:pointer;}
+button:hover{background:#3b4cca;}
+canvas{background:#f8f9ff;border-radius:10px;display:block;margin:1rem auto;}
+label{display:block;margin-top:1rem;}
+</style>
+</head>
+
+<body>
+<header>
+<h1>מחשב קוונטי אינטראקטיבי – 2 קיוּביטים עם צמרה 3D</h1>
+<p>כל שערי בסיס, בחירה של קיוּביט, אינטגרציה של הסתברויות לאורך זמן</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. שליטה על שערים קוונטיים</h2>
+<p>בחר שער והחילו על קיוּביט 0 או 1:</p>
+<select id="gateSelect">
+<option value="X">X</option>
+<option value="Y">Y</option>
+<option value="Z">Z</option>
+<option value="H">Hadamard</option>
+<option value="CNOT">CNOT 0→1</option>
+<option value="SWAP">SWAP</option>
+</select>
+<select id="bitSelect">
+<option value="0">קיוּביט 0</option>
+<option value="1">קיוּביט 1</option>
+</select>
+<button id="applyGate">החלת שער</button>
+<button id="reset">איפוס</button>
+<button id="start">התחל דינמיקה</button>
+<button id="pause">עצור</button>
+</section>
+
+<section>
+<h2>2. צמרת קוונטית – אינטגרציה לאורך זמן</h2>
+<canvas id="quantumCanvas" width="800" height="400"></canvas>
+<p>כל מצב |00⟩…|11⟩ = נקודה במרחב, הגובה = אינטגרציה מצטברת, צבע = מצב</p>
+</section>
+
+</main>
+
+<script>
+// Canvas והקשר
+const canvas = document.getElementById('quantumCanvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width;
+const height = canvas.height;
+
+// 2 קיוּביטים: |00>,|01>,|10>,|11>
+let amps = [1,0,0,0];
+let cumulative = [0,0,0,0];
+let dt = 0.05;
+let interval;
+let time=0;
+
+// מיקום נקודות ברשת
+const positions = [
+  {x:150, z:150}, // |00>
+  {x:350, z:150}, // |01>
+  {x:150, z:300}, // |10>
+  {x:350, z:300}  // |11>
+];
+
+// מטריצות בסיסיות
+const X=[[0,1],[1,0]];
+const Y=[[0,-1],[1,0]];
+const Z=[[1,0],[0,-1]];
+const H=[[1/Math.sqrt(2),1/Math.sqrt(2)],[1/Math.sqrt(2),-1/Math.sqrt(2)]];
+
+// פונקציה לנורמליזציה
+function normalize(v){
+  let norm = Math.sqrt(v.reduce((acc,x)=>acc+x*x,0));
+  return v.map(x=>x/norm);
+}
+
+// החלת שער על קיוּביט יחיד
+function applySingleQubit(gate,bit){
+  let newAmps=[0,0,0,0];
+  for(let i=0;i<4;i++){
+    let b = (bit===0)?(i>>1)&1 : i&1;
+    for(let j=0;j<2;j++){
+      let idx = (bit===0)? ((j<<1)|(i&1)) : ((i&2)|j);
+      newAmps[idx] += gate[j][b]*amps[i];
+    }
+  }
+  amps=newAmps;
+  drawMesh();
+}
+
+// CNOT 0→1
+function applyCNOT(){
+  let newAmps=[...amps];
+  for(let i=0;i<4;i++){
+    let c = (i>>1)&1;
+    let t = i&1;
+    if(c===1){
+      let idx = (i & 2) | (t^1);
+      newAmps[idx]=amps[i];
+      newAmps[i]=0;
+    }
+  }
+  amps=newAmps;
+  drawMesh();
+}
+
+// SWAP
+function applySWAP(){
+  let newAmps=[...amps];
+  newAmps[1]=amps[2];
+  newAmps[2]=amps[1];
+  amps=newAmps;
+  drawMesh();
+}
+
+// גרף צמרה 3D perspective
+function drawMesh(){
+  ctx.clearRect(0,0,width,height);
+  const maxHeight=200;
+  const maxCum = Math.max(...cumulative)||1;
+
+  for(let i=0;i<4;i++){
+    let pos=positions[i];
+    let x=pos.x;
+    let z=pos.z;
+    let y=cumulative[i]/maxCum*maxHeight;
+
+    // פרספקטיבה פשוטה
+    const screenX = x + (z-150)/2;
+    const screenY = height-50-y;
+
+    ctx.fillStyle=["#3b4cca","#6a5acd","#5c6bc0","#7c4dff"][i];
+    ctx.fillRect(screenX, screenY, 60, y);
+    ctx.fillStyle="#000";
+    ctx.font="14px Arial";
+    ctx.fillText(`|${i.toString(2).padStart(2,'0')}⟩: ${cumulative[i].toFixed(2)}`,screenX,screenY-5);
+  }
+}
+
+// דינמיקה בזמן – צעד קטן (למדגם: Hadamard על ביט 0 בכל צעד)
+function step(){
+  // אפשר להוסיף כאן דינמיקה מורכבת יותר לפי רצון
+  const newAmps=[0,0,0,0];
+  // לדוגמה: Hadamard על ביט 0
+  for(let i=0;i<4;i++){
+    let b = (i>>1)&1;
+    for(let j=0;j<2;j++){
+      let idx = ((j<<1)|(i&1));
+      newAmps[idx]+=H[j][b]*amps[i];
+    }
+  }
+  amps=normalize(newAmps);
+
+  // אינטגרציה מצטברת (צמרה)
+  for(let i=0;i<4;i++){
+    cumulative[i]+=amps[i]*amps[i]*dt;
+  }
+
+  time+=dt;
+  drawMesh();
+}
+
+// כפתורים
+document.getElementById('applyGate').onclick=()=>{
+  const gate=document.getElementById('gateSelect').value;
+  const bit=parseInt(document.getElementById('bitSelect').value);
+  if(gate==='X') applySingleQubit(X,bit);
+  else if(gate==='Y') applySingleQubit(Y,bit);
+  else if(gate==='Z') applySingleQubit(Z,bit);
+  else if(gate==='H') applySingleQubit(H,bit);
+  else if(gate==='CNOT') applyCNOT();
+  else if(gate==='SWAP') applySWAP();
+};
+
+document.getElementById('reset').onclick=()=>{
+  if(interval) clearInterval(interval);
+  amps=[1,0,0,0];
+  cumulative=[0,0,0,0];
+  time=0;
+  drawMesh();
+};
+
+document.getElementById('start').onclick=()=>{
+  if(interval) clearInterval(interval);
+  interval=setInterval(step,50);
+};
+
+document.getElementById('pause').onclick=()=>{
+  if(interval) clearInterval(interval);
+};
+
+// ציור התחלתי
+drawMesh();
+</script>
+</body>
+</html>
