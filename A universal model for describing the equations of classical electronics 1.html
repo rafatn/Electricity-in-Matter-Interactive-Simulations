@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>מודל אוניברסלי למשוואות האלקטרוניקה הקלאסית | קואורדינטות כלליות + סביבה</title>
+    <!-- MathJax להצגת נוסחאות מושלמת -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async>
+        MathJax = {
+            tex: {
+                displayMath: [['\\[', '\\]']],
+                inlineMath: [['\\(', '\\)']],
+                packages: {'[+]': ['ams', 'newcommand']}
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax'
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9eff5 0%, #dce5ed 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif;
+            direction: rtl;
+            padding: 2rem 1rem;
+            color: #122b3c;
+        }
+
+        .paper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0,0,0,0.05);
+            overflow: hidden;
+            padding: 2rem 2rem 2.5rem;
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #0f4c5f, #1e7a8c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            border-right: 6px solid #2c9ab3;
+            padding-right: 1rem;
+        }
+
+        .sub {
+            font-size: 1.05rem;
+            color: #2a6b7c;
+            margin-bottom: 2rem;
+            background: #e6f3f8;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            display: inline-block;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #175d73;
+            border-bottom: 2px solid #cde0e9;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #226f88;
+        }
+
+        .theorem-box {
+            background: #f2f7fc;
+            border-right: 6px solid #2c9ab3;
+            padding: 1.2rem 1.5rem;
+            margin: 1.2rem 0;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            overflow-x: auto;
+        }
+
+        .formula-highlight {
+            background: #eef3fc;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #cce3ed;
+        }
+
+        .note {
+            background: #e1f0f5;
+            border-right: 4px solid #4699b3;
+            padding: 0.9rem 1.3rem;
+            border-radius: 1rem;
+            margin: 1.2rem 0;
+            font-size: 0.95rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin: 1.8rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: #cde1ec;
+            color: #0a3f51;
+            padding: 12px 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e2edf5;
+            vertical-align: top;
+        }
+
+        .coord-badge {
+            background: #1f6d8a;
+            color: white;
+            border-radius: 2rem;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 0.6rem;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid #cde0ea;
+            color: #537a8c;
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+            .paper {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            h2 {
+                font-size: 1.4rem;
+            }
+            .theorem-box {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="paper">
+    <h1>📐 מודל אוניברסלי לתיאור משוואות האלקטרוניקה הקלאסית</h1>
+    <div class="sub">
+        ⚡ הרחבת חוק אוהם \( U = I \cdot R \) – תלות מלאה בטמפרטורה, לחות, גובה, תכונות חומר, צפיפות זרם, שדות \( \mathbf{E}, \mathbf{B} \) <br>
+        🌍 וכל מערכת קואורדינטות (קרטזית, גלילית, כדורית, או כלליות המוגדרות ע"י המחשב)
+    </div>
+
+    <p>המודל הקלאסי \( U = I R \) מניח התנגדות קבועה, סביבה אידיאלית ושדות אחידים. במציאות, יש לקחת בחשבון את השפעת <strong>הטמפרטורה, הלחות, הגובה, התכונות המיקרוסקופיות של החומר, צפיפות הזרם, השדה המגנטי, והגאומטריה (קואורדינטות)</strong>. להלן הצגת מערכת המשוואות המלאה.</p>
+
+    <h2>🔹 1. התנגדות תלוית סביבה (טמפרטורה, לחות, גובה)</h2>
+    <div class="theorem-box">
+        \[
+        R(T, RH, h) = R_0 \left[ 1 + \alpha (T - T_0) + \beta (RH - RH_0) \right] \cdot \kappa(h)
+        \]
+        \[
+        T_{\text{amb}}(h) = T_{\text{sea}} - \lambda h ,\quad \lambda \approx 6.5 \times 10^{-3} \, \text{K/m}
+        \]
+    </div>
+    <ul>
+        <li>\( T \) – טמפרטורת המוליך, \( RH \) – לחות יחסית, \( h \) – גובה.</li>
+        <li>\( \alpha \) – מקדם טמפרטורה (נחושת: \( \alpha \approx 0.00393 \, \text{K}^{-1} \)).</li>
+        <li>\( \beta \) – מקדם לחות אמפירי, \( \kappa(h) \) – תיקון קירור/לחץ.</li>
+    </ul>
+
+    <h2>🔹 2. צפיפות זרם, חומר ומשוואת חום</h2>
+    <div class="theorem-box">
+        \[
+        \mathbf{J} = \sigma(T, RH, h) \, \mathbf{E}, \quad \sigma = \sigma_0 \left[1 + \alpha_\sigma (T-T_0) + \beta(RH-RH_0)\right] \kappa(h)
+        \]
+        \[
+        R_{\text{eff}} = \int_0^L \frac{dx}{\sigma(T(x)) \, A(x)} \quad \Rightarrow \quad U = I \cdot R_{\text{eff}}
+        \]
+        \[
+        \nabla \cdot (k \nabla T) + \mathbf{J} \cdot \mathbf{E} = 0 \quad \text{(מקור חום אוהם)}
+        \]
+    </div>
+    <div class="note">
+        💡 צפיפות הזרם מוגבלת: \( J \le J_{\max}(T) \) – למניעת המסה או אלקטרומיגרציה.
+    </div>
+
+    <h2>🔹 3. שדה חשמלי בתנאי סביבה – אי אחידות ואפקט זבק</h2>
+    <div class="theorem-box">
+        \[
+        \nabla \cdot (\sigma \mathbf{E}) = 0 \quad \Rightarrow \quad E(x) = \frac{J}{\sigma(T(x))} \quad \text{(בחד-ממד)}
+        \]
+        \[
+        \mathbf{E}_{\text{Seebeck}} = -S(T) \nabla T ,\qquad \mathbf{J} = \sigma \big( \mathbf{E} + S(T)\nabla T \big)
+        \]
+        \[
+        \|\mathbf{E}\| \le E_{\text{bd}}(h, RH) ,\quad E_{\text{bd}}(h) = E_{\text{bd}}(0) \cdot e^{-h/h_0}
+        \]
+    </div>
+
+    <h2>🔹 4. שילוב השדה המגנטי \( \mathbf{B}, \mathbf{H} \)</h2>
+    <div class="theorem-box">
+        \[
+        \nabla \times \mathbf{H} = \mathbf{J} + \frac{\partial \mathbf{D}}{\partial t},\qquad 
+        \nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}
+        \]
+        \[
+        \mathbf{B} = \mu(T, RH, h)\,\mathbf{H}, \quad \delta = \sqrt{\frac{2}{\omega \mu \sigma}} \quad \text{(עומק חדירה)}
+        \]
+        \[
+        \mathbf{J} = \sigma \mathbf{E} + \frac{\sigma}{nq} (\mathbf{J} \times \mathbf{B}) \quad \text{(כוח לורנץ)}
+        \]
+    </div>
+
+    <h2>🔹 5. הכללה לכל מערכת קואורדינטות (קרטזית, גלילית, כדורית, כלליות)</h2>
+    <p>תהי מערכת קואורדינטות עקומות \( (q^1, q^2, q^3) \) עם מטרית מרחב \( g_{ij} \) ופקטורי סקלה \( h_1, h_2, h_3 \). האופרטורים מקבלים צורה כללית:</p>
+    <div class="theorem-box">
+        \[
+        \nabla \cdot \mathbf{A} = \frac{1}{h_1 h_2 h_3} \sum_{i=1}^3 \frac{\partial}{\partial q^i} \left( \frac{h_1 h_2 h_3}{h_i} A_i \right)
+        \]
+        \[
+        (\nabla \times \mathbf{A})^i = \frac{1}{h_j h_k} \left( \frac{\partial (h_k A_k)}{\partial q^j} - \frac{\partial (h_j A_j)}{\partial q^k} \right) \quad \text{(ציקלית)}
+        \]
+        \[
+        \nabla^2 T = \frac{1}{h_1 h_2 h_3} \sum_{i=1}^3 \frac{\partial}{\partial q^i} \left( \frac{h_1 h_2 h_3}{h_i^2} \frac{\partial T}{\partial q^i} \right)
+        \]
+    </div>
+
+    <h3>📌 קואורדינטות קרטזיות \( (x,y,z) \)</h3>
+    <div class="formula-highlight">
+        \( h_x = 1,\; h_y = 1,\; h_z = 1 \) &nbsp;&nbsp;→&nbsp;&nbsp; \( \nabla \cdot \mathbf{E} = \frac{\partial E_x}{\partial x} + \frac{\partial E_y}{\partial y} + \frac{\partial E_z}{\partial z} \)
+    </div>
+    <h3>📌 קואורדינטות גליליות \( (r, \phi, z) \)</h3>
+    <div class="formula-highlight">
+        \( h_r = 1,\; h_\phi = r,\; h_z = 1 \) <br>
+        \( \nabla \cdot \mathbf{E} = \frac{1}{r} \frac{\partial (r E_r)}{\partial r} + \frac{1}{r} \frac{\partial E_\phi}{\partial \phi} + \frac{\partial E_z}{\partial z} \)
+    </div>
+    <h3>📌 קואורדינטות כדוריות \( (r, \theta, \phi) \)</h3>
+    <div class="formula-highlight">
+        \( h_r = 1,\; h_\theta = r,\; h_\phi = r\sin\theta \) <br>
+        \( \nabla \cdot \mathbf{E} = \frac{1}{r^2} \frac{\partial (r^2 E_r)}{\partial r} + \frac{1}{r\sin\theta} \frac{\partial (\sin\theta E_\theta)}{\partial \theta} + \frac{1}{r\sin\theta} \frac{\partial E_\phi}{\partial \phi} \)
+    </div>
+
+    <div class="note">
+        🧠 <strong>קואורדינטות כלליות ע"י המחשב</strong>: המערכת מקבלת הגדרת טרנספורמציה או רשת לא־מובנית, מחשבת את המטריקה \( g_{ij} \) ומפיקה אוטומטית את האופרטורים הדרושים (grad, div, curl, Laplacian) לצורך פתרון מספרי של השדות \( \mathbf{E}, \mathbf{B}, T \).
+    </div>
+
+    <h2>🔹 6. מערכת המשוואות המלאה בצורה גאומטרית (כללית)</h2>
+    <div class="theorem-box">
+        \[
+        \begin{cases}
+        \displaystyle \frac{1}{\sqrt{g}} \partial_i \left( \sqrt{g} \, \sigma(T,RH,h) \, g^{ij} E_j \right) = 0 \\[1em]
+        \displaystyle \frac{1}{\sqrt{g}} \varepsilon^{ijk} \partial_j H_k = \sigma E^i + \frac{\partial (\varepsilon E^i)}{\partial t} \\[1em]
+        \displaystyle \frac{1}{\sqrt{g}} \varepsilon^{ijk} \partial_j E_k = -\frac{\partial B^i}{\partial t} \\[1em]
+        \displaystyle \frac{1}{\sqrt{g}} \partial_i \left( \sqrt{g} \, k(T) \, g^{ij} \partial_j T \right) + \mathbf{J} \cdot \mathbf{E} = 0 \\[1em]
+        \|\mathbf{E}\| \le E_{\text{bd}}(h, RH), \quad J \le J_{\max}(T)
+        \end{cases}
+        \]
+    </div>
+    <div class="note">
+        🌡️ התלות בסביבה: \( \sigma(T,RH,h) \), \( \mu(T,RH,h) \), \( k(T) \), \( T_{\text{amb}}(h) \) – משפיעים על תנאי השפה ועל פיזור החום.
+    </div>
+
+    <h2>🔹 7. טבלת השוואה – קלאסי מול מודל אוניברסלי</h2>
+    <table>
+        <thead><tr><th>תכונה</th><th>חוק אוהם הקלאסי</th><th>מודל מורחב (סביבה + חומר + קואורדינטות)</th></tr></thead>
+        <tbody>
+            <tr><td>התנגדות \(R\)</td><td>קבועה</td><td>תלויה ב-\(T, RH, h, J, B\) וגאומטריה</td></tr>
+            <tr><td>טמפרטורה</td><td>מוזנחת</td><td>משוואת חום עם מקור אוהם + \( \sigma(T) \)</td></tr>
+            <tr><td>לחות / גובה</td><td>אין</td><td>\( \beta(RH) \), \( \kappa(h) \), שינוי \( E_{bd} \)</td></tr>
+            <tr><td>שדה מגנטי</td><td>לא מופיע</td><td>אפקט עור, כוח לורנץ, \( \mu(T) \)</td></tr>
+            <tr><td>מערכת קואורדינטות</td><td>מרומזת (1D קרטזי)</td><td>כללית: גלילית, כדורית, טורואידית, רשת חופשית</td></tr>
+            <tr><td>תלות מקומית של \( \mathbf{E} \)</td><td>אחיד</td><td>משתנה עם \( \sigma(\mathbf{r}) \) ו-\( \nabla T \)</td></tr>
+        </tbody>
+    </table>
+
+    <h2>🔹 8. דוגמה מספרית: תיל גלילי בגובה 2500 מ', לחות 80%</h2>
+    <div class="theorem-box">
+        \[
+        \begin{aligned}
+        & L=1\ \text{m},\ A=1\ \text{mm}^2,\ I=10\ \text{A},\ h=2500\ \text{m},\ RH=80\%,\ T_{\text{sea}}=20^\circ C \\
+        & T_{\text{amb}} = 20 - 0.0065\times 2500 = 3.75^\circ C \\
+        & R_0 = 0.01724\ \Omega,\quad \alpha = 0.00393\ \text{K}^{-1} \\
+        & \text{איזון תרמי: } I^2 R(T) = h_{\text{conv}}(h)\cdot A_s \cdot (T - T_{\text{amb}}) \\
+        & \Rightarrow R_{\text{eff}} \approx 0.0191\ \Omega \quad (\text{עלייה של כ-11% לעומת האידיאלי})
+        \end{aligned}
+        \]
+    </div>
+    <p>בקואורדינטות גליליות, פתרון מלא ייתן התפלגות \( T(r) \) ו-\( E_z(r) \) תוך התחשבות באפקט עור (לתדרים גבוהים) ובשדה מגנטי עצמי.</p>
+
+    <h2>🔹 9. סיכום – הנוסחה המאחדת</h2>
+    <div class="formula-highlight" style="background: #d9eef5; font-weight: bold;">
+        \[
+        \boxed{ U = I \cdot R_{\text{eff}}\big( q^i,\; T,\; RH,\; h,\; J,\; \mathbf{B},\; \text{metric} \big) }
+        \]
+        כאשר \( R_{\text{eff}} \) נקבע על ידי פתרון מערכת המצומדות בקואורדינטות המוגדרות ע"י המחשב.
+    </div>
+    <p>מודל זה מאפשר סימולציות מציאותיות לתכנון מעגלים אלקטרוניים בתנאי סביבה קיצוניים (גובה רב, אזורים טרופיים, חלל), כולל כל גאומטריה וכל מערכת קואורדינטות שניתנת לתיאור מתמטי או נומרי.</p>
+
+    <footer>
+        📐 מודל אוניברסלי לאלקטרוניקה קלאסית – תלות מלאה בסביבה, בחומר, בשדות, ובקואורדינטות כלליות.<br>
+        🖥️ יישום נומרי באמצעות FEM / הפרשים סופיים עם מטריקה דינמית.
+    </footer>
+</div>
+</body>
+</html>
