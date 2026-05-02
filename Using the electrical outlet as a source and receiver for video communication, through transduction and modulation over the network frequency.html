@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>תקשורת חזותית מעל רשת החשמל</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:#f4f6fb;
+  color:#1e293b;
+  margin:0;
+  line-height:1.6;
+}
+header{
+  background:linear-gradient(135deg,#0f172a,#1e40af);
+  color:#fff;
+  padding:30px;
+}
+section{
+  background:#fff;
+  margin:24px;
+  padding:24px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+h1,h2,h3{margin-top:0}
+code{
+  background:#eef2ff;
+  padding:2px 6px;
+  border-radius:6px;
+}
+ul{padding-right:20px}
+.diagram{
+  margin:20px 0;
+  text-align:center;
+}
+footer{
+  text-align:center;
+  padding:20px;
+  color:#475569;
+}
+.badge{
+  display:inline-block;
+  background:#e0e7ff;
+  color:#1e3a8a;
+  padding:6px 12px;
+  border-radius:999px;
+  margin:4px 0;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>תקשורת חזותית מעל רשת החשמל</h1>
+  <p>
+    שימוש בשקע החשמל כמקור וכמקלט לתקשורת וידאו,
+    באמצעות התמרה ומודולציה מעל תדר הרשת.
+  </p>
+</header>
+
+<section>
+<h2>תקציר הרעיון</h2>
+<p>
+רשת החשמל (230V / 50Hz) משמשת לא רק להעברת אנרגיה,
+אלא גם כ<strong>תווך תקשורת חזותית</strong>.
+</p>
+<ul>
+  <li>אין שימוש ב-Ethernet או HDMI</li>
+  <li>הווידאו מומר → מקודד → משודר בתדר גבוה</li>
+  <li>כל שקע הוא נקודת I/O חכמה</li>
+</ul>
+<span class="badge">Visual over Power Line</span>
+<span class="badge">No IP</span>
+<span class="badge">Low Latency</span>
+</section>
+
+<section>
+<h2>עקרון הפעולה</h2>
+
+<div class="diagram">
+<svg width="600" height="220" viewBox="0 0 600 220">
+  <rect x="20" y="60" width="160" height="80" rx="12" fill="#c7d2fe"/>
+  <text x="100" y="105" text-anchor="middle" font-size="14">מקור וידאו</text>
+
+  <rect x="220" y="40" width="160" height="120" rx="12" fill="#a5b4fc"/>
+  <text x="300" y="90" text-anchor="middle" font-size="14">התמרה + מודולציה</text>
+  <text x="300" y="115" text-anchor="middle" font-size="12">OFDM / QAM</text>
+
+  <rect x="420" y="60" width="160" height="80" rx="12" fill="#c7d2fe"/>
+  <text x="500" y="105" text-anchor="middle" font-size="14">שקע יעד / מסך</text>
+
+  <line x1="180" y1="100" x2="220" y2="100" stroke="#1e293b" stroke-width="2"/>
+  <line x1="380" y1="100" x2="420" y2="100" stroke="#1e293b" stroke-width="2"/>
+</svg>
+</div>
+
+<p>
+אות הווידאו אינו עובר ישירות, אלא לאחר:
+</p>
+<ul>
+  <li>קידוד (H.265 / AV1)</li>
+  <li>פירוק לפריימים</li>
+  <li>שידור על נושא בתדר גבוה מעל קו החשמל</li>
+</ul>
+</section>
+
+<section>
+<h2>שכבות המערכת</h2>
+<ol>
+  <li><strong>שכבת אנרגיה</strong> – 230V / 50Hz (ללא שינוי)</li>
+  <li><strong>שכבת נשא</strong> – 100kHz–50MHz (מבודדת גלוונית)</li>
+  <li><strong>שכבת מדיה</strong> – וידאו, שמע, סנכרון</li>
+  <li><strong>שכבת תצוגה</strong> – מסך / מקרן / מצלמה</li>
+</ol>
+</section>
+
+<section>
+<h2>בטיחות ורגולציה</h2>
+<ul>
+  <li>בידוד גלווני מלא (Transformers / Capacitive Coupling)</li>
+  <li>אין מגע ישיר בין אלקטרוניקה למתח רשת</li>
+  <li>עמידה בתקני IEC 62368</li>
+  <li>תחומי תדר מותרים (CENELEC)</li>
+</ul>
+</section>
+
+<section>
+<h2>אתגרים ופתרונות</h2>
+<table style="width:100%;border-collapse:collapse">
+<tr>
+  <th align="right">אתגר</th>
+  <th align="right">פתרון</th>
+</tr>
+<tr>
+  <td>רעש חשמלי</td>
+  <td>OFDM + FEC + Adaptive Bitrate</td>
+</tr>
+<tr>
+  <td>השהיה</td>
+  <td>זרימה רציפה ללא IP</td>
+</tr>
+<tr>
+  <td>אבטחה</td>
+  <td>הצפנה סימטרית ברמת הקו</td>
+</tr>
+</table>
+</section>
+
+<section>
+<h2>שימושים אפשריים</h2>
+<ul>
+  <li>מצלמות אבטחה ללא רשת</li>
+  <li>בתי חולים ומבנים ישנים</li>
+  <li>מערכות חירום</li>
+  <li>בתים חכמים</li>
+  <li>תעשייה ובקרה</li>
+</ul>
+</section>
+
+<section>
+<h2>למה זה חדש?</h2>
+<p>
+לא מדובר ב-PLC שמעביר IP,
+אלא ב-<strong>אפיק חזותי ישיר</strong>
+שמנצל את רשת החשמל כ-Bus מדיה.
+</p>
+<ul>
+  <li>Plug & View</li>
+  <li>ללא דרייברים</li>
+  <li>ללא רשת נתונים</li>
+  <li>Latency קבוע</li>
+</ul>
+</section>
+
+<footer>
+  <p>מסמך רעיוני – תקשורת חזותית מעל רשת החשמל</p>
+</footer>
+
+</body>
+</html>
