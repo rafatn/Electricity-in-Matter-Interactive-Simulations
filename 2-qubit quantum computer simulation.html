@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>מחשב קוונטי 2 קיוּביטים – אינטראקטיבי מלא</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --accent:#3b4cca;
+  --accent2:#6a5acd;
+  --text:#1f2937;
+  --muted:#6b7280;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+}
+
+header{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  padding:2.5rem 1.5rem;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+}
+
+main{
+  max-width:900px;
+  margin:2rem auto;
+  padding:0 1rem 3rem;
+}
+
+section{
+  background:var(--card);
+  margin:2rem 0;
+  padding:2rem;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+  color:var(--accent);
+  margin-top:0;
+}
+
+label{
+  display:block;
+  margin:0.8rem 0 .3rem;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+button{
+  padding:.6rem 1.2rem;
+  margin:.3rem;
+  background:var(--accent2);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:var(--accent);
+}
+
+canvas{
+  background:#f8f9ff;
+  border-radius:10px;
+  display:block;
+  margin:1rem 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>סימולציית מחשב קוונטי 2 קיוּביטים</h1>
+  <p>שערי בסיס: X, Y, Z, Hadamard, CNOT, SWAP – הסתברויות בזמן אמת</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. הגדר אמפליטודות התחלתיות</h2>
+
+<label for="amp00">|00⟩</label>
+<input type="range" id="amp00" min="0" max="1" step="0.01" value="1">
+
+<label for="amp01">|01⟩</label>
+<input type="range" id="amp01" min="0" max="1" step="0.01" value="0">
+
+<label for="amp10">|10⟩</label>
+<input type="range" id="amp10" min="0" max="1" step="0.01" value="0">
+
+<label for="amp11">|11⟩</label>
+<input type="range" id="amp11" min="0" max="1" step="0.01" value="0">
+</section>
+
+<section>
+<h2>2. החלת שערים קוונטיים</h2>
+
+<p>בחר שער להחלה על קיוּביט 0 או 1 או קבוצה:</p>
+<button id="x0">X קיוּביט 0</button>
+<button id="x1">X קיוּביט 1</button>
+<button id="y0">Y קיוּביט 0</button>
+<button id="y1">Y קיוּביט 1</button>
+<button id="z0">Z קיוּביט 0</button>
+<button id="z1">Z קיוּביט 1</button>
+<button id="h0">Hadamard 0</button>
+<button id="h1">Hadamard 1</button>
+<button id="cnot01">CNOT: 0→1</button>
+<button id="swap">SWAP</button>
+<button id="reset">איפוס</button>
+</section>
+
+<section>
+<h2>3. הסתברויות</h2>
+<canvas id="probCanvas" width="800" height="250"></canvas>
+<p>הגרף מציג את הסתברויות המדידה לכל מצב |00⟩, |01⟩, |10⟩, |11⟩ בזמן אמת</p>
+</section>
+
+</main>
+
+<script>
+// קבלת אלמנטים
+const sliders = [
+  document.getElementById('amp00'),
+  document.getElementById('amp01'),
+  document.getElementById('amp10'),
+  document.getElementById('amp11')
+];
+
+const canvas = document.getElementById('probCanvas');
+const ctx = canvas.getContext('2d');
+
+let amps = sliders.map(s => parseFloat(s.value));
+
+// פונקציה לנורמליזציה
+function normalize(){
+  let norm = Math.sqrt(amps.reduce((acc,v)=>acc+v*v,0));
+  if(norm===0) norm=1;
+  amps = amps.map(v=>v/norm);
+}
+
+// ציור גרף הסתברויות
+function drawGraph(){
+  normalize();
+  const probs = amps.map(a => a*a);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const margin = 50;
+  const barWidth = 120;
+  const spacing = 50;
+  const maxHeight = canvas.height - 2*margin;
+
+  const labels = ["|00⟩","|01⟩","|10⟩","|11⟩"];
+  const colors = ["#3b4cca","#6a5acd","#5c6bc0","#7c4dff"];
+
+  for(let i=0;i<4;i++){
+    let x = margin + i*(barWidth + spacing);
+    let y = canvas.height - margin - probs[i]*maxHeight;
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(x, y, barWidth, probs[i]*maxHeight);
+    ctx.fillStyle = "#000";
+    ctx.font = "16px Arial";
+    ctx.fillText(`${labels[i]}: P=${probs[i].toFixed(2)}`, x, canvas.height-margin+20);
+  }
+}
+
+// עדכון ערכים מהסליידרים
+sliders.forEach((s,i)=>s.addEventListener('input',()=>{
+  amps[i] = parseFloat(s.value);
+  drawGraph();
+}));
+
+// מטריצות בסיסיות
+const X = [[0,1],[1,0]];
+const Y = [[0,-1],[1,0]]; // למטרה חינוכית, פשוט ריאלית
+const Z = [[1,0],[0,-1]];
+const H = [[1/Math.sqrt(2),1/Math.sqrt(2)],[1/Math.sqrt(2),-1/Math.sqrt(2)]];
+
+// פונקציה להחלת שער יחיד
+function applySingleQubit(gate,bit){
+  let newAmps = [0,0,0,0];
+  for(let i=0;i<4;i++){
+    let b = (bit===0)?(i>>1)&1 : i&1;
+    for(let j=0;j<2;j++){
+      let idx = (bit===0)? ((j<<1)|(i&1)) : ((i&2)|j);
+      newAmps[idx] += gate[j][b]*amps[i];
+    }
+  }
+  amps = newAmps;
+  drawGraph();
+}
+
+// פונקציה CNOT (0→1)
+function cnot(){
+  let newAmps = [...amps];
+  for(let i=0;i<4;i++){
+    let c = (i>>1)&1;
+    let t = i&1;
+    if(c===1){
+      let idx = (i & 2) | (t^1);
+      newAmps[idx] = amps[i];
+      newAmps[i] = 0;
+    }
+  }
+  amps = newAmps;
+  drawGraph();
+}
+
+// פונקציה SWAP
+function swap(){
+  let newAmps = [...amps];
+  newAmps[1] = amps[2];
+  newAmps[2] = amps[1];
+  amps = newAmps;
+  drawGraph();
+}
+
+// כפתורים
+document.getElementById('x0').onclick = ()=>applySingleQubit(X,0);
+document.getElementById('x1').onclick = ()=>applySingleQubit(X,1);
+document.getElementById('y0').onclick = ()=>applySingleQubit(Y,0);
+document.getElementById('y1').onclick = ()=>applySingleQubit(Y,1);
+document.getElementById('z0').onclick = ()=>applySingleQubit(Z,0);
+document.getElementById('z1').onclick = ()=>applySingleQubit(Z,1);
+document.getElementById('h0').onclick = ()=>applySingleQubit(H,0);
+document.getElementById('h1').onclick = ()=>applySingleQubit(H,1);
+document.getElementById('cnot01').onclick = ()=>cnot();
+document.getElementById('swap').onclick = ()=>swap();
+document.getElementById('reset').onclick = ()=>{
+  amps = [1,0,0,0];
+  sliders.forEach((s,i)=>s.value=amps[i]);
+  drawGraph();
+}
+
+// ציור התחלתי
+drawGraph();
+</script>
+
+</body>
+</html>
