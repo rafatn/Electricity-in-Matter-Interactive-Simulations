@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>קומפוננטות המערכת הקוונטית</title>
+    <style>
+        :root {
+            --quantum-dark: #0a0e1a;
+            --quantum-blue: #0f1a3d;
+            --quantum-teal: #00e5ff;
+            --quantum-green: #00e676;
+            --quantum-purple: #9c27b0;
+            --quantum-orange: #ff9100;
+            --quantum-red: #ff1744;
+            --quantum-yellow: #ffd600;
+            --quantum-white: #f5f7ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans Hebrew', sans-serif;
+            background: var(--quantum-dark);
+            color: var(--quantum-white);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, 
+                var(--quantum-blue) 0%, 
+                var(--quantum-purple) 100%);
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom: 4px solid var(--quantum-teal);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, 
+                var(--quantum-teal) 0%, 
+                var(--quantum-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Component Grid */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .component-card {
+            background: linear-gradient(145deg, 
+                rgba(15, 26, 61, 0.9), 
+                rgba(26, 35, 126, 0.9));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .component-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--quantum-teal));
+        }
+
+        .component-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .component-number {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--quantum-teal);
+            color: var(--quantum-dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .component-card h3 {
+            color: var(--quantum-teal);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(0, 229, 255, 0.3);
+        }
+
+        .specs-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .specs-list li {
+            margin-bottom: 0.8rem;
+            padding-right: 1.5rem;
+            position: relative;
+        }
+
+        .specs-list li::before {
+            content: '▶';
+            position: absolute;
+            right: 0;
+            color: var(--quantum-green);
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-tag {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--quantum-teal);
+            color: var(--quantum-teal);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Static Architecture */
+        .architecture-static {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 3rem 0;
+            border: 2px solid var(--quantum-purple);
+        }
+
+        .component-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .static-component {
+            background: var(--quantum-blue);
+            border: 2px solid var(--quantum-teal);
+            border-radius: 10px;
+            padding: 1.5rem;
+            width: 200px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                var(--quantum-teal), 
+                transparent);
+            z-index: 1;
+        }
+
+        /* Specifications Table */
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .specs-table th {
+            background: linear-gradient(90deg, 
+                var(--quantum-blue), 
+                var(--quantum-purple));
+            color: white;
+            padding: 1.2rem;
+            text-align: right;
+        }
+
+        .specs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .specs-table tr:hover {
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        /* Component Details */
+        .component-details {
+            background: rgba(15, 26, 61, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--quantum-orange);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--quantum-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            border-left: 4px solid var(--quantum-green);
+        }
+
+        .code {
+            font-family: 'Courier New', monospace;
+            color: var(--quantum-white);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Component Colors */
+        .sensor { border-color: var(--quantum-green); }
+        .processor { border-color: var(--quantum-teal); }
+        .quantum { border-color: var(--quantum-purple); }
+        .transmitter { border-color: var(--quantum-orange); }
+        .satellite { border-color: var(--quantum-yellow); }
+        .receiver { border-color: var(--quantum-red); }
+
+        .sensor .component-icon { color: var(--quantum-green); }
+        .processor .component-icon { color: var(--quantum-teal); }
+        .quantum .component-icon { color: var(--quantum-purple); }
+        .transmitter .component-icon { color: var(--quantum-orange); }
+        .satellite .component-icon { color: var(--quantum-yellow); }
+        .receiver .component-icon { color: var(--quantum-red); }
+
+        @media (max-width: 768px) {
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .component-row {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .static-component {
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>⚛️ קומפוננטות המערכת הקוונטית</h1>
+            <div class="subtitle">
+                רכיבי המערכת לתקשורת לווינית מאובטחת | כל קומפוננטה בנפרד ללא תלות
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- חיישן תדר רשת -->
+        <section class="components-grid">
+            <div class="component-card sensor">
+                <div class="component-number">1</div>
+                <i class="component-icon fas fa-wave-square"></i>
+                <h3>חיישן תדר רשת</h3>
+                <p>חיישן ADC למדידת תדר רשת החשמל בדיוק גבוה</p>
+                
+                <ul class="specs-list">
+                    <li>קצב דגימה: 1MSPS</li>
+                    <li>רזולוציה: 16-bit</li>
+                    <li>דיוק: ±0.001Hz</li>
+                    <li>טווח תדרים: 40-60Hz</li>
+                    <li>רעש: -120dB</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">ADC</span>
+                    <span class="tech-tag">DSP</span>
+                    <span class="tech-tag">FFT</span>
+                    <span class="tech-tag">התניה אנלוגית</span>
+                </div>
+            </div>
+
+            <div class="component-details">
+                <h3>📊 מפרט טכני מפורט - חיישן תדר</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-value">24-bit ΣΔ</div>
+                        <div>ארכיטקטורת ADC</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">100dB</div>
+                        <div>דחיית רעשי רשת</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">-40°C to +85°C</div>
+                        <div>טמפרטורת עבודה</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">5ppm/°C</div>
+                        <div>יציבות טמפרטורה</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- מעבד DSP -->
+        <section class="components-grid">
+            <div class="component-card processor">
+                <div class="component-number">2</div>
+                <i class="component-icon fas fa-microchip"></i>
+                <h3>מעבד DSP</h3>
+                <p>מעבד עיבוד אותות דיגיטלי להמרת מידע לתדר</p>
+                
+                <ul class="specs-list">
+                    <li>מעבד: FPGA Xilinx Zynq</li>
+                    <li>לוגיקה: 150K</li>
+                    <li>זיכרון: 4GB DDR4</li>
+                    <li>עיבוד FFT בזמן אמת</li>
+                    <li>אלגוריתמים: FIR, IIR</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">FPGA</span>
+                    <span class="tech-tag">VHDL</span>
+                    <span class="tech-tag">Verilog</span>
+                    <span class="tech-tag">MATLAB</span>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code">
+// קוד DSP להמרת תמונה לתדר
+void image_to_frequency(uint8_t *image, float *frequency_output) {
+    // המרה לגווני אפור
+    grayscale_convert(image);
+    
+    // טרנספורם פורייה דו-ממדי
+    fft2d(image, frequency_output);
+    
+    // מיפוי לתדר רשת
+    map_to_grid_frequency(frequency_output, 50.0); // 50Hz
+    
+    // נרמול אנרגיה
+    normalize_energy(frequency_output);
+}
+                </div>
+            </div>
+        </section>
+
+        <!-- מקור פוטונים קוונטי -->
+        <section class="components-grid">
+            <div class="component-card quantum">
+                <div class="component-number">3</div>
+                <i class="component-icon fas fa-atom"></i>
+                <h3>מקור פוטונים קוונטי</h3>
+                <p>מקור לייזר ליצירת פוטונים שזורים עם מצבים קוונטיים</p>
+                
+                <ul class="specs-list">
+                    <li>אורך גל: 1550nm</li>
+                    <li>הספק: 10mW</li>
+                    <li>יחס שזירה: >90%</li>
+                    <li>יעילות קוונטית: 85%</li>
+                    <li>טמפרטורה: 4K</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">SPDC</span>
+                    <span class="tech-tag">שזירה</span>
+                    <span class="tech-tag">אופטיקה קוונטית</span>
+                    <span class="tech-tag">קריוסטט</span>
+                </div>
+            </div>
+
+            <div class="component-details">
+                <h3>🔬 פרמטרים קוונטיים</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-value">|ψ⟩ = α|0⟩ + β|1⟩</div>
+                        <div>מצב קוונטי</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">CHSH > 2.8</div>
+                        <div>אי-שוויון בל</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">10⁶ פוטונים/שנ</div>
+                        <div>קצב יצירה</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">> 99%</div>
+                        <div>טוהר מצב</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- משדר לוויין -->
+        <section class="components-grid">
+            <div class="component-card transmitter">
+                <div class="component-number">4</div>
+                <i class="component-icon fas fa-satellite-dish"></i>
+                <h3>משדר לוויין</h3>
+                <p>מערכת RF לשידור פוטונים דרך אטמוספירה לחלל</p>
+                
+                <ul class="specs-list">
+                    <li>תדר: Ka-band (26.5-40GHz)</li>
+                    <li>הספק: 100W</li>
+                    <li>אנטנה: 2.4m</li>
+                    <li>יעילות: 65%</li>
+                    <li>Tracking: 0.01°</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">RF</span>
+                    <span class="tech-tag">TWTA</span>
+                    <span class="tech-tag">מעקב לוויינים</span>
+                    <span class="tech-tag">שידור אופטי</span>
+                </div>
+            </div>
+
+            <table class="specs-table">
+                <tr>
+                    <th>פרמטר</th>
+                    <th>מפרט</th>
+                    <th>יחידות</th>
+                </tr>
+                <tr>
+                    <td>G/T</td>
+                    <td>35</td>
+                    <td>dB/K</td>
+                </tr>
+                <tr>
+                    <td>EIRP</td>
+                    <td>75</td>
+                    <td>dBW</td>
+                </tr>
+                <tr>
+                    <td>יחס ציר ראשי/צדדי</td>
+                    <td>70</td>
+                    <td>dB</td>
+                </tr>
+                <tr>
+                    <td>סרוו מהירות</td>
+                    <td>5</td>
+                    <td>°/שנייה</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- לוויין -->
+        <section class="components-grid">
+            <div class="component-card satellite">
+                <div class="component-number">5</div>
+                <i class="component-icon fas fa-satellite"></i>
+                <h3>לוויין תקשורת</h3>
+                <p>לוויין LEO עם יכולות תקשורת קוונטית</p>
+                
+                <ul class="specs-list">
+                    <li>גובה: 550km</li>
+                    <li>נטייה: 53°</li>
+                    <li>משקל: 260kg</li>
+                    <li>הספק: 2kW</li>
+                    <li>אורך חיים: 7 שנים</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">LEO</span>
+                    <span class="tech-tag">AOCS</span>
+                    <span class="tech-tag">תרמית</span>
+                    <span class="tech-tag">מערך שמש</span>
+                </div>
+            </div>
+
+            <div class="component-details">
+                <h3>🛰️ מפרט מסלול</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-value">550km</div>
+                        <div>גובה מסלול</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">97 דקות</div>
+                        <div>זמן הקפה</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">7.5km/s</div>
+                        <div>מהירות מסלולית</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">53°</div>
+                        <div>נטייה</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- מקלט קרקעי -->
+        <section class="components-grid">
+            <div class="component-card receiver">
+                <div class="component-number">6</div>
+                <i class="component-icon fas fa-signal"></i>
+                <h3>מקלט קרקעי</h3>
+                <p>תחנת קרקע לפענוח אותות קוונטיים</p>
+                
+                <ul class="specs-list">
+                    <li>אנטנה: 13m</li>
+                    <li>רעש: 25K</li>
+                    <li>גלאי: SNSPD</li>
+                    <li>יעילות: 95%</li>
+                    <li>קצב ספירה: 100MHz</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">SNSPD</span>
+                    <span class="tech-tag">Time Tagging</span>
+                    <span class="tech-tag">QKD</span>
+                    <span class="tech-tag">Coincidence</span>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code">
+// אלגוריתם פענוח קוונטי
+QuantumState decode_photons(PhotonStream *stream, 
+                           FrequencyKey *key) {
+    QuantumState state;
+    
+    // התאמת תזמונים
+    time_correlation(stream);
+    
+    // שחזור שזירה
+    entanglement_reconstruction(stream);
+    
+    // הפקת ביטים קוונטיים
+    extract_quantum_bits(&state, stream);
+    
+    // בדיקת אי-שוויון בל
+    if (bell_inequality_test(&state) > 2.8) {
+        // שזירה מאושרת
+        return state;
+    }
+    
+    return ERROR_STATE;
+}
+                </div>
+            </div>
+        </section>
+
+        <!-- טבלת השוואת קומפוננטות -->
+        <section class="architecture-static">
+            <h3>📋 טבלת השוואה בין הקומפוננטות</h3>
+            <table class="specs-table">
+                <tr>
+                    <th>קומפוננטה</th>
+                    <th>מפרט טכני</th>
+                    <th>דרישות הספק</th>
+                    <th>טמפרטורה</th>
+                    <th>עלות משוערת</th>
+                </tr>
+                <tr>
+                    <td>חיישן תדר</td>
+                    <td>24-bit ADC, 1MSPS</td>
+                    <td>5W</td>
+                    <td>-40°C to +85°C</td>
+                    <td>$2,500</td>
+                </tr>
+                <tr>
+                    <td>מעבד DSP</td>
+                    <td>FPGA Zynq, 150K LUT</td>
+                    <td>15W</td>
+                    <td>0°C to +70°C</td>
+                    <td>$8,000</td>
+                </tr>
+                <tr>
+                    <td>מקור קוונטי</td>
+                    <td>1550nm, SPDC, 90% entanglement</td>
+                    <td>50W</td>
+                    <td>4K</td>
+                    <td>$250,000</td>
+                </tr>
+                <tr>
+                    <td>משדר לוויין</td>
+                    <td>Ka-band, 100W, 2.4m dish</td>
+                    <td>500W</td>
+                    <td>-30°C to +50°C</td>
+                    <td>$150,000</td>
+                </tr>
+                <tr>
+                    <td>לוויין</td>
+                    <td>550km LEO, 260kg, 2kW</td>
+                    <td>2,000W</td>
+                    <td>-100°C to +100°C</td>
+                    <td>$15M</td>
+                </tr>
+                <tr>
+                    <td>מקלט קרקעי</td>
+                    <td>13m dish, SNSPD, 25K noise</td>
+                    <td>10kW</td>
+                    <td>-10°C to +40°C</td>
+                    <td>$5M</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- דיאגרמה סטטית -->
+        <section class="architecture-static">
+            <h3>🏗️ מבנה המערכת - קומפוננטות נפרדות</h3>
+            
+            <div class="component-row">
+                <div class="static-component sensor">
+                    <h4>חיישן תדר</h4>
+                    <p>מדידת 50Hz</p>
+                </div>
+                
+                <div class="static-component processor">
+                    <h4>מעבד DSP</h4>
+                    <p>עיבוד FFT</p>
+                </div>
+                
+                <div class="static-component quantum">
+                    <h4>מקור קוונטי</h4>
+                    <p>יצירת פוטונים</p>
+                </div>
+            </div>
+            
+            <div class="component-row">
+                <div class="static-component transmitter">
+                    <h4>משדר</h4>
+                    <p>שידור RF</p>
+                </div>
+                
+                <div class="static-component satellite">
+                    <h4>לוויין</h4>
+                    <p>תמסורת</p>
+                </div>
+                
+                <div class="static-component receiver">
+                    <h4>מקלט</h4>
+                    <p>פענוח</p>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 2rem; color: var(--quantum-teal);">
+                כל קומפוננטה עומדת בפני עצמה | אין תלות הדדית | אפשרות החלפה מודולרית
+            </p>
+        </section>
+
+        <!-- סיכום מפרטים -->
+        <section class="component-details" style="border-left-color: var(--quantum-purple);">
+            <h3>📈 סיכום ביצועים</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-value">1Gbps</div>
+                    <div>קצב נתונים</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value">&lt;50ms</div>
+                    <div>השהייה</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value">99.999%</div>
+                    <div>אמינות</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value">100%</div>
+                    <div>גילוי האזנה</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value">0%</div>
+                    <div>אובדן אינפורמציה</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value">∞</div>
+                    <div>עמידות פריצה</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 מערכת תקשורת קוונטית | כל הקומפוננטות מוצגות בנפרד ללא תלות</p>
+            <p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.5);">
+                כל רכיב מתוכנן לעבודה עצמאית עם ממשקים מוגדרים
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
