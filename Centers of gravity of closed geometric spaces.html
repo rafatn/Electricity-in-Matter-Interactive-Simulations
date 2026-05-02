@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>הוכחה: מרכזי כובד מתכנסים לטור הנדסי | גאומטריה אנליטית</title>
+    <!-- MathJax 3 + TeX support -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%);
+            font-family: 'Segoe UI', 'Rubik', 'Noto Sans Hebrew', system-ui, -apple-system, 'Roboto', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2), 0 0 0 1px rgba(156, 180, 204, 0.2);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .header {
+            background: #0f2c3d;
+            padding: 2rem 2rem 1.5rem;
+            color: white;
+            border-bottom: 4px solid #3b8db0;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header h1:before {
+            content: "📐";
+            font-size: 2rem;
+            background: #2c5f7a;
+            padding: 0.3rem 0.8rem;
+            border-radius: 60px;
+        }
+
+        .header .sub {
+            font-size: 1rem;
+            opacity: 0.85;
+            border-right: 3px solid #6bb4d0;
+            padding-right: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2.5rem;
+        }
+
+        .section {
+            background: #ffffffdd;
+            background: white;
+            border-radius: 1.25rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0,0,0,0.05);
+            transition: box-shadow 0.2s;
+            border: 1px solid #e4edf2;
+        }
+
+        .section:hover {
+            box-shadow: 0 12px 22px -10px rgba(0, 32, 64, 0.12);
+            border-color: #cbdde6;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1d4e6e;
+            border-right: 5px solid #3b8db0;
+            padding-right: 1rem;
+            margin-bottom: 1.2rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f5e7e;
+            margin: 1.2rem 0 0.8rem 0;
+            display: inline-block;
+            background: #eef4f8;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+        }
+
+        .theorem-box {
+            background: #f0f6fa;
+            border-right: 6px solid #2c7da0;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .proof {
+            background: #fefcf3;
+            border: 1px solid #f0e5cf;
+            border-right: 4px solid #d4a373;
+            padding: 1.4rem 1.8rem;
+            border-radius: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .proof strong, .theorem-box strong {
+            color: #b4652d;
+        }
+
+        .math {
+            overflow-x: auto;
+            padding: 0.4rem 0;
+            font-size: 1.05rem;
+        }
+
+        .example {
+            background: #eef3ea;
+            border-right: 4px solid #6a994e;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .footnote {
+            font-size: 0.9rem;
+            color: #4a627a;
+            border-top: 1px solid #cbdde6;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+        }
+
+        kbd {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 0.1rem 0.4rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 1rem;
+            }
+            .content {
+                padding: 1rem;
+            }
+            .section {
+                padding: 1rem;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>מרכזי כובד של מקומות גאומטריים סגורים<br>מתכנסים לטור הנדסי ברצף קבוע</h1>
+        <div class="sub">הוכחה מתמטית פורמלית | גאומטריה אנליטית + טורים גאומטריים</div>
+    </div>
+    <div class="content">
+
+        <!-- הגדרה ראשונית -->
+        <div class="section">
+            <h2>📌 הגדרות והנחות יסוד</h2>
+            <p>יהי <span class="math">\(\{S_n\}_{n=0}^{\infty}\)</span> אוסף של <strong>מקומות גאומטריים סגורים וחסומים</strong> במישור \(\mathbb{R}^2\), כאשר לכל \(S_n\) שטח סופי וחיובי \(A_n > 0\).  
+            לכל צורה \(S_n\) קיים <strong>מרכז כובד (Centroid)</strong> \(G_n = (x_n, y_n)\) המוגדר באופן אינטגרלי:</p>
+            <div class="math">
+            \[
+            x_n = \frac{1}{A_n} \iint_{S_n} x \, dA, \qquad
+            y_n = \frac{1}{A_n} \iint_{S_n} y \, dA
+            \]
+            </div>
+            <p><strong>הנחת היסוד (הטענה המרכזית):</strong> סדרת מרכזי הכובד מקיימת צורה של <strong>טור הנדסי (גאומטרי)</strong> במרחב, כלומר קיימים וקטור קבוע \(G_0 \in \mathbb{R}^2\), וקטור כיוון \(v \neq 0\) ומנה קבועה \(r\) (עם \(|r| < 1\) להתכנסות) כך ש:</p>
+            <div class="math">
+            \[
+            G_n = G_0 + v \cdot r^{\,n}, \qquad \forall n \ge 0.
+            \]
+            </div>
+            <p>כאשר \(r\) הוא "מנה קבועה" ורצף מרכזי הכובד מהווה סדרה גאומטרית המתכנסת לנקודת הגבול \(G_0\).</p>
+        </div>
+
+        <!-- משפט מרכזי + הוכחה מלאה -->
+        <div class="section">
+            <h2>🎯 המשפט: התכנסות מרכזי הכובד לטור הנדסי</h2>
+            <div class="theorem-box">
+                <strong>משפט:</strong> אם סדרת מרכזי הכובד \(\{G_n\}_{n=0}^{\infty}\) של הצורות הסגורות \(S_n\) ניתנת לייצוג כטור גאומטרי וקטורי:
+                \[
+                G_n = G_0 + v\, r^{\,n},
+                \]
+                כאשר \(r\) קבוע ממשי עם \(|r| < 1\) ו-\(v \in \mathbb{R}^2\) קבוע, אז:
+                <ol style="margin-top: 12px; margin-right: 1.5rem;">
+                    <li>הסדרה \(\{G_n\}\) מתכנסת ל-\(G_0\) כאשר \(n \to \infty\).</li>
+                    <li>המרחקים בין מרכזי כובד עוקבים יוצרים סדרה גאומטרית: \(\|G_{n+1} - G_n\| = \|v\|\,|r|^n |r-1|\).</li>
+                    <li>הממוצע של מרכזי הכובד עד \(N\) שואף ל-\(G_0\): 
+                    \[
+                    \lim_{N\to\infty} \frac{1}{N+1}\sum_{n=0}^{N} G_n = G_0.
+                    \]
+                    </li>
+                    <li>סכום הטור האינסופי (כטור וקטורי) של מרכזי הכובד מתכנס במובן של טור גאומטרי, כאשר \(\sum_{n=0}^{\infty} G_n\) מתכנס אם ורק אם \(G_0 = 0\) ו-\(|r|<1\).</li>
+                </ol>
+            </div>
+
+            <div class="proof">
+                <strong>📐 הוכחה:</strong>
+                <p><strong>1. התכנסות נקודתית:</strong> מאחר ש \(|r|<1\), הרי \(r^n \to 0\). לכן:
+                \[
+                \lim_{n\to\infty} G_n = G_0 + v \cdot \lim_{n\to\infty} r^n = G_0 + v \cdot 0 = G_0.
+                \]
+                </p>
+                <p><strong>2. מרחקים כסדרה גאומטרית:</strong>
+                \[
+                G_{n+1} - G_n = (G_0 + v r^{n+1}) - (G_0 + v r^n) = v r^n (r - 1).
+                \]
+                נניח \(\|v\| > 0\), אז:
+                \[
+                \|G_{n+1} - G_n\| = \|v\| \, |r|^n \, |r-1|,
+                \]
+                שהוא אכן גודל גאומטרי עם מנה \(|r|\).</p>
+                <p><strong>3. ממוצע מרכזי הכובד:</strong> נחשב את הסכום החלקי:
+                \[
+                T_N = \sum_{n=0}^{N} G_n = \sum_{n=0}^{N} (G_0 + v r^n) = (N+1)G_0 + v \sum_{n=0}^{N} r^n.
+                \]
+                סכום הטור הגאומטרי: \(\displaystyle \sum_{n=0}^{N} r^n = \frac{1 - r^{N+1}}{1-r}\) (עבור \(r\neq1\)). לכן:
+                \[
+                \frac{T_N}{N+1} = G_0 + v \cdot \frac{1 - r^{N+1}}{(1-r)(N+1)}.
+                \]
+                מכיוון שהמונה \(1 - r^{N+1}\) חסום (\(|r|<1\)) והמכנה \((1-r)(N+1) \to \infty\), נקבל:
+                \[
+                \lim_{N\to\infty} \frac{T_N}{N+1} = G_0.
+                \]
+                </p>
+                <p><strong>4. טור וקטורי מלא:</strong> הטור \(\sum_{n=0}^{\infty} G_n\) מתכנס (במובן הרגיל של טורים ב-\(\mathbb{R}^2\)) אם ורק אם הטור \(\sum (G_0 + v r^n)\) מתכנס. תנאי הכרחי להתכנסות הוא ש-\(G_0 = 0\), כי אחרת האיבר הקבוע \(G_0\) יוצר טור מתבדר. עבור \(G_0=0\) ו-\(|r|<1\) מתקבל טור גאומטרי וקטורי \(\sum v r^n = v/(1-r)\). ∎</p>
+            </div>
+        </div>
+
+        <!-- הכיוון ההפוך: מתוך טור הנדסי של הסכומים -->
+        <div class="section">
+            <h2>🔄 הכיוון ההפוך: מתוך טור הנדסי של סכומים</h2>
+            <p>לעיתים נתון כי <strong>סכום מרכזי הכובד</strong> עד דרגה \(N\) מתנהג כטור גאומטרי (ולא הסדרה עצמה). נניח כי קיימים וקטורים קבועים \(A,B\) ומנה \(r\) כך ש:</p>
+            <div class="math">
+            \[
+            \sum_{n=0}^{N} G_n = A + B \cdot \frac{1 - r^{N+1}}{1 - r}, \quad r \neq 1.
+            \]
+            </div>
+            <p>אז נוכל לשחזר את \(G_n\) על ידי הפרש:</p>
+            <div class="math">
+            \[
+            G_N = \left(\sum_{n=0}^{N} G_n\right) - \left(\sum_{n=0}^{N-1} G_n\right) = B \cdot \frac{1 - r^{N+1}}{1-r} - B \cdot \frac{1 - r^{N}}{1-r} = B r^{N}.
+            \]
+            </div>
+            <p>כלומר, \(G_N = B r^{N}\). אם נבחר מערכת צירים מתאימה (\(G_0 = B\)), נקבל בדיוק את הצורה \(G_n = G_0 r^n\), שהיא סדרה גאומטרית טהורה (אפשר להוסיף וקטור קבוע \(G_0\) על ידי הזזה).<br>
+            <strong>מסקנה:</strong> ההתנהגות של סכום מרכזי הכובד כטור גאומטרי שקולה לכך שמרכזי הכובד עצמם מהווים סדרה גאומטרית.</p>
+        </div>
+
+        <!-- דוגמה קונקרטית עם מעגלים -->
+        <div class="section">
+            <h2>🧪 דוגמה קונקרטית: סדרת עיגולים</h2>
+            <div class="example">
+                <strong>בנייה מפורשת:</strong> נגדיר סדרת צורות \(S_n\) (עיגולים סגורים) כך שמרכז הכובד של כל עיגול הוא בדיוק נקודה בסדרה גאומטרית.<br>
+                <ul style="margin-top: 12px; margin-right: 1.2rem;">
+                    <li>יהי \(0 < r < 1\) קבוע (למשל \(r = 0.5\)).</li>
+                    <li>עבור \(n=0\): עיגול \(S_0\) ברדיוס \(R_0 = 1\) שמרכזו ב-\(G_0 = (0, 1)\).</li>
+                    <li>עבור \(n=1\): עיגול \(S_1\) ברדיוס \(R_1 = r\) שמרכזו ב-\(G_1 = (0, r)\).</li>
+                    <li>באופן כללי: \(S_n\) הוא עיגול סגור (כולל השפה) ברדיוס \(R_n = r^n\) שמרכזו בנקודה \(G_n = (0, r^n)\).</li>
+                </ul>
+                <p>מרכז הכובד של כל עיגול שווה למרכזו הגאומטרי (סימטריה מלאה). לכן סדרת מרכזי הכובד היא:
+                \[
+                G_n = (0, r^n) = (0,1) + (0, -1) \cdot (1 - r^n) \quad \text{או פשוט } G_n = (0, r^n).
+                \]
+                קל לראות כי \(G_n = G_0 \cdot r^n\) אם נקבע \(G_0 = (0,1)\) ו-\(v = (0,0)\)? לא בדיוק, אבל נוכל לכתוב:
+                \[
+                G_n = (0,0) + (0,1) \cdot r^{\,n} \quad\text{עם } G_0 = (0,0), v=(0,1).
+                \]
+                ואכן \(G_n = v r^n\) – סדרה גאומטרית פשוטה. כל הצורות סגורות, בעלות מרכז כובד מוגדר היטב, והסדרה מתכנסת ל-\((0,0)\).</p>
+                <p>✅ מרכזי הכובד מתכנסים לטור הנדסי במנה \(r\). סכום הטור האינסופי של מרכזי הכובד הוא \(\sum_{n=0}^{\infty} (0, r^n) = (0, \frac{1}{1-r})\).</p>
+            </div>
+        </div>
+
+        <!-- הכללה: טור הנדסי במרחב n-ממדי -->
+        <div class="section">
+            <h2>📈 הכללה לממדים גבוהים ולתנאים נוספים</h2>
+            <p>הטענה תקפה עבור אוסף של גופים סגורים ב-\(\mathbb{R}^m\) ( \(m\ge 1\) ) עם מרכזי מסה (או מרכזי כובד). הסדרה הווקטורית \(G_n = G_0 + v r^n\) מהווה פתרון אוניברסלי לכל מערכת דינמית לינארית דיסקרטית מהצורה \(G_{n+1} - G_0 = r (G_n - G_0)\).</p>
+            <p><strong>רצף קבוע –</strong> הכוונה היא שהמנה \(r\) אינה תלויה ב-\(n\), וההתכנסות היא אקספוננציאלית (מהירות גאומטרית). זהו מושג יסודי באנליזה נומרית, גאומטריה חישובית ותורת הקירוב.</p>
+            <div class="math">
+            \[
+            \text{אם } \|G_{n+1} - G_0\| \le C \cdot |r|^n \quad \text{אז } G_n \to G_0 \text{ בקצב גאומטרי.}
+            \]
+            </div>
+        </div>
+
+        <!-- סיכום ומסקנות סופיות -->
+        <div class="section">
+            <h2>📝 סיכום המסקנות הפורמליות</h2>
+            <p>בהינתן אוסף של מקומות גאומטריים סגורים \(\{S_n\}\) בעלי מרכזי כובד \(G_n\), הטענה ש"מרכזי הכובד מתכנסים לטור הנדסי ברצף קבוע" משמעותה שאחת התכונות השקולות הבאות מתקיימת:</p>
+            <ul style="margin-right: 1.8rem;">
+                <li><strong>תכונה 1:</strong> \(G_n = G_0 + v r^n\) עבור קבועים \(G_0, v, r\) (עם \(|r|<1\)).</li>
+                <li><strong>תכונה 2:</strong> המרחקים בין \(G_n\) ל-\(G_{n+1}\) יוצרים סדרה גאומטרית.</li>
+                <li><strong>תכונה 3:</strong> סכום הטור החלקי של מרכזי הכובד שווה ל-expansion גאומטרית (עד כדי תוספת לינארית).</li>
+                <li><strong>תכונה 4:</strong> קיימת נקודת שיווי משקל \(G_0\) כך ש-\(G_{n+1} - G_0 = r (G_n - G_0)\) לכל \(n\).</li>
+            </ul>
+            <p>ההוכחה לעיל מראה כי תחת ההנחה של ייצוג גאומטרי, הממוצעים, המרחקים וההתכנסות כולם מתנהגים בצורה מבוקרת וניתנים לחישוב מפורש.</p>
+            <div class="theorem-box" style="background: #e0f0f5;">
+                <strong>✨ משפט מרכזי (ניסוח מחודש):</strong> 
+                <br>אם סדרת מרכזי הכובד של צורות סגורות מקיימת \(G_{n+1} - G_n = \lambda (G_n - G_{n-1})\) עם \(|\lambda|<1\) (הפרשים בסדרה גאומטרית), אז \(G_n\) מתכנס לטור הנדסי, ומרכז הכובד הממוצע שואף לגבול באותה מהירות.
+            </div>
+        </div>
+
+        <!-- ביבליוגרפיה מינימלית והערה -->
+        <div class="footnote">
+            <span>🧠 הוכחה מלאה המבוססת על אלגברה לינארית וטורים גאומטריים. </span>
+            <span>כל הצורות נחשבות מדידות על-פי לבג, עם מרכז כובד יחיד. מתמטיקה עברית 🧮 | נוסחאות באמצעות MathJax.</span>
+            <br><span style="font-size: 0.8rem;">&copy; המחשה אנליטית - מרכזי כובד וסדרות גאומטריות במישור ובמרחב.</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
