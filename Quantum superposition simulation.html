@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>סופרפוזיציה קוונטית – סימולציה אינטראקטיבית</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --accent:#3b4cca;
+  --accent2:#6a5acd;
+  --text:#1f2937;
+  --muted:#6b7280;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+}
+
+header{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  padding:2.5rem 1.5rem;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+}
+
+main{
+  max-width:900px;
+  margin:2rem auto;
+  padding:0 1rem 3rem;
+}
+
+section{
+  background:var(--card);
+  margin:2rem 0;
+  padding:2rem;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+  color:var(--accent);
+  margin-top:0;
+}
+
+label{
+  display:block;
+  margin:1rem 0 .3rem;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+canvas{
+  background:#f8f9ff;
+  border-radius:10px;
+  display:block;
+  margin:1rem 0;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>סימולציית סופרפוזיציה קוונטית</h1>
+  <p>שינוי אמפליטודות בזמן אמת והצגת הסתברויות</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. הגדר קיוּביטים</h2>
+<p>ניתן לשנות את האמפליטודה של כל מצב |0⟩ ו-|1⟩ ולראות את ההסתברות בהתאם:</p>
+
+<label for="amp0">אמפליטודה |0⟩ (α₀)</label>
+<input type="range" id="amp0" min="0" max="1" step="0.01" value="0.7">
+
+<label for="amp1">אמפליטודה |1⟩ (α₁)</label>
+<input type="range" id="amp1" min="0" max="1" step="0.01" value="0.7">
+
+<canvas id="probCanvas" width="800" height="200"></canvas>
+<p>הגרף מציג את ההסתברויות P(0) ו-P(1) בהתאם לערכים שנבחרו.</p>
+</section>
+
+<section>
+<h2>2. הסבר</h2>
+<ul>
+<li>הקיוּביט |ψ⟩ = α₀|0⟩ + α₁|1⟩</li>
+<li>P(0) = |α₀|², P(1) = |α₁|²</li>
+<li>הסכום תמיד מנורמל ל-1 (בגרף זה יתוקן אוטומטית)</li>
+<li>ניתן להדמיה של סופרפוזיציה במצבים בדידים</li>
+</ul>
+</section>
+
+</main>
+
+<script>
+// גישה לאלמנטים
+const amp0Slider = document.getElementById('amp0');
+const amp1Slider = document.getElementById('amp1');
+const canvas = document.getElementById('probCanvas');
+const ctx = canvas.getContext('2d');
+
+// פונקציה לציור גרף
+function drawGraph(){
+  // קבלת ערכים
+  let a0 = parseFloat(amp0Slider.value);
+  let a1 = parseFloat(amp1Slider.value);
+  
+  // נורמליזציה
+  let norm = Math.sqrt(a0*a0 + a1*a1);
+  if(norm === 0) norm = 1;
+  let p0 = (a0/norm)**2;
+  let p1 = (a1/norm)**2;
+
+  // ניקוי קנבס
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // ציור רקע
+  ctx.fillStyle = "#f8f9ff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // הגדרות
+  const margin = 50;
+  const barWidth = 200;
+  const spacing = 150;
+  const maxHeight = canvas.height - 2*margin;
+
+  // ציור |0⟩
+  ctx.fillStyle = "#3b4cca";
+  ctx.fillRect(margin, canvas.height-margin-p0*maxHeight, barWidth, p0*maxHeight);
+  ctx.fillStyle = "#000";
+  ctx.font = "16px Arial";
+  ctx.fillText(`|0⟩ : P=${p0.toFixed(2)}`, margin, canvas.height-margin+20);
+
+  // ציור |1⟩
+  ctx.fillStyle = "#6a5acd";
+  ctx.fillRect(margin+barWidth+spacing, canvas.height-margin-p1*maxHeight, barWidth, p1*maxHeight);
+  ctx.fillStyle = "#000";
+  ctx.fillText(`|1⟩ : P=${p1.toFixed(2)}`, margin+barWidth+spacing, canvas.height-margin+20);
+}
+
+// עדכון גרף בעת שינוי
+amp0Slider.addEventListener('input', drawGraph);
+amp1Slider.addEventListener('input', drawGraph);
+
+// ציור התחלתי
+drawGraph();
+</script>
+
+</body>
+</html>
