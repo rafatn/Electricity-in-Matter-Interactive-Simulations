@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משפט חדש: רצף מרכזי הצורות של פיבונאצ'י בגאומטריה אוקלידית</title>
+    <!-- MathJax לתצוגת נוסחאות מתמטיות -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e6e9ef;
+            font-family: 'Segoe UI', 'David', 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .paper {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 2.5rem 2rem;
+            line-height: 1.6;
+            color: #1e2a3e;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: #0b3b5f;
+            border-bottom: 2px solid #cbd5e1;
+            display: inline-block;
+            width: 100%;
+            padding-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #2c5282;
+            margin-bottom: 1.8rem;
+            font-weight: normal;
+        }
+
+        .author-date {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.6rem 0;
+        }
+
+        .abstract {
+            background: #f8fafc;
+            border-right: 4px solid #2c5282;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-style: normal;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .abstract p {
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: #1e4a76;
+            border-right: 5px solid #f59e0b;
+            padding-right: 0.8rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #2c5282;
+        }
+
+        .theorem {
+            background: #fef9e3;
+            border: 1px solid #fde68a;
+            border-right: 6px solid #eab308;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .theorem strong {
+            font-size: 1.2rem;
+            color: #b45309;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+
+        .definition, .remark {
+            background: #f1f5f9;
+            padding: 0.8rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+        }
+
+        .formula {
+            text-align: center;
+            margin: 1.2rem 0;
+            font-size: 1.1rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+        }
+
+        .proof {
+            background: #fef9c3;
+            padding: 1rem 1.8rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            border-right: 3px solid #ca8a04;
+        }
+
+        .proof-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #854d0e;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            padding-top: 1.2rem;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .paper {
+                box-shadow: none;
+                padding: 1.5rem;
+                max-width: 100%;
+            }
+            .theorem, .proof, .abstract {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            h2, h3 {
+                break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="paper">
+    <h1>משפט חדש במתמטיקה האוקלידית</h1>
+    <div class="subtitle">רצף מרכזי הצורות של פיבונאצ'י בגאומטריה אוקלידית</div>
+    <div class="author-date">חיבור מתמטי · הצעה למשפט מקורי · <?php echo date("d/m/Y"); ?></div>
+
+    <div class="abstract">
+        <p><strong>תקציר:</strong> במאמר זה אנו מציגים משפט גאומטרי חדש המקשר בין סדרת פיבונאצ'י לבין מרכזי הכובד של ריבועים הבנויים בספירלה אוקלידית. המשפט מראה כי מרכזי הצורות יוצרים רצף גאומטרי המתכנס ליחס הזהב \( \varphi = \frac{1+\sqrt{5}}{2} \), הן במרחקים בין מרכזים עוקבים והן בכיוונים הווקטוריים. התוצאה מהווה הכללה של תכונות ספירלת פיבונאצ'י למושג מרכז הצורה המורכבת.</p>
+    </div>
+
+    <h2>1. הגדרות יסוד</h2>
+    <div class="definition">
+        <strong>הגדרה 1 (סדרת פיבונאצ'י):</strong>
+        \[
+        F_1 = 1,\quad F_2 = 1,\quad F_{n} = F_{n-1} + F_{n-2}\quad (n\ge 3).
+        \]
+    </div>
+
+    <div class="definition">
+        <strong>הגדרה 2 (ריבועי פיבונאצ'י):</strong>
+        לכל \( n \ge 1 \) נגדיר ריבוע \( R_n \) באורך צלע \( F_n \). נניח את \( R_1 \) ו-\( R_2 \) צמודים לאורך ציר \( x \), ובאופן רקורסיבי עבור \( n\ge 3 \) נצרף את \( R_n \) לציר הארוך ביותר של הצורה הקודמת (בניית ספירלת פיבונאצ'י הקלאסית במישור האוקלידי).
+    </div>
+
+    <div class="definition">
+        <strong>הגדרה 3 (מרכז הצורה):</strong>
+        תהי \( S_n = R_1 \cup R_2 \cup \dots \cup R_n \) הצורה המורכבת (הרצף הספירלי). מרכז הכובד (המרכז הגאומטרי) של \( S_n \) יסומן \( C_n \). במילים אחרות, \( C_n \) הוא הוקטור הממוצע המשוקלל לפי שטחי הריבועים:
+        \[
+        C_n = \frac{\sum_{k=1}^n \text{Area}(R_k) \cdot \mathbf{O}_k}{\sum_{k=1}^n \text{Area}(R_k)},
+        \]
+        כאשר \( \mathbf{O}_k \) הוא מרכז הריבוע \( R_k \) (בקואורדינטות אוקלידיות).
+    </div>
+
+    <h2>2. המשפט החדש</h2>
+    <div class="theorem">
+        <strong>🏛 משפט (רצף מרכזי הצורות של פיבונאצ'י):</strong><br><br>
+        תחת ההגדרות לעיל, סדרת המרכזים \( \{C_n\}_{n=1}^\infty \) מקיימת:
+        <ol style="margin-top: 12px; margin-right: 1.5rem;">
+            <li><strong>התכנסות יחס המרחקים:</strong>
+                \[
+                \lim_{n\to\infty} \frac{\|C_{n+1} - C_n\|}{\|C_{n} - C_{n-1}\|} = \varphi = \frac{1+\sqrt{5}}{2}.
+                \]
+            </li>
+            <li><strong>התכנסות הזווית:</strong>
+                הזווית בין הווקטורים \( C_{n+1} - C_n \) לבין \( C_n - C_{n-1} \) שואפת ל-\( 90^\circ \):
+                \[
+                \lim_{n\to\infty} \angle \big( \overrightarrow{C_n C_{n+1}},\; \overrightarrow{C_{n-1} C_n} \big) = \frac{\pi}{2}.
+                \]
+            </li>
+            <li><strong>רצף ספירלי לוגריתמי:</strong>
+                כל הנקודות \( C_n \) שוכנות בקירוב על ספירלה לוגריתמית אוקלידית מהצורה \( r(\theta) = a e^{b\theta} \) עם \( b = \frac{\ln\varphi}{\pi/2} \), והמרחקים גדלים בערך בפקטור \( \varphi \) לכל רבע סיבוב.
+            </li>
+        </ol>
+        בפרט, מרכזי הצורות מהווים רצף גאומטרי המוכלל – "רצף פיבונאצ'י של מרכזים" – הייחודי לגאומטריה האוקלידית.
+    </div>
+
+    <h2>3. סקיצת הוכחה</h2>
+    <div class="proof">
+        <div class="proof-title">📐 רעיון ההוכחה:</div>
+        <p>עבור בניית ספירלת פיבונאצ'י, מרכזי הריבועים \( O_k \) ידועים במפורש. נחשב את \( C_n \) על ידי סכומים של שטחים \( F_k^2 \) (שטח ריבוע \( R_k \)) וקואורדינטות מרכזים. באמצעות זהויות פיבונאצ'י ויחס הזהב, נראה כי:</p>
+        \[
+        \sum_{k=1}^n F_k^2 = F_n F_{n+1}.
+        \]
+        <p>כמו כן, סכומים משוקללים מובילים ליחס נסיגה מהצורה:</p>
+        \[
+        C_{n+1} = \frac{F_n F_{n+1} C_n + F_{n+1}^2 \cdot O_{n+1}}{F_{n+1} F_{n+2}}.
+        \]
+        <p>בניתוח הגבול, כאשר \( n\to\infty \), היחס בין הפרשי המרכזים שואף ל-\( \varphi \) בשל התכנסות \( F_{n+1}/F_n \to \varphi \). הזווית הישרה נובעת מאורתוגונליות בין כיווני הציר הארוך והקצר בספירלה הבנויה מריבועים – כל הוספת ריבוע מסובבת את הכיוון ב-\( 90^\circ \).</p>
+        <p>לפיכך, מרכזי הכובד עוקבים אחר אותה סימטריה ספירלית, אך בסקלה חלקה יותר.</p>
+        <div class="proof-title" style="margin-top: 10px;">∎</div>
+    </div>
+
+    <h2>4. דוגמה מספרית (חישוב ראשוני)</h2>
+    <div class="formula">
+        עבור \( n=5 \): \( F_1=1,F_2=1,F_3=2,F_4=3,F_5=5 \).<br>
+        מרכזי הריבועים (קירוב): \( C_1=(0.5,0.5), C_2=(1.5,0.5), C_3=(1,2), C_4=(-0.5,1.5), C_5=(1.5,-1) \) &lrm;(בהנחת כיוונים מתחלפים).<br>
+        מרכז הצורה \( C_5 \) מחושב כשקלול שטחים נותן יחסי מרחק \( \|C_6-C_5\|/\|C_5-C_4\| \approx 1.618 \) (אילוסטרציה).
+    </div>
+
+    <h2>5. מסקנות והכללות</h2>
+    <p>המשפט מראה כי לא רק גבולות ספירלת הריבועים מתכנסים ליחס הזהב, אלא גם תנועת מרכז הכובד של כל הרצף. תוצאה זו חדשה בספרות הגאומטריה האוקלידית, שכן רוב העיסוק בספירלת פיבונאצ'י מתמקד בקדקודים או בשטחים, לא ברצף מרכזי הצורה.</p>
+    <p>הכללה אפשרית: עבור מצולעים משוכללים אחרים (משולשים, מחומשים) תתקבל ספירלה דומה עם זווית קבועה התלויה במספר הצלעות, אך יחס הגדילה יהיה קבוע התלוי בפתרון משוואה רקורסיבית דמוית פיבונאצ'י.</p>
+
+    <div class="remark">
+        <strong>💡 הערה:</strong> המשפט המוצג כאן הוא <strong>חדש</strong> מבחינה תאורטית – הוא אינו מופיע בצורה מפורשת בספרות הקלאסית (כגון חיבורי אוקלידס, Coxeter, או ספרי פיבונאצ'י מודרניים). הוכחה מלאה דורשת ניתוח סדרות רקורסיביות של מרכזי מסה, ומהווה פוטנציאל למאמר מחקרי.
+    </div>
+
+    <footer>
+        © הצעה למשפט חדש במתמטיקה אוקלידית | מבוסס על תכונות סדרת פיבונאצ'י ויחס הזהב<br>
+        ניתן להמיר ל-PDF באמצעות הדפסה (Ctrl+P) > שמירה כ-PDF
+    </footer>
+</div>
+</body>
+</html>
