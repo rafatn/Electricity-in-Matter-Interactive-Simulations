@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת תקשורת קוונטית - מסמך מלל מלא</title>
+    <style>
+        :root {
+            --quantum-dark: #0a0e1a;
+            --quantum-blue: #0f1a3d;
+            --quantum-teal: #00e5ff;
+            --quantum-green: #00e676;
+            --quantum-purple: #9c27b0;
+            --quantum-orange: #ff9100;
+            --quantum-white: #f5f7ff;
+            --paper-bg: #fffaf0;
+            --paper-border: #d4c4a8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'David', 'Segoe UI', 'Noto Sans Hebrew', sans-serif;
+            background: var(--quantum-dark);
+            color: #333;
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .paper-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--paper-bg);
+            border-radius: 5px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--paper-border);
+        }
+
+        .paper-content {
+            padding: 3rem;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Paper texture effect */
+        .paper-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 95%, rgba(0,0,0,0.03) 100%),
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 100% 24px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        /* Header */
+        .document-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--paper-border);
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--quantum-blue);
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .document-subtitle {
+            font-size: 1.4rem;
+            color: var(--quantum-purple);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .document-meta {
+            color: #666;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Content Sections */
+        .text-content {
+            position: relative;
+            z-index: 2;
+            font-size: 1.15rem;
+            text-align: justify;
+        }
+
+        h2 {
+            color: var(--quantum-blue);
+            font-size: 2rem;
+            margin: 2.5rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--quantum-teal);
+            page-break-after: avoid;
+        }
+
+        h3 {
+            color: var(--quantum-purple);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            page-break-after: avoid;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+            text-indent: 1.5em;
+        }
+
+        .no-indent {
+            text-indent: 0;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+            padding-right: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            line-height: 1.7;
+        }
+
+        /* Highlighted Text */
+        .highlight {
+            background: linear-gradient(120deg, rgba(0, 229, 255, 0.1) 0%, transparent 100%);
+            border-right: 4px solid var(--quantum-teal);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .highlight::before {
+            content: "💡";
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        .important-note {
+            background: linear-gradient(120deg, rgba(255, 145, 0, 0.1) 0%, transparent 100%);
+            border-right: 4px solid var(--quantum-orange);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .important-note::before {
+            content: "⚠️";
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        /* Technical Specifications */
+        .tech-spec {
+            background: rgba(15, 26, 61, 0.05);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .spec-header {
+            color: var(--quantum-teal);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Quantum Principles Box */
+        .quantum-principle {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, transparent 100%);
+            border: 2px solid var(--quantum-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .principle-title {
+            color: var(--quantum-purple);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Component Description */
+        .component-desc {
+            background: white;
+            border: 2px solid var(--paper-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .component-title {
+            color: var(--quantum-green);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Mathematical Formulas */
+        .formula {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            direction: ltr;
+        }
+
+        /* Tables */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            border: 1px solid var(--paper-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .spec-table th {
+            background: linear-gradient(135deg, var(--quantum-blue), var(--quantum-purple));
+            color: white;
+            padding: 1rem;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .spec-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--paper-border);
+        }
+
+        .spec-table tr:hover {
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        /* Footer */
+        .document-footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--paper-border);
+            color: #666;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-number {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #999;
+            font-size: 0.9rem;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 1px solid var(--paper-border);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .paper-container {
+                box-shadow: none;
+                border: none;
+            }
+            
+            .page-number {
+                position: fixed;
+                bottom: 10px;
+            }
+            
+            .highlight::before,
+            .important-note::before {
+                display: none;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .paper-content {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            .text-content {
+                font-size: 1rem;
+            }
+        }
+
+        /* Watermark */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 8rem;
+            color: rgba(0, 229, 255, 0.03);
+            z-index: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="watermark">QUANTUM SECURE</div>
+    
+    <div class="paper-container">
+        <div class="paper-content">
+            <!-- Document Header -->
+            <div class="document-header">
+                <h1>מסמך טכני: מערכת תקשורת קוונטית לווינית</h1>
+                <div class="document-subtitle">
+                    שילוב תדר רשת חשמל, קידוד קוונטי ותקשורת לוויינית מאובטחת
+                </div>
+                <div class="document-meta">
+                    גרסה 1.0 | דצמבר 2024 | מסמך סודי - לשימוש פנימי בלבד
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="text-content">
+                <!-- Introduction -->
+                <h2>הקדמה: רעיון מהפכני בתקשורת מאובטחת</h2>
+                <p>
+                    מסמך זה מציג ארכיטקטורה חדשנית למערכת תקשורת לווינית המבוססת על עקרונות קוונטיים 
+                    ושילוב ייחודי עם תדר רשת החשמל. המערכת נועדה לספק אבטחה מוחלטת תוך שמירה על 
+                    חוק שימור האינפורמציה כהרחבה של חוק שימור האנרגיה.
+                </p>
+
+                <div class="highlight">
+                    <strong>רעיון הליבה:</strong> שימוש בתדר רשת החשמל (50Hz) כנושא לאינפורמציה, המרתה למצב קוונטי, 
+                    ושידורה דרך לוויין תוך שמירה על עקרון שימור האינפורמציה.
+                </div>
+
+                <!-- Principle 1 -->
+                <h3>עקרון 1: קידוד מידע בתדר רשת החשמל</h3>
+                <p>
+                    המערכת משתמשת בתדר רשת החשמל הבסיסי (50Hz בישראל, 60Hz בארה"ב) כפלטפורמת קידוד. 
+                    כל רשת חשמל יוצרת "טביעת אצבע" אלקטרומגנטית ייחודית הכוללת:
+                </p>
+                
+                <ul>
+                    <li>הרמוניות של תדר הבסיס</li>
+                    <li>רעשי רקע אופייניים</li>
+                    <li>תבניות צריכה ייחודיות</li>
+                    <li>מאפיינים פיזיקליים של שנאים וקווים</li>
+                </ul>
+
+                <div class="tech-spec">
+                    <div class="spec-header">מפרט טכני - חיישן תדר:</div>
+                    דיוק מדידה: ±0.001Hz | קצב דגימה: 1MSPS | רזולוציה: 24-bit | טווח תדרים: 40-60Hz
+                </div>
+
+                <!-- Principle 2 -->
+                <h3>עקרון 2: המרה קוונטית של המידע</h3>
+                <p>
+                    לאחר קידוד המידע בתבנית תדר, המערכת מבצעת המרה קוונטית:
+                </p>
+
+                <div class="quantum-principle">
+                    <div class="principle-title">המשוואה הקוונטית:</div>
+                    |ψ⟩ = α|0⟩ + β|1⟩
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                        כאשר α ו-β מייצגים את המידע המקודד בתדר, והם מקיימים |α|² + |β|² = 1
+                    </p>
+                </div>
+
+                <p>
+                    תהליך ההמרה כולל יצירת פוטונים שזורים (Entangled Photons) הנושאים את המידע הקוונטי. 
+                    שזירה קוונטית מבטיחה כי כל ניסיון להאזין לשידור ישנה את מצב הפוטונים ויחשף מיד.
+                </p>
+
+                <div class="important-note">
+                    <strong>יתרון קריטי:</strong> עקרון אי-הצפיות הקוונטית מבטיח שאף גורם שלישי לא יכול להאזין 
+                    לשידור מבלי לשנות את המידע - מה שמתגלה מיידית בצד המקבל.
+                </div>
+
+                <!-- Principle 3 -->
+                <h3>עקרון 3: חוק שימור האינפורמציה</h3>
+                <p>
+                    המערכת מיישמת את חוק שימור האינפורמציה כהרחבה של חוק שימור האנרגיה:
+                </p>
+
+                <div class="formula">
+                    ∫ E(f)df = ∫ I(x,y,t)dxdydt
+                </div>
+
+                <p>
+                    המשוואה קובעת כי האינטגרל על ספקטרום האנרגיה בתדרים שווה לאינטגרל על המידע החזותי 
+                    במרחב ובזמן. בפועל, זה מתבטא ב:
+                </p>
+
+                <ul>
+                    <li>אפס אובדן מידע בתהליך ההמרה</li>
+                    <li>שימור מלא של רזולוציה ואיכות תמונה</li>
+                    <li>אנרגיית השידור פרופורציונית לכמות האינפורמציה</li>
+                </ul>
+
+                <!-- System Components -->
+                <h2>רכיבי המערכת העיקריים</h2>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-wave-square"></i> 1. חיישן תדר רשת</div>
+                    <p>
+                        רכיב ADC מתקדם למדידת תדר רשת החשמל בדיוק של 0.001Hz. כולל מערך סינון DSP 
+                        להפרדת האות הרצוי מרעשי רקע. פועל בטמפרטורות של 40°C- עד 85°C+ עם יציבות 
+                        תרמית של 5ppm/°C.
+                    </p>
+                </div>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-microchip"></i> 2. מעבד DSP קוונטי</div>
+                    <p>
+                        מעבד FPGA מבוסס Xilinx Zynq עם 150K לוגיקות. מבצע עיבוד FFT בזמן אמת, 
+                        המרת תמונה לתדר, ואלגוריתמי קידוד מתקדמים. כולל 4GB DDR4 ומהירות שעון של 400MHz.
+                    </p>
+                </div>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-atom"></i> 3. מקור פוטונים קוונטי</div>
+                    <p>
+                        מערכת SPDC (Spontaneous Parametric Down-Conversion) הפועלת באורך גל 1550nm. 
+                        יוצרת פוטונים שזורים עם יחס שזירה של 90%+. דורשת קירור ל-4K וצורכת 50W.
+                    </p>
+                </div>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-satellite-dish"></i> 4. משדר לוויין</div>
+                    <p>
+                        מערכת RF בתדר Ka-band (26.5-40GHz) עם הספק 100W ואנטנת 2.4m. כולל מערכת 
+                        מעקב לוויינים בדיוק 0.01° ויחס ציר ראשי/צדדי של 70dB.
+                    </p>
+                </div>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-satellite"></i> 5. לוויין תקשורת</div>
+                    <p>
+                        לוויין LEO בגובה 550km עם מסלול נטוי 53°. משקל 260kg, הספק 2kW, אורך חיים 
+                        7 שנים. כולל מערכות תיקון מסלול, בקרה תרמית ומערך תאים סולאריים.
+                    </p>
+                </div>
+
+                <div class="component-desc">
+                    <div class="component-title"><i class="fas fa-signal"></i> 6. מקלט קרקעי</div>
+                    <p>
+                        תחנת קרקע עם אנטנת 13m ורמת רעש של 25K. כולל גלאי SNSPD עם יעילות 95% 
+                        וקצב ספירת פוטונים של 100MHz. מערכת Time Tagging לזיהוי תזמונים מדויק.
+                    </p>
+                </div>
+
+                <!-- Technical Specifications Table -->
+                <h2>טבלת מפרטים טכניים</h2>
+                <table class="spec-table">
+                    <tr>
+                        <th>פרמטר</th>
+                        <th>ערך</th>
+                        <th>יחידות</th>
+                        <th>הסבר</th>
+                    </tr>
+                    <tr>
+                        <td>קצב נתונים</td>
+                        <td>1</td>
+                        <td>Gbps</td>
+                        <td>מהירות שידור מקסימלית</td>
+                    </tr>
+                    <tr>
+                        <td>השהייה</td>
+                        <td>&lt;50</td>
+                        <td>ms</td>
+                        <td>זמן אמת מקצה לקצה</td>
+                    </tr>
+                    <tr>
+                        <td>אמינות</td>
+                        <td>99.999%</td>
+                        <td></td>
+                        <td>זמן פעולה ללא תקלות</td>
+                    </tr>
+                    <tr>
+                        <td>אבטחה</td>
+                        <td>100%</td>
+                        <td></td>
+                        <td>גילוי האזנה ודאי</td>
+                    </tr>
+                    <tr>
+                        <td>יעילות קוונטית</td>
+                        <td>85%</td>
+                        <td></td>
+                        <td>יחס המרת פוטונים</td>
+                    </tr>
+                    <tr>
+                        <td>דיוק תדר</td>
+                        <td>±0.001</td>
+                        <td>Hz</td>
+                        <td>מדידת תדר רשת</td>
+                    </tr>
+                </table>
+
+                <!-- Security Features -->
+                <h2>מאפייני אבטחה מתקדמים</h2>
+
+                <h3>א. טביעת אצבע תדרית ייחודית</h3>
+                <p>
+                    כל רשת חשמל מייצרת תבנית תדר ייחודית הכוללת הרמוניות ספציפיות, רעשי רקע אופייניים 
+                    ותבניות צריכה מקומיות. תבנית זו משמשת כמפתח הצפנה פיזי בלתי ניתן לשכפול.
+                </p>
+
+                <h3>ב. הצפנה קוונטית מבוססת QKD</h3>
+                <p>
+                    שימוש בפרוטוקולי QKD (Quantum Key Distribution) כמו BB84 ו-E91 ליצירת מפתחות 
+                    הצפנה בלתי ניתנים לפריצה. כל ניסיון להאזין מפר את עקרון אי-השוויון של בל ומתגלה מיידית.
+                </p>
+
+                <div class="formula">
+                    S = E(a,b) - E(a,b') + E(a',b) + E(a',b') ≤ 2
+                </div>
+
+                <p class="no-indent">
+                    כאשר ערך S > 2 מעיד על שזירה קוונטית ומוכיח שלא בוצעה האזנה.
+                </p>
+
+                <h3>ג. Forward Secrecy קוונטי</h3>
+                <p>
+                    מפתחות ההצפנה מתחדשים בכל שידור באמצעות תהליך קוונטי אקראי. פריצת מפתח אחד 
+                    לא מאפשרת גישה לתקשורת עתידית או עברית.
+                </p>
+
+                <!-- Applications -->
+                <h2>יישומים מעשיים</h2>
+
+                <div class="highlight">
+                    <strong>תקשורת ממשלתית ובטחונית:</strong> העברת מידע מסווג בין בסיסים ומרכזי פיקוד 
+                    עם אבטחה מוחלטת מפני האזנה ופריצה.
+                </div>
+
+                <p>
+                    <strong>תשתיות קריטיות:</strong> תקשורת מאובטחת בין תחנות כוח, בתי חולים, מרכזי נתונים 
+                    ומערכות בנקאיות.
+                </p>
+
+                <p>
+                    <strong>מחקר מדעי:</strong> העברת נתונים ממעבדות מחקר באזורים מרוחקים ותחנות מחקר 
+                    באנטארקטיקה ובעומק הים.
+                </p>
+
+                <p>
+                    <strong>חירום ואסון:</strong> הקמת תקשורת חירום כאשר תשתיות קרקעיות נפגעות, עם יכולת 
+                    פעולה עצמאית לחלוטין מרשתות חשמל מקומיות.
+                </div>
+
+                <!-- Implementation Timeline -->
+                <h2>ציר זמן מימוש</h2>
+
+                <div class="tech-spec">
+                    <strong>שלב 1 - הוכחת היתכנות (6 חודשים):</strong><br>
+                    פיתוח חיישן תדר + מעבד DSP | בדיקות מעבדה | סימולציות קוונטיות
+                </div>
+
+                <div class="tech-spec">
+                    <strong>שלב 2 - אב טיפוס (12 חודשים):</strong><br>
+                    אינטגרציית מקור פוטונים | בניית משדר ניסיוני | ניסויים בשטח מוגבל
+                </div>
+
+                <div class="tech-spec">
+                    <strong>שלב 3 - מימוש מלא (24 חודשים):</strong><br>
+                    שיגור לוויין ניסוי | הקמת תחנת קרקע | ניסויים מקצה לקצה | אישורי רגולציה
+                </div>
+
+                <!-- Conclusion -->
+                <h2>סיכום ומסקנות</h2>
+
+                <p>
+                    המערכת המוצעת מהווה קפיצת מדרגה טכנולוגית בתחום התקשורת המאובטחת. השילוב בין 
+                    תדר רשת החשמל, עקרונות קוונטיים ותקשורת לוויינית יוצר פלטפורמה בעלת מאפייני אבטחה 
+                    חסרי תקדים.
+                </p>
+
+                <div class="important-note">
+                    <strong>יתרון מרכזי:</strong> המערכת אינה תלויה בתשתיות תקשורת קרקעיות רגישות, 
+                    ופועלת באופן עצמאי גם בתנאי חירום ואסון כאשר תשתיות אחרות קורסות.
+                </div>
+
+                <p>
+                    המימוש דורש השקעה משמעותית בפיתוח חומרה מתקדמת ואינטגרציה של טכנולוגיות מגוונות, 
+                    אך התוצאה הסופית - תקשורת מאובטחת לחלוטין עם אפס סיכוי לפריצה - מצדיקה את המאמץ.
+                </p>
+
+                <p style="margin-top: 2rem; font-style: italic; color: #666;">
+                    "העברת אינפורמציה היא העברת אנרגיה. מה שניתן למדוד ניתן לשמור, ומה שנשמר - 
+                    ניתן להעביר בביטחון מוחלט."
+                </p>
+            </div>
+
+            <!-- Document Footer -->
+            <div class="document-footer">
+                <p>מסמך טכני - מערכת תקשורת קוונטית לווינית</p>
+                <p>© 2024 כל הזכויות שמורות | מסמך סודי - אין להפיץ ללא אישור</p>
+                <p>נכתב ועודכן: דצמבר 2024</p>
+            </div>
+
+            <div class="page-number">עמוד 1</div>
+        </div>
+    </div>
+
+    <script>
+        // Add page turning effect on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const paper = document.querySelector('.paper-container');
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset;
+                const maxScroll = document.body.scrollHeight - window.innerHeight;
+                const scrollPercent = scrollTop / maxScroll;
+                
+                // Add slight shadow effect based on scroll
+                paper.style.boxShadow = `0 0 ${50 + scrollPercent * 100}px rgba(0, 0, 0, ${0.3 + scrollPercent * 0.2})`;
+                
+                // Update page number (simplified)
+                const pageNum = Math.min(Math.floor(scrollPercent * 3) + 1, 3);
+                document.querySelector('.page-number').textContent = `עמוד ${pageNum}`;
+            });
+            
+            // Add print button functionality
+            const printBtn = document.createElement('button');
+            printBtn.innerHTML = '<i class="fas fa-print"></i> הדפס מסמך';
+            printBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: var(--quantum-blue);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                z-index: 1000;
+                font-family: inherit;
+            `;
+            printBtn.onclick = () => window.print();
+            document.body.appendChild(printBtn);
+        });
+    </script>
+</body>
+</html>
