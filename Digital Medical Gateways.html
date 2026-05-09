@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שערים רפואיים דיגיטליים - מיפוי תרופות לקוד בינארי</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+        }
+
+        .binary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .binary-table th, .binary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .binary-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .binary-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .gate-demo {
+            background: #f7fafc;
+            border-right: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .gate-result {
+            background: #e6fffa;
+            border: 1px solid #38b2ac;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border-right: 4px solid #fc8181;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #f0fff4;
+            border-right: 4px solid #48bb78;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .button-calc {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .button-calc:hover {
+            transform: scale(1.05);
+        }
+
+        .sensitivity-mask {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .mask-bits {
+            display: inline-block;
+            background: #2d3748;
+            color: #68d391;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.2em;
+            margin: 5px;
+        }
+
+        .bit-position {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 30px;
+            margin: 2px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .bit-value {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 30px;
+            margin: 2px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .bit-1 {
+            background: #48bb78;
+            color: white;
+        }
+
+        .bit-0 {
+            background: #fc8181;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .bit-position, .bit-value {
+                width: 25px;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 שערים רפואיים דיגיטליים</h1>
+            <div class="subtitle">
+                מיפוי תרופות לקוד בינארי לפי מחלה • שילוב עקרונות מאלקטרוניקה ספרתית ברפואה
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- כרטיסייה 1: מיפוי גורמים -->
+            <div class="card">
+                <h2>📊 מיפוי גורמים למחלה X</h2>
+                <p>כל גורם מקבל מיקום סיבית ייחודי במספר הבינארי</p>
+                
+                <table class="binary-table">
+                    <thead>
+                        <tr><th>גורם</th><th>סיבית</th><th>קריטיות</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>דלקת</td><td>0</td><td>גבוהה</td></tr>
+                        <tr><td>קרישיות יתר</td><td>1</td><td>גבוהה</td></tr>
+                        <tr><td>אי ספיקת כליות</td><td>2</td><td>קריטי</td></tr>
+                        <tr><td>רגישות לפניצילין</td><td>3</td><td>קריטי</td></tr>
+                        <tr><td>רמת ALT גבוהה</td><td>4</td><td>בינונית</td></tr>
+                        <tr><td>סיכון לדימום</td><td>5</td><td>קריטי</td></tr>
+                        <tr><td>אלרגיה לאספירין</td><td>6</td><td>קריטי</td></tr>
+                        <tr><td>גיל > 65</td><td>7</td><td>בינונית</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="code-example">
+                    <strong>📝 קוד בינארי לדוגמה:</strong> 10110010<br>
+                    <small>סיבית 7:1 | 6:0 | 5:1 | 4:1 | 3:0 | 2:0 | 1:1 | 0:0</small>
+                </div>
+
+                <div>
+                    <strong>🎯 משמעות הקוד:</strong>
+                    <div class="gate-demo">
+                        ✅ דלקת: לא<br>
+                        ✅ קרישיות יתר: כן<br>
+                        ✅ סיכון לדימום: כן<br>
+                        ✅ רמת ALT גבוהה: כן<br>
+                        ❌ רגישות לפניצילין: לא
+                    </div>
+                </div>
+            </div>
+
+            <!-- כרטיסייה 2: שערים לוגיים רפואיים -->
+            <div class="card">
+                <h2>🔌 שערים לוגיים רפואיים</h2>
+                
+                <h3>✔️ שער AND רפואי</h3>
+                <div class="gate-demo">
+                    <strong>תרופה נוגדת קרישה תינתן רק אם:</strong><br>
+                    קרישיות יתר = 1 <strong>AND</strong> סיכון לדימום = 0<br>
+                    <div class="gate-result">
+                        🧮 נוסחה: (bit1 = 1) AND (bit5 = 0)<br>
+                        🔍 עבור המטופל הנ"ל (10110010):<br>
+                        bit1 = 1 ✅, bit5 = 1 ❌ → <strong>תוצאה: אסור לתת</strong>
+                    </div>
+                </div>
+
+                <h3>🔄 שער NOT רפואי</h3>
+                <div class="gate-demo">
+                    <strong>אזהרה לאספירין:</strong><br>
+                    NOT (רגישות לפניצילין) → להתריע על אלרגיה צולבת<br>
+                    <div>בדוגמה: NOT 0 = 1 → <strong>קיימת התראה</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- כרטיסייה 3: זיהוי רגישויות -->
+            <div class="card">
+                <h2>⚠️ זיהוי רגישויות לתרופות</h2>
+                
+                <div class="sensitivity-mask">
+                    <h3>תרופה T1 (פניצילין + דלקת)</h3>
+                    <div><strong>מסכת רגישות:</strong> <span class="mask-bits">00001001</span> (סיביות 0,3)</div>
+                    <div><strong>קוד מטופל:</strong> <span class="mask-bits">10110010</span></div>
+                    <div><strong>AND בינארי:</strong> <span class="mask-bits">00000000</span></div>
+                    <div class="success">
+                        ✅ <strong>תוצאה:</strong> המטופל <strong>אינו רגיש</strong> לתרופה T1<br>
+                        <small>(כי AND עם המסכה לא שווה למסכה)</small>
+                    </div>
+                </div>
+
+                <div class="sensitivity-mask">
+                    <h3>תרופה T2 (קרישיות + אלרגיה לאספירין)</h3>
+                    <div><strong>מסכת רגישות:</strong> <span class="mask-bits">01100010</span> (סיביות 1,5,6)</div>
+                    <div><strong>קוד מטופל:</strong> <span class="mask-bits">10110010</span></div>
+                    <div><strong>AND בינארי:</strong> <span class="mask-bits">00100010</span></div>
+                    <div class="warning">
+                        ⚠️ <strong>תוצאה:</strong> המטופל רגיש חלקית לתרופה T2<br>
+                        <small>סיביות 1 ו-5 תואמות (קרישיות וסיכון לדימום)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- כרטיסייה 4: מערכת קריטיות -->
+            <div class="card">
+                <h2>⚖️ מערכת קריטיות משוקללת</h2>
+                <p>כל גורם מקבל משקל לפי חומרתו</p>
+                
+                <table class="binary-table">
+                    <thead>
+                        <tr><th>גורם</th><th>משקל</th><th>ערך במטופל</th><th>ציון</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>אי ספיקת כליות</td><td>3</td><td>0</td><td>0</td></tr>
+                        <tr><td>רגישות לפניצילין</td><td>3</td><td>0</td><td>0</td></tr>
+                        <tr><td>סיכון לדימום</td><td>3</td><td>1</td><td>3</td></tr>
+                        <tr><td>קרישיות יתר</td><td>2</td><td>1</td><td>2</td></tr>
+                        <tr><td>דלקת</td><td>1</td><td>0</td><td>0</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="gate-result">
+                    <strong>📊 ציון סיכון כולל:</strong> 5 מתוך 12<br>
+                    <strong>🎯 סף קריטי:</strong> 4 → <strong class="warning">⚠️ חריגה מהסף! נדרשת זהירות</strong>
+                </div>
+
+                <div class="success">
+                    <strong>💊 המלצה טיפולית:</strong> להימנע מתרופות נוגדות קרישה, לשקול טיפול חלופי
+                </div>
+            </div>
+        </div>
+
+        <!-- כרטיסיית הדגמה אינטראקטיבית -->
+        <div class="card">
+            <h2>🖥️ הדגמה אינטראקטיבית - שער החלטה לתרופה</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <strong>מטופל נוכחי (קוד בינארי):</strong> 
+                <span id="patientCode" class="mask-bits" style="font-size: 1.3em;">10110010</span>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
+                <div style="flex: 1;">
+                    <h3>🔘 הגדרות שער ההחלטה</h3>
+                    <div class="gate-demo">
+                        <p><strong>תרופת נוגדת קרישה - תנאים:</strong></p>
+                        <label><input type="checkbox" id="and1" value="1" checked> קרישיות יתר = 1 (AND)</label><br>
+                        <label><input type="checkbox" id="and2" value="5" checked> סיכון לדימום = 0 (AND NOT)</label><br>
+                        <label><input type="checkbox" id="or1" value="6"> אלרגיה לאספירין = 1 (OR)</label><br>
+                        <button class="button-calc" onclick="calculateGate()">🏁 הפעל שער רפואי</button>
+                    </div>
+                </div>
+                
+                <div style="flex: 1;">
+                    <h3>📋 תוצאת ההחלטה</h3>
+                    <div id="gateResult" class="gate-result" style="text-align: center; font-size: 1.2em;">
+                        לחץ על הפעל שער
+                    </div>
+                    <div id="gateDetails" style="margin-top: 15px; font-size: 0.95em; color: #555;">
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #e2e8f0;">
+                <h3>🎨 ייצוג חזותי של הקוד הבינארי של המטופל</h3>
+                <div id="binaryVisual" style="text-align: center; margin-top: 10px;"></div>
+                <div style="margin-top: 10px; text-align: center;">
+                    <button class="button-calc" onclick="changePatientExample(1)" style="background: #48bb78;">📋 מטופל א' (סיכון גבוה)</button>
+                    <button class="button-calc" onclick="changePatientExample(2)" style="background: #4299e1;">📋 מטופל ב' (סיכון נמוך)</button>
+                    <button class="button-calc" onclick="changePatientExample(3)" style="background: #ed8936;">📋 מטופל ג' (אלרגיה מורכבת)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- סיכום ויתרונות -->
+        <div class="card">
+            <h2>💡 יתרונות הגישה הדיגיטלית הרפואית</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="success">
+                    ⚡ <strong>חישוב מהיר</strong><br>
+                    מתאים להתראות בזמן אמת
+                </div>
+                <div class="success">
+                    📐 <strong>תקן פתוח</strong><br>
+                    מיקום קבוע לגורמים
+                </div>
+                <div class="success">
+                    🛡️ <strong>מניעת טעויות</strong><br>
+                    זיהוי רגישות צולבת
+                </div>
+                <div class="success">
+                    📈 <strong>סקלביליות</strong><br>
+                    הרחבה ל-128+ סיביות
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🏥 שערים רפואיים דיגיטליים - שילוב עקרונות אלקטרוניקה ספרתית ברפואה מודרנית</p>
+            <p style="font-size: 0.9em;">מיפוי תרופות, רגישויות וגורמי סיכון למערכת בינאית מדידה</p>
+        </div>
+    </div>
+
+    <script>
+        let currentPatient = "10110010"; // קוד בינארי נוכחי
+        
+        // פונקציה לעדכון ההדגמה הויזואלית
+        function updateBinaryVisual() {
+            const visualDiv = document.getElementById('binaryVisual');
+            const bits = currentPatient.split('');
+            let html = '<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 5px;">';
+            for (let i = bits.length - 1; i >= 0; i--) {
+                const bitValue = bits[bits.length - 1 - i];
+                html += `<div style="text-align: center;">
+                            <div class="bit-position">${i}</div>
+                            <div class="bit-value ${bitValue === '1' ? 'bit-1' : 'bit-0'}">${bitValue}</div>
+                         </div>`;
+            }
+            html += '</div>';
+            visualDiv.innerHTML = html;
+            document.getElementById('patientCode').innerHTML = currentPatient;
+        }
+        
+        // פונקציה להחלפת מטופל לדוגמה
+        function changePatientExample(type) {
+            if (type === 1) {
+                currentPatient = "11111111"; // סיכון גבוה בכל הפרמטרים
+            } else if (type === 2) {
+                currentPatient = "00000000"; // סיכון נמוך
+            } else {
+                currentPatient = "10001001"; // אלרגיה מורכבת
+            }
+            updateBinaryVisual();
+            calculateGate();
+        }
+        
+        // חישוב שערים רפואיים
+        function calculateGate() {
+            const bits = currentPatient.split('').map(b => parseInt(b));
+            const checkboxes = document.querySelectorAll('#gate-demo input[type="checkbox"]');
+            
+            let result = true;
+            let details = [];
+            
+            // AND conditions (need to be 1)
+            const andConditions = [
+                {bit: 1, expected: 1, name: "קרישיות יתר = 1"},
+                {bit: 5, expected: 0, name: "סיכון לדימום = 0"}  // NOT condition
+            ];
+            
+            // Check AND conditions
+            for (let cond of andConditions) {
+                const actualValue = bits[cond.bit];
+                const conditionMet = (actualValue === cond.expected);
+                if (!conditionMet) {
+                    result = false;
+                    details.push(`❌ ${cond.name} (קיים ${actualValue})`);
+                } else {
+                    details.push(`✅ ${cond.name}`);
+                }
+            }
+            
+            // Check OR condition (אלרגיה לאספירין)
+            const orBit = 6;
+            const orValue = bits[orBit];
+            if (orValue === 1) {
+                details.push(`⚠️ התראה: אלרגיה לאספירין (bit${orBit}=1)`);
+            }
+            
+            const resultDiv = document.getElementById('gateResult');
+            const detailsDiv = document.getElementById('gateDetails');
+            
+            if (result) {
+                resultDiv.innerHTML = '✅ <strong>מותר לתת את התרופה</strong><br>כל התנאים מתקיימים';
+                resultDiv.className = 'gate-result success';
+            } else {
+                resultDiv.innerHTML = '❌ <strong>אסור לתת את התרופה</strong><br>אחד או יותר מהתנאים לא מתקיימים';
+                resultDiv.className = 'gate-result warning';
+            }
+            
+            detailsDiv.innerHTML = '<strong>פירוט הבדיקה:</strong><br>' + details.join('<br>');
+        }
+        
+        // אתחול ההדגמה
+        updateBinaryVisual();
+        calculateGate();
+        
+        // הוספת אירועים לכפתורים אם צריך - נשאר כמו שהיה
+    </script>
+</body>
+</html>
