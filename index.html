@@ -88,7 +88,13 @@
       background: linear-gradient(180deg, rgba(15,23,42,.60), rgba(15,23,42,.14));
     }
 
-    .wrap{max-width:1240px; margin:0 auto; padding:18px 18px 34px}
+    .wrap{
+      max-width:1240px; 
+      margin:0 auto; 
+      padding:18px 18px 34px;
+      width: 100%;
+      transition: max-width 0.2s ease;
+    }
     .top{
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
@@ -158,6 +164,14 @@
 
     .controls{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      width: 100%;
+    }
+    /* התאמת אלמנטים בקונטרולס שיתפרסו יפה במובייל */
+    .controls > * {
+      flex: 1 1 auto;
+    }
+    .controls button, .controls select {
+      justify-content: center;
     }
 
     .pill{
@@ -170,7 +184,7 @@
     }
 
     .search{
-      min-width:min(520px, 90vw);
+      flex: 10 1 400px;
       display:flex; gap:10px; align-items:center;
     }
     .search input{
@@ -200,7 +214,7 @@
     }
 
     .btnIcon{
-      width:40px; height:40px;
+      width:40px; height:40px; flex: 0 0 40px;
       border-radius:14px;
       display:grid; place-items:center;
       background: var(--card);
@@ -253,6 +267,7 @@
       background: var(--card2);
       border:1px solid var(--line);
       display:flex; gap:10px; align-items:center;
+      flex: 1 1 auto;
     }
     .dot{
       width:10px; height:10px; border-radius:999px; background:var(--ok);
@@ -326,17 +341,6 @@
       align-items:stretch;
       gap:10px;
     }
-    @media (max-width: 740px){
-      .grid.list .cardInner{ flex-direction:column; }
-      .grid.list .cardBottom{
-        width:auto;
-        border-right:none;
-        border-top:1px solid var(--line);
-        flex-direction:row;
-        justify-content:space-between;
-        align-items:center;
-      }
-    }
 
     .card{
       grid-column: span 4;
@@ -350,12 +354,6 @@
       transition: transform .14s ease, filter .14s ease;
     }
     .card:hover{ transform: translateY(-2px); filter:brightness(1.01); }
-
-    @media (max-width: 980px){ .card{grid-column: span 6;} }
-    @media (max-width: 640px){
-      .card{grid-column: span 12;}
-      .search{min-width:100%}
-    }
 
     .cardTop{
       padding:14px 14px 10px;
@@ -506,26 +504,51 @@
 
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
 
-    /* =========================
-       ✅ Device Preview (SAFE)
-       ========================= */
-    html[data-device="desktop"] .wrap{ max-width:1240px; }
-
-    html[data-device="tablet"] .wrap{ max-width: 900px; }
-
-    html[data-device="mobile"] .wrap{ max-width: 420px; }
-
-    html[data-device="tablet"] .wrap,
-    html[data-device="mobile"] .wrap{
-      outline: 1px solid rgba(148,163,184,.45);
-      border-radius: 18px;
-      background: rgba(255,255,255,.04);
+    /* ==============================================
+       ✅ RESPONSIVE MEDIA QUERIES (AUTOMATIC)
+       ============================================== */
+    
+    /* טאבלטים ומסכים בינוניים (עד 980px) */
+    @media (max-width: 980px) {
+      .card { grid-column: span 6; }
     }
 
-    html[data-device="tablet"] body,
-    html[data-device="mobile"] body{
-      padding-left: 10px;
-      padding-right: 10px;
+    /* מובייל ומסכים קטנים (עד 740px) */
+    @media (max-width: 740px) {
+      .card { grid-column: span 12; }
+      .search { min-width: 100%; }
+      
+      .grid.list .cardInner { flex-direction: column; }
+      .grid.list .cardBottom {
+        width: auto;
+        border-right: none;
+        border-top: 1px solid var(--line);
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .search .k { display: none; } /* הסתרת קיצור המקלדת במובייל */
+    }
+
+    /* ==============================================
+       ✅ DEVICE PREVIEW SIMULATION (MANUAL CONTROLS)
+       ============================================== */
+    html[data-device="desktop"] .wrap { max-width: 1240px !important; background: transparent !important; outline: none !important; }
+
+    html[data-device="tablet"] .wrap { max-width: 900px !important; }
+    html[data-device="tablet"] .card { grid-column: span 6 !important; }
+
+    html[data-device="mobile"] .wrap { max-width: 420px !important; }
+    html[data-device="mobile"] .card { grid-column: span 12 !important; }
+    html[data-device="mobile"] .search .k { display: none; }
+
+    /* הגדרות סימולטור ייעודיות לטאבלט/מובייל כשהם נבחרים ידנית במחשב */
+    html[data-device="tablet"] .wrap,
+    html[data-device="mobile"] .wrap {
+      outline: 1px solid rgba(148,163,184,.45) !important;
+      border-radius: 18px !important;
+      background: var(--cardSolid) !important;
+      box-shadow: var(--shadow);
     }
   </style>
 </head>
@@ -552,11 +575,11 @@
         <button class="btnIcon" id="themeBtn" title="מצב בהיר/כהה">🌓</button>
         <button class="btnIcon" id="viewBtn" title="תצוגה: Grid/List">▦</button>
 
-        <!-- ✅ NEW: device preview -->
         <select id="deviceSel" class="select" title="תצוגת מכשיר">
-          <option value="desktop">🖥️ מחשב</option>
-          <option value="tablet">📟 טאבלט</option>
-          <option value="mobile">📱 מובייל</option>
+          <option value="auto">📱 התאמה אוטומטית</option>
+          <option value="desktop">🖥️ סימולטור: מחשב</option>
+          <option value="tablet">📟 סימולטור: טאבלט</option>
+          <option value="mobile">📱 סימולטור: מובייל</option>
         </select>
 
         <select id="sortSel" class="select" title="מיון">
@@ -608,10 +631,6 @@
 <div class="toast" id="toast">הועתק!</div>
 
 <script>
-/**
- * INDEX.HTML — Full list (no Top10) + Manual Emoji per file + Export/Import.
- */
-
 const RAW_FILES = [
   "Digital Medical Gateways.html",
   "Using the electrical outlet as a source and receiver for video communication, through transduction and modulation over the network frequency.html",
@@ -778,7 +797,7 @@ function tagsFromFile(file){
 
   if(f.includes("water") || f.includes("gas") || f.includes("train")) tags.add("תחבורה/מים");
   if(f.includes("usb") || f.includes("ipv6") || f.includes("security") || f.includes("hybirddata")) tags.add("רשת/אבטחה");
-  if(f.includes("qfm") || f.includes("qaxm") || f.includes("plutos") || f.includes("plugos")) tags.add("אותות/מודלים");
+  if(f.includes("qfm") || f.includes("qfm") || f.includes("plutos") || f.includes("plugos")) tags.add("אותות/מודלים");
   if(f.includes("hospital") || f.includes("bio") || f.includes("organ") || f.includes("blood") || f.includes("therapy") || f.includes("tooth")) tags.add("בריאות/ביולוגיה");
   if(f.includes("energy") || f.includes("electricity") || f.includes("harvesting") || f.includes("pressure") || f.includes("thermo") || f.includes("thermal") || f.includes("thermosiphon") || f.includes("floor") || f.includes("paver")) tags.add("אנרגיה/תרמו");
   if(f.includes("aircraft") || f.includes("supersonic") || f.includes("air_road") || f.includes("glider")) tags.add("תעופה");
@@ -1068,19 +1087,23 @@ async function copyText(text){
 }
 
 function applyDevice(mode){
-  const m = (mode==="mobile" || mode==="tablet") ? mode : "desktop";
-  document.documentElement.setAttribute("data-device", m);
-  localStorage.setItem(LS_DEVICE, m);
-  if(deviceSel) deviceSel.value = m;
+  document.documentElement.setAttribute("data-device", mode);
+  localStorage.setItem(LS_DEVICE, mode);
+  if(deviceSel) deviceSel.value = mode;
   renderActiveInfo();
 }
 
+// עדכון פונקציית המידע המציגה את המצב הפעיל
 function renderActiveInfo(){
   const qq = q.value.trim();
   const viewLabel = (viewMode==="list") ? "List" : "Grid";
   const tagLabel = activeTag || "הכל";
-  const dev = document.documentElement.getAttribute("data-device") || "desktop";
-  const devLabel = dev==="mobile" ? "Mobile" : (dev==="tablet" ? "Tablet" : "Desktop");
+  const dev = document.documentElement.getAttribute("data-device") || "auto";
+  let devLabel = "אוטומטי";
+  if(dev === "desktop") devLabel = "Desktop (מאולץ)";
+  if(dev === "tablet") devLabel = "Tablet (מאולץ)";
+  if(dev === "mobile") devLabel = "Mobile (מאולץ)";
+  
   activeInfo.textContent = `סינון: ${tagLabel} • חיפוש: ${qq ? qq : "—"} • תצוגה: ${viewLabel} • מכשיר: ${devLabel}`;
 }
 
@@ -1212,7 +1235,7 @@ function exportData(){
     viewMode: localStorage.getItem(LS_VIEW) || "grid",
     sortMode: localStorage.getItem(LS_SORT) || "az",
     fileViews: JSON.parse(localStorage.getItem(LS_FILEVIEWS) || "{}"),
-    deviceMode: localStorage.getItem(LS_DEVICE) || "desktop"
+    deviceMode: localStorage.getItem(LS_DEVICE) || "auto"
   };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
   const a = document.createElement("a");
@@ -1234,7 +1257,7 @@ function importData(obj){
   localStorage.setItem(LS_VIEW, String(obj.viewMode || "grid"));
   localStorage.setItem(LS_SORT, String(obj.sortMode || "az"));
   localStorage.setItem(LS_FILEVIEWS, JSON.stringify(obj.fileViews || {}));
-  localStorage.setItem(LS_DEVICE, String(obj.deviceMode || "desktop"));
+  localStorage.setItem(LS_DEVICE, String(obj.deviceMode || "auto"));
 
   viewMode = localStorage.getItem(LS_VIEW) || "grid";
   viewBtn.textContent = (viewMode==="list") ? "≡" : "▦";
@@ -1246,7 +1269,7 @@ function importData(obj){
 
   renderChips();
   render();
-  applyDevice(localStorage.getItem(LS_DEVICE) || "desktop");
+  applyDevice(localStorage.getItem(LS_DEVICE) || "auto");
   showToast("ייבוא בוצע ✅");
 }
 
@@ -1276,8 +1299,8 @@ function init(){
     render();
   };
 
-  // ✅ device preview
-  const savedDevice = localStorage.getItem(LS_DEVICE) || "desktop";
+  // אתחול מצב המכשיר והאזנה לשינויים
+  const savedDevice = localStorage.getItem(LS_DEVICE) || "auto";
   applyDevice(savedDevice);
   if(deviceSel){
     deviceSel.addEventListener("change", ()=> applyDevice(deviceSel.value));
@@ -1311,7 +1334,7 @@ function init(){
 
     renderChips();
     render();
-    applyDevice("desktop");
+    applyDevice("auto");
     showToast("איפוס בוצע ✅");
   };
 
